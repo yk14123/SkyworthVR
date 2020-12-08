@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?><!--<shape xmlns:android="http://schemas.android.com/apk/res/android"-->
+<ripple xmlns:android="http://schemas.android.com/apk/res/android"
+    android:color="@android:color/white"><!--手指点击控件的提示颜色，白色最好，透明会没效果，其他颜色会与背景色重叠，可能达不到想要的效果-->
+    <item>
+        <inset
+            android:insetLeft="4dp"
+            android:insetTop="1dp"
+            android:insetRight="4dp"
+            android:insetBottom="1dp"><!--在button中设置文字到边框的距离，数值越大，距离越小，若控件有padding设置，则inset此层可去掉-->
+            <!--rectangle ring line oval-->
+            <shape android:shape="rectangle"><!--控件的背景-->
+                <gradient
+                    android:angle="90"
+                    android:endColor="#ff479722"
+                    android:startColor="#ff68c41d"
+                    android:type="linear"
+                    android:useLevel="true" />
+                <corners android:radius="5dp" />
+            </shape>
+        </inset>
+    </item>
+</ripple>

@@ -1,0 +1,4 @@
+include ':hvrskyworthvr'
+include ':app'
+include ':lib_network'
+rootProject.name = "HvrSkyWorth"

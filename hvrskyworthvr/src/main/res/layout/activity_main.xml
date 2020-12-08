@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".ui.main.MainActivity">
+
+    <androidx.appcompat.widget.AppCompatImageView
+        android:id="@+id/appCompatImageView"
+        android:layout_width="80dp"
+        android:layout_height="80dp"
+        android:layout_marginTop="24dp"
+        android:elevation="10dp"
+        android:scaleType="fitCenter"
+        android:src="@drawable/sky_worth_main_logo"
+        app:layout_constraintEnd_toEndOf="@id/radioGroup"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <androidx.appcompat.widget.AppCompatImageView
+        android:id="@+id/iv_about_bg"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:src="@drawable/sky_worth_about_bg"
+        android:visibility="invisible"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <FrameLayout
+        android:id="@+id/fl_container"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@id/radioGroup"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <androidx.appcompat.widget.AppCompatImageView
+        android:id="@+id/iv_main_publish_bg"
+        android:layout_width="119dp"
+        android:layout_height="203dp"
+        android:src="@drawable/sky_worth_main_background_ball"
+        android:visibility="invisible"
+        app:layout_constraintBottom_toBottomOf="@id/radioGroup"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.248" />
+
+    <androidx.appcompat.widget.AppCompatImageView
+        android:id="@+id/iv_main_video_bg"
+        android:layout_width="119dp"
+        android:layout_height="203dp"
+        android:src="@drawable/sky_worth_main_background_ball"
+        android:visibility="invisible"
+        app:layout_constraintBottom_toBottomOf="@id/radioGroup"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.5" />
+
+    <androidx.appcompat.widget.AppCompatImageView
+        android:id="@+id/iv_main_about_bg"
+        android:layout_width="119dp"
+        android:layout_height="203dp"
+        android:src="@drawable/sky_worth_main_background_ball"
+        android:visibility="invisible"
+        app:layout_constraintBottom_toBottomOf="@id/radioGroup"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.752" />
+
+    <RadioGroup
+        android:id="@+id/radioGroup"
+        android:layout_width="105dp"
+        android:layout_height="0dp"
+        android:background="@color/color_72F3"
+        android:elevation="5dp"
+        android:gravity="center"
+        android:paddingStart="5dp"
+        android:paddingEnd="5dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <com.zaaach.tabradiobutton.TabRadioButton
+            android:id="@+id/rb_main_publish"
+            style="@style/TabRadioButtonWithText"
+            android:drawableTop="@drawable/selector_main_navigation_drawable_publish"
+            android:text="@string/main_navigation_publish"
+            app:trb_drawable_size="48dp"
+            app:trb_duration="200"
+            app:trb_enable_animation="true"
+            app:trb_scale_rate="0.8" />
+
+        <com.zaaach.tabradiobutton.TabRadioButton
+            android:id="@+id/rb_main_video"
+            style="@style/TabRadioButtonWithText"
+            android:drawableTop="@drawable/selector_main_navigation_drawable_video"
+            android:text="@string/main_navigation_video"
+            app:trb_drawable_size="48dp"
+            app:trb_duration="200"
+            app:trb_enable_animation="true"
+            app:trb_scale_rate="0.8" />
+
+        <com.zaaach.tabradiobutton.TabRadioButton
+            android:id="@+id/rb_main_about"
+            style="@style/TabRadioButtonWithText"
+            android:drawableTop="@drawable/selector_main_navigation_drawable_about"
+            android:text="@string/main_navigation_about"
+            app:trb_drawable_size="48dp"
+            app:trb_duration="200"
+            app:trb_enable_animation="true"
+            app:trb_scale_rate="0.8" />
+
+    </RadioGroup>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

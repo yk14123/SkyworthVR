@@ -1,0 +1,18 @@
+<resources>
+    <string name="app_name">HvrSkyWorthVr</string>
+    <string name="splash_title">欢迎体验农家360</string>
+    <string name="splash_copyright">Copyright © 2020 ChinaFocus. All rights reserved.</string>
+
+    <string name="login_des">登录</string>
+    <string name="login_confirm">再次确认账号</string>
+    <string name="login_account">请输入账号</string>
+    <string name="login_title">请登录账号</string>
+    <string name="login_account_not_null">账号不能为空</string>
+    <string name="login_account_must_equals">两次输入账号必须一样</string>
+    <string name="main_navigation_publish">全景出版</string>
+    <string name="main_navigation_video">全景视频</string>
+    <string name="main_navigation_about">关于</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+
+</resources>
