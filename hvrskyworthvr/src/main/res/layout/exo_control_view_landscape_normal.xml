@@ -1,0 +1,180 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/video_media_bg">
+
+    <ImageButton
+        android:id="@id/exo_back"
+        android:layout_width="30dp"
+        android:layout_height="30dp"
+        android:layout_marginStart="15dp"
+        android:background="@null"
+        android:padding="5dp"
+        android:scaleType="center"
+        android:src="@drawable/icon_exo_back"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:ignore="ContentDescription" />
+
+    <TextView
+        android:id="@id/exo_text_title"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="20dp"
+        android:ellipsize="end"
+        android:maxLines="1"
+        android:singleLine="true"
+        android:textColor="@color/color_white"
+        android:textSize="24sp"
+        app:layout_constraintBottom_toBottomOf="@+id/exo_back"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0"
+        app:layout_constraintStart_toEndOf="@+id/exo_back"
+        app:layout_constraintTop_toTopOf="@+id/exo_back"
+        app:layout_constraintWidth_max="wrap"
+        tools:text="年曆史、7代人傳承，中國京劇第一世家堪稱人類藝術史奇觀！世家堪稱人類藝術史奇觀" />
+
+    <ImageButton
+        android:id="@id/exo_reset_content"
+        android:layout_width="60dp"
+        android:layout_height="60dp"
+        android:background="@drawable/shape_video_icon_bg"
+        android:scaleType="centerInside"
+        android:src="@drawable/icon_video_adjust"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.38"
+        tools:ignore="ContentDescription" />
+
+    <ImageButton
+        android:id="@id/exo_link_vr"
+        android:layout_width="60dp"
+        android:layout_height="60dp"
+        android:layout_marginTop="32dp"
+        android:background="@drawable/shape_video_icon_bg"
+        android:scaleType="centerInside"
+        android:src="@drawable/icon_video_vr"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="@+id/exo_reset_content"
+        app:layout_constraintTop_toBottomOf="@+id/exo_reset_content"
+        tools:ignore="ContentDescription" />
+
+    <ImageButton
+        android:id="@id/exo_play"
+        android:layout_width="45dp"
+        android:layout_height="45dp"
+        android:layout_marginStart="15dp"
+        android:layout_marginBottom="15dp"
+        android:background="@null"
+        android:padding="5dp"
+        android:src="@drawable/icon_exo_play"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        tools:ignore="ContentDescription" />
+
+    <ImageButton
+        android:id="@id/exo_pause"
+        android:layout_width="45dp"
+        android:layout_height="45dp"
+        android:layout_marginStart="15dp"
+        android:layout_marginBottom="15dp"
+        android:background="@null"
+        android:padding="5dp"
+        android:src="@drawable/icon_exo_pause"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        tools:ignore="ContentDescription" />
+
+    <ImageButton
+        android:id="@+id/exo_replay"
+        android:layout_width="104dp"
+        android:layout_height="104dp"
+        android:background="@drawable/shape_video_icon_bg"
+        android:scaleType="center"
+        android:src="@drawable/icon_exo_replay"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.41"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:ignore="ContentDescription" />
+
+    <ImageButton
+        android:id="@+id/exo_next_video"
+        android:layout_width="104dp"
+        android:layout_height="104dp"
+        android:background="@drawable/shape_video_icon_bg"
+        android:scaleType="center"
+        android:src="@drawable/icon_exo_play_next"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.59"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:ignore="ContentDescription" />
+
+    <ImageButton
+        android:id="@id/exo_setting"
+        android:layout_width="45dp"
+        android:layout_height="45dp"
+        android:layout_marginBottom="15dp"
+        android:background="@null"
+        android:padding="5dp"
+        android:scaleType="centerInside"
+        android:src="@drawable/icon_exo_setting"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="@+id/exo_link_vr"
+        tools:ignore="ContentDescription" />
+
+    <View
+        android:id="@id/exo_progress_placeholder"
+        android:layout_width="0dp"
+        android:layout_height="35dp"
+        android:layout_marginStart="20dp"
+        android:layout_marginEnd="20dp"
+        android:layout_marginBottom="10dp"
+        app:layout_constraintBottom_toTopOf="@id/exo_setting"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <TextView
+        android:id="@id/exo_position"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="20dp"
+        android:gravity="center_vertical|start"
+        android:includeFontPadding="false"
+        android:textColor="@color/color_white"
+        android:textSize="16sp"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toBottomOf="@+id/exo_duration"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/exo_duration"
+        tools:text="66:66" />
+
+    <TextView
+        android:id="@id/exo_duration"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:includeFontPadding="false"
+        android:textColor="@color/color_white"
+        android:textSize="16sp"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toTopOf="@+id/exo_setting"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="@+id/exo_link_vr"
+        app:layout_constraintTop_toBottomOf="@+id/exo_link_vr"
+        app:layout_constraintVertical_bias="0.65"
+        tools:text="17:12" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

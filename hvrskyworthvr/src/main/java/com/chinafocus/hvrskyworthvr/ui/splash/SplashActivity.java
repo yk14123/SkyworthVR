@@ -5,8 +5,11 @@ import androidx.lifecycle.ViewModelProvider;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.widget.Toast;
 
+import com.blankj.utilcode.constant.PermissionConstants;
 import com.blankj.utilcode.util.BarUtils;
+import com.blankj.utilcode.util.PermissionUtils;
 import com.blankj.utilcode.util.SPUtils;
 import com.chinafocus.hvrskyworthvr.R;
 import com.chinafocus.hvrskyworthvr.global.Constants;
@@ -29,7 +32,20 @@ public class SplashActivity extends AppCompatActivity {
         BarUtils.setStatusBarLightMode(this, true);
 
         DefaultUrlViewModel model = new ViewModelProvider(this).get(DefaultUrlViewModel.class);
-        model.getDefaultCloudUrl();
+
+        PermissionUtils.permission(PermissionConstants.STORAGE, PermissionConstants.PHONE).callback(new PermissionUtils.SimpleCallback() {
+            @Override
+            public void onGranted() {
+                model.getDefaultCloudUrl();
+            }
+
+            @Override
+            public void onDenied() {
+                finish();
+                Toast.makeText(SplashActivity.this, "权限请求失败", Toast.LENGTH_SHORT).show();
+            }
+        }).request();
+
         model.defaultCloudUrlMutableLiveData.observe(this, this::saveDefaultUrl);
 
     }

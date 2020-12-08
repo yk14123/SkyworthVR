@@ -1,4 +1,4 @@
-package com.chinafocus.hvrskyworthvr.ui.main.video.sublist;
+package com.chinafocus.hvrskyworthvr.ui.adapter;
 
 import android.content.Intent;
 import android.view.LayoutInflater;
@@ -14,7 +14,6 @@ import com.bumptech.glide.Glide;
 import com.chinafocus.hvrskyworthvr.R;
 import com.chinafocus.hvrskyworthvr.global.Constants;
 import com.chinafocus.hvrskyworthvr.model.bean.VideoListData;
-import com.chinafocus.hvrskyworthvr.ui.adapter.BaseViewHolder;
 import com.chinafocus.hvrskyworthvr.ui.main.media.MediaPlayActivity;
 
 import java.util.List;

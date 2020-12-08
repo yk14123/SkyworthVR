@@ -6,4 +6,21 @@
     android:layout_height="match_parent"
     tools:context=".ui.main.media.MediaPlayActivity">
 
+    <com.chinafocus.hvrskyworthvr.exo.ui.PlayerView
+        android:id="@+id/player_view_land"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:visibility="visible"
+        app:bar_height="3dp"
+        app:controller_layout_id="@layout/exo_control_view_landscape_normal"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:played_color="@color/colorAccent"
+        app:scrubber_drawable="@drawable/icon_exo_seekbar"
+        app:show_buffering="when_playing"
+        app:show_timeout="3000"
+        app:surface_type="spherical_gl_surface_view" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>

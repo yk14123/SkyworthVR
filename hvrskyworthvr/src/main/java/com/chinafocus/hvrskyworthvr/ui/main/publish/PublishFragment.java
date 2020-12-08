@@ -19,7 +19,7 @@ import android.view.ViewGroup;
 import com.chinafocus.hvrskyworthvr.R;
 import com.chinafocus.hvrskyworthvr.ui.adapter.BannerViewAdapter;
 import com.chinafocus.hvrskyworthvr.ui.main.BannerViewModel;
-import com.chinafocus.hvrskyworthvr.ui.main.video.sublist.VideoListAdapter;
+import com.chinafocus.hvrskyworthvr.ui.adapter.VideoListAdapter;
 import com.chinafocus.hvrskyworthvr.util.MyRollHandler;
 
 

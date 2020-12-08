@@ -1,7 +1,6 @@
 package com.chinafocus.hvrskyworthvr.ui.main.video.sublist;
 
 import androidx.lifecycle.ViewModelProvider;
-import androidx.lifecycle.ViewModelProviders;
 
 import android.os.Bundle;
 
@@ -16,6 +15,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.chinafocus.hvrskyworthvr.R;
+import com.chinafocus.hvrskyworthvr.ui.adapter.VideoListAdapter;
 
 import java.util.Objects;
 
