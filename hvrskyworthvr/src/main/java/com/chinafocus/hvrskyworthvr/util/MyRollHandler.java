@@ -12,7 +12,7 @@ import androidx.viewpager2.widget.ViewPager2;
 public class MyRollHandler extends Handler {
 
     // 轮询切换的时间
-    private static int Time = 3000;
+    private static int Time = 8000;
 
     private ViewPager2 mViewPager2;
     private int mCurrentItem;

@@ -1,5 +1,6 @@
 package com.chinafocus.hvrskyworthvr.ui.adapter;
 
+import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,8 +13,12 @@ import com.bumptech.glide.Glide;
 import com.chinafocus.hvrskyworthvr.R;
 import com.chinafocus.hvrskyworthvr.global.Constants;
 import com.chinafocus.hvrskyworthvr.model.bean.Banner;
+import com.chinafocus.hvrskyworthvr.ui.main.media.MediaPlayActivity;
 
 import java.util.List;
+
+import static com.chinafocus.hvrskyworthvr.ui.main.media.MediaPlayActivity.MEDIA_CATEGORY_TAG;
+import static com.chinafocus.hvrskyworthvr.ui.main.media.MediaPlayActivity.MEDIA_ID;
 
 public class BannerViewAdapter extends RecyclerView.Adapter<BaseViewHolder> {
 
@@ -27,7 +32,18 @@ public class BannerViewAdapter extends RecyclerView.Adapter<BaseViewHolder> {
     @Override
     public BaseViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View inflate = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_banner, parent, false);
-        return new BaseViewHolder(inflate);
+        BaseViewHolder baseViewHolder = new BaseViewHolder(inflate);
+        baseViewHolder.itemView.setOnClickListener(v -> {
+            int adapterPosition = baseViewHolder.getAdapterPosition() % mBannerLists.size();
+            int id = mBannerLists.get(adapterPosition).getId();
+            String type = mBannerLists.get(adapterPosition).getType();
+
+            Intent intent = new Intent(parent.getContext(), MediaPlayActivity.class);
+            intent.putExtra(MEDIA_ID, id);
+            intent.putExtra(MEDIA_CATEGORY_TAG, type.equals("video") ? "video" : "publish");
+            parent.getContext().startActivity(intent);
+        });
+        return baseViewHolder;
     }
 
     @Override

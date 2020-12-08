@@ -1,5 +1,6 @@
 package com.chinafocus.hvrskyworthvr.ui.main;
 
+import android.annotation.SuppressLint;
 import android.app.Application;
 
 import androidx.annotation.NonNull;
@@ -13,6 +14,7 @@ import com.chinafocus.lib_network.net.errorhandler.ExceptionHandle;
 import com.chinafocus.lib_network.net.observer.BaseObserver;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 
 public class BannerViewModel extends BaseViewModel {
@@ -29,9 +31,14 @@ public class BannerViewModel extends BaseViewModel {
                         .getService(ApiService.class)
                         .getBanner(),
                 new BaseObserver<List<Banner>>() {
+                    @SuppressLint("NewApi")
                     @Override
                     public void onSuccess(List<Banner> defaultCloudUrlBaseResponse) {
-                        bannerMutableLiveData.postValue(defaultCloudUrlBaseResponse);
+                        List<Banner> filterList = defaultCloudUrlBaseResponse
+                                .stream()
+                                .filter(banner -> !banner.getType().equals("field"))
+                                .collect(Collectors.toList());
+                        bannerMutableLiveData.postValue(filterList);
                     }
 
                     @Override

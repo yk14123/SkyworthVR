@@ -46,8 +46,8 @@ public class SplashActivity extends AppCompatActivity {
                 .subscribe(new DisposableCompletableObserver() {
                     @Override
                     public void onComplete() {
-                        startActivity(new Intent(SplashActivity.this, LoginActivity.class));
-//                        startActivity(new Intent(SplashActivity.this, MainActivity.class));
+//                        startActivity(new Intent(SplashActivity.this, LoginActivity.class));
+                        startActivity(new Intent(SplashActivity.this, MainActivity.class));
                         finish();
                     }
 
