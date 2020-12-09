@@ -13,4 +13,5 @@
     <color name="color_test_checked">#479722</color>
     <color name="color_indicator">#6DD400</color>
     <color name="video_media_bg">#99000000</color>
+    <color name="video_media_detail_bg">#33000000</color>
 </resources>

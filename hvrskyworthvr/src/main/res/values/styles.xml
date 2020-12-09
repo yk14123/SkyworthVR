@@ -18,4 +18,23 @@
         <item name="android:drawablePadding">-2dp</item>
     </style>
 
+    <style name="VideoDetail_TranslucentGreyDialog" parent="@style/AlertDialog.AppCompat.Light">
+        <item name="android:windowFrame">@null</item>
+        <item name="android:windowNoTitle">true</item>
+        <item name="android:windowIsFloating">true</item>
+        <item name="android:windowContentOverlay">@null</item>
+        <item name="android:windowBackground">@android:color/transparent
+        </item><!-- 设置dialog背景为透明背景 -->
+        <item name="android:backgroundDimAmount">0.3</item>
+        <item name="android:backgroundDimEnabled">true</item><!-- 设置dialog背景不变暗 -->
+
+        <item name="android:windowAnimationStyle">@style/DialogAnimation_BottomSheet</item>
+    </style>
+
+    <!-- ActionSheet进出动画 -->
+    <style name="DialogAnimation_BottomSheet" parent="@android:style/Animation.Dialog">
+        <item name="android:windowEnterAnimation">@anim/dialog_anim_bottom_in</item>
+        <item name="android:windowExitAnimation">@anim/dialog_anim_bottom_out</item>
+    </style>
+
 </resources>

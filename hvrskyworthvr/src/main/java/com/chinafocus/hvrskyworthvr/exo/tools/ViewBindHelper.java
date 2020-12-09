@@ -21,7 +21,6 @@ public class ViewBindHelper {
         this.mLandscapePlayerView = landscapePlayerView;
     }
 
-
     /**
      * 绑定交互动作
      */
@@ -47,8 +46,8 @@ public class ViewBindHelper {
 
             @Override
             public void onLinkVR() {
-                if (mPlayNextVideoListener != null) {
-                    mPlayNextVideoListener.onLinkVR();
+                if (mPlayVideoListener != null) {
+                    mPlayVideoListener.onLinkVR();
                 }
             }
 
@@ -56,24 +55,33 @@ public class ViewBindHelper {
             public void onVideoNextPlay() {
                 // 播放下一个
                 Log.e("MyLog", "next play");
-                if (mPlayNextVideoListener != null) {
-                    mPlayNextVideoListener.onPlayNextVideo();
+                if (mPlayVideoListener != null) {
+                    mPlayVideoListener.onPlayNextVideo();
+                }
+            }
+
+            @Override
+            public void onVideoSetting() {
+                if (mPlayVideoListener != null) {
+                    mPlayVideoListener.onVideoSetting();
                 }
             }
         });
     }
 
 
-    public interface PlayNextVideoListener {
+    public interface PlayVideoListener {
         void onPlayNextVideo();
 
         void onLinkVR();
+
+        void onVideoSetting();
     }
 
-    private PlayNextVideoListener mPlayNextVideoListener;
+    private PlayVideoListener mPlayVideoListener;
 
-    public void setPlayNextVideoListener(PlayNextVideoListener playNextVideoListener) {
-        mPlayNextVideoListener = playNextVideoListener;
+    public void setPlayVideoListener(PlayVideoListener playVideoListener) {
+        mPlayVideoListener = playVideoListener;
     }
 
     /**
