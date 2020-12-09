@@ -2,6 +2,7 @@ package com.chinafocus.hvrskyworthvr.ui.main;
 
 import android.os.Bundle;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.RadioGroup;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -11,6 +12,7 @@ import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
 import com.chinafocus.hvrskyworthvr.R;
+import com.chinafocus.hvrskyworthvr.ui.dialog.VrModeMainDialog;
 import com.chinafocus.hvrskyworthvr.ui.main.about.AboutFragment;
 import com.chinafocus.hvrskyworthvr.ui.main.publish.PublishFragment;
 import com.chinafocus.hvrskyworthvr.ui.main.video.VideoFragment;
@@ -52,6 +54,24 @@ public class MainActivity extends AppCompatActivity implements RadioGroup.OnChec
         radioGroup.check(R.id.rb_main_publish);
     }
 
+    private VrModeMainDialog vrModeMainDialog;
+
+    private void showVRMode() {
+        if (vrModeMainDialog == null) {
+            vrModeMainDialog = new VrModeMainDialog(this);
+        }
+        if (!vrModeMainDialog.isShowing()) {
+            vrModeMainDialog.show();
+            getWindow().clearFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND);
+        }
+    }
+
+    private void hideVRMode() {
+        if (vrModeMainDialog != null) {
+            vrModeMainDialog.dismiss();
+        }
+    }
+
     @Override
     public void onCheckedChanged(RadioGroup group, int checkedId) {
         if (checkedId == R.id.rb_main_publish) {//快讯
@@ -66,6 +86,7 @@ public class MainActivity extends AppCompatActivity implements RadioGroup.OnChec
             switchFragment(mAboutFragment);
             switchBackgroundDrawable(R.id.iv_main_about_bg);
             setAboutBgShow(true);
+            showVRMode();
         }
     }
 

@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <androidx.appcompat.widget.AppCompatImageView
+        android:id="@+id/appCompatImageView3"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:background="@drawable/sky_worth_vr_mode_linking_bg"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/appCompatTextView3"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="带上VR眼镜即可"
+        android:textColor="#F2F2F2"
+        android:textSize="32sp"
+        app:layout_constraintBottom_toBottomOf="@+id/appCompatImageView3"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/appCompatImageView3"
+        app:layout_constraintVertical_bias="0.614" />
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/tv_dialog_back"
+        android:layout_width="252dp"
+        android:layout_height="52dp"
+        android:layout_marginTop="45dp"
+        android:background="@drawable/shape_vr_mode_linking_back_bg"
+        android:drawableStart="@drawable/sky_worth_vr_mode_linking_back"
+        android:drawablePadding="-25dp"
+        android:gravity="center"
+        android:paddingStart="36dp"
+        android:text="返回屏幕模式"
+        android:textColor="@color/color_F2"
+        android:textSize="20sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/appCompatTextView3" />
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>

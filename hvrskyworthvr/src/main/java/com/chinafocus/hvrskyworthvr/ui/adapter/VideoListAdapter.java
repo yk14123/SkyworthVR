@@ -64,6 +64,6 @@ public class VideoListAdapter extends RecyclerView.Adapter<BaseViewHolder> {
 
     @Override
     public int getItemCount() {
-        return videoLists.size();
+        return videoLists == null ? 0 : videoLists.size();
     }
 }

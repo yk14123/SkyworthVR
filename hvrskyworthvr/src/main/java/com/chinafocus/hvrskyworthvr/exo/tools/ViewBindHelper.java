@@ -7,13 +7,13 @@ import com.blankj.utilcode.util.BarUtils;
 import com.chinafocus.hvrskyworthvr.exo.ui.IControlViewInterAction;
 import com.chinafocus.hvrskyworthvr.exo.ui.PlayerView;
 import com.chinafocus.hvrskyworthvr.exo.ui.spherical.SphericalGLSurfaceView;
+import com.chinafocus.hvrskyworthvr.ui.main.media.MediaPlayActivity;
 import com.google.android.exoplayer2.text.CaptionStyleCompat;
 
 import static android.util.TypedValue.COMPLEX_UNIT_SP;
 import static com.google.android.exoplayer2.text.CaptionStyleCompat.EDGE_TYPE_NONE;
 
 public class ViewBindHelper {
-
 
     private PlayerView mLandscapePlayerView;
 
@@ -38,6 +38,11 @@ public class ViewBindHelper {
         mLandscapePlayerView.getSubtitleView().setPadding(0, 0, 0, BarUtils.getStatusBarHeight());
 
         mLandscapePlayerView.setInterActionWithCustomControlView(new IControlViewInterAction() {
+
+            @Override
+            public void onGoBackActivity() {
+                ((MediaPlayActivity) mLandscapePlayerView.getContext()).finish();
+            }
 
             @Override
             public void onVideoContentReset() {

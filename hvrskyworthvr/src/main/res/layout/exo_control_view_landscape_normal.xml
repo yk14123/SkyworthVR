@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/video_media_bg">
+    android:background="@color/video_media_detail_bg">
 
     <ImageButton
         android:id="@id/exo_back"
@@ -29,11 +29,10 @@
         android:singleLine="true"
         android:textColor="@color/color_white"
         android:textSize="24sp"
-        app:layout_constraintBottom_toBottomOf="@+id/exo_back"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0"
         app:layout_constraintStart_toEndOf="@+id/exo_back"
-        app:layout_constraintTop_toTopOf="@+id/exo_back"
+        app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintWidth_max="wrap"
         tools:text="年曆史、7代人傳承，中國京劇第一世家堪稱人類藝術史奇觀！世家堪稱人類藝術史奇觀" />
 

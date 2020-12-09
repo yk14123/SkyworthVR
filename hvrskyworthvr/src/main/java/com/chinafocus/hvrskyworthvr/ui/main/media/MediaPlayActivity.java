@@ -20,6 +20,7 @@ import com.chinafocus.hvrskyworthvr.exo.ui.spherical.SphericalGLSurfaceView;
 import com.chinafocus.hvrskyworthvr.global.Constants;
 import com.chinafocus.hvrskyworthvr.model.bean.VideoDetail;
 import com.chinafocus.hvrskyworthvr.ui.dialog.VideoDetailDialog;
+import com.chinafocus.hvrskyworthvr.ui.dialog.VrModeVideoLinkingDialog;
 import com.chinafocus.hvrskyworthvr.util.statusbar.StatusBarCompatFactory;
 
 import java.util.List;
@@ -172,7 +173,13 @@ public class MediaPlayActivity extends AppCompatActivity implements ViewBindHelp
 
     @Override
     public void onLinkVR() {
+        if (modeVideoLinkingDialog == null) {
+            modeVideoLinkingDialog = new VrModeVideoLinkingDialog(this);
+        }
 
+        if (!modeVideoLinkingDialog.isShowing()) {
+            modeVideoLinkingDialog.show();
+        }
     }
 
     @Override
@@ -181,6 +188,8 @@ public class MediaPlayActivity extends AppCompatActivity implements ViewBindHelp
             videoDetailDialog.show();
         }
     }
+
+    private VrModeVideoLinkingDialog modeVideoLinkingDialog;
 
 }
 
