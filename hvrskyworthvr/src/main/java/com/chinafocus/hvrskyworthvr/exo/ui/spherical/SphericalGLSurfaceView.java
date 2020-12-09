@@ -185,17 +185,17 @@ public final class SphericalGLSurfaceView extends GLSurfaceView {
     @Override
     public void onResume() {
         super.onResume();
-        if (orientationSensor != null) {
-            sensorManager.registerListener(
-                    orientationListener, orientationSensor, SensorManager.SENSOR_DELAY_FASTEST);
-        }
+//        if (orientationSensor != null) {
+//            sensorManager.registerListener(
+//                    orientationListener, orientationSensor, SensorManager.SENSOR_DELAY_FASTEST);
+//        }
     }
 
     @Override
     public void onPause() {
-        if (orientationSensor != null) {
-            sensorManager.unregisterListener(orientationListener);
-        }
+//        if (orientationSensor != null) {
+//            sensorManager.unregisterListener(orientationListener);
+//        }
         super.onPause();
     }
 
