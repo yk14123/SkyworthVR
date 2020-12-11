@@ -6,13 +6,10 @@ import android.text.method.ScrollingMovementMethod;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.WindowManager;
 import android.widget.TextView;
 
 import com.blankj.utilcode.util.ScreenUtils;
 import com.chinafocus.hvrskyworthvr.R;
-
-import java.util.Objects;
 
 /**
  * 用户权限确认框

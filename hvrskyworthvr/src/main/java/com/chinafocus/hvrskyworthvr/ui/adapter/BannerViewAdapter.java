@@ -17,7 +17,7 @@ import com.chinafocus.hvrskyworthvr.ui.main.media.MediaPlayActivity;
 
 import java.util.List;
 
-import static com.chinafocus.hvrskyworthvr.ui.main.media.MediaPlayActivity.MEDIA_CATEGORY_TAG;
+import static com.chinafocus.hvrskyworthvr.ui.main.media.MediaPlayActivity.MEDIA_FROM_TAG;
 import static com.chinafocus.hvrskyworthvr.ui.main.media.MediaPlayActivity.MEDIA_ID;
 
 public class BannerViewAdapter extends RecyclerView.Adapter<BaseViewHolder> {
@@ -40,7 +40,7 @@ public class BannerViewAdapter extends RecyclerView.Adapter<BaseViewHolder> {
 
             Intent intent = new Intent(parent.getContext(), MediaPlayActivity.class);
             intent.putExtra(MEDIA_ID, id);
-            intent.putExtra(MEDIA_CATEGORY_TAG, type.equals("video") ? "video" : "publish");
+            intent.putExtra(MEDIA_FROM_TAG, type.equals("video") ? "video" : "publish");
             parent.getContext().startActivity(intent);
         });
         return baseViewHolder;

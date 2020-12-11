@@ -3,7 +3,6 @@ package com.chinafocus.hvrskyworthvr.exo.tools;
 import android.graphics.Color;
 import android.util.Log;
 
-import com.blankj.utilcode.util.BarUtils;
 import com.chinafocus.hvrskyworthvr.exo.ui.IControlViewInterAction;
 import com.chinafocus.hvrskyworthvr.exo.ui.PlayerView;
 import com.chinafocus.hvrskyworthvr.exo.ui.spherical.SphericalGLSurfaceView;
@@ -35,7 +34,7 @@ public class ViewBindHelper {
         assert mLandscapePlayerView.getSubtitleView() != null;
         mLandscapePlayerView.getSubtitleView().setStyle(new CaptionStyleCompat(Color.WHITE, 0, 0, EDGE_TYPE_NONE, 0, null));
         mLandscapePlayerView.getSubtitleView().setFixedTextSize(COMPLEX_UNIT_SP, 30);
-        mLandscapePlayerView.getSubtitleView().setPadding(0, 0, 0, BarUtils.getStatusBarHeight());
+//        mLandscapePlayerView.getSubtitleView().setPadding(0, 0, 0, BarUtils.getStatusBarHeight());
 
         mLandscapePlayerView.setInterActionWithCustomControlView(new IControlViewInterAction() {
 

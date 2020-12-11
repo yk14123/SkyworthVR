@@ -18,7 +18,7 @@ import com.chinafocus.hvrskyworthvr.ui.main.media.MediaPlayActivity;
 
 import java.util.List;
 
-import static com.chinafocus.hvrskyworthvr.ui.main.media.MediaPlayActivity.MEDIA_CATEGORY_TAG;
+import static com.chinafocus.hvrskyworthvr.ui.main.media.MediaPlayActivity.MEDIA_FROM_TAG;
 import static com.chinafocus.hvrskyworthvr.ui.main.media.MediaPlayActivity.MEDIA_ID;
 
 public class VideoListAdapter extends RecyclerView.Adapter<BaseViewHolder> {
@@ -41,7 +41,7 @@ public class VideoListAdapter extends RecyclerView.Adapter<BaseViewHolder> {
             int id = videoLists.get(adapterPosition).getId();
             Intent intent = new Intent(parent.getContext(), MediaPlayActivity.class);
             intent.putExtra(MEDIA_ID, id);
-            intent.putExtra(MEDIA_CATEGORY_TAG, video_tag);
+            intent.putExtra(MEDIA_FROM_TAG, video_tag);
             parent.getContext().startActivity(intent);
         });
         return baseViewHolder;

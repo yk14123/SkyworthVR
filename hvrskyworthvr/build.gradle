@@ -49,6 +49,8 @@ dependencies {
     annotationProcessor 'com.github.bumptech.glide:compiler:4.11.0'
     // exoplayer
     implementation 'com.google.android.exoplayer:exoplayer:2.12.2'
+    // eventBus
+    implementation 'org.greenrobot:eventbus:3.2.0'
     // 网络模块
     implementation project(path: ':lib_network')
 

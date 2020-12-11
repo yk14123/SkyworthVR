@@ -25,8 +25,6 @@ public class VrModeMainDialog extends AppCompatDialog {
         // 全新的方式设定宽高！
         setContentView(mContentView, new ViewGroup.LayoutParams(screenWidth, screenHeight));
 
-        mContentView.setOnClickListener(v -> dismiss());
-
         // 设置外部可以取消
         setCancelable(false);
         setCanceledOnTouchOutside(false);

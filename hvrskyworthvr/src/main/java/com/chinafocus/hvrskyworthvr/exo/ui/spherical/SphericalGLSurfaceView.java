@@ -37,6 +37,7 @@ import androidx.annotation.UiThread;
 import androidx.annotation.VisibleForTesting;
 
 
+import com.chinafocus.hvrskyworthvr.util.MatrixUtil;
 import com.google.android.exoplayer2.C;
 import com.google.android.exoplayer2.Player;
 import com.google.android.exoplayer2.ui.spherical.SingleTapListener;
@@ -272,12 +273,18 @@ public final class SphericalGLSurfaceView extends GLSurfaceView {
         private final float[] tempMatrix = new float[16];
         private float mAspect;
 
+        private final float[] skyWorthRotationMatrix = new float[16];
+        private final float[] skyWorthMatrix = new float[16];
 
         public Renderer(SceneRenderer scene) {
             this.scene = scene;
             Matrix.setIdentityM(deviceOrientationMatrix, 0);
             Matrix.setIdentityM(touchPitchMatrix, 0);
             Matrix.setIdentityM(touchYawMatrix, 0);
+            Matrix.setIdentityM(skyWorthRotationMatrix, 0);
+
+            // -1 - 1
+            MatrixUtil.setRotationWithQuaternion(skyWorthRotationMatrix, 0.3f, 0.0f, 0.0f, 1.0f);
             deviceRoll = UPRIGHT_ROLL;
         }
 
@@ -330,7 +337,8 @@ public final class SphericalGLSurfaceView extends GLSurfaceView {
             // Orientation = pitch * sensor * yaw since that is closest to what most users expect the
             // behavior to be.
             synchronized (this) {
-                Matrix.multiplyMM(tempMatrix, 0, deviceOrientationMatrix, 0, touchYawMatrix, 0);
+                Matrix.multiplyMM(skyWorthMatrix, 0, touchYawMatrix, 0, skyWorthRotationMatrix, 0);
+                Matrix.multiplyMM(tempMatrix, 0, deviceOrientationMatrix, 0, skyWorthMatrix, 0);
                 Matrix.multiplyMM(viewMatrix, 0, touchPitchMatrix, 0, tempMatrix, 0);
             }
 

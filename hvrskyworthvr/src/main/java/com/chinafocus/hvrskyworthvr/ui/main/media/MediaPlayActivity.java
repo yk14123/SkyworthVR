@@ -10,6 +10,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Log;
+import android.widget.Toast;
 
 import com.blankj.utilcode.util.BarUtils;
 import com.chinafocus.hvrskyworthvr.R;
@@ -19,9 +20,17 @@ import com.chinafocus.hvrskyworthvr.exo.ui.PlayerView;
 import com.chinafocus.hvrskyworthvr.exo.ui.spherical.SphericalGLSurfaceView;
 import com.chinafocus.hvrskyworthvr.global.Constants;
 import com.chinafocus.hvrskyworthvr.model.bean.VideoDetail;
+import com.chinafocus.hvrskyworthvr.service.event.VrConnect;
+import com.chinafocus.hvrskyworthvr.service.event.VrDisConnect;
+import com.chinafocus.hvrskyworthvr.service.event.VrRotation;
 import com.chinafocus.hvrskyworthvr.ui.dialog.VideoDetailDialog;
+import com.chinafocus.hvrskyworthvr.ui.dialog.VrModeMainDialog;
 import com.chinafocus.hvrskyworthvr.ui.dialog.VrModeVideoLinkingDialog;
 import com.chinafocus.hvrskyworthvr.util.statusbar.StatusBarCompatFactory;
+
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -29,7 +38,14 @@ import java.util.stream.Collectors;
 public class MediaPlayActivity extends AppCompatActivity implements ViewBindHelper.PlayVideoListener {
 
     public static final String MEDIA_ID = "media_id";
+    public static final String MEDIA_FROM_TAG = "media_category_tag";
+    public static final String MEDIA_SEEK = "media_seek";
     public static final String MEDIA_CATEGORY_TAG = "media_category_tag";
+    public static final String MEDIA_LINK_VR = "media_link_vr";
+    private int video_id;
+    private String video_tag;
+    private long seek;
+    private boolean linkingVr;
 
     @RequiresApi(api = Build.VERSION_CODES.N)
     @Override
@@ -38,10 +54,7 @@ public class MediaPlayActivity extends AppCompatActivity implements ViewBindHelp
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_media_play);
 
-        Intent intent = getIntent();
-        int video_id = intent.getIntExtra(MEDIA_ID, -1);
-        String video_tag = intent.getStringExtra(MEDIA_CATEGORY_TAG);
-
+        handleIntent();
         initView(savedInstanceState);
 
         MediaViewModel mediaViewModel = new ViewModelProvider(this).get(MediaViewModel.class);
@@ -94,6 +107,14 @@ public class MediaPlayActivity extends AppCompatActivity implements ViewBindHelp
 
     }
 
+    private void handleIntent() {
+        Intent intent = getIntent();
+        video_id = intent.getIntExtra(MEDIA_ID, -1);
+        video_tag = intent.getStringExtra(MEDIA_FROM_TAG);
+        seek = intent.getLongExtra(MEDIA_SEEK, 0);
+        linkingVr = intent.getBooleanExtra(MEDIA_LINK_VR, false);
+    }
+
     private VideoDetailDialog videoDetailDialog;
     private PlayerView mLandPlayerView;
     private ExoMediaHelper mExoMediaHelper;
@@ -105,7 +126,6 @@ public class MediaPlayActivity extends AppCompatActivity implements ViewBindHelp
                 , BarUtils.getStatusBarHeight()
                 , BarUtils.getStatusBarHeight()
                 , BarUtils.getStatusBarHeight());
-
 
         ((SphericalGLSurfaceView) mLandPlayerView.getVideoSurfaceView()).resetScale();
 
@@ -127,6 +147,39 @@ public class MediaPlayActivity extends AppCompatActivity implements ViewBindHelp
         mExoMediaHelper.onNewIntent();
     }
 
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void toUnityMediaInfoAndActiveVRPlayerStatus(VrConnect event) {
+        // 1.给VR同步视频信息
+
+        // 2.切换不可操作播放状态
+
+        linkingVr = true;
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void goBackMainActivityAndInactiveMainDialog(VrDisConnect event) {
+        linkingVr = false;
+        finish();
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void syncRotation(VrRotation vrRotation) {
+        // 同步四元数
+    }
+
+    // 3. Pad 位于播放结束界面时，如果此时 VR 被激活则 VR 端直接进入一级视频列表界面，Pad 回到视频列表界面的「不可选片状态」
+    // 不用接受命令。
+    // 当链接状态，播放结束后
+    void goBackMainActivityAndActiveMainDialog() {
+
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        EventBus.getDefault().register(this);
+    }
+
     @Override
     protected void onPause() {
         super.onPause();
@@ -137,6 +190,7 @@ public class MediaPlayActivity extends AppCompatActivity implements ViewBindHelp
     public void onStop() {
         super.onStop();
         mExoMediaHelper.onStop();
+        EventBus.getDefault().unregister(this);
     }
 
     @Override
@@ -169,6 +223,7 @@ public class MediaPlayActivity extends AppCompatActivity implements ViewBindHelp
 //            mViewBindHelper.clearVideoRatioLang();
 //            mVideoInfoPresenter.getVideoInfoNewFromChannel(mNextVideoId, mChannelId);
 //        }
+        Toast.makeText(this, "暂无下一个影片", Toast.LENGTH_SHORT).show();
     }
 
     @Override

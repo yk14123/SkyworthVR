@@ -10,6 +10,8 @@
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
     <uses-permission android:name="android.permission.READ_PHONE_STATE" />
 
+    <uses-permission android:name="android.permission.WAKE_LOCK" />
+
     <application
         android:name=".MyApp"
         android:allowBackup="true"
@@ -20,6 +22,11 @@
         android:theme="@style/AppTheme"
         android:usesCleartextTraffic="true"
         tools:targetApi="m">
+        <service
+            android:name=".service.SocketService"
+            android:exported="true"
+            android:permission="android.permission.BIND_JOB_SERVICE" />
+
         <activity
             android:name=".ui.main.media.MediaPlayActivity"
             android:screenOrientation="landscape" />

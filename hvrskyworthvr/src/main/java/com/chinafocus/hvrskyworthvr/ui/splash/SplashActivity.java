@@ -14,6 +14,8 @@ import com.blankj.utilcode.util.SPUtils;
 import com.chinafocus.hvrskyworthvr.R;
 import com.chinafocus.hvrskyworthvr.global.Constants;
 import com.chinafocus.hvrskyworthvr.model.bean.DefaultCloudUrl;
+import com.chinafocus.hvrskyworthvr.net.TcpClient;
+import com.chinafocus.hvrskyworthvr.service.SocketService;
 import com.chinafocus.hvrskyworthvr.ui.login.LoginActivity;
 import com.chinafocus.hvrskyworthvr.ui.main.MainActivity;
 
@@ -52,13 +54,21 @@ public class SplashActivity extends AppCompatActivity {
 
     private void saveDefaultUrl(DefaultCloudUrl url) {
 //        SPUtils.getInstance().put(Constants.DEFAULT_URL, url.getCloudUrl());
+        startSocketService();
         Constants.DEFAULT_URL = url.getCloudUrl();
         delayStartLoginActivity();
     }
 
+    private void startSocketService() {
+        Intent intent = new Intent(this, SocketService.class);
+        intent.putExtra("address", "10.10.20.243");
+        intent.putExtra("port", 8888);
+        SocketService.enqueueWork(this, intent);
+    }
+
     private void delayStartLoginActivity() {
         Completable
-                .timer(1, TimeUnit.SECONDS)
+                .timer(2, TimeUnit.SECONDS)
                 .subscribe(new DisposableCompletableObserver() {
                     @Override
                     public void onComplete() {

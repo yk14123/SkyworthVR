@@ -1,8 +1,8 @@
 package com.chinafocus.hvrskyworthvr.ui.main;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
-import android.view.WindowManager;
 import android.widget.RadioGroup;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -12,14 +12,28 @@ import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
 import com.chinafocus.hvrskyworthvr.R;
+import com.chinafocus.hvrskyworthvr.service.event.VrConnect;
+import com.chinafocus.hvrskyworthvr.service.event.VrDisConnect;
+import com.chinafocus.hvrskyworthvr.service.event.VrSyncPlayInfo;
 import com.chinafocus.hvrskyworthvr.ui.dialog.VrModeMainDialog;
 import com.chinafocus.hvrskyworthvr.ui.main.about.AboutFragment;
+import com.chinafocus.hvrskyworthvr.ui.main.media.MediaPlayActivity;
 import com.chinafocus.hvrskyworthvr.ui.main.publish.PublishFragment;
 import com.chinafocus.hvrskyworthvr.ui.main.video.VideoFragment;
 import com.chinafocus.hvrskyworthvr.util.statusbar.StatusBarCompatFactory;
 
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
+
 import java.util.Arrays;
 import java.util.List;
+
+import static com.chinafocus.hvrskyworthvr.ui.main.media.MediaPlayActivity.MEDIA_CATEGORY_TAG;
+import static com.chinafocus.hvrskyworthvr.ui.main.media.MediaPlayActivity.MEDIA_FROM_TAG;
+import static com.chinafocus.hvrskyworthvr.ui.main.media.MediaPlayActivity.MEDIA_ID;
+import static com.chinafocus.hvrskyworthvr.ui.main.media.MediaPlayActivity.MEDIA_LINK_VR;
+import static com.chinafocus.hvrskyworthvr.ui.main.media.MediaPlayActivity.MEDIA_SEEK;
 
 public class MainActivity extends AppCompatActivity implements RadioGroup.OnCheckedChangeListener {
 
@@ -52,24 +66,38 @@ public class MainActivity extends AppCompatActivity implements RadioGroup.OnChec
 
         initFragments();
         radioGroup.check(R.id.rb_main_publish);
+
+
     }
 
     private VrModeMainDialog vrModeMainDialog;
 
-    private void showVRMode() {
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void showVRMode(VrConnect event) {
         if (vrModeMainDialog == null) {
             vrModeMainDialog = new VrModeMainDialog(this);
         }
         if (!vrModeMainDialog.isShowing()) {
             vrModeMainDialog.show();
-            getWindow().clearFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND);
         }
     }
 
-    private void hideVRMode() {
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void hideVRMode(VrDisConnect event) {
         if (vrModeMainDialog != null) {
             vrModeMainDialog.dismiss();
         }
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void goToMediaPlayActivityAndActiveVRPlayerStatus(VrSyncPlayInfo event) {
+        Intent intent = new Intent(this, MediaPlayActivity.class);
+        intent.putExtra(MEDIA_ID, event.videoId);
+        intent.putExtra(MEDIA_FROM_TAG, event.tag);
+//        intent.putExtra(MEDIA_CATEGORY_TAG, video_tag);
+        intent.putExtra(MEDIA_SEEK, event.seek);
+        intent.putExtra(MEDIA_LINK_VR, true);
+        startActivity(intent);
     }
 
     @Override
@@ -86,8 +114,19 @@ public class MainActivity extends AppCompatActivity implements RadioGroup.OnChec
             switchFragment(mAboutFragment);
             switchBackgroundDrawable(R.id.iv_main_about_bg);
             setAboutBgShow(true);
-            showVRMode();
         }
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        EventBus.getDefault().register(this);
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        EventBus.getDefault().unregister(this);
     }
 
     private void setAboutBgShow(boolean show) {
