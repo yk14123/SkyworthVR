@@ -35,6 +35,7 @@ import com.google.android.exoplayer2.upstream.cache.CacheDataSource;
 import com.google.android.exoplayer2.upstream.cache.SimpleCache;
 import com.google.android.exoplayer2.util.MimeTypes;
 import com.google.android.exoplayer2.util.Util;
+import com.google.android.exoplayer2.video.VideoListener;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -72,9 +73,9 @@ public class ExoMediaHelper {
      *
      * @param time
      */
-    public void seekTo(int time) {
+    public void seekTo(long time) {
         if (player != null) {
-            player.seekTo(time * 1000);
+            player.seekTo(time);
         }
     }
 
@@ -380,6 +381,11 @@ public class ExoMediaHelper {
     }
 
     public class PlayerEventListener implements Player.EventListener {
+
+        @Override
+        public void onPlaybackStateChanged(int state) {
+            Log.e("MyLog", "onPlaybackStateChanged >>> " + state);
+        }
 
         @Override
         public void onPlayerError(ExoPlaybackException error) {

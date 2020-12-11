@@ -5,6 +5,8 @@ import androidx.lifecycle.ViewModelProvider;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.SystemClock;
+import android.util.Log;
 import android.widget.Toast;
 
 import com.blankj.utilcode.constant.PermissionConstants;
@@ -16,13 +18,19 @@ import com.chinafocus.hvrskyworthvr.global.Constants;
 import com.chinafocus.hvrskyworthvr.model.bean.DefaultCloudUrl;
 import com.chinafocus.hvrskyworthvr.net.TcpClient;
 import com.chinafocus.hvrskyworthvr.service.SocketService;
+import com.chinafocus.hvrskyworthvr.service.event.VrSyncPlayInfo;
 import com.chinafocus.hvrskyworthvr.ui.login.LoginActivity;
 import com.chinafocus.hvrskyworthvr.ui.main.MainActivity;
 
 import java.util.concurrent.TimeUnit;
 
 import io.reactivex.Completable;
+import io.reactivex.Observable;
+import io.reactivex.Observer;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.disposables.Disposable;
 import io.reactivex.observers.DisposableCompletableObserver;
+import io.reactivex.schedulers.Schedulers;
 
 public class SplashActivity extends AppCompatActivity {
 
@@ -61,8 +69,8 @@ public class SplashActivity extends AppCompatActivity {
 
     private void startSocketService() {
         Intent intent = new Intent(this, SocketService.class);
-        intent.putExtra("address", "10.10.20.243");
-        intent.putExtra("port", 8888);
+        intent.putExtra("address", "10.10.21.69");
+        intent.putExtra("port", 10102);
         SocketService.enqueueWork(this, intent);
     }
 

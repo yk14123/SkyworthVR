@@ -17,6 +17,7 @@ import android.view.ViewGroup;
 
 import com.chinafocus.hvrskyworthvr.R;
 import com.chinafocus.hvrskyworthvr.model.bean.VideoCategory;
+import com.chinafocus.hvrskyworthvr.service.event.VrSyncPlayInfo;
 import com.chinafocus.hvrskyworthvr.ui.adapter.BannerViewAdapter;
 import com.chinafocus.hvrskyworthvr.ui.main.BannerViewModel;
 import com.chinafocus.hvrskyworthvr.ui.main.video.sublist.VideoListFragment;
@@ -122,7 +123,29 @@ public class VideoFragment extends Fragment {
             BaseFragmentStateAdapter<VideoListFragment> adapter = new BaseFragmentStateAdapter<>(this, fragments);
             viewPagerVideoList.setAdapter(adapter);
 
-            ViewPager2Helper.bind(magicIndicator, viewPagerVideoList);
+            VrSyncPlayInfo.obtain().category = videoCategories.get(0).getCid();
+//            ViewPager2Helper.bind(magicIndicator, viewPagerVideoList);
+            viewPagerVideoList.registerOnPageChangeCallback(new ViewPager2.OnPageChangeCallback() {
+                @Override
+                public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+                    super.onPageScrolled(position, positionOffset, positionOffsetPixels);
+                    magicIndicator.onPageScrolled(position, positionOffset, positionOffsetPixels);
+                }
+
+                @Override
+                public void onPageSelected(int position) {
+                    super.onPageSelected(position);
+                    magicIndicator.onPageSelected(position);
+                    VrSyncPlayInfo.obtain().category = videoCategories.get(position).getCid();
+                }
+
+                @Override
+                public void onPageScrollStateChanged(int state) {
+                    super.onPageScrollStateChanged(state);
+                    magicIndicator.onPageScrollStateChanged(state);
+                }
+            });
+
         });
 
     }

@@ -62,7 +62,7 @@ public class PublishFragment extends Fragment {
 
         PublishViewModel publishViewModel = new ViewModelProvider(this).get(PublishViewModel.class);
         publishViewModel.getVideoListData();
-        publishViewModel.videoListDataMutableLiveData.observe(getViewLifecycleOwner(), videoListData -> recyclerView.setAdapter(new VideoListAdapter(videoListData.getList(), "publish")));
+        publishViewModel.videoListDataMutableLiveData.observe(getViewLifecycleOwner(), videoListData -> recyclerView.setAdapter(new VideoListAdapter(videoListData.getList(), 1)));
 
     }
 

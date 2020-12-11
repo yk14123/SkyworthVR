@@ -14,7 +14,11 @@ import com.bumptech.glide.Glide;
 import com.chinafocus.hvrskyworthvr.R;
 import com.chinafocus.hvrskyworthvr.global.Constants;
 import com.chinafocus.hvrskyworthvr.model.bean.VideoListData;
+import com.chinafocus.hvrskyworthvr.service.event.VrCancelTimeTask;
+import com.chinafocus.hvrskyworthvr.service.event.VrSyncPlayInfo;
 import com.chinafocus.hvrskyworthvr.ui.main.media.MediaPlayActivity;
+
+import org.greenrobot.eventbus.EventBus;
 
 import java.util.List;
 
@@ -24,9 +28,9 @@ import static com.chinafocus.hvrskyworthvr.ui.main.media.MediaPlayActivity.MEDIA
 public class VideoListAdapter extends RecyclerView.Adapter<BaseViewHolder> {
 
     private List<VideoListData.ListBean> videoLists;
-    private String video_tag;
+    private int video_tag;
 
-    public VideoListAdapter(List<VideoListData.ListBean> videoLists, String tag) {
+    public VideoListAdapter(List<VideoListData.ListBean> videoLists, int tag) {
         this.videoLists = videoLists;
         this.video_tag = tag;
     }
@@ -37,6 +41,10 @@ public class VideoListAdapter extends RecyclerView.Adapter<BaseViewHolder> {
         View inflate = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_video_list, parent, false);
         BaseViewHolder baseViewHolder = new BaseViewHolder(inflate);
         baseViewHolder.itemView.setOnClickListener(v -> {
+
+            VrSyncPlayInfo.obtain().seek = 0L;
+            EventBus.getDefault().post(VrCancelTimeTask.obtain());
+
             int adapterPosition = baseViewHolder.getAdapterPosition();
             int id = videoLists.get(adapterPosition).getId();
             Intent intent = new Intent(parent.getContext(), MediaPlayActivity.class);

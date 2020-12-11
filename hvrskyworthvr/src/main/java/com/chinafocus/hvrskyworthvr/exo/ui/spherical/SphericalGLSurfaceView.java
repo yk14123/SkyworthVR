@@ -121,6 +121,16 @@ public final class SphericalGLSurfaceView extends GLSurfaceView {
 
     }
 
+    public void postRotationWithQuaternion(float x, float y, float z, float w) {
+        mRenderer.postRotationWithQuaternion(x, y, z, w);
+    }
+
+    public void syncTouchVR() {
+        resetVR();
+        resetScale();
+        setOnTouchListener(null);
+    }
+
     public void resetVR() {
         mRenderer.resetTouch();
         touchTracker.clearTouch();
@@ -283,9 +293,12 @@ public final class SphericalGLSurfaceView extends GLSurfaceView {
             Matrix.setIdentityM(touchYawMatrix, 0);
             Matrix.setIdentityM(skyWorthRotationMatrix, 0);
 
-            // -1 - 1
-//            MatrixUtil.setRotationWithQuaternion(skyWorthRotationMatrix, 0.3f, 0.0f, 0.0f, 1.0f);
             deviceRoll = UPRIGHT_ROLL;
+        }
+
+        public void postRotationWithQuaternion(float x, float y, float z, float w) {
+            // -1 - 1
+            MatrixUtil.setRotationWithQuaternion(skyWorthRotationMatrix, x, y, z, w);
         }
 
         public void resetTouch() {

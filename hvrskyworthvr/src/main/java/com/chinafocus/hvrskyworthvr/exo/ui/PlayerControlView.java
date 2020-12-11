@@ -658,9 +658,17 @@ public class PlayerControlView extends FrameLayout {
         if (sync) {
             groupConnect.setVisibility(VISIBLE);
             groupDisconnect.setVisibility(GONE);
+            if (playButton != null) {
+                ((ViewManager) playButton.getParent()).removeView((View) playButton);
+            }
             playButton = null;
+            if (pauseButton != null) {
+                ((ViewManager) pauseButton.getParent()).removeView((View) pauseButton);
+            }
             pauseButton = null;
-            ((ViewManager) ((DefaultTimeBar) timeBar).getParent()).removeView((View) timeBar);
+            if (timeBar != null) {
+                ((ViewManager) ((DefaultTimeBar) timeBar).getParent()).removeView((View) timeBar);
+            }
             timeBar = null;
         } else {
             groupConnect.setVisibility(GONE);
@@ -1103,7 +1111,7 @@ public class PlayerControlView extends FrameLayout {
                 visibilityListener.onVisibilityChange(getVisibility());
             }
             // 画面隐藏的时候，继续更新progress
-//            removeCallbacks(updateProgressAction);
+            removeCallbacks(updateProgressAction);
             removeCallbacks(hideAction);
             hideAtMs = C.TIME_UNSET;
         }

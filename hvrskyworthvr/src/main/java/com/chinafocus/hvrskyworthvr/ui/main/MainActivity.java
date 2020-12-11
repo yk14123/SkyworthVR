@@ -2,6 +2,7 @@ package com.chinafocus.hvrskyworthvr.ui.main;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.RadioGroup;
 
@@ -12,8 +13,14 @@ import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
 import com.chinafocus.hvrskyworthvr.R;
-import com.chinafocus.hvrskyworthvr.service.event.VrConnect;
-import com.chinafocus.hvrskyworthvr.service.event.VrDisConnect;
+import com.chinafocus.hvrskyworthvr.global.Constants;
+import com.chinafocus.hvrskyworthvr.service.SocketService;
+import com.chinafocus.hvrskyworthvr.service.event.VrCancelTimeTask;
+import com.chinafocus.hvrskyworthvr.service.event.VrMainStickyActiveDialog;
+import com.chinafocus.hvrskyworthvr.service.event.VrMainConnect;
+import com.chinafocus.hvrskyworthvr.service.event.VrMainDisConnect;
+import com.chinafocus.hvrskyworthvr.service.event.VrMainStickyInactiveDialog;
+import com.chinafocus.hvrskyworthvr.service.event.VrMainSyncMediaInfo;
 import com.chinafocus.hvrskyworthvr.service.event.VrSyncPlayInfo;
 import com.chinafocus.hvrskyworthvr.ui.dialog.VrModeMainDialog;
 import com.chinafocus.hvrskyworthvr.ui.main.about.AboutFragment;
@@ -28,6 +35,13 @@ import org.greenrobot.eventbus.ThreadMode;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
+
+import io.reactivex.Observable;
+import io.reactivex.Observer;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.disposables.Disposable;
+import io.reactivex.schedulers.Schedulers;
 
 import static com.chinafocus.hvrskyworthvr.ui.main.media.MediaPlayActivity.MEDIA_CATEGORY_TAG;
 import static com.chinafocus.hvrskyworthvr.ui.main.media.MediaPlayActivity.MEDIA_FROM_TAG;
@@ -67,53 +81,133 @@ public class MainActivity extends AppCompatActivity implements RadioGroup.OnChec
         initFragments();
         radioGroup.check(R.id.rb_main_publish);
 
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        Constants.ACTIVITY_TAG = Constants.ACTIVITY_MAIN;
 
     }
 
     private VrModeMainDialog vrModeMainDialog;
 
     @Subscribe(threadMode = ThreadMode.MAIN)
-    public void showVRMode(VrConnect event) {
+    public void showVRMode(VrMainConnect event) {
         if (vrModeMainDialog == null) {
             vrModeMainDialog = new VrModeMainDialog(this);
         }
         if (!vrModeMainDialog.isShowing()) {
             vrModeMainDialog.show();
         }
+        // TODO 1.给VR同步视频信息
+        Intent intent = new Intent(this, SocketService.class);
+        intent.putExtra(MEDIA_FROM_TAG, VrSyncPlayInfo.obtain().tag);
+        intent.putExtra(MEDIA_ID, VrSyncPlayInfo.obtain().videoId);
+        intent.putExtra(MEDIA_CATEGORY_TAG, VrSyncPlayInfo.obtain().category);
+        intent.putExtra(MEDIA_SEEK, VrSyncPlayInfo.obtain().seek);
+
+        startService(intent);
     }
 
+    @Subscribe(threadMode = ThreadMode.MAIN, sticky = true)
+    public void showVRModeSticky(VrMainStickyActiveDialog event) {
+        if (vrModeMainDialog == null) {
+            vrModeMainDialog = new VrModeMainDialog(this);
+        }
+        if (!vrModeMainDialog.isShowing()) {
+            vrModeMainDialog.show();
+        }
+
+    }
+
+    private Disposable mDisposable;
+
+    /**
+     * 5分钟之后，视频重新选择
+     */
+    private void startTimeTask() {
+        Observable.timer(5, TimeUnit.MINUTES)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Observer<Long>() {
+                    @Override
+                    public void onSubscribe(Disposable d) {
+                        mDisposable = d;
+                    }
+
+                    @Override
+                    public void onNext(Long value) {
+                        //Log.d("Timer",""+value);
+                        VrSyncPlayInfo.obtain().videoId = -1;
+                        VrSyncPlayInfo.obtain().seek = 0L;
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+
+                    }
+
+                    @Override
+                    public void onComplete() {
+                    }
+                });
+    }
+
+    /**
+     * 关闭定时器
+     */
     @Subscribe(threadMode = ThreadMode.MAIN)
-    public void hideVRMode(VrDisConnect event) {
-        if (vrModeMainDialog != null) {
-            vrModeMainDialog.dismiss();
+    public void closeTimer(VrCancelTimeTask vrCancelTimeTask) {
+        if (mDisposable != null) {
+            mDisposable.dispose();
         }
     }
 
+    @Subscribe(threadMode = ThreadMode.MAIN, sticky = true)
+    public void hideVRModeSticky(VrMainStickyInactiveDialog event) {
+        if (vrModeMainDialog != null) {
+            vrModeMainDialog.dismiss();
+        }
+        startTimeTask();
+    }
+
     @Subscribe(threadMode = ThreadMode.MAIN)
-    public void goToMediaPlayActivityAndActiveVRPlayerStatus(VrSyncPlayInfo event) {
+    public void hideVRMode(VrMainDisConnect event) {
+        if (vrModeMainDialog != null) {
+            vrModeMainDialog.dismiss();
+        }
+        startTimeTask();
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void goToMediaPlayActivityAndActiveVRPlayerStatus(VrMainSyncMediaInfo vrMainSyncMediaInfo) {
         Intent intent = new Intent(this, MediaPlayActivity.class);
-        intent.putExtra(MEDIA_ID, event.videoId);
-        intent.putExtra(MEDIA_FROM_TAG, event.tag);
-//        intent.putExtra(MEDIA_CATEGORY_TAG, video_tag);
-        intent.putExtra(MEDIA_SEEK, event.seek);
+        intent.putExtra(MEDIA_FROM_TAG, VrSyncPlayInfo.obtain().tag);
+        intent.putExtra(MEDIA_CATEGORY_TAG, VrSyncPlayInfo.obtain().tag);
+        intent.putExtra(MEDIA_ID, VrSyncPlayInfo.obtain().tag);
+        intent.putExtra(MEDIA_SEEK, VrSyncPlayInfo.obtain().tag);
         intent.putExtra(MEDIA_LINK_VR, true);
         startActivity(intent);
     }
 
     @Override
     public void onCheckedChanged(RadioGroup group, int checkedId) {
-        if (checkedId == R.id.rb_main_publish) {//快讯
+        if (checkedId == R.id.rb_main_publish) {//出版
             switchFragment(mPublishFragment);
             switchBackgroundDrawable(R.id.iv_main_publish_bg);
             setAboutBgShow(false);
-        } else if (checkedId == R.id.rb_main_video) { //全景
+            VrSyncPlayInfo.obtain().tag = 1;
+        } else if (checkedId == R.id.rb_main_video) { //视频
             switchFragment(mVideoFragment);
             switchBackgroundDrawable(R.id.iv_main_video_bg);
             setAboutBgShow(false);
-        } else if (checkedId == R.id.rb_main_about) {//杂志
+            VrSyncPlayInfo.obtain().tag = 2;
+        } else if (checkedId == R.id.rb_main_about) {//我的
             switchFragment(mAboutFragment);
             switchBackgroundDrawable(R.id.iv_main_about_bg);
             setAboutBgShow(true);
+            VrSyncPlayInfo.obtain().tag = 1;
         }
     }
 
@@ -127,6 +221,11 @@ public class MainActivity extends AppCompatActivity implements RadioGroup.OnChec
     protected void onStop() {
         super.onStop();
         EventBus.getDefault().unregister(this);
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
     }
 
     private void setAboutBgShow(boolean show) {
