@@ -48,7 +48,7 @@ public class BannerViewAdapter extends RecyclerView.Adapter<BaseViewHolder> {
 
             Intent intent = new Intent(parent.getContext(), MediaPlayActivity.class);
             intent.putExtra(MEDIA_ID, id);
-            intent.putExtra(MEDIA_FROM_TAG, type.equals("publish") ? 1 : 2);
+            intent.putExtra(MEDIA_FROM_TAG, type.equals("video") ? 2 : 1);
             parent.getContext().startActivity(intent);
         });
         return baseViewHolder;

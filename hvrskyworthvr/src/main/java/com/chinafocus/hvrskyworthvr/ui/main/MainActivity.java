@@ -109,8 +109,8 @@ public class MainActivity extends AppCompatActivity implements RadioGroup.OnChec
         startService(intent);
 
         if (VrSyncPlayInfo.obtain().videoId != -1) {
-            startSyncMediaPlayActivity();
             closeMainDialog();
+            startSyncMediaPlayActivity();
         }
     }
 
@@ -189,8 +189,8 @@ public class MainActivity extends AppCompatActivity implements RadioGroup.OnChec
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void goToMediaPlayActivityAndActiveVRPlayerStatus(VrMainSyncMediaInfo vrMainSyncMediaInfo) {
-        startSyncMediaPlayActivity();
         closeMainDialog();
+        startSyncMediaPlayActivity();
     }
 
     private void startSyncMediaPlayActivity() {

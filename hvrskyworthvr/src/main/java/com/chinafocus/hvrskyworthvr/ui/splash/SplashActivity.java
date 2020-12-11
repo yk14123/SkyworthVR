@@ -69,7 +69,8 @@ public class SplashActivity extends AppCompatActivity {
 
     private void startSocketService() {
         Intent intent = new Intent(this, SocketService.class);
-        intent.putExtra("address", "10.10.21.69");
+        intent.putExtra("address", "192.168.8.170");
+//        intent.putExtra("address", "10.10.21.69");
         intent.putExtra("port", 10102);
         SocketService.enqueueWork(this, intent);
     }
