@@ -1,16 +1,16 @@
 package com.chinafocus.hvrskyworthvr.ui.main.media;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.RequiresApi;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.lifecycle.ViewModelProvider;
-
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Log;
 import android.widget.Toast;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.RequiresApi;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.lifecycle.ViewModelProvider;
 
 import com.blankj.utilcode.util.BarUtils;
 import com.chinafocus.hvrskyworthvr.R;
@@ -24,7 +24,6 @@ import com.chinafocus.hvrskyworthvr.service.event.VrConnect;
 import com.chinafocus.hvrskyworthvr.service.event.VrDisConnect;
 import com.chinafocus.hvrskyworthvr.service.event.VrRotation;
 import com.chinafocus.hvrskyworthvr.ui.dialog.VideoDetailDialog;
-import com.chinafocus.hvrskyworthvr.ui.dialog.VrModeMainDialog;
 import com.chinafocus.hvrskyworthvr.ui.dialog.VrModeVideoLinkingDialog;
 import com.chinafocus.hvrskyworthvr.util.statusbar.StatusBarCompatFactory;
 
@@ -46,6 +45,11 @@ public class MediaPlayActivity extends AppCompatActivity implements ViewBindHelp
     private String video_tag;
     private long seek;
     private boolean linkingVr;
+
+    private VrModeVideoLinkingDialog modeVideoLinkingDialog;
+    private VideoDetailDialog videoDetailDialog;
+    private PlayerView mLandPlayerView;
+    private ExoMediaHelper mExoMediaHelper;
 
     @RequiresApi(api = Build.VERSION_CODES.N)
     @Override
@@ -115,10 +119,6 @@ public class MediaPlayActivity extends AppCompatActivity implements ViewBindHelp
         linkingVr = intent.getBooleanExtra(MEDIA_LINK_VR, false);
     }
 
-    private VideoDetailDialog videoDetailDialog;
-    private PlayerView mLandPlayerView;
-    private ExoMediaHelper mExoMediaHelper;
-
     private void initView(Bundle savedInstanceState) {
         mLandPlayerView = findViewById(R.id.player_view_land);
         mLandPlayerView.setControllerPadding(
@@ -135,16 +135,8 @@ public class MediaPlayActivity extends AppCompatActivity implements ViewBindHelp
         mViewBindHelper.bindPlayerView();
         mViewBindHelper.setPlayVideoListener(this);
 
-    }
+        mLandPlayerView.syncSkyWorthMediaStatus(false);
 
-    /**
-     * 配合singleTop使用，当singleTop启用的时候（PlayerActivity跳转PlayerActivity跳转），onPause -> onNewIntent ->
-     * onResume
-     */
-    @Override
-    public void onNewIntent(Intent intent) {
-        super.onNewIntent(intent);
-        mExoMediaHelper.onNewIntent();
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
@@ -244,15 +236,14 @@ public class MediaPlayActivity extends AppCompatActivity implements ViewBindHelp
         }
     }
 
-    private VrModeVideoLinkingDialog modeVideoLinkingDialog;
+    /**
+     * 配合singleTop使用，当singleTop启用的时候（PlayerActivity跳转PlayerActivity跳转），onPause -> onNewIntent ->
+     * onResume
+     */
+    @Override
+    public void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
+        mExoMediaHelper.onNewIntent();
+    }
 
 }
-
-
-//        mVideoProgressBar = findViewById(R.id.pb_time_bar);
-//        mVideoBack = findViewById(R.id.ib_exo_back);
-//        mVideoBack.setOnClickListener(v -> finish());
-//        RelativeLayout.LayoutParams layoutParams = (RelativeLayout.LayoutParams) mVideoBack.getLayoutParams();
-//        layoutParams.setMarginStart(getResources().getDimensionPixelSize(R.dimen.dp_5));
-//        layoutParams.topMargin = BarUtils.getStatusBarHeight();
-//        mVideoBack.setLayoutParams(layoutParams);

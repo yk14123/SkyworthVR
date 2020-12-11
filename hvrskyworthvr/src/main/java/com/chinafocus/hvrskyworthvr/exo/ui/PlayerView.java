@@ -30,7 +30,6 @@ import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.os.Looper;
 import android.util.AttributeSet;
-import android.view.Gravity;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -599,6 +598,10 @@ public class PlayerView extends FrameLayout implements AdsLoader.AdViewProvider 
     }
 
     //------------------自定义区域------------------//
+
+    public void syncSkyWorthMediaStatus(boolean sync) {
+        controller.syncSkyWorthMediaStatus(sync);
+    }
 
     public void shouldHideVideoNextButton(boolean hide) {
         controller.shouldHideVideoNextButton(hide);

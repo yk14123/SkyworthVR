@@ -284,7 +284,7 @@ public final class SphericalGLSurfaceView extends GLSurfaceView {
             Matrix.setIdentityM(skyWorthRotationMatrix, 0);
 
             // -1 - 1
-            MatrixUtil.setRotationWithQuaternion(skyWorthRotationMatrix, 0.3f, 0.0f, 0.0f, 1.0f);
+//            MatrixUtil.setRotationWithQuaternion(skyWorthRotationMatrix, 0.3f, 0.0f, 0.0f, 1.0f);
             deviceRoll = UPRIGHT_ROLL;
         }
 

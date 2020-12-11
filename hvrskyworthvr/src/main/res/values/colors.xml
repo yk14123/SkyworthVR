@@ -15,4 +15,7 @@
     <color name="color_indicator">#6DD400</color>
     <color name="video_media_bg">#99000000</color>
     <color name="video_media_detail_bg">#33000000</color>
+
+    <color name="video_unplay_hint">#33FFFFFF</color>
+    <color name="video_buffer_hint">#CCFFFFFF</color>
 </resources>

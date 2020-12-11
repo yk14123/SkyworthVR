@@ -124,6 +124,7 @@
         android:id="@id/exo_setting"
         android:layout_width="45dp"
         android:layout_height="45dp"
+        android:layout_marginEnd="8dp"
         android:layout_marginBottom="15dp"
         android:background="@null"
         android:padding="5dp"
@@ -131,7 +132,6 @@
         android:src="@drawable/icon_exo_setting"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="@+id/exo_link_vr"
         tools:ignore="ContentDescription" />
 
     <View
@@ -175,5 +175,60 @@
         app:layout_constraintTop_toBottomOf="@+id/exo_link_vr"
         app:layout_constraintVertical_bias="0.65"
         tools:text="17:12" />
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/appCompatTextView4"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@drawable/shape_vr_mode_linking_text_bg"
+        android:paddingStart="128dp"
+        android:paddingTop="5dp"
+        android:paddingEnd="26dp"
+        android:paddingBottom="5dp"
+        android:text="正在同步展示VR眼镜中的视频画面"
+        android:textColor="@color/color_F2"
+        android:textSize="32sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.75" />
+
+    <androidx.appcompat.widget.AppCompatImageView
+        android:id="@+id/appCompatImageView4"
+        android:layout_width="129dp"
+        android:layout_height="108dp"
+        android:src="@drawable/sky_worth_vr_mode_linking_icon"
+        app:layout_constraintBottom_toBottomOf="@+id/appCompatTextView4"
+        app:layout_constraintStart_toStartOf="@+id/appCompatTextView4" />
+
+    <ProgressBar
+        android:id="@+id/pb_time_bar"
+        style="?android:attr/progressBarStyleHorizontal"
+        android:layout_width="0dp"
+        android:layout_height="3dp"
+        android:layout_marginStart="36dp"
+        android:layout_marginEnd="36dp"
+        android:layout_marginBottom="26dp"
+        android:progressDrawable="@drawable/video_pb_pd_sp_blog"
+        app:layout_constraintBottom_toTopOf="@+id/exo_setting"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <androidx.constraintlayout.widget.Group
+        android:id="@+id/group_disconnect"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:visibility="visible"
+        app:constraint_referenced_ids="exo_position,exo_link_vr,exo_duration,exo_back,exo_reset_content"
+        tools:ignore="UnknownId" />
+
+    <androidx.constraintlayout.widget.Group
+        android:id="@+id/group_connect"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:visibility="gone"
+        app:constraint_referenced_ids="appCompatImageView4,appCompatTextView4,pb_time_bar" />
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -30,12 +30,15 @@ import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewManager;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import androidx.annotation.Nullable;
+import androidx.constraintlayout.widget.Group;
 
 
 import com.chinafocus.hvrskyworthvr.R;
@@ -269,9 +272,9 @@ public class PlayerControlView extends FrameLayout {
     @Nullable
     private final View nextButton;
     @Nullable
-    private final View playButton;
+    private View playButton;
     @Nullable
-    private final View pauseButton;
+    private View pauseButton;
     @Nullable
     private final View fastForwardButton;
     @Nullable
@@ -287,7 +290,7 @@ public class PlayerControlView extends FrameLayout {
     @Nullable
     private final TextView positionView;
     @Nullable
-    private final TimeBar timeBar;
+    private TimeBar timeBar;
     private final StringBuilder formatBuilder;
     private final Formatter formatter;
     private final Timeline.Period period;
@@ -557,6 +560,10 @@ public class PlayerControlView extends FrameLayout {
             mVideoNext.setOnClickListener(v -> mInterAction.onVideoNextPlay());
         }
 
+        groupConnect = findViewById(R.id.group_connect);
+        groupDisconnect = findViewById(R.id.group_disconnect);
+        noTouchTimeBar = findViewById(R.id.pb_time_bar);
+
 
         //------------------澳门快讯没有使用区域------------------//
 
@@ -641,7 +648,26 @@ public class PlayerControlView extends FrameLayout {
     @Nullable
     private ImageButton mVideoNext;
 
+    private Group groupConnect;
+    private Group groupDisconnect;
+    private ProgressBar noTouchTimeBar;
+
     private boolean shouldHideVideoNextButton;
+
+    public void syncSkyWorthMediaStatus(boolean sync) {
+        if (sync) {
+            groupConnect.setVisibility(VISIBLE);
+            groupDisconnect.setVisibility(GONE);
+            playButton = null;
+            pauseButton = null;
+            ((ViewManager) ((DefaultTimeBar) timeBar).getParent()).removeView((View) timeBar);
+            timeBar = null;
+        } else {
+            groupConnect.setVisibility(GONE);
+            groupDisconnect.setVisibility(VISIBLE);
+        }
+
+    }
 
     @Nullable
     private IControlViewInterAction mInterAction;
@@ -1328,6 +1354,9 @@ public class PlayerControlView extends FrameLayout {
             System.arraycopy(extraPlayedAdGroups, 0, playedAdGroups, adGroupCount, extraAdGroupCount);
             timeBar.setAdGroupTimesMs(adGroupTimesMs, playedAdGroups, totalAdGroupCount);
         }
+        if (noTouchTimeBar != null) {
+            noTouchTimeBar.setMax((int) durationMs);
+        }
         updateProgress();
     }
 
@@ -1335,9 +1364,9 @@ public class PlayerControlView extends FrameLayout {
      * 递归操作，循环更新，每隔一定的时间更新Progress
      */
     private void updateProgress() {
-//        if (!isVisible() || !isAttachedToWindow) {
-//            return;
-//        }
+        if (!isVisible() || !isAttachedToWindow) {
+            return;
+        }
 
         @Nullable Player player = this.player;
         long position = 0;
@@ -1358,6 +1387,12 @@ public class PlayerControlView extends FrameLayout {
             timeBar.setPosition(position);
             timeBar.setBufferedPosition(bufferedPosition);
         }
+
+        if (noTouchTimeBar != null) {
+            noTouchTimeBar.setProgress((int) position);
+            noTouchTimeBar.setSecondaryProgress((int) bufferedPosition);
+        }
+
         // 暂时没有人实现该监听
         if (progressUpdateListener != null) {
             progressUpdateListener.onProgressUpdate(position, bufferedPosition);
