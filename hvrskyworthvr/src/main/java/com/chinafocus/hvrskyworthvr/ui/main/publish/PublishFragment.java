@@ -23,6 +23,8 @@ import com.chinafocus.hvrskyworthvr.ui.adapter.VideoListAdapter;
 import com.chinafocus.hvrskyworthvr.util.MyRollHandler;
 
 
+import java.lang.reflect.Field;
+
 import static androidx.viewpager2.widget.ViewPager2.ORIENTATION_HORIZONTAL;
 
 public class PublishFragment extends Fragment {
@@ -54,6 +56,7 @@ public class PublishFragment extends Fragment {
         bannerViewModel.bannerMutableLiveData.observe(getViewLifecycleOwner(), bannerList -> {
             viewPagerBanner.setAdapter(new BannerViewAdapter(bannerList));
             viewPagerBanner.setCurrentItem(currentItem, false);
+            setViewPager2ScrollTouchSlop(viewPagerBanner, 1);
             startRollHandler();
         });
 
@@ -63,6 +66,22 @@ public class PublishFragment extends Fragment {
         PublishViewModel publishViewModel = new ViewModelProvider(this).get(PublishViewModel.class);
         publishViewModel.getVideoListData();
         publishViewModel.videoListDataMutableLiveData.observe(getViewLifecycleOwner(), videoListData -> recyclerView.setAdapter(new VideoListAdapter(videoListData.getList(), 1)));
+
+    }
+
+    private void setViewPager2ScrollTouchSlop(ViewPager2 viewPager2, int touchSlop) {
+        try {
+            Field mRecyclerView = ViewPager2.class.getDeclaredField("mRecyclerView");
+            mRecyclerView.setAccessible(true);
+            Object recyclerView = mRecyclerView.get(viewPager2);
+
+            Field mTouchSlop = RecyclerView.class.getDeclaredField("mTouchSlop");
+            mTouchSlop.setAccessible(true);
+            mTouchSlop.setInt(recyclerView, touchSlop);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
 
     }
 

@@ -8,6 +8,7 @@ import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.RecyclerView;
 import androidx.viewpager2.widget.ViewPager2;
 
 import android.os.Looper;
@@ -23,7 +24,6 @@ import com.chinafocus.hvrskyworthvr.ui.main.BannerViewModel;
 import com.chinafocus.hvrskyworthvr.ui.main.video.sublist.VideoListFragment;
 import com.chinafocus.hvrskyworthvr.util.MyRollHandler;
 import com.chinafocus.hvrskyworthvr.util.widget.BaseFragmentStateAdapter;
-import com.chinafocus.hvrskyworthvr.util.widget.ViewPager2Helper;
 
 import net.lucode.hackware.magicindicator.MagicIndicator;
 import net.lucode.hackware.magicindicator.buildins.commonnavigator.CommonNavigator;
@@ -33,6 +33,7 @@ import net.lucode.hackware.magicindicator.buildins.commonnavigator.abs.IPagerTit
 import net.lucode.hackware.magicindicator.buildins.commonnavigator.indicators.LinePagerIndicator;
 import net.lucode.hackware.magicindicator.buildins.commonnavigator.titles.ColorTransitionPagerTitleView;
 
+import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -43,6 +44,7 @@ public class VideoFragment extends Fragment {
     private MyRollHandler mHandler;
     private ViewPager2 viewPagerBanner;
     private int currentItem = 1;
+    private ViewPager2 viewPagerVideoList;
 
     public static VideoFragment newInstance() {
         return new VideoFragment();
@@ -66,12 +68,14 @@ public class VideoFragment extends Fragment {
         bannerViewModel.getDefaultCloudUrl();
         bannerViewModel.bannerMutableLiveData.observe(getViewLifecycleOwner(), bannerList -> {
             viewPagerBanner.setAdapter(new BannerViewAdapter(bannerList));
+            setViewPager2ScrollTouchSlop(viewPagerBanner, 1);
             viewPagerBanner.setCurrentItem(1, false);
             startRollHandler();
         });
 
         MagicIndicator magicIndicator = requireView().findViewById(R.id.magic_Indicator);
-        ViewPager2 viewPagerVideoList = requireView().findViewById(R.id.vp_video_list);
+        viewPagerVideoList = requireView().findViewById(R.id.vp_video_list);
+
 
         VideoViewModel videoViewModel = new ViewModelProvider(this).get(VideoViewModel.class);
         videoViewModel.getVideoCategory();
@@ -122,6 +126,7 @@ public class VideoFragment extends Fragment {
 
             BaseFragmentStateAdapter<VideoListFragment> adapter = new BaseFragmentStateAdapter<>(this, fragments);
             viewPagerVideoList.setAdapter(adapter);
+            setViewPager2ScrollTouchSlop(viewPagerVideoList, 150);
 
             VrSyncPlayInfo.obtain().category = videoCategories.get(0).getCid();
 //            ViewPager2Helper.bind(magicIndicator, viewPagerVideoList);
@@ -130,6 +135,7 @@ public class VideoFragment extends Fragment {
                 public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
                     super.onPageScrolled(position, positionOffset, positionOffsetPixels);
                     magicIndicator.onPageScrolled(position, positionOffset, positionOffsetPixels);
+                    VrSyncPlayInfo.obtain().videoId = -1;
                 }
 
                 @Override
@@ -137,6 +143,7 @@ public class VideoFragment extends Fragment {
                     super.onPageSelected(position);
                     magicIndicator.onPageSelected(position);
                     VrSyncPlayInfo.obtain().category = videoCategories.get(position).getCid();
+                    VrSyncPlayInfo.obtain().videoId = -1;
                 }
 
                 @Override
@@ -147,6 +154,22 @@ public class VideoFragment extends Fragment {
             });
 
         });
+
+    }
+
+    private void setViewPager2ScrollTouchSlop(ViewPager2 viewPager2, int touchSlop) {
+        try {
+            Field mRecyclerView = ViewPager2.class.getDeclaredField("mRecyclerView");
+            mRecyclerView.setAccessible(true);
+            Object recyclerView = mRecyclerView.get(viewPager2);
+
+            Field mTouchSlop = RecyclerView.class.getDeclaredField("mTouchSlop");
+            mTouchSlop.setAccessible(true);
+            mTouchSlop.setInt(recyclerView, touchSlop);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
 
     }
 

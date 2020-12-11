@@ -15,7 +15,7 @@
         <com.google.android.material.appbar.CollapsingToolbarLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            app:layout_scrollFlags="noScroll">
+            app:layout_scrollFlags="scroll">
 
             <FrameLayout
                 android:layout_width="match_parent"
@@ -23,7 +23,7 @@
                 android:layout_marginTop="24dp"
                 android:clipChildren="false"
                 android:layerType="software"
-                app:layout_collapseMode="pin">
+                app:layout_collapseMode="parallax">
 
                 <androidx.viewpager2.widget.ViewPager2
                     android:id="@+id/vp_publish_banner_root"

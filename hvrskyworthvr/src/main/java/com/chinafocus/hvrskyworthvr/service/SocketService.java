@@ -15,6 +15,7 @@ import com.chinafocus.hvrskyworthvr.service.event.VrMainSyncMediaInfo;
 import com.chinafocus.hvrskyworthvr.service.event.VrMediaConnect;
 import com.chinafocus.hvrskyworthvr.service.event.VrMediaDisConnect;
 import com.chinafocus.hvrskyworthvr.service.event.VrMediaSyncMediaInfo;
+import com.chinafocus.hvrskyworthvr.service.event.VrMediaWaitSelected;
 import com.chinafocus.hvrskyworthvr.service.event.VrRotation;
 import com.chinafocus.hvrskyworthvr.service.event.VrSyncPlayInfo;
 
@@ -52,6 +53,7 @@ public class SocketService extends JobIntentService {
     private static final int DISCONNECT = 2;
     private static final int SYNC_PLAY = 3;
     private static final int SYNC_ROTATION = 4;
+    private static final int SYNC_WAIT_VR_SELECTED = 5;
 
     private Executor executor;
 
@@ -174,6 +176,9 @@ public class SocketService extends JobIntentService {
                                 System.arraycopy(pools, 14, rotationByte, 0, rotationByte.length);
                                 handRotation(rotationByte);
                                 break;
+                            case SYNC_WAIT_VR_SELECTED:
+                                handWaitVrSelected();
+                                break;
                         }
 
                         if (len == messageLen) {
@@ -195,6 +200,36 @@ public class SocketService extends JobIntentService {
             closeAll();
         }
 
+    }
+
+    /**
+     * VR没有取下来的时候，进入VR选片
+     */
+    private void handWaitVrSelected() {
+        Observable.just(1)
+                .subscribeOn(Schedulers.trampoline())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Observer<Integer>() {
+                    @Override
+                    public void onSubscribe(Disposable d) {
+
+                    }
+
+                    @Override
+                    public void onNext(Integer integer) {
+                        EventBus.getDefault().post(VrMediaWaitSelected.obtain());
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+
+                    }
+
+                    @Override
+                    public void onComplete() {
+
+                    }
+                });
     }
 
     /**

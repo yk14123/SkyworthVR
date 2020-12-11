@@ -106,8 +106,12 @@ public class MainActivity extends AppCompatActivity implements RadioGroup.OnChec
         intent.putExtra(MEDIA_ID, VrSyncPlayInfo.obtain().videoId);
         intent.putExtra(MEDIA_CATEGORY_TAG, VrSyncPlayInfo.obtain().category);
         intent.putExtra(MEDIA_SEEK, VrSyncPlayInfo.obtain().seek);
-
         startService(intent);
+
+        if (VrSyncPlayInfo.obtain().videoId != -1) {
+            startSyncMediaPlayActivity();
+            closeMainDialog();
+        }
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN, sticky = true)
@@ -166,30 +170,39 @@ public class MainActivity extends AppCompatActivity implements RadioGroup.OnChec
 
     @Subscribe(threadMode = ThreadMode.MAIN, sticky = true)
     public void hideVRModeSticky(VrMainStickyInactiveDialog event) {
-        if (vrModeMainDialog != null) {
-            vrModeMainDialog.dismiss();
-        }
+        Log.e("MyLog", " MainActivity VrMainStickyInactiveDialog");
+        closeMainDialog();
         startTimeTask();
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void hideVRMode(VrMainDisConnect event) {
-        if (vrModeMainDialog != null) {
+        closeMainDialog();
+        startTimeTask();
+    }
+
+    private void closeMainDialog() {
+        if (vrModeMainDialog != null && vrModeMainDialog.isShowing()) {
             vrModeMainDialog.dismiss();
         }
-        startTimeTask();
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void goToMediaPlayActivityAndActiveVRPlayerStatus(VrMainSyncMediaInfo vrMainSyncMediaInfo) {
+        startSyncMediaPlayActivity();
+        closeMainDialog();
+    }
+
+    private void startSyncMediaPlayActivity() {
         Intent intent = new Intent(this, MediaPlayActivity.class);
         intent.putExtra(MEDIA_FROM_TAG, VrSyncPlayInfo.obtain().tag);
-        intent.putExtra(MEDIA_CATEGORY_TAG, VrSyncPlayInfo.obtain().tag);
-        intent.putExtra(MEDIA_ID, VrSyncPlayInfo.obtain().tag);
-        intent.putExtra(MEDIA_SEEK, VrSyncPlayInfo.obtain().tag);
+        intent.putExtra(MEDIA_CATEGORY_TAG, VrSyncPlayInfo.obtain().category);
+        intent.putExtra(MEDIA_ID, VrSyncPlayInfo.obtain().videoId);
+        intent.putExtra(MEDIA_SEEK, VrSyncPlayInfo.obtain().seek);
         intent.putExtra(MEDIA_LINK_VR, true);
         startActivity(intent);
     }
+
 
     @Override
     public void onCheckedChanged(RadioGroup group, int checkedId) {
@@ -198,16 +211,19 @@ public class MainActivity extends AppCompatActivity implements RadioGroup.OnChec
             switchBackgroundDrawable(R.id.iv_main_publish_bg);
             setAboutBgShow(false);
             VrSyncPlayInfo.obtain().tag = 1;
+            VrSyncPlayInfo.obtain().videoId = -1;
         } else if (checkedId == R.id.rb_main_video) { //视频
             switchFragment(mVideoFragment);
             switchBackgroundDrawable(R.id.iv_main_video_bg);
             setAboutBgShow(false);
             VrSyncPlayInfo.obtain().tag = 2;
+            VrSyncPlayInfo.obtain().videoId = -1;
         } else if (checkedId == R.id.rb_main_about) {//我的
             switchFragment(mAboutFragment);
             switchBackgroundDrawable(R.id.iv_main_about_bg);
             setAboutBgShow(true);
             VrSyncPlayInfo.obtain().tag = 1;
+            VrSyncPlayInfo.obtain().videoId = -1;
         }
     }
 

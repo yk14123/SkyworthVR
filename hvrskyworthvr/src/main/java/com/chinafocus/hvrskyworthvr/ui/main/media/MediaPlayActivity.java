@@ -26,6 +26,7 @@ import com.chinafocus.hvrskyworthvr.service.event.VrMainStickyInactiveDialog;
 import com.chinafocus.hvrskyworthvr.service.event.VrMediaConnect;
 import com.chinafocus.hvrskyworthvr.service.event.VrMediaDisConnect;
 import com.chinafocus.hvrskyworthvr.service.event.VrMediaSyncMediaInfo;
+import com.chinafocus.hvrskyworthvr.service.event.VrMediaWaitSelected;
 import com.chinafocus.hvrskyworthvr.service.event.VrRotation;
 import com.chinafocus.hvrskyworthvr.service.event.VrSyncPlayInfo;
 import com.chinafocus.hvrskyworthvr.ui.dialog.VideoDetailDialog;
@@ -132,6 +133,7 @@ public class MediaPlayActivity extends AppCompatActivity implements ViewBindHelp
                             // 3. Pad 位于播放结束界面时，如果此时 VR 被激活则 VR 端直接进入一级视频列表界面，Pad 回到视频列表界面的「不可选片状态」
                             // 不用接受命令。
                             // 当链接状态，播放结束后
+                            closeAllDialog();
                             VrSyncPlayInfo.obtain().seek = 0L;
                             EventBus.getDefault().postSticky(VrMainStickyActiveDialog.obtain());
                             finish();
@@ -206,6 +208,8 @@ public class MediaPlayActivity extends AppCompatActivity implements ViewBindHelp
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void toUnityMediaInfoAndActiveVRPlayerStatus(VrMediaConnect event) {
 
+        closeAllDialog();
+
         // 2.切换不可操作播放状态
         mLandPlayerView.showController();
         mLandPlayerView.syncSkyWorthMediaStatus(true);
@@ -227,7 +231,16 @@ public class MediaPlayActivity extends AppCompatActivity implements ViewBindHelp
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
+    public void goActivityAndActiveDialog(VrMediaWaitSelected vrMediaWaitSelected) {
+        closeAllDialog();
+        VrSyncPlayInfo.obtain().seek = 0L;
+        EventBus.getDefault().postSticky(VrMainStickyActiveDialog.obtain());
+        finish();
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
     public void goBackMainActivityAndInactiveMainDialog(VrMediaDisConnect event) {
+        closeAllDialog();
         Log.e("MyLog", "MediaPlay VrMediaDisConnect");
         linkingVr = false;
         VrSyncPlayInfo.obtain().seek = mExoMediaHelper.getPlayer().getCurrentPosition();
@@ -237,7 +250,7 @@ public class MediaPlayActivity extends AppCompatActivity implements ViewBindHelp
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void loadNextSyncMedia(VrMediaSyncMediaInfo vrMediaSyncMediaInfo) {
-
+        closeAllDialog();
         String tag = "";
         if (VrSyncPlayInfo.obtain().tag == 1) {
             tag = "publish";
@@ -263,6 +276,15 @@ public class MediaPlayActivity extends AppCompatActivity implements ViewBindHelp
                 // 同步四元数
                 surfaceView.postRotationWithQuaternion(vrRotation.x, vrRotation.y, vrRotation.z, vrRotation.w);
             }
+        }
+    }
+
+    private void closeAllDialog() {
+        if (videoDetailDialog != null && videoDetailDialog.isShowing()) {
+            videoDetailDialog.dismiss();
+        }
+        if (modeVideoLinkingDialog != null && modeVideoLinkingDialog.isShowing()) {
+            modeVideoLinkingDialog.dismiss();
         }
     }
 
