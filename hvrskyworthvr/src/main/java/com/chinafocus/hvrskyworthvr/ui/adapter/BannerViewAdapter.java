@@ -10,6 +10,7 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.RequestOptions;
 import com.chinafocus.hvrskyworthvr.R;
 import com.chinafocus.hvrskyworthvr.global.Constants;
 import com.chinafocus.hvrskyworthvr.model.bean.Banner;
@@ -21,15 +22,19 @@ import org.greenrobot.eventbus.EventBus;
 
 import java.util.List;
 
+import jp.wasabeef.glide.transformations.ColorFilterTransformation;
+
 import static com.chinafocus.hvrskyworthvr.ui.main.media.MediaPlayActivity.MEDIA_FROM_TAG;
 import static com.chinafocus.hvrskyworthvr.ui.main.media.MediaPlayActivity.MEDIA_ID;
 
 public class BannerViewAdapter extends RecyclerView.Adapter<BaseViewHolder> {
 
     private final List<Banner> mBannerLists;
+    private final ColorFilterTransformation colorFilterTransformation;
 
     public BannerViewAdapter(@NonNull List<Banner> bannerLists) {
         mBannerLists = bannerLists;
+        colorFilterTransformation = new ColorFilterTransformation(0x1A000000);
     }
 
     @NonNull
@@ -65,6 +70,7 @@ public class BannerViewAdapter extends RecyclerView.Adapter<BaseViewHolder> {
 
         Glide.with(holder.itemView.getContext())
                 .load(Constants.DEFAULT_URL + banner.getCoverImg())
+                .apply(RequestOptions.bitmapTransform(colorFilterTransformation))
                 .into((ImageView) holder.getView(R.id.iv_banner_bg));
 
     }

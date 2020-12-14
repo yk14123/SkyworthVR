@@ -207,7 +207,7 @@ public class MediaPlayActivity extends AppCompatActivity implements ViewBindHelp
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void toUnityMediaInfoAndActiveVRPlayerStatus(VrMediaConnect event) {
-
+        Log.e("MyLog", "MediaPlay toUnityMediaInfoAndActiveVRPlayerStatus");
         closeAllDialog();
 
         // 2.切换不可操作播放状态
@@ -232,6 +232,7 @@ public class MediaPlayActivity extends AppCompatActivity implements ViewBindHelp
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void goActivityAndActiveDialog(VrMediaWaitSelected vrMediaWaitSelected) {
+        Log.e("MyLog", "MediaPlay goActivityAndActiveDialog");
         closeAllDialog();
         VrSyncPlayInfo.obtain().seek = 0L;
         EventBus.getDefault().postSticky(VrMainStickyActiveDialog.obtain());

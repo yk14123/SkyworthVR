@@ -39,7 +39,7 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <androidx.appcompat.widget.AppCompatImageView
-        android:id="@+id/iv_main_publish_bg"
+        android:id="@+id/iv_main_video_bg"
         android:layout_width="119dp"
         android:layout_height="203dp"
         android:src="@drawable/sky_worth_main_background_ball"
@@ -50,7 +50,7 @@
         app:layout_constraintVertical_bias="0.248" />
 
     <androidx.appcompat.widget.AppCompatImageView
-        android:id="@+id/iv_main_video_bg"
+        android:id="@+id/iv_main_publish_bg"
         android:layout_width="119dp"
         android:layout_height="203dp"
         android:src="@drawable/sky_worth_main_background_ball"
@@ -85,20 +85,20 @@
         app:layout_constraintTop_toTopOf="parent">
 
         <com.zaaach.tabradiobutton.TabRadioButton
-            android:id="@+id/rb_main_publish"
+            android:id="@+id/rb_main_video"
             style="@style/TabRadioButtonWithText"
-            android:drawableTop="@drawable/selector_main_navigation_drawable_publish"
-            android:text="@string/main_navigation_publish"
+            android:drawableTop="@drawable/selector_main_navigation_drawable_video"
+            android:text="@string/main_navigation_video"
             app:trb_drawable_size="48dp"
             app:trb_duration="200"
             app:trb_enable_animation="true"
             app:trb_scale_rate="0.8" />
 
         <com.zaaach.tabradiobutton.TabRadioButton
-            android:id="@+id/rb_main_video"
+            android:id="@+id/rb_main_publish"
             style="@style/TabRadioButtonWithText"
-            android:drawableTop="@drawable/selector_main_navigation_drawable_video"
-            android:text="@string/main_navigation_video"
+            android:drawableTop="@drawable/selector_main_navigation_drawable_publish"
+            android:text="@string/main_navigation_publish"
             app:trb_drawable_size="48dp"
             app:trb_duration="200"
             app:trb_enable_animation="true"

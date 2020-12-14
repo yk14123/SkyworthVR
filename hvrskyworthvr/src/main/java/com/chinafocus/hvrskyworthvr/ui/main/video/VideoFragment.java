@@ -93,7 +93,7 @@ public class VideoFragment extends Fragment {
                 @Override
                 public IPagerTitleView getTitleView(Context context, final int index) {
                     ColorTransitionPagerTitleView scaleTitleView = new ColorTransitionPagerTitleView(context);
-                    scaleTitleView.setTextSize(22);
+                    scaleTitleView.setTextSize(20);
                     scaleTitleView.setNormalColor(getResources().getColor(R.color.color_333));
                     scaleTitleView.setSelectedColor(getResources().getColor(R.color.color_test_checked));
                     scaleTitleView.setText(videoCategories.get(index).getNameCn());

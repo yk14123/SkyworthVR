@@ -79,7 +79,7 @@ public class MainActivity extends AppCompatActivity implements RadioGroup.OnChec
         radioGroup.setOnCheckedChangeListener(this);
 
         initFragments();
-        radioGroup.check(R.id.rb_main_publish);
+        radioGroup.check(R.id.rb_main_video);
 
     }
 
@@ -94,6 +94,8 @@ public class MainActivity extends AppCompatActivity implements RadioGroup.OnChec
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void showVRMode(VrMainConnect event) {
+        Log.e("MyLog", "MainActivity >>> VrMainConnect");
+
         if (vrModeMainDialog == null) {
             vrModeMainDialog = new VrModeMainDialog(this);
         }
@@ -116,6 +118,8 @@ public class MainActivity extends AppCompatActivity implements RadioGroup.OnChec
 
     @Subscribe(threadMode = ThreadMode.MAIN, sticky = true)
     public void showVRModeSticky(VrMainStickyActiveDialog event) {
+        Log.e("MyLog", "MainActivity >>> VrMainStickyActiveDialog");
+
         if (vrModeMainDialog == null) {
             vrModeMainDialog = new VrModeMainDialog(this);
         }
@@ -171,7 +175,7 @@ public class MainActivity extends AppCompatActivity implements RadioGroup.OnChec
     @Subscribe(threadMode = ThreadMode.MAIN, sticky = true)
     public void hideVRModeSticky(VrMainStickyInactiveDialog event) {
         Log.e("MyLog", " MainActivity VrMainStickyInactiveDialog");
-        closeMainDialog();
+        ivAboutBg.postDelayed(this::closeMainDialog, 300);
         startTimeTask();
     }
 
@@ -182,7 +186,9 @@ public class MainActivity extends AppCompatActivity implements RadioGroup.OnChec
     }
 
     private void closeMainDialog() {
-        if (vrModeMainDialog != null && vrModeMainDialog.isShowing()) {
+        Log.e("MyLog", "MainActivity closeMainDialog before");
+        if (vrModeMainDialog != null) {
+            Log.e("MyLog", "MainActivity closeMainDialog doing");
             vrModeMainDialog.dismiss();
         }
     }
