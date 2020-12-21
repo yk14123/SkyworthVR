@@ -1,15 +1,13 @@
 package com.chinafocus.hvrskyworth;
 
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.bluetooth.BluetoothDevice;
-import android.bluetooth.BluetoothGatt;
-import android.bluetooth.BluetoothGattCallback;
 import android.bluetooth.BluetoothSocket;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
+
+import androidx.appcompat.app.AppCompatActivity;
 
 import com.ssnwt.vr.androidmanager.AndroidInterface;
 import com.ssnwt.vr.androidmanager.ProximitySensorUtils;
@@ -34,6 +32,7 @@ public class MainActivity extends AppCompatActivity implements ProximitySensorUt
         findViewById(R.id.bt_search).setOnClickListener(this);
         findViewById(R.id.bt_bond).setOnClickListener(this);
         findViewById(R.id.bt_http).setOnClickListener(this);
+
 
         AndroidInterface.getInstance().getBluetoothUtils().setListener(new BluetoothUtils.BluetoothListener() {
             @Override
@@ -145,6 +144,7 @@ public class MainActivity extends AppCompatActivity implements ProximitySensorUt
         try {
             BluetoothSocket rfcommSocketToServiceRecord = mBluetoothDevice.createRfcommSocketToServiceRecord(UUID.fromString("fa87c0d0-afac-11de-8a39-0800200c9a66"));
             rfcommSocketToServiceRecord.connect();
+
         } catch (IOException e) {
             e.printStackTrace();
         }

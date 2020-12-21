@@ -1,3 +1,5 @@
+include ':testbluetooth'
+include ':huaweipad'
 include ':hvrskyworthvr'
 include ':app'
 include ':lib_network'
