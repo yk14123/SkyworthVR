@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.chinafocus.huaweipad;
+package com.chinafocus.lib_bluetooth;
 
 
 public interface Constants {

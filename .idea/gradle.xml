@@ -12,11 +12,11 @@
         <option name="modules">
           <set>
             <option value="$PROJECT_DIR$" />
-            <option value="$PROJECT_DIR$/app" />
             <option value="$PROJECT_DIR$/huaweipad" />
             <option value="$PROJECT_DIR$/hvrskyworthvr" />
+            <option value="$PROJECT_DIR$/lib_bluetooth" />
             <option value="$PROJECT_DIR$/lib_network" />
-            <option value="$PROJECT_DIR$/testbluetooth" />
+            <option value="$PROJECT_DIR$/skyworthvr" />
           </set>
         </option>
         <option name="resolveModulePerSourceSet" value="false" />
