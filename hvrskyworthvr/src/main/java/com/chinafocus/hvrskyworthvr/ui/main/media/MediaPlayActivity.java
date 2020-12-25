@@ -20,6 +20,7 @@ import com.chinafocus.hvrskyworthvr.exo.ui.PlayerView;
 import com.chinafocus.hvrskyworthvr.exo.ui.spherical.SphericalGLSurfaceView;
 import com.chinafocus.hvrskyworthvr.global.Constants;
 import com.chinafocus.hvrskyworthvr.model.bean.VideoDetail;
+import com.chinafocus.hvrskyworthvr.service.BluetoothService;
 import com.chinafocus.hvrskyworthvr.service.SocketService;
 import com.chinafocus.hvrskyworthvr.service.event.VrMainStickyActiveDialog;
 import com.chinafocus.hvrskyworthvr.service.event.VrMainStickyInactiveDialog;
@@ -218,14 +219,24 @@ public class MediaPlayActivity extends AppCompatActivity implements ViewBindHelp
         linkingVr = true;
 
         // TODO 1.给VR同步视频信息
-        Intent intent = new Intent(this, SocketService.class);
-        intent.putExtra(MEDIA_FROM_TAG, VrSyncPlayInfo.obtain().tag);
-        intent.putExtra(MEDIA_CATEGORY_TAG, VrSyncPlayInfo.obtain().category);
-        intent.putExtra(MEDIA_ID, VrSyncPlayInfo.obtain().videoId);
-        long currentPosition = mExoMediaHelper.getPlayer().getCurrentPosition();
-        VrSyncPlayInfo.obtain().seek = currentPosition;
-        intent.putExtra(MEDIA_SEEK, currentPosition);
-        startService(intent);
+//        Intent intent = new Intent(this, SocketService.class);
+//        intent.putExtra(MEDIA_FROM_TAG, VrSyncPlayInfo.obtain().tag);
+//        intent.putExtra(MEDIA_CATEGORY_TAG, VrSyncPlayInfo.obtain().category);
+//        intent.putExtra(MEDIA_ID, VrSyncPlayInfo.obtain().videoId);
+//        long currentPosition = mExoMediaHelper.getPlayer().getCurrentPosition();
+//        VrSyncPlayInfo.obtain().seek = currentPosition;
+//        intent.putExtra(MEDIA_SEEK, currentPosition);
+//        startService(intent);
+
+        VrSyncPlayInfo.obtain().seek = mExoMediaHelper.getPlayer().getCurrentPosition();
+        BluetoothService.getInstance()
+                .sendMessage(
+                        VrSyncPlayInfo.obtain().tag,
+                        VrSyncPlayInfo.obtain().videoId,
+                        VrSyncPlayInfo.obtain().category,
+                        VrSyncPlayInfo.obtain().seek
+                );
+
 
         mExoMediaHelper.getPlayer().setVolume(0f);
     }

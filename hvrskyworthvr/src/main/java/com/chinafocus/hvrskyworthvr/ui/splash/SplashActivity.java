@@ -32,7 +32,7 @@ public class SplashActivity extends AppCompatActivity {
 
         DefaultUrlViewModel model = new ViewModelProvider(this).get(DefaultUrlViewModel.class);
 
-        PermissionUtils.permission(PermissionConstants.STORAGE, PermissionConstants.PHONE).callback(new PermissionUtils.SimpleCallback() {
+        PermissionUtils.permission(PermissionConstants.STORAGE, PermissionConstants.PHONE, PermissionConstants.LOCATION).callback(new PermissionUtils.SimpleCallback() {
             @Override
             public void onGranted() {
                 model.getDefaultCloudUrl();
@@ -51,7 +51,7 @@ public class SplashActivity extends AppCompatActivity {
 
     private void saveDefaultUrl(DefaultCloudUrl url) {
 //        SPUtils.getInstance().put(Constants.DEFAULT_URL, url.getCloudUrl());
-        startSocketService();
+//        startSocketService();
         Constants.DEFAULT_URL = url.getCloudUrl();
         delayStartLoginActivity();
     }

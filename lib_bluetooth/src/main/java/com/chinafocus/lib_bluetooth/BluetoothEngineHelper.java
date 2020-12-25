@@ -8,12 +8,9 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Handler;
-import android.os.Looper;
-import android.os.Message;
 import android.text.TextUtils;
 import android.util.Log;
 
-import java.lang.reflect.Method;
 import java.util.Objects;
 import java.util.Set;
 
@@ -25,47 +22,11 @@ public class BluetoothEngineHelper {
     private BluetoothEngineService bluetoothEngineService;
     private BluetoothAdapter mBluetoothAdapter;
 
+    private final Handler mHandler;
 
-    private final Handler mHandler = new Handler(Looper.getMainLooper()) {
-        @Override
-        public void handleMessage(Message msg) {
-            switch (msg.what) {
-                case Constants.MESSAGE_STATE_CHANGE:
-                    switch (msg.arg1) {
-                        case BluetoothEngineService.STATE_CONNECTED:
-                            // 链接成功
-                            break;
-                        case BluetoothEngineService.STATE_CONNECTING:
-                            // 链接中
-                            break;
-                        case BluetoothEngineService.STATE_LISTEN:
-                        case BluetoothEngineService.STATE_NONE:
-                            // 等待配对中
-                            break;
-                    }
-                    break;
-                case Constants.MESSAGE_WRITE:
-                    byte[] writeBuf = (byte[]) msg.obj;
-                    // construct a string from the buffer
-                    break;
-                case Constants.MESSAGE_READ:
-                    byte[] readBuf = (byte[]) msg.obj;
-                    // construct a string from the valid bytes in the buffer
-                    // TODO 收到byte数据
-                    String readMessage = new String(readBuf, 0, msg.arg1);
-                    Log.e(TAG, " readMessage :" + readMessage);
-                    break;
-                case Constants.MESSAGE_DEVICE_NAME:
-                    // save the connected device's name
-                    String deviceName = msg.getData().getString(Constants.DEVICE_NAME);
-                    // 设备名称
-                    break;
-                case Constants.MESSAGE_TOAST:
-                    // 链接错误
-                    break;
-            }
-        }
-    };
+    public BluetoothEngineHelper(Handler mHandler) {
+        this.mHandler = mHandler;
+    }
 
     /**
      * 启动蓝牙引擎
@@ -231,6 +192,7 @@ public class BluetoothEngineHelper {
 
     /**
      * pad端解除蓝牙绑定。只有用户手动解除！
+     *
      * @param context
      */
     public synchronized void unBondDevice(Context context) {

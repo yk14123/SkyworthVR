@@ -1,6 +1,7 @@
 package com.chinafocus.lib_bluetooth;
 
 import android.os.Bundle;
+import android.os.Handler;
 import android.view.View;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -16,7 +17,7 @@ public class Demo extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        bluetoothEngineHelper = new BluetoothEngineHelper();
+        bluetoothEngineHelper = new BluetoothEngineHelper(new Handler(getMainLooper()));
         bluetoothEngineHelper.startBluetoothEngine(this);
     }
 

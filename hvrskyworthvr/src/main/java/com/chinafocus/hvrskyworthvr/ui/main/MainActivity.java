@@ -14,6 +14,7 @@ import androidx.fragment.app.FragmentTransaction;
 
 import com.chinafocus.hvrskyworthvr.R;
 import com.chinafocus.hvrskyworthvr.global.Constants;
+import com.chinafocus.hvrskyworthvr.service.BluetoothService;
 import com.chinafocus.hvrskyworthvr.service.SocketService;
 import com.chinafocus.hvrskyworthvr.service.event.VrCancelTimeTask;
 import com.chinafocus.hvrskyworthvr.service.event.VrMainStickyActiveDialog;
@@ -81,6 +82,13 @@ public class MainActivity extends AppCompatActivity implements RadioGroup.OnChec
         initFragments();
         radioGroup.check(R.id.rb_main_video);
 
+        BluetoothService.getInstance().startBluetoothEngine(this);
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        BluetoothService.getInstance().releaseAll(this);
     }
 
     @Override
@@ -103,12 +111,20 @@ public class MainActivity extends AppCompatActivity implements RadioGroup.OnChec
             vrModeMainDialog.show();
         }
         // TODO 1.给VR同步视频信息
-        Intent intent = new Intent(this, SocketService.class);
-        intent.putExtra(MEDIA_FROM_TAG, VrSyncPlayInfo.obtain().tag);
-        intent.putExtra(MEDIA_ID, VrSyncPlayInfo.obtain().videoId);
-        intent.putExtra(MEDIA_CATEGORY_TAG, VrSyncPlayInfo.obtain().category);
-        intent.putExtra(MEDIA_SEEK, VrSyncPlayInfo.obtain().seek);
-        startService(intent);
+//        Intent intent = new Intent(this, SocketService.class);
+//        intent.putExtra(MEDIA_FROM_TAG, VrSyncPlayInfo.obtain().tag);
+//        intent.putExtra(MEDIA_ID, VrSyncPlayInfo.obtain().videoId);
+//        intent.putExtra(MEDIA_CATEGORY_TAG, VrSyncPlayInfo.obtain().category);
+//        intent.putExtra(MEDIA_SEEK, VrSyncPlayInfo.obtain().seek);
+//        startService(intent);
+
+        BluetoothService.getInstance()
+                .sendMessage(
+                        VrSyncPlayInfo.obtain().tag,
+                        VrSyncPlayInfo.obtain().videoId,
+                        VrSyncPlayInfo.obtain().category,
+                        VrSyncPlayInfo.obtain().seek
+                );
 
         if (VrSyncPlayInfo.obtain().videoId != -1) {
             closeMainDialog();
