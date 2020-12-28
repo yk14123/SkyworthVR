@@ -25,8 +25,12 @@ import java.nio.ByteBuffer;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 
+import static com.chinafocus.lib_bluetooth.Constants.MESSAGE_DEVICE_NAME;
+import static com.chinafocus.lib_bluetooth.Constants.MESSAGE_STATE_CHANGE;
+import static com.chinafocus.lib_bluetooth.Constants.MESSAGE_TOAST;
 
-public class BluetoothService {
+
+public class BluetoothService implements BluetoothEngineService.AsyncThreadReadBytes {
 
     private static final int CONNECT = 1;
     private static final int DISCONNECT = 2;
@@ -34,12 +38,17 @@ public class BluetoothService {
     private static final int SYNC_ROTATION = 4;
     private static final int SYNC_WAIT_VR_SELECTED = 5;
 
+    private static final int MESSAGE_CONNECT = 10001;
+    private static final int MESSAGE_DISCONNECT = 10002;
+    private static final int MESSAGE_SYNC_PLAY = 10003;
+    private static final int MESSAGE_SYNC_WAIT_VR_SELECTED = 10004;
+
     private final Executor executor;
 
     private final BluetoothEngineHelper bluetoothEngineHelper;
 
     private BluetoothService() {
-        bluetoothEngineHelper = new BluetoothEngineHelper(mHandler);
+        bluetoothEngineHelper = new BluetoothEngineHelper(mHandler, this);
         executor = Executors.newCachedThreadPool();
     }
 
@@ -100,7 +109,7 @@ public class BluetoothService {
         @Override
         public void handleMessage(Message msg) {
             switch (msg.what) {
-                case com.chinafocus.lib_bluetooth.Constants.MESSAGE_STATE_CHANGE:
+                case MESSAGE_STATE_CHANGE:
                     switch (msg.arg1) {
                         case BluetoothEngineService.STATE_CONNECTED:
                             // 链接成功
@@ -114,79 +123,84 @@ public class BluetoothService {
                             break;
                     }
                     break;
-                case com.chinafocus.lib_bluetooth.Constants.MESSAGE_WRITE:
-                    byte[] writeBuf = (byte[]) msg.obj;
-                    // construct a string from the buffer
-                    break;
-                case com.chinafocus.lib_bluetooth.Constants.MESSAGE_READ:
-                    byte[] readBuf = (byte[]) msg.obj;
-                    // construct a string from the valid bytes in the buffer
-                    onHandleWork(readBuf, msg.arg1);
+//                case com.chinafocus.lib_bluetooth.Constants.MESSAGE_WRITE:
+//                    byte[] writeBuf = (byte[]) msg.obj;
+//                    // construct a string from the buffer
+//                    break;
+//                case com.chinafocus.lib_bluetooth.Constants.MESSAGE_READ:
+//                    byte[] readBuf = (byte[]) msg.obj;
+                // construct a string from the valid bytes in the buffer
+//                    onHandleWork(readBuf, msg.arg1);
 //                    Log.e(TAG, " readMessage :" + readMessage);
-                    break;
-                case com.chinafocus.lib_bluetooth.Constants.MESSAGE_DEVICE_NAME:
+//                    break;
+                case MESSAGE_DEVICE_NAME:
                     // save the connected device's name
                     String deviceName = msg.getData().getString(com.chinafocus.lib_bluetooth.Constants.DEVICE_NAME);
                     // 设备名称
                     break;
-                case com.chinafocus.lib_bluetooth.Constants.MESSAGE_TOAST:
+                case MESSAGE_TOAST:
                     // 链接错误
+                    break;
+                case MESSAGE_CONNECT:
+                    handConnect();
+                    break;
+                case MESSAGE_DISCONNECT:
+                    handDisconnect();
+                    break;
+                case MESSAGE_SYNC_PLAY:
+                    byte[] readBuf = (byte[]) msg.obj;
+                    handSyncPlay(readBuf, msg.arg1);
+                    break;
+                case MESSAGE_SYNC_WAIT_VR_SELECTED:
+                    handWaitVrSelected();
                     break;
             }
         }
     };
 
-    protected void onHandleWork(byte[] bytes, int len) {
+    private void onHandleWork(byte[] bytes, int len) {
 
         int cursor = 0;
-        int handledTotalMessageLength = 0;
 
-        if (len > 0) {
+        while (len > cursor) {
 
-            while (true) {
+            // 队列
+            int messageBodyLen = ByteBuffer.wrap(bytes).getInt(cursor);
+            int messageLen = messageBodyLen + 4;
+            int tag = ByteBuffer.wrap(bytes).getInt(cursor + 4);
+            int category = ByteBuffer.wrap(bytes).getInt(cursor + 8);
 
-                // 队列
-                int messageBodyLen = ByteBuffer.wrap(bytes).getInt(cursor);
-                int messageLen = messageBodyLen + 4;
-                int tag = ByteBuffer.wrap(bytes).getInt(cursor + 4);
-                int category = ByteBuffer.wrap(bytes).getInt(cursor + 8);
+            Log.e("MyLog", "socketInputStream.read >>> "
+                    + " >>> 消息body长度是 : " + messageBodyLen
+                    + " >>> 消息类型是 : " + tag
+                    + " >>> 消息category是 : " + category
+                    + " >>> 消息总长度是 : " + len
+                    + " >>> cursor : " + cursor
+            );
 
-                Log.e("MyLog", "socketInputStream.read >>> "
-                        + " >>> 消息body长度是 : " + messageBodyLen
-                        + " >>> 消息类型是 : " + tag
-                        + " >>> 消息category是 : " + category
-                        + " >>> 消息总长度是 : " + len
-
-                );
-
-                switch (tag) {
-                    case CONNECT:
-                        handConnect();
-                        break;
-                    case DISCONNECT:
-                        handDisconnect();
-                        break;
-                    case SYNC_PLAY:
-                        // 这里多加了2 是因为unity使用了框架，封装成了object，多了2个short类型
-                        handSyncPlay(bytes, cursor + 14);
-                        break;
-                    case SYNC_ROTATION:
-                        handRotation(bytes, cursor + 14);
-                        break;
-                    case SYNC_WAIT_VR_SELECTED:
-                        handWaitVrSelected();
-                        break;
-                }
-
-                handledTotalMessageLength += messageLen;
-
-                if (len == handledTotalMessageLength) {
-                    return;
-                } else if (len > handledTotalMessageLength) {
-                    // 多条数据
-                    cursor = len - handledTotalMessageLength;
-                }
+            switch (tag) {
+                case CONNECT:
+//                    handConnect();
+                    mHandler.obtainMessage(MESSAGE_CONNECT).sendToTarget();
+                    break;
+                case DISCONNECT:
+//                    handDisconnect();
+                    mHandler.obtainMessage(MESSAGE_DISCONNECT).sendToTarget();
+                    break;
+                case SYNC_PLAY:
+                    // 这里多加了2 是因为unity使用了框架，封装成了object，多了2个short类型
+//                    handSyncPlay(bytes, cursor + 14);
+                    mHandler.obtainMessage(MESSAGE_SYNC_PLAY, cursor + 14, -1, bytes).sendToTarget();
+                    break;
+                case SYNC_ROTATION:
+                    handRotation(bytes, cursor + 14);
+                    break;
+                case SYNC_WAIT_VR_SELECTED:
+                    mHandler.obtainMessage(MESSAGE_SYNC_WAIT_VR_SELECTED).sendToTarget();
+                    break;
             }
+
+            cursor += messageLen;
         }
     }
 
@@ -262,5 +276,8 @@ public class BluetoothService {
         EventBus.getDefault().post(obtain);
     }
 
-
+    @Override
+    public void asyncThreadReadBytes(byte[] bytes, int len) {
+        onHandleWork(bytes, len);
+    }
 }

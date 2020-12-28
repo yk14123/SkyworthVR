@@ -63,13 +63,23 @@ public class BluetoothEngineService {
     public static final int STATE_CONNECTED = 3;  // now connected to a remote device
 
     /**
+     * 异步方式读取数据
+     */
+    public interface AsyncThreadReadBytes {
+        void asyncThreadReadBytes(byte[] bytes, int len);
+    }
+
+    private final AsyncThreadReadBytes mAsyncThreadReadBytes;
+
+    /**
      * Constructor. Prepares a new BluetoothChat session.
      */
-    public BluetoothEngineService(Handler handler) {
+    public BluetoothEngineService(Handler handler, AsyncThreadReadBytes asyncThreadReadBytes) {
         mAdapter = BluetoothAdapter.getDefaultAdapter();
         mState = STATE_NONE;
         mNewState = mState;
         mHandler = handler;
+        mAsyncThreadReadBytes = asyncThreadReadBytes;
     }
 
     /**
@@ -465,9 +475,11 @@ public class BluetoothEngineService {
                     // Read from the InputStream
                     bytes = mmInStream.read(buffer);
 
+                    mAsyncThreadReadBytes.asyncThreadReadBytes(buffer, bytes);
+
                     // Send the obtained bytes to the UI Activity
-                    mHandler.obtainMessage(Constants.MESSAGE_READ, bytes, -1, buffer)
-                            .sendToTarget();
+//                    mHandler.obtainMessage(Constants.MESSAGE_READ, bytes, -1, buffer)
+//                            .sendToTarget();
                 } catch (IOException e) {
                     Log.e(TAG, "------蓝牙引擎>>> [Socket] >>> InputStream read disconnected----------", e);
                     connectionLost();

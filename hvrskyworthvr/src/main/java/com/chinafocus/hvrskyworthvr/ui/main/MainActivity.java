@@ -15,11 +15,10 @@ import androidx.fragment.app.FragmentTransaction;
 import com.chinafocus.hvrskyworthvr.R;
 import com.chinafocus.hvrskyworthvr.global.Constants;
 import com.chinafocus.hvrskyworthvr.service.BluetoothService;
-import com.chinafocus.hvrskyworthvr.service.SocketService;
 import com.chinafocus.hvrskyworthvr.service.event.VrCancelTimeTask;
-import com.chinafocus.hvrskyworthvr.service.event.VrMainStickyActiveDialog;
 import com.chinafocus.hvrskyworthvr.service.event.VrMainConnect;
 import com.chinafocus.hvrskyworthvr.service.event.VrMainDisConnect;
+import com.chinafocus.hvrskyworthvr.service.event.VrMainStickyActiveDialog;
 import com.chinafocus.hvrskyworthvr.service.event.VrMainStickyInactiveDialog;
 import com.chinafocus.hvrskyworthvr.service.event.VrMainSyncMediaInfo;
 import com.chinafocus.hvrskyworthvr.service.event.VrSyncPlayInfo;
@@ -32,7 +31,6 @@ import com.chinafocus.hvrskyworthvr.util.statusbar.StatusBarCompatFactory;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
-import org.greenrobot.eventbus.ThreadMode;
 
 import java.util.Arrays;
 import java.util.List;
@@ -100,7 +98,7 @@ public class MainActivity extends AppCompatActivity implements RadioGroup.OnChec
 
     private VrModeMainDialog vrModeMainDialog;
 
-    @Subscribe(threadMode = ThreadMode.MAIN)
+    @Subscribe()
     public void showVRMode(VrMainConnect event) {
         Log.e("MyLog", "MainActivity >>> VrMainConnect");
 
@@ -132,7 +130,7 @@ public class MainActivity extends AppCompatActivity implements RadioGroup.OnChec
         }
     }
 
-    @Subscribe(threadMode = ThreadMode.MAIN, sticky = true)
+    @Subscribe(sticky = true)
     public void showVRModeSticky(VrMainStickyActiveDialog event) {
         Log.e("MyLog", "MainActivity >>> VrMainStickyActiveDialog");
 
@@ -181,21 +179,21 @@ public class MainActivity extends AppCompatActivity implements RadioGroup.OnChec
     /**
      * 关闭定时器
      */
-    @Subscribe(threadMode = ThreadMode.MAIN)
+    @Subscribe()
     public void closeTimer(VrCancelTimeTask vrCancelTimeTask) {
         if (mDisposable != null) {
             mDisposable.dispose();
         }
     }
 
-    @Subscribe(threadMode = ThreadMode.MAIN, sticky = true)
+    @Subscribe(sticky = true)
     public void hideVRModeSticky(VrMainStickyInactiveDialog event) {
         Log.e("MyLog", " MainActivity VrMainStickyInactiveDialog");
         ivAboutBg.postDelayed(this::closeMainDialog, 300);
         startTimeTask();
     }
 
-    @Subscribe(threadMode = ThreadMode.MAIN)
+    @Subscribe()
     public void hideVRMode(VrMainDisConnect event) {
         closeMainDialog();
         startTimeTask();
@@ -209,7 +207,7 @@ public class MainActivity extends AppCompatActivity implements RadioGroup.OnChec
         }
     }
 
-    @Subscribe(threadMode = ThreadMode.MAIN)
+    @Subscribe()
     public void goToMediaPlayActivityAndActiveVRPlayerStatus(VrMainSyncMediaInfo vrMainSyncMediaInfo) {
         closeMainDialog();
         startSyncMediaPlayActivity();

@@ -17,7 +17,12 @@ public class Demo extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        bluetoothEngineHelper = new BluetoothEngineHelper(new Handler(getMainLooper()));
+        bluetoothEngineHelper = new BluetoothEngineHelper(new Handler(getMainLooper()), new BluetoothEngineService.AsyncThreadReadBytes() {
+            @Override
+            public void asyncThreadReadBytes(byte[] bytes, int len) {
+
+            }
+        });
         bluetoothEngineHelper.startBluetoothEngine(this);
     }
 

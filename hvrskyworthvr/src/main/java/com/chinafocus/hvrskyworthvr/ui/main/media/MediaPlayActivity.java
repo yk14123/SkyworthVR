@@ -21,7 +21,6 @@ import com.chinafocus.hvrskyworthvr.exo.ui.spherical.SphericalGLSurfaceView;
 import com.chinafocus.hvrskyworthvr.global.Constants;
 import com.chinafocus.hvrskyworthvr.model.bean.VideoDetail;
 import com.chinafocus.hvrskyworthvr.service.BluetoothService;
-import com.chinafocus.hvrskyworthvr.service.SocketService;
 import com.chinafocus.hvrskyworthvr.service.event.VrMainStickyActiveDialog;
 import com.chinafocus.hvrskyworthvr.service.event.VrMainStickyInactiveDialog;
 import com.chinafocus.hvrskyworthvr.service.event.VrMediaConnect;
@@ -37,7 +36,6 @@ import com.google.android.exoplayer2.Player;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
-import org.greenrobot.eventbus.ThreadMode;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -206,7 +204,7 @@ public class MediaPlayActivity extends AppCompatActivity implements ViewBindHelp
         Constants.ACTIVITY_TAG = Constants.ACTIVITY_MEDIA;
     }
 
-    @Subscribe(threadMode = ThreadMode.MAIN)
+    @Subscribe()
     public void toUnityMediaInfoAndActiveVRPlayerStatus(VrMediaConnect event) {
         Log.e("MyLog", "MediaPlay toUnityMediaInfoAndActiveVRPlayerStatus");
         closeAllDialog();
@@ -241,7 +239,7 @@ public class MediaPlayActivity extends AppCompatActivity implements ViewBindHelp
         mExoMediaHelper.getPlayer().setVolume(0f);
     }
 
-    @Subscribe(threadMode = ThreadMode.MAIN)
+    @Subscribe()
     public void goActivityAndActiveDialog(VrMediaWaitSelected vrMediaWaitSelected) {
         Log.e("MyLog", "MediaPlay goActivityAndActiveDialog");
         closeAllDialog();
@@ -250,7 +248,7 @@ public class MediaPlayActivity extends AppCompatActivity implements ViewBindHelp
         finish();
     }
 
-    @Subscribe(threadMode = ThreadMode.MAIN)
+    @Subscribe()
     public void goBackMainActivityAndInactiveMainDialog(VrMediaDisConnect event) {
         closeAllDialog();
         Log.e("MyLog", "MediaPlay VrMediaDisConnect");
@@ -260,7 +258,7 @@ public class MediaPlayActivity extends AppCompatActivity implements ViewBindHelp
         finish();
     }
 
-    @Subscribe(threadMode = ThreadMode.MAIN)
+    @Subscribe()
     public void loadNextSyncMedia(VrMediaSyncMediaInfo vrMediaSyncMediaInfo) {
         closeAllDialog();
         String tag = "";
@@ -280,7 +278,7 @@ public class MediaPlayActivity extends AppCompatActivity implements ViewBindHelp
         mediaViewModel.getVideoDetailData(tag, VrSyncPlayInfo.obtain().videoId);
     }
 
-    @Subscribe(threadMode = ThreadMode.MAIN)
+    @Subscribe()
     public void syncRotation(VrRotation vrRotation) {
         if (mLandPlayerView != null && linkingVr) {
             SphericalGLSurfaceView surfaceView = (SphericalGLSurfaceView) mLandPlayerView.getVideoSurfaceView();

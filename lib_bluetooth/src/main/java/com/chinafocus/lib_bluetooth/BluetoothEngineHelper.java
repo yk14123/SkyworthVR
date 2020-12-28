@@ -23,9 +23,11 @@ public class BluetoothEngineHelper {
     private BluetoothAdapter mBluetoothAdapter;
 
     private final Handler mHandler;
+    private final BluetoothEngineService.AsyncThreadReadBytes mAsyncThreadReadBytes;
 
-    public BluetoothEngineHelper(Handler mHandler) {
+    public BluetoothEngineHelper(Handler mHandler, BluetoothEngineService.AsyncThreadReadBytes asyncThreadReadBytes) {
         this.mHandler = mHandler;
+        this.mAsyncThreadReadBytes = asyncThreadReadBytes;
     }
 
     /**
@@ -45,7 +47,7 @@ public class BluetoothEngineHelper {
             } else {
 
                 if (bluetoothEngineService == null) {
-                    bluetoothEngineService = new BluetoothEngineService(mHandler);
+                    bluetoothEngineService = new BluetoothEngineService(mHandler, mAsyncThreadReadBytes);
                 }
                 bluetoothEngineService.start();
 
