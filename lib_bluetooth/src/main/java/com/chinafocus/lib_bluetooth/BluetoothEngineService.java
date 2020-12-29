@@ -466,7 +466,7 @@ public class BluetoothEngineService {
 
         public void run() {
             Log.d(TAG, "------蓝牙引擎>>> [Socket] >>> InputStream start reading----------");
-            byte[] buffer = new byte[1024];
+            byte[] buffer = new byte[2048];
             int bytes;
 
             // Keep listening to the InputStream while connected

@@ -280,7 +280,8 @@ public class MediaPlayActivity extends AppCompatActivity implements ViewBindHelp
 
     @Subscribe()
     public void syncRotation(VrRotation vrRotation) {
-        if (mLandPlayerView != null && linkingVr) {
+//        if (mLandPlayerView != null && linkingVr) {
+        if (mLandPlayerView != null) {
             SphericalGLSurfaceView surfaceView = (SphericalGLSurfaceView) mLandPlayerView.getVideoSurfaceView();
             if (surfaceView != null) {
                 // 同步四元数

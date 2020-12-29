@@ -284,7 +284,7 @@ public final class SphericalGLSurfaceView extends GLSurfaceView {
         private float mAspect;
 
         private final float[] skyWorthRotationMatrix = new float[16];
-        private final float[] skyWorthMatrix = new float[16];
+        private final float[] tempSkyWorthMatrix = new float[16];
 
         public Renderer(SceneRenderer scene) {
             this.scene = scene;
@@ -350,8 +350,8 @@ public final class SphericalGLSurfaceView extends GLSurfaceView {
             // Orientation = pitch * sensor * yaw since that is closest to what most users expect the
             // behavior to be.
             synchronized (this) {
-                Matrix.multiplyMM(skyWorthMatrix, 0, touchYawMatrix, 0, skyWorthRotationMatrix, 0);
-                Matrix.multiplyMM(tempMatrix, 0, deviceOrientationMatrix, 0, skyWorthMatrix, 0);
+                Matrix.multiplyMM(tempSkyWorthMatrix, 0, touchYawMatrix, 0, skyWorthRotationMatrix, 0);
+                Matrix.multiplyMM(tempMatrix, 0, deviceOrientationMatrix, 0, tempSkyWorthMatrix, 0);
                 Matrix.multiplyMM(viewMatrix, 0, touchPitchMatrix, 0, tempMatrix, 0);
             }
 

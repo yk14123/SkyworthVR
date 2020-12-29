@@ -22,7 +22,7 @@ import com.chinafocus.lib_bluetooth.BluetoothEngineService;
 import org.greenrobot.eventbus.EventBus;
 
 import java.nio.ByteBuffer;
-import java.util.concurrent.Executor;
+import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 import static com.chinafocus.lib_bluetooth.Constants.MESSAGE_DEVICE_NAME;
@@ -43,7 +43,7 @@ public class BluetoothService implements BluetoothEngineService.AsyncThreadReadB
     private static final int MESSAGE_SYNC_PLAY = 10003;
     private static final int MESSAGE_SYNC_WAIT_VR_SELECTED = 10004;
 
-    private final Executor executor;
+    private final ExecutorService executor;
 
     private final BluetoothEngineHelper bluetoothEngineHelper;
 
@@ -168,35 +168,38 @@ public class BluetoothService implements BluetoothEngineService.AsyncThreadReadB
             int messageBodyLen = ByteBuffer.wrap(bytes).getInt(cursor);
             int messageLen = messageBodyLen + 4;
             int tag = ByteBuffer.wrap(bytes).getInt(cursor + 4);
-            int category = ByteBuffer.wrap(bytes).getInt(cursor + 8);
+//            int category = ByteBuffer.wrap(bytes).getInt(cursor + 8);
 
-            Log.e("MyLog", "socketInputStream.read >>> "
-                    + " >>> 消息body长度是 : " + messageBodyLen
-                    + " >>> 消息类型是 : " + tag
-                    + " >>> 消息category是 : " + category
-                    + " >>> 消息总长度是 : " + len
-                    + " >>> cursor : " + cursor
+            Log.i("MyLog", "socketInputStream.read"
+//                    + " >>> 消息body长度是 : " + messageBodyLen
+                            + " >>> 消息类型是 : " + tag
+//                    + " >>> 消息category是 : " + category
+                            + " >>> 消息总长度是 : " + len
+                            + " >>> cursor : " + cursor
             );
-
             switch (tag) {
+                case SYNC_ROTATION:
+                    handRotation(bytes, cursor + 14);
+                    break;
                 case CONNECT:
 //                    handConnect();
-                    mHandler.obtainMessage(MESSAGE_CONNECT).sendToTarget();
+//                    mHandler.obtainMessage(MESSAGE_CONNECT).sendToTarget();
+                    executor.execute(() -> mHandler.obtainMessage(MESSAGE_CONNECT).sendToTarget());
                     break;
                 case DISCONNECT:
 //                    handDisconnect();
-                    mHandler.obtainMessage(MESSAGE_DISCONNECT).sendToTarget();
+//                    mHandler.obtainMessage(MESSAGE_DISCONNECT).sendToTarget();
+                    executor.execute(() -> mHandler.obtainMessage(MESSAGE_DISCONNECT).sendToTarget());
                     break;
                 case SYNC_PLAY:
                     // 这里多加了2 是因为unity使用了框架，封装成了object，多了2个short类型
 //                    handSyncPlay(bytes, cursor + 14);
                     mHandler.obtainMessage(MESSAGE_SYNC_PLAY, cursor + 14, -1, bytes).sendToTarget();
-                    break;
-                case SYNC_ROTATION:
-                    handRotation(bytes, cursor + 14);
+//                    executor.execute(() -> mHandler.obtainMessage(MESSAGE_SYNC_PLAY, finalCursor + 14, -1, bytes).sendToTarget());
                     break;
                 case SYNC_WAIT_VR_SELECTED:
-                    mHandler.obtainMessage(MESSAGE_SYNC_WAIT_VR_SELECTED).sendToTarget();
+//                    mHandler.obtainMessage(MESSAGE_SYNC_WAIT_VR_SELECTED).sendToTarget();
+                    executor.execute(() -> mHandler.obtainMessage(MESSAGE_SYNC_WAIT_VR_SELECTED).sendToTarget());
                     break;
             }
 

@@ -35,11 +35,13 @@ import com.google.android.exoplayer2.upstream.cache.CacheDataSource;
 import com.google.android.exoplayer2.upstream.cache.SimpleCache;
 import com.google.android.exoplayer2.util.MimeTypes;
 import com.google.android.exoplayer2.util.Util;
-import com.google.android.exoplayer2.video.VideoListener;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+
+import static com.google.android.exoplayer2.DefaultLoadControl.DEFAULT_BUFFER_FOR_PLAYBACK_AFTER_REBUFFER_MS;
+import static com.google.android.exoplayer2.DefaultLoadControl.DEFAULT_BUFFER_FOR_PLAYBACK_MS;
 
 public class ExoMediaHelper {
 
@@ -90,7 +92,10 @@ public class ExoMediaHelper {
         if (player == null) {
             player = new SimpleExoPlayer.Builder(mContext)
                     .setLoadControl(new DefaultLoadControl.Builder()
-                            .setPrioritizeTimeOverSizeThresholds(false)
+                            .setBufferDurationsMs(30_000, 30_000,
+                                    DEFAULT_BUFFER_FOR_PLAYBACK_MS,
+                                    DEFAULT_BUFFER_FOR_PLAYBACK_AFTER_REBUFFER_MS)
+                            .setPrioritizeTimeOverSizeThresholds(true)
                             .build())
                     .build();
             // 监听
