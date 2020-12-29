@@ -183,13 +183,13 @@ public class BluetoothService implements BluetoothEngineService.AsyncThreadReadB
                     break;
                 case CONNECT:
 //                    handConnect();
-//                    mHandler.obtainMessage(MESSAGE_CONNECT).sendToTarget();
-                    executor.execute(() -> mHandler.obtainMessage(MESSAGE_CONNECT).sendToTarget());
+                    mHandler.obtainMessage(MESSAGE_CONNECT).sendToTarget();
+//                    executor.execute(() -> mHandler.obtainMessage(MESSAGE_CONNECT).sendToTarget());
                     break;
                 case DISCONNECT:
 //                    handDisconnect();
-//                    mHandler.obtainMessage(MESSAGE_DISCONNECT).sendToTarget();
-                    executor.execute(() -> mHandler.obtainMessage(MESSAGE_DISCONNECT).sendToTarget());
+                    mHandler.obtainMessage(MESSAGE_DISCONNECT).sendToTarget();
+//                    executor.execute(() -> mHandler.obtainMessage(MESSAGE_DISCONNECT).sendToTarget());
                     break;
                 case SYNC_PLAY:
                     // 这里多加了2 是因为unity使用了框架，封装成了object，多了2个short类型
@@ -198,8 +198,8 @@ public class BluetoothService implements BluetoothEngineService.AsyncThreadReadB
 //                    executor.execute(() -> mHandler.obtainMessage(MESSAGE_SYNC_PLAY, finalCursor + 14, -1, bytes).sendToTarget());
                     break;
                 case SYNC_WAIT_VR_SELECTED:
-//                    mHandler.obtainMessage(MESSAGE_SYNC_WAIT_VR_SELECTED).sendToTarget();
-                    executor.execute(() -> mHandler.obtainMessage(MESSAGE_SYNC_WAIT_VR_SELECTED).sendToTarget());
+                    mHandler.obtainMessage(MESSAGE_SYNC_WAIT_VR_SELECTED).sendToTarget();
+//                    executor.execute(() -> mHandler.obtainMessage(MESSAGE_SYNC_WAIT_VR_SELECTED).sendToTarget());
                     break;
             }
 
