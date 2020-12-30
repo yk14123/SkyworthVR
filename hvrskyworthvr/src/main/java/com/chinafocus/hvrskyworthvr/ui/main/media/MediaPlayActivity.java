@@ -230,8 +230,8 @@ public class MediaPlayActivity extends AppCompatActivity implements ViewBindHelp
         BluetoothService.getInstance()
                 .sendMessage(
                         VrSyncPlayInfo.obtain().tag,
-                        VrSyncPlayInfo.obtain().videoId,
                         VrSyncPlayInfo.obtain().category,
+                        VrSyncPlayInfo.obtain().videoId,
                         VrSyncPlayInfo.obtain().seek
                 );
 

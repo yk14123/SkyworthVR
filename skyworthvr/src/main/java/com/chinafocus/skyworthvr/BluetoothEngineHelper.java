@@ -8,11 +8,13 @@ import android.content.Intent;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
+import android.util.Base64;
 import android.util.Log;
 
 import com.ssnwt.vr.androidmanager.AndroidInterface;
 import com.unity3d.player.UnityPlayer;
 
+import java.nio.charset.StandardCharsets;
 import java.util.Set;
 
 public class BluetoothEngineHelper {
@@ -50,9 +52,9 @@ public class BluetoothEngineHelper {
                 case Constants.MESSAGE_READ:
                     byte[] readBuf = (byte[]) msg.obj;
                     // construct a string from the valid bytes in the buffer
-                    String readMessage = new String(readBuf, 0, msg.arg1);
-                    Log.e(TAG, " readMessage :" + readMessage);
-                    UnityPlayer.UnitySendMessage(UNITY_NAME, "ReadData", readMessage);
+                    String s = new String(Base64.encode(readBuf, 0, msg.arg1, Base64.DEFAULT), StandardCharsets.US_ASCII);
+                    Log.e(TAG, " readMessage :" + s);
+                    UnityPlayer.UnitySendMessage(UNITY_NAME, "ReadData", s);
                     break;
                 case Constants.MESSAGE_DEVICE_NAME:
                     // save the connected device's name

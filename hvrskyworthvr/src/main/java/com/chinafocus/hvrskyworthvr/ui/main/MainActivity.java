@@ -101,13 +101,13 @@ public class MainActivity extends AppCompatActivity implements RadioGroup.OnChec
     @Subscribe()
     public void showVRMode(VrMainConnect event) {
         Log.e("MyLog", "MainActivity >>> VrMainConnect");
-
-        if (vrModeMainDialog == null) {
-            vrModeMainDialog = new VrModeMainDialog(this);
-        }
-        if (!vrModeMainDialog.isShowing()) {
-            vrModeMainDialog.show();
-        }
+        ivAboutBg.postDelayed(this::showVrModeMainDialog, 300);
+//        if (vrModeMainDialog == null) {
+//            vrModeMainDialog = new VrModeMainDialog(this);
+//        }
+//        if (!vrModeMainDialog.isShowing()) {
+//            vrModeMainDialog.show();
+//        }
         // TODO 1.给VR同步视频信息
 //        Intent intent = new Intent(this, SocketService.class);
 //        intent.putExtra(MEDIA_FROM_TAG, VrSyncPlayInfo.obtain().tag);
@@ -116,31 +116,39 @@ public class MainActivity extends AppCompatActivity implements RadioGroup.OnChec
 //        intent.putExtra(MEDIA_SEEK, VrSyncPlayInfo.obtain().seek);
 //        startService(intent);
 
-        BluetoothService.getInstance()
-                .sendMessage(
-                        VrSyncPlayInfo.obtain().tag,
-                        VrSyncPlayInfo.obtain().videoId,
-                        VrSyncPlayInfo.obtain().category,
-                        VrSyncPlayInfo.obtain().seek
-                );
+        ivAboutBg.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                BluetoothService.getInstance()
+                        .sendMessage(
+                                VrSyncPlayInfo.obtain().tag,
+                                VrSyncPlayInfo.obtain().category,
+                                VrSyncPlayInfo.obtain().videoId,
+                                VrSyncPlayInfo.obtain().seek
+                        );
 
-        if (VrSyncPlayInfo.obtain().videoId != -1) {
-            closeMainDialog();
-            startSyncMediaPlayActivity();
-        }
+                if (VrSyncPlayInfo.obtain().videoId != -1) {
+//            closeMainDialog();
+                    startSyncMediaPlayActivity();
+                }
+            }
+        }, 400);
+
     }
 
     @Subscribe(sticky = true)
     public void showVRModeSticky(VrMainStickyActiveDialog event) {
         Log.e("MyLog", "MainActivity >>> VrMainStickyActiveDialog");
+        ivAboutBg.postDelayed(this::showVrModeMainDialog, 300);
+    }
 
+    private void showVrModeMainDialog() {
         if (vrModeMainDialog == null) {
             vrModeMainDialog = new VrModeMainDialog(this);
         }
         if (!vrModeMainDialog.isShowing()) {
             vrModeMainDialog.show();
         }
-
     }
 
     private Disposable mDisposable;
@@ -189,7 +197,7 @@ public class MainActivity extends AppCompatActivity implements RadioGroup.OnChec
     @Subscribe(sticky = true)
     public void hideVRModeSticky(VrMainStickyInactiveDialog event) {
         Log.e("MyLog", " MainActivity VrMainStickyInactiveDialog");
-        ivAboutBg.postDelayed(this::closeMainDialog, 300);
+        ivAboutBg.postDelayed(this::closeMainDialog, 500);
         startTimeTask();
     }
 

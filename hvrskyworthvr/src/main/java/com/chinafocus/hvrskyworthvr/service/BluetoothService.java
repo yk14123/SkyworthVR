@@ -22,8 +22,6 @@ import com.chinafocus.lib_bluetooth.BluetoothEngineService;
 import org.greenrobot.eventbus.EventBus;
 
 import java.nio.ByteBuffer;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 
 import static com.chinafocus.lib_bluetooth.Constants.MESSAGE_DEVICE_NAME;
 import static com.chinafocus.lib_bluetooth.Constants.MESSAGE_STATE_CHANGE;
@@ -43,13 +41,13 @@ public class BluetoothService implements BluetoothEngineService.AsyncThreadReadB
     private static final int MESSAGE_SYNC_PLAY = 10003;
     private static final int MESSAGE_SYNC_WAIT_VR_SELECTED = 10004;
 
-    private final ExecutorService executor;
+//    private final ExecutorService executor;
 
     private final BluetoothEngineHelper bluetoothEngineHelper;
 
     private BluetoothService() {
         bluetoothEngineHelper = new BluetoothEngineHelper(mHandler, this);
-        executor = Executors.newCachedThreadPool();
+//        executor = Executors.newSingleThreadExecutor();
     }
 
     private static BluetoothService instance;
@@ -77,7 +75,7 @@ public class BluetoothService implements BluetoothEngineService.AsyncThreadReadB
         bluetoothEngineHelper.startBluetoothEngine(activity);
     }
 
-    public synchronized void sendMessage(int videoTag, int videoCategory, int videoId, long seek) {
+    public void sendMessage(int videoTag, int videoCategory, int videoId, long seek) {
 
         Log.e("MyLog", "发送给服务端的信息" +
                 " >>> video_tag : " + videoTag
@@ -85,23 +83,23 @@ public class BluetoothService implements BluetoothEngineService.AsyncThreadReadB
                 + " >>> video_id : " + videoId
                 + " >>> seek : " + seek);
 
-        executor.execute(() -> {
-            byte[] mediaInfoByte = new byte[34];
-            ByteBuffer.wrap(mediaInfoByte).putInt(30);
+//        executor.execute(() -> {
+        byte[] mediaInfoByte = new byte[34];
+        ByteBuffer.wrap(mediaInfoByte).putInt(30);
 
-            ByteBuffer.wrap(mediaInfoByte).putInt(4, 3);
-            ByteBuffer.wrap(mediaInfoByte).putInt(8, 3);
+        ByteBuffer.wrap(mediaInfoByte).putInt(4, 3);
+        ByteBuffer.wrap(mediaInfoByte).putInt(8, 3);
 
-            ByteBuffer.wrap(mediaInfoByte).putShort(12, (short) 20);
+        ByteBuffer.wrap(mediaInfoByte).putShort(12, (short) 20);
 
-            ByteBuffer.wrap(mediaInfoByte).putInt(14, videoTag);
-            ByteBuffer.wrap(mediaInfoByte).putInt(18, videoCategory);
-            ByteBuffer.wrap(mediaInfoByte).putInt(22, videoId);
-            ByteBuffer.wrap(mediaInfoByte).putLong(26, seek);
+        ByteBuffer.wrap(mediaInfoByte).putInt(14, videoTag);
+        ByteBuffer.wrap(mediaInfoByte).putInt(18, videoCategory);
+        ByteBuffer.wrap(mediaInfoByte).putInt(22, videoId);
+        ByteBuffer.wrap(mediaInfoByte).putLong(26, seek);
 
-            bluetoothEngineHelper.sendMessage(mediaInfoByte);
-
-        });
+        bluetoothEngineHelper.sendMessage(mediaInfoByte);
+//
+//        });
 
     }
 
