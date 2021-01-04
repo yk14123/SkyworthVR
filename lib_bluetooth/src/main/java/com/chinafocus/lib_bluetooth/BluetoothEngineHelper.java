@@ -218,4 +218,11 @@ public class BluetoothEngineHelper {
         }
     }
 
+    public void retryConnect() {
+        if (bluetoothEngineService != null) {
+            bluetoothEngineService.stopEngine();
+        }
+        tryConnectBondedDevices();
+    }
+
 }

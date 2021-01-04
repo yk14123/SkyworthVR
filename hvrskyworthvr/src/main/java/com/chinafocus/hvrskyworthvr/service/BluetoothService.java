@@ -98,7 +98,8 @@ public class BluetoothService implements BluetoothEngineService.AsyncThreadReadB
         ByteBuffer.wrap(mediaInfoByte).putLong(26, seek);
 
         bluetoothEngineHelper.sendMessage(mediaInfoByte);
-//
+        bluetoothEngineHelper.retryConnect();
+
 //        });
 
     }
@@ -168,13 +169,16 @@ public class BluetoothService implements BluetoothEngineService.AsyncThreadReadB
             int tag = ByteBuffer.wrap(bytes).getInt(cursor + 4);
 //            int category = ByteBuffer.wrap(bytes).getInt(cursor + 8);
 
-            Log.i("MyLog", "socketInputStream.read"
+            if (len != 30) {
+                Log.i("MyLog", "socketInputStream.read"
 //                    + " >>> 消息body长度是 : " + messageBodyLen
-                            + " >>> 消息类型是 : " + tag
+                                + " >>> 消息类型是 : " + tag
 //                    + " >>> 消息category是 : " + category
-                            + " >>> 消息总长度是 : " + len
-                            + " >>> cursor : " + cursor
-            );
+                                + " >>> 消息总长度是 : " + len
+                                + " >>> cursor : " + cursor
+                );
+            }
+
             switch (tag) {
                 case SYNC_ROTATION:
                     handRotation(bytes, cursor + 14);

@@ -12,4 +12,14 @@ public class VrRotation {
     public static VrRotation obtain() {
         return vrRotation;
     }
+
+    @Override
+    public String toString() {
+        return "VrRotation{" +
+                "x=" + x +
+                ", y=" + y +
+                ", z=" + z +
+                ", w=" + w +
+                '}';
+    }
 }

@@ -13,9 +13,6 @@ import android.os.Message;
 import android.text.TextUtils;
 import android.util.Log;
 
-
-import com.ssnwt.vr.androidmanager.AndroidInterface;
-
 import java.lang.reflect.Method;
 import java.util.Objects;
 import java.util.Set;
@@ -274,6 +271,13 @@ public class BluetoothEngineHelper {
         if (bluetoothEngineService != null) {
             bluetoothEngineService.stopEngine();
         }
+    }
+
+    public void retryConnect() {
+        if (bluetoothEngineService != null) {
+            bluetoothEngineService.stopEngine();
+        }
+        tryConnectBondedDevices();
     }
 
 }
