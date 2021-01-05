@@ -6,6 +6,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.RadioGroup;
 
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.AppCompatImageView;
 import androidx.fragment.app.Fragment;
@@ -18,8 +19,6 @@ import com.chinafocus.hvrskyworthvr.service.BluetoothService;
 import com.chinafocus.hvrskyworthvr.service.event.VrCancelTimeTask;
 import com.chinafocus.hvrskyworthvr.service.event.VrMainConnect;
 import com.chinafocus.hvrskyworthvr.service.event.VrMainDisConnect;
-import com.chinafocus.hvrskyworthvr.service.event.VrMainStickyActiveDialog;
-import com.chinafocus.hvrskyworthvr.service.event.VrMainStickyInactiveDialog;
 import com.chinafocus.hvrskyworthvr.service.event.VrMainSyncMediaInfo;
 import com.chinafocus.hvrskyworthvr.service.event.VrSyncPlayInfo;
 import com.chinafocus.hvrskyworthvr.ui.dialog.VrModeMainDialog;
@@ -42,6 +41,9 @@ import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.schedulers.Schedulers;
 
+import static com.chinafocus.hvrskyworthvr.global.Constants.REQUEST_CODE_VR_MEDIA_ACTIVITY;
+import static com.chinafocus.hvrskyworthvr.global.Constants.RESULT_CODE_ACTIVE_DIALOG;
+import static com.chinafocus.hvrskyworthvr.global.Constants.RESULT_CODE_INACTIVE_DIALOG;
 import static com.chinafocus.hvrskyworthvr.ui.main.media.MediaPlayActivity.MEDIA_CATEGORY_TAG;
 import static com.chinafocus.hvrskyworthvr.ui.main.media.MediaPlayActivity.MEDIA_FROM_TAG;
 import static com.chinafocus.hvrskyworthvr.ui.main.media.MediaPlayActivity.MEDIA_ID;
@@ -59,6 +61,8 @@ public class MainActivity extends AppCompatActivity implements RadioGroup.OnChec
     private Fragment mVideoFragment;
     private Fragment mAboutFragment;
     private AppCompatImageView ivAboutBg;
+
+    private Disposable mDisposable;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -93,53 +97,74 @@ public class MainActivity extends AppCompatActivity implements RadioGroup.OnChec
     protected void onResume() {
         super.onResume();
         Constants.ACTIVITY_TAG = Constants.ACTIVITY_MAIN;
-
     }
 
     private VrModeMainDialog vrModeMainDialog;
 
+    /**
+     * 在首页戴上VR眼镜
+     *
+     * @param event 戴上VR眼镜事件
+     */
     @Subscribe()
-    public void showVRMode(VrMainConnect event) {
-        Log.e("MyLog", "MainActivity >>> VrMainConnect");
-        ivAboutBg.postDelayed(this::showVrModeMainDialog, 300);
-//        if (vrModeMainDialog == null) {
-//            vrModeMainDialog = new VrModeMainDialog(this);
-//        }
-//        if (!vrModeMainDialog.isShowing()) {
-//            vrModeMainDialog.show();
-//        }
-        // TODO 1.给VR同步视频信息
-//        Intent intent = new Intent(this, SocketService.class);
-//        intent.putExtra(MEDIA_FROM_TAG, VrSyncPlayInfo.obtain().tag);
-//        intent.putExtra(MEDIA_ID, VrSyncPlayInfo.obtain().videoId);
-//        intent.putExtra(MEDIA_CATEGORY_TAG, VrSyncPlayInfo.obtain().category);
-//        intent.putExtra(MEDIA_SEEK, VrSyncPlayInfo.obtain().seek);
-//        startService(intent);
+    @SuppressWarnings("unused")
+    public void connectToVR(VrMainConnect event) {
+        Log.d("MyLog", "-----在首页戴上VR眼镜-----");
+        ivAboutBg.post(() -> {
+            // 1.关闭定时器
+            closeTimer(null);
+            // 2.展示控制画面
+            showVrModeMainDialog();
+            // 3.给VR同步视频信息，如果当前video==-1的话，VR端需要切换到列表页面
+            BluetoothService.getInstance()
+                    .sendMessage(
+                            VrSyncPlayInfo.obtain().getTag(),
+                            VrSyncPlayInfo.obtain().getCategory(),
+                            VrSyncPlayInfo.obtain().getVideoId(),
+                            VrSyncPlayInfo.obtain().getSeekTime()
+                    );
 
-        ivAboutBg.postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                BluetoothService.getInstance()
-                        .sendMessage(
-                                VrSyncPlayInfo.obtain().tag,
-                                VrSyncPlayInfo.obtain().category,
-                                VrSyncPlayInfo.obtain().videoId,
-                                VrSyncPlayInfo.obtain().seek
-                        );
-
-                if (VrSyncPlayInfo.obtain().videoId != -1) {
-//            closeMainDialog();
-                    startSyncMediaPlayActivity();
-                }
+            if (VrSyncPlayInfo.obtain().getVideoId() != -1) {
+                startSyncMediaPlayActivity();
             }
-        }, 400);
+        });
 
     }
 
-    @Subscribe(sticky = true)
-    public void showVRModeSticky(VrMainStickyActiveDialog event) {
-        Log.e("MyLog", "MainActivity >>> VrMainStickyActiveDialog");
-        ivAboutBg.postDelayed(this::showVrModeMainDialog, 300);
+    /**
+     * 在首页取下VR眼镜
+     *
+     * @param event 取下VR眼镜事件
+     */
+    @Subscribe()
+    @SuppressWarnings("unused")
+    public void disConnectFromVR(VrMainDisConnect event) {
+        Log.d("MyLog", "-----在首页取下VR眼镜-----");
+        closeMainDialog();
+        startTimeTask();
+    }
+
+    /**
+     * 戴上VR后，VR选择了一个影片
+     *
+     * @param vrMainSyncMediaInfo VR选择影片事件
+     */
+    @Subscribe()
+    @SuppressWarnings("unused")
+    public void goToMediaPlayActivityAndActiveVRPlayerStatus(VrMainSyncMediaInfo vrMainSyncMediaInfo) {
+        Log.d("MyLog", "-----VR选择了一个影片,Pad需要从首页跳转播放-----");
+        closeTimer(null);
+        startSyncMediaPlayActivity();
+    }
+
+    private void startSyncMediaPlayActivity() {
+        Intent intent = new Intent(this, MediaPlayActivity.class);
+        intent.putExtra(MEDIA_FROM_TAG, VrSyncPlayInfo.obtain().getTag());
+        intent.putExtra(MEDIA_CATEGORY_TAG, VrSyncPlayInfo.obtain().getCategory());
+        intent.putExtra(MEDIA_ID, VrSyncPlayInfo.obtain().getVideoId());
+        intent.putExtra(MEDIA_SEEK, VrSyncPlayInfo.obtain().getSeekTime());
+        intent.putExtra(MEDIA_LINK_VR, true);
+        startActivityForResult(intent, REQUEST_CODE_VR_MEDIA_ACTIVITY);
     }
 
     private void showVrModeMainDialog() {
@@ -151,8 +176,6 @@ public class MainActivity extends AppCompatActivity implements RadioGroup.OnChec
         }
     }
 
-    private Disposable mDisposable;
-
     /**
      * 5分钟之后，视频重新选择
      */
@@ -163,14 +186,14 @@ public class MainActivity extends AppCompatActivity implements RadioGroup.OnChec
                 .subscribe(new Observer<Long>() {
                     @Override
                     public void onSubscribe(Disposable d) {
+                        closeTimer(null);
+                        Log.d("MyLog", "-----开启5分钟定时器-----");
                         mDisposable = d;
                     }
 
                     @Override
                     public void onNext(Long value) {
-                        //Log.d("Timer",""+value);
-                        VrSyncPlayInfo.obtain().videoId = -1;
-                        VrSyncPlayInfo.obtain().seek = 0L;
+                        VrSyncPlayInfo.obtain().restoreVideoInfo();
                     }
 
                     @Override
@@ -188,70 +211,56 @@ public class MainActivity extends AppCompatActivity implements RadioGroup.OnChec
      * 关闭定时器
      */
     @Subscribe()
+    @SuppressWarnings("unused")
     public void closeTimer(VrCancelTimeTask vrCancelTimeTask) {
-        if (mDisposable != null) {
+        if (mDisposable != null && !mDisposable.isDisposed()) {
+            Log.d("MyLog", "-----关闭5分钟定时器-----");
             mDisposable.dispose();
         }
     }
 
-    @Subscribe(sticky = true)
-    public void hideVRModeSticky(VrMainStickyInactiveDialog event) {
-        Log.e("MyLog", " MainActivity VrMainStickyInactiveDialog");
-        ivAboutBg.postDelayed(this::closeMainDialog, 500);
-        startTimeTask();
-    }
-
-    @Subscribe()
-    public void hideVRMode(VrMainDisConnect event) {
-        closeMainDialog();
-        startTimeTask();
-    }
 
     private void closeMainDialog() {
-        Log.e("MyLog", "MainActivity closeMainDialog before");
-        if (vrModeMainDialog != null) {
-            Log.e("MyLog", "MainActivity closeMainDialog doing");
+        Log.d("MyLog", "-----关闭MainActivity的控制dialog-----");
+        if (vrModeMainDialog != null && vrModeMainDialog.isShowing()) {
             vrModeMainDialog.dismiss();
         }
     }
 
-    @Subscribe()
-    public void goToMediaPlayActivityAndActiveVRPlayerStatus(VrMainSyncMediaInfo vrMainSyncMediaInfo) {
-        closeMainDialog();
-        startSyncMediaPlayActivity();
-    }
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
 
-    private void startSyncMediaPlayActivity() {
-        Intent intent = new Intent(this, MediaPlayActivity.class);
-        intent.putExtra(MEDIA_FROM_TAG, VrSyncPlayInfo.obtain().tag);
-        intent.putExtra(MEDIA_CATEGORY_TAG, VrSyncPlayInfo.obtain().category);
-        intent.putExtra(MEDIA_ID, VrSyncPlayInfo.obtain().videoId);
-        intent.putExtra(MEDIA_SEEK, VrSyncPlayInfo.obtain().seek);
-        intent.putExtra(MEDIA_LINK_VR, true);
-        startActivity(intent);
-    }
+        if (resultCode == RESULT_CODE_INACTIVE_DIALOG) {
+            closeMainDialog();
+            startTimeTask();
+        } else if (resultCode == RESULT_CODE_ACTIVE_DIALOG) {
+            showVrModeMainDialog();
+            closeTimer(null);
+        }
 
+        super.onActivityResult(requestCode, resultCode, data);
+    }
 
     @Override
     public void onCheckedChanged(RadioGroup group, int checkedId) {
+        closeTimer(null);
+        VrSyncPlayInfo.obtain().restoreVideoInfo();
+
         if (checkedId == R.id.rb_main_publish) {//出版
             switchFragment(mPublishFragment);
             switchBackgroundDrawable(R.id.iv_main_publish_bg);
             setAboutBgShow(false);
-            VrSyncPlayInfo.obtain().tag = 1;
-            VrSyncPlayInfo.obtain().videoId = -1;
+            VrSyncPlayInfo.obtain().setTag(1);
         } else if (checkedId == R.id.rb_main_video) { //视频
             switchFragment(mVideoFragment);
             switchBackgroundDrawable(R.id.iv_main_video_bg);
             setAboutBgShow(false);
-            VrSyncPlayInfo.obtain().tag = 2;
-            VrSyncPlayInfo.obtain().videoId = -1;
+            VrSyncPlayInfo.obtain().setTag(2);
         } else if (checkedId == R.id.rb_main_about) {//我的
             switchFragment(mAboutFragment);
             switchBackgroundDrawable(R.id.iv_main_about_bg);
             setAboutBgShow(true);
-            VrSyncPlayInfo.obtain().tag = 1;
-            VrSyncPlayInfo.obtain().videoId = -1;
+            VrSyncPlayInfo.obtain().setTag(1);
         }
     }
 

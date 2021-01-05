@@ -21,8 +21,6 @@ import com.chinafocus.hvrskyworthvr.exo.ui.spherical.SphericalGLSurfaceView;
 import com.chinafocus.hvrskyworthvr.global.Constants;
 import com.chinafocus.hvrskyworthvr.model.bean.VideoDetail;
 import com.chinafocus.hvrskyworthvr.service.BluetoothService;
-import com.chinafocus.hvrskyworthvr.service.event.VrMainStickyActiveDialog;
-import com.chinafocus.hvrskyworthvr.service.event.VrMainStickyInactiveDialog;
 import com.chinafocus.hvrskyworthvr.service.event.VrMediaConnect;
 import com.chinafocus.hvrskyworthvr.service.event.VrMediaDisConnect;
 import com.chinafocus.hvrskyworthvr.service.event.VrMediaSyncMediaInfo;
@@ -38,7 +36,12 @@ import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
+
+import static com.chinafocus.hvrskyworthvr.global.Constants.RESULT_CODE_ACTIVE_DIALOG;
+import static com.chinafocus.hvrskyworthvr.global.Constants.RESULT_CODE_INACTIVE_DIALOG;
+import static com.google.android.exoplayer2.Player.STATE_ENDED;
 
 public class MediaPlayActivity extends AppCompatActivity implements ViewBindHelper.PlayVideoListener {
 
@@ -101,6 +104,10 @@ public class MediaPlayActivity extends AppCompatActivity implements ViewBindHelp
                                 .collect(Collectors.toList());
             }
 
+            if (filesBeanList == null) {
+                return;
+            }
+
             String format = "";
             String videoUrl = "";
             String subtitle = "";
@@ -128,14 +135,11 @@ public class MediaPlayActivity extends AppCompatActivity implements ViewBindHelp
                 mExoMediaHelper.getPlayer().addListener(new Player.EventListener() {
                     @Override
                     public void onPlaybackStateChanged(int state) {
-                        if (linkingVr && state == 4) {
+                        if (linkingVr && state == STATE_ENDED) {
                             // 3. Pad 位于播放结束界面时，如果此时 VR 被激活则 VR 端直接进入一级视频列表界面，Pad 回到视频列表界面的「不可选片状态」
                             // 不用接受命令。
                             // 当链接状态，播放结束后
-                            closeAllDialog();
-                            VrSyncPlayInfo.obtain().seek = 0L;
-                            EventBus.getDefault().postSticky(VrMainStickyActiveDialog.obtain());
-                            finish();
+                            waitSelectedFromVR(null);
                         }
                     }
                 });
@@ -143,7 +147,7 @@ public class MediaPlayActivity extends AppCompatActivity implements ViewBindHelp
                 if (linkingVr) {
                     mExoMediaHelper.getPlayer().setVolume(0f);
                     mLandPlayerView.showController();
-                    ((SphericalGLSurfaceView) mLandPlayerView.getVideoSurfaceView()).syncTouchVR();
+                    ((SphericalGLSurfaceView) Objects.requireNonNull(mLandPlayerView.getVideoSurfaceView())).syncTouchVR();
                 }
 
                 mLandPlayerView.setVideoTitle(videoDetail.getTitle());
@@ -167,15 +171,16 @@ public class MediaPlayActivity extends AppCompatActivity implements ViewBindHelp
         video_tag = intent.getIntExtra(MEDIA_FROM_TAG, -1);
         category = intent.getIntExtra(MEDIA_CATEGORY_TAG, -1);
         video_id = intent.getIntExtra(MEDIA_ID, -1);
-        seek = intent.getLongExtra(MEDIA_SEEK, 0);
+        seek = intent.getLongExtra(MEDIA_SEEK, 0L);
         linkingVr = intent.getBooleanExtra(MEDIA_LINK_VR, false);
 
-        Log.e("MyLog", " MediaPlayActivity handleIntent >>> video_tag : " + video_tag + " >>> video_id : " + video_id);
-
-        VrSyncPlayInfo.obtain().tag = video_tag;
-        VrSyncPlayInfo.obtain().category = category;
-        VrSyncPlayInfo.obtain().videoId = video_id;
-        VrSyncPlayInfo.obtain().seek = seek;
+        Log.d("MyLog", " MediaPlayActivity Intent"
+                + " >>> video_tag : " + video_tag
+                + " >>> category : " + category
+                + " >>> video_id : " + video_id
+                + " >>> seek : " + seek
+                + " >>> linkingVr : " + linkingVr);
+        VrSyncPlayInfo.obtain().saveAllState(video_tag, category, video_id, seek);
     }
 
     private void initView(Bundle savedInstanceState) {
@@ -186,7 +191,7 @@ public class MediaPlayActivity extends AppCompatActivity implements ViewBindHelp
                 , BarUtils.getStatusBarHeight()
                 , BarUtils.getStatusBarHeight());
 
-        ((SphericalGLSurfaceView) mLandPlayerView.getVideoSurfaceView()).resetScale();
+        ((SphericalGLSurfaceView) Objects.requireNonNull(mLandPlayerView.getVideoSurfaceView())).resetScale();
 
         mExoMediaHelper = new ExoMediaHelper(this, mLandPlayerView);
         mExoMediaHelper.restoreSavedInstanceState(savedInstanceState);
@@ -204,84 +209,121 @@ public class MediaPlayActivity extends AppCompatActivity implements ViewBindHelp
         Constants.ACTIVITY_TAG = Constants.ACTIVITY_MEDIA;
     }
 
+    /**
+     * 在播放页面的时候，戴上VR眼镜
+     * 把Pad的播放信息，同步给VR
+     *
+     * @param event VR链接事件
+     */
     @Subscribe()
-    public void toUnityMediaInfoAndActiveVRPlayerStatus(VrMediaConnect event) {
-        Log.e("MyLog", "MediaPlay toUnityMediaInfoAndActiveVRPlayerStatus");
+    @SuppressWarnings("unused")
+    public void syncMediaInfoToVRConnect(VrMediaConnect event) {
+        Log.d("MyLog", "-----当前在播放页面的时候，戴上VR眼镜-----");
+        // 1.关闭当前dialog
         closeAllDialog();
 
         // 2.切换不可操作播放状态
         mLandPlayerView.showController();
         mLandPlayerView.syncSkyWorthMediaStatus(true);
-        ((SphericalGLSurfaceView) mLandPlayerView.getVideoSurfaceView()).syncTouchVR();
+        ((SphericalGLSurfaceView) Objects.requireNonNull(mLandPlayerView.getVideoSurfaceView())).syncTouchVR();
 
         linkingVr = true;
 
-        // TODO 1.给VR同步视频信息
-//        Intent intent = new Intent(this, SocketService.class);
-//        intent.putExtra(MEDIA_FROM_TAG, VrSyncPlayInfo.obtain().tag);
-//        intent.putExtra(MEDIA_CATEGORY_TAG, VrSyncPlayInfo.obtain().category);
-//        intent.putExtra(MEDIA_ID, VrSyncPlayInfo.obtain().videoId);
-//        long currentPosition = mExoMediaHelper.getPlayer().getCurrentPosition();
-//        VrSyncPlayInfo.obtain().seek = currentPosition;
-//        intent.putExtra(MEDIA_SEEK, currentPosition);
-//        startService(intent);
-
-        VrSyncPlayInfo.obtain().seek = mExoMediaHelper.getPlayer().getCurrentPosition();
+        // 3.给VR同步视频信息
+        VrSyncPlayInfo.obtain().setSeekTime(mExoMediaHelper.getPlayer().getCurrentPosition());
         BluetoothService.getInstance()
                 .sendMessage(
-                        VrSyncPlayInfo.obtain().tag,
-                        VrSyncPlayInfo.obtain().category,
-                        VrSyncPlayInfo.obtain().videoId,
-                        VrSyncPlayInfo.obtain().seek
+                        VrSyncPlayInfo.obtain().getTag(),
+                        VrSyncPlayInfo.obtain().getCategory(),
+                        VrSyncPlayInfo.obtain().getVideoId(),
+                        VrSyncPlayInfo.obtain().getSeekTime()
                 );
 
-
+        // 4.pad端静音
         mExoMediaHelper.getPlayer().setVolume(0f);
     }
 
+    /**
+     * VR同步后，VR摘下眼镜
+     * 回到首页面
+     *
+     * @param event VR断开事件
+     */
     @Subscribe()
-    public void goActivityAndActiveDialog(VrMediaWaitSelected vrMediaWaitSelected) {
-        Log.e("MyLog", "MediaPlay goActivityAndActiveDialog");
+    @SuppressWarnings("unused")
+    public void disConnectFromVR(VrMediaDisConnect event) {
+        // 1.关闭当前dialog
         closeAllDialog();
-        VrSyncPlayInfo.obtain().seek = 0L;
-        EventBus.getDefault().postSticky(VrMainStickyActiveDialog.obtain());
-        finish();
-    }
-
-    @Subscribe()
-    public void goBackMainActivityAndInactiveMainDialog(VrMediaDisConnect event) {
-        closeAllDialog();
-        Log.e("MyLog", "MediaPlay VrMediaDisConnect");
+        Log.d("MyLog", "-----当前在播放页面的时候，取下VR眼镜-----");
         linkingVr = false;
-        VrSyncPlayInfo.obtain().seek = mExoMediaHelper.getPlayer().getCurrentPosition();
-        EventBus.getDefault().postSticky(VrMainStickyInactiveDialog.obtain());
+        // 2.保存当前页面播放时长
+        VrSyncPlayInfo.obtain().setSeekTime(mExoMediaHelper.getPlayer().getCurrentPosition());
+        setResult(RESULT_CODE_INACTIVE_DIALOG);
         finish();
+        // 3.立即切换当前Activity为Main
+        Constants.ACTIVITY_TAG = Constants.ACTIVITY_MAIN;
     }
 
+    /**
+     * VR端回到了列表页面，正在选择菜单
+     * Pad端需要回到MainActivity，并进行等待
+     *
+     * @param vrMediaWaitSelected 等待VR选片
+     */
     @Subscribe()
-    public void loadNextSyncMedia(VrMediaSyncMediaInfo vrMediaSyncMediaInfo) {
+    public void waitSelectedFromVR(VrMediaWaitSelected vrMediaWaitSelected) {
+        if (vrMediaWaitSelected == null) {
+            Log.d("MyLog", "-----VR端还在播放，Pad端提前播放完了-----");
+        } else {
+            Log.d("MyLog", "-----VR端回到了列表页面，正在选择菜单-----");
+        }
+        // 1.关闭当前dialog
         closeAllDialog();
-        String tag = "";
-        if (VrSyncPlayInfo.obtain().tag == 1) {
-            tag = "publish";
-        } else if (VrSyncPlayInfo.obtain().tag == 2) {
-            tag = "video";
+        // 2.恢复视频保存信息
+        VrSyncPlayInfo.obtain().restoreVideoInfo();
+        setResult(RESULT_CODE_ACTIVE_DIALOG);
+        finish();
+        // 3.立即切换当前Activity为Main
+        Constants.ACTIVITY_TAG = Constants.ACTIVITY_MAIN;
+    }
+
+    /**
+     * 戴上VR眼镜后，在VR眼镜内部切换影片!
+     * Pad端需要同步展示
+     *
+     * @param vrMediaSyncMediaInfo VR切换影片
+     */
+    @Subscribe()
+    @SuppressWarnings("unused")
+    public void loadNextSyncMediaFromVR(VrMediaSyncMediaInfo vrMediaSyncMediaInfo) {
+        Log.d("MyLog", "-----VR端加载了新的影片 >>> "
+                + VrSyncPlayInfo.obtain());
+
+        // 1.关闭当前dialog
+        closeAllDialog();
+
+        String temp = "";
+        video_tag = VrSyncPlayInfo.obtain().getTag();
+        if (video_tag == 1) {
+            temp = "publish";
+        } else if (video_tag == 2) {
+            temp = "video";
         }
 
-        Log.e("MyLog", " loadNextSyncMedia getVideoDetailData "
-                + " >>> tag : " + tag
-                + " >>> video_id : " + VrSyncPlayInfo.obtain().videoId
-                + " >>> linkingVr : " + linkingVr);
-
-        video_tag = VrSyncPlayInfo.obtain().tag;
-
-        mediaViewModel.getVideoDetailData(tag, VrSyncPlayInfo.obtain().videoId);
+        // 2.加载视频
+        mediaViewModel.getVideoDetailData(temp, VrSyncPlayInfo.obtain().getVideoId());
     }
 
+    /**
+     * 同步VR端旋转角度！
+     *
+     * @param vrRotation 同步角度
+     */
     @Subscribe()
-    public void syncRotation(VrRotation vrRotation) {
-//        if (mLandPlayerView != null && linkingVr) {
-        if (mLandPlayerView != null) {
+    @SuppressWarnings("unused")
+    public void syncRotationFromVR(VrRotation vrRotation) {
+        if (mLandPlayerView != null && linkingVr) {
+//        if (mLandPlayerView != null) {
             SphericalGLSurfaceView surfaceView = (SphericalGLSurfaceView) mLandPlayerView.getVideoSurfaceView();
             if (surfaceView != null) {
                 // 同步四元数

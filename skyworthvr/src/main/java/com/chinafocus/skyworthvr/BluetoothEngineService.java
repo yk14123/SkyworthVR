@@ -434,6 +434,8 @@ public class BluetoothEngineService {
         private final InputStream mmInStream;
         private final OutputStream mmOutStream;
 
+        byte[] temp = new byte[1024];
+
         public ConnectedThread(BluetoothSocket socket) {
             Log.d(TAG, "------蓝牙引擎>>> [Socket] >>> 传输通道create ConnectedThread:----------");
             mmSocket = socket;
@@ -464,8 +466,9 @@ public class BluetoothEngineService {
                     // Read from the InputStream
                     bytes = mmInStream.read(buffer);
 
+                    System.arraycopy(buffer, 0, temp, 0, bytes);
                     // Send the obtained bytes to the UI Activity
-                    mHandler.obtainMessage(Constants.MESSAGE_READ, bytes, -1, buffer)
+                    mHandler.obtainMessage(Constants.MESSAGE_READ, bytes, -1, temp)
                             .sendToTarget();
                 } catch (IOException e) {
                     Log.e(TAG, "------蓝牙引擎>>> [Socket] >>> InputStream read disconnected----------", e);
@@ -483,7 +486,6 @@ public class BluetoothEngineService {
         public void write(byte[] buffer) {
             try {
                 mmOutStream.write(buffer);
-                mmOutStream.flush();
 
                 // Share the sent message back to the UI Activity
 //                mHandler.obtainMessage(Constants.MESSAGE_WRITE, -1, -1, buffer)

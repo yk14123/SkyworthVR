@@ -217,4 +217,11 @@ public class BluetoothEngineHelper {
         }
         AndroidInterface.getInstance().getBluetoothUtils().pause();
     }
+
+    public void retryConnect() {
+        if (bluetoothEngineService != null) {
+            bluetoothEngineService.stopEngine();
+        }
+        tryConnectBondedDevices();
+    }
 }

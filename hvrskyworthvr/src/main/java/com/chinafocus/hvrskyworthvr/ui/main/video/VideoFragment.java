@@ -1,20 +1,18 @@
 package com.chinafocus.hvrskyworthvr.ui.main.video;
 
-import androidx.lifecycle.ViewModelProvider;
-
 import android.content.Context;
 import android.os.Bundle;
-
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.fragment.app.Fragment;
-import androidx.recyclerview.widget.RecyclerView;
-import androidx.viewpager2.widget.ViewPager2;
-
 import android.os.Looper;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.fragment.app.Fragment;
+import androidx.lifecycle.ViewModelProvider;
+import androidx.recyclerview.widget.RecyclerView;
+import androidx.viewpager2.widget.ViewPager2;
 
 import com.chinafocus.hvrskyworthvr.R;
 import com.chinafocus.hvrskyworthvr.model.bean.VideoCategory;
@@ -128,22 +126,23 @@ public class VideoFragment extends Fragment {
             viewPagerVideoList.setAdapter(adapter);
             setViewPager2ScrollTouchSlop(viewPagerVideoList, 150);
 
-            VrSyncPlayInfo.obtain().category = videoCategories.get(0).getCid();
+            VrSyncPlayInfo.obtain().setCategory(videoCategories.get(0).getCid());
 //            ViewPager2Helper.bind(magicIndicator, viewPagerVideoList);
             viewPagerVideoList.registerOnPageChangeCallback(new ViewPager2.OnPageChangeCallback() {
                 @Override
                 public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
                     super.onPageScrolled(position, positionOffset, positionOffsetPixels);
                     magicIndicator.onPageScrolled(position, positionOffset, positionOffsetPixels);
-                    VrSyncPlayInfo.obtain().videoId = -1;
+                    VrSyncPlayInfo.obtain().restoreVideoInfo();
                 }
 
                 @Override
                 public void onPageSelected(int position) {
                     super.onPageSelected(position);
                     magicIndicator.onPageSelected(position);
-                    VrSyncPlayInfo.obtain().category = videoCategories.get(position).getCid();
-                    VrSyncPlayInfo.obtain().videoId = -1;
+
+                    VrSyncPlayInfo.obtain().setCategory(videoCategories.get(position).getCid());
+                    VrSyncPlayInfo.obtain().restoreVideoInfo();
                 }
 
                 @Override

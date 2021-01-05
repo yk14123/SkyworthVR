@@ -40,4 +40,8 @@ public class Demo extends AppCompatActivity {
         bluetoothEngineHelper.unBondDevice();
     }
 
+    public void retryBluetoothConnect() {
+        bluetoothEngineHelper.retryConnect();
+    }
+
 }

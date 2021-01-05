@@ -1,5 +1,6 @@
 package com.chinafocus.hvrskyworthvr.ui.adapter;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -24,6 +25,7 @@ import java.util.List;
 
 import jp.wasabeef.glide.transformations.ColorFilterTransformation;
 
+import static com.chinafocus.hvrskyworthvr.global.Constants.REQUEST_CODE_PAD_MEDIA_ACTIVITY;
 import static com.chinafocus.hvrskyworthvr.ui.main.media.MediaPlayActivity.MEDIA_FROM_TAG;
 import static com.chinafocus.hvrskyworthvr.ui.main.media.MediaPlayActivity.MEDIA_ID;
 
@@ -44,7 +46,7 @@ public class BannerViewAdapter extends RecyclerView.Adapter<BaseViewHolder> {
         BaseViewHolder baseViewHolder = new BaseViewHolder(inflate);
         baseViewHolder.itemView.setOnClickListener(v -> {
 
-            VrSyncPlayInfo.obtain().seek = 0L;
+            VrSyncPlayInfo.obtain().clearVideoTime();
             EventBus.getDefault().post(VrCancelTimeTask.obtain());
 
             int adapterPosition = baseViewHolder.getAdapterPosition() % mBannerLists.size();
@@ -54,7 +56,7 @@ public class BannerViewAdapter extends RecyclerView.Adapter<BaseViewHolder> {
             Intent intent = new Intent(parent.getContext(), MediaPlayActivity.class);
             intent.putExtra(MEDIA_ID, id);
             intent.putExtra(MEDIA_FROM_TAG, type.equals("video") ? 2 : 1);
-            parent.getContext().startActivity(intent);
+            ((Activity) parent.getContext()).startActivityForResult(intent, REQUEST_CODE_PAD_MEDIA_ACTIVITY);
         });
         return baseViewHolder;
     }

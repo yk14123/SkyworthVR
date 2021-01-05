@@ -6,10 +6,12 @@ import android.util.Log;
 import com.chinafocus.hvrskyworthvr.exo.ui.IControlViewInterAction;
 import com.chinafocus.hvrskyworthvr.exo.ui.PlayerView;
 import com.chinafocus.hvrskyworthvr.exo.ui.spherical.SphericalGLSurfaceView;
+import com.chinafocus.hvrskyworthvr.global.Constants;
 import com.chinafocus.hvrskyworthvr.ui.main.media.MediaPlayActivity;
 import com.google.android.exoplayer2.text.CaptionStyleCompat;
 
 import static android.util.TypedValue.COMPLEX_UNIT_SP;
+import static com.chinafocus.hvrskyworthvr.global.Constants.RESULT_CODE_INACTIVE_DIALOG;
 import static com.google.android.exoplayer2.text.CaptionStyleCompat.EDGE_TYPE_NONE;
 
 public class ViewBindHelper {
@@ -40,7 +42,10 @@ public class ViewBindHelper {
 
             @Override
             public void onGoBackActivity() {
+                ((MediaPlayActivity) mLandscapePlayerView.getContext()).setResult(RESULT_CODE_INACTIVE_DIALOG);
                 ((MediaPlayActivity) mLandscapePlayerView.getContext()).finish();
+                // 3.立即切换当前Activity为Main
+                Constants.ACTIVITY_TAG = Constants.ACTIVITY_MAIN;
             }
 
             @Override
