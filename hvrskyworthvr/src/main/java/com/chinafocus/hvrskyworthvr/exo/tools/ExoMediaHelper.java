@@ -296,6 +296,8 @@ public class ExoMediaHelper {
 
         if (!TextUtils.isEmpty(subTitle)) {
 
+            Log.d("MyLog", "视频字幕地址是 >>>" + subTitle);
+
             MediaItem.Subtitle subtitle =
                     new MediaItem.Subtitle(Uri.parse(subTitle), MimeTypes.TEXT_SSA, null, C.SELECTION_FLAG_DEFAULT);
 

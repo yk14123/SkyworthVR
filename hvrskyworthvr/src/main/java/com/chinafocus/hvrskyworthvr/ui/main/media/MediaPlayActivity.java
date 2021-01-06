@@ -140,6 +140,9 @@ public class MediaPlayActivity extends AppCompatActivity implements ViewBindHelp
                             // 不用接受命令。
                             // 当链接状态，播放结束后
                             waitSelectedFromVR(null);
+                        } else if (!linkingVr && state == STATE_ENDED) {
+                            VrSyncPlayInfo.obtain().restoreVideoInfo();
+                            Log.e("MyLog", "当前播放完了:" + VrSyncPlayInfo.obtain());
                         }
                     }
                 });
@@ -174,7 +177,7 @@ public class MediaPlayActivity extends AppCompatActivity implements ViewBindHelp
         seek = intent.getLongExtra(MEDIA_SEEK, 0L);
         linkingVr = intent.getBooleanExtra(MEDIA_LINK_VR, false);
 
-        Log.d("MyLog", " MediaPlayActivity Intent"
+        Log.d("MyLog", "------当前播放页面的初始状态Intent"
                 + " >>> video_tag : " + video_tag
                 + " >>> category : " + category
                 + " >>> video_id : " + video_id
@@ -229,8 +232,21 @@ public class MediaPlayActivity extends AppCompatActivity implements ViewBindHelp
 
         linkingVr = true;
 
+        long duration = mExoMediaHelper.getPlayer().getDuration();
+        long currentPosition = mExoMediaHelper.getPlayer().getCurrentPosition();
+
+        Log.e("MyLog", "duration >>> " + duration + " >>> currentPosition >>> " + currentPosition);
+
+        if (currentPosition < duration) {
+            VrSyncPlayInfo.obtain().setSeekTime(currentPosition);
+            // 4.pad端静音
+            mExoMediaHelper.getPlayer().setVolume(0f);
+        } else {
+            setResult(RESULT_CODE_ACTIVE_DIALOG);
+            finish();
+        }
+
         // 3.给VR同步视频信息
-        VrSyncPlayInfo.obtain().setSeekTime(mExoMediaHelper.getPlayer().getCurrentPosition());
         BluetoothService.getInstance()
                 .sendMessage(
                         VrSyncPlayInfo.obtain().getTag(),
@@ -239,8 +255,6 @@ public class MediaPlayActivity extends AppCompatActivity implements ViewBindHelp
                         VrSyncPlayInfo.obtain().getSeekTime()
                 );
 
-        // 4.pad端静音
-        mExoMediaHelper.getPlayer().setVolume(0f);
     }
 
     /**

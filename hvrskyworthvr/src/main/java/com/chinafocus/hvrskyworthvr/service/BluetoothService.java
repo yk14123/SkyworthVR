@@ -81,7 +81,7 @@ public class BluetoothService implements BluetoothEngineService.AsyncThreadReadB
 
     public void sendMessage(int videoTag, int videoCategory, int videoId, long seek) {
 
-        Log.e("MyLog", "发送给服务端的信息" +
+        Log.e("MyLog", "-----发送给VR端的信息" +
                 " >>> video_tag : " + videoTag
                 + " >>> video_category : " + videoCategory
                 + " >>> video_id : " + videoId
@@ -248,7 +248,7 @@ public class BluetoothService implements BluetoothEngineService.AsyncThreadReadB
 
         obtain.saveAllState(tag, category, id, seek);
 
-        Log.e("MyLog", "收到服务端的Media信息 obtain >> " + obtain);
+        Log.e("MyLog", "-----收到VR端同步过来的Media信息 obtain >> " + obtain);
 
         if (Constants.ACTIVITY_TAG == Constants.ACTIVITY_MAIN) {
             EventBus.getDefault().post(VrMainSyncMediaInfo.obtain());

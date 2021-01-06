@@ -24,8 +24,10 @@ import org.greenrobot.eventbus.EventBus;
 import java.util.List;
 
 import static com.chinafocus.hvrskyworthvr.global.Constants.REQUEST_CODE_PAD_MEDIA_ACTIVITY;
+import static com.chinafocus.hvrskyworthvr.ui.main.media.MediaPlayActivity.MEDIA_CATEGORY_TAG;
 import static com.chinafocus.hvrskyworthvr.ui.main.media.MediaPlayActivity.MEDIA_FROM_TAG;
 import static com.chinafocus.hvrskyworthvr.ui.main.media.MediaPlayActivity.MEDIA_ID;
+import static com.chinafocus.hvrskyworthvr.ui.main.video.VideoFragment.CURRENT_CATEGORY;
 
 public class VideoListAdapter extends RecyclerView.Adapter<BaseViewHolder> {
 
@@ -52,6 +54,7 @@ public class VideoListAdapter extends RecyclerView.Adapter<BaseViewHolder> {
             Intent intent = new Intent(parent.getContext(), MediaPlayActivity.class);
             intent.putExtra(MEDIA_ID, id);
             intent.putExtra(MEDIA_FROM_TAG, video_tag);
+            intent.putExtra(MEDIA_CATEGORY_TAG, CURRENT_CATEGORY);
             ((Activity) parent.getContext()).startActivityForResult(intent, REQUEST_CODE_PAD_MEDIA_ACTIVITY);
         });
         return baseViewHolder;

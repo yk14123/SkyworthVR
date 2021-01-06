@@ -44,6 +44,8 @@ public class VideoFragment extends Fragment {
     private int currentItem = 1;
     private ViewPager2 viewPagerVideoList;
 
+    public static int CURRENT_CATEGORY;
+
     public static VideoFragment newInstance() {
         return new VideoFragment();
     }
@@ -126,7 +128,9 @@ public class VideoFragment extends Fragment {
             viewPagerVideoList.setAdapter(adapter);
             setViewPager2ScrollTouchSlop(viewPagerVideoList, 150);
 
-            VrSyncPlayInfo.obtain().setCategory(videoCategories.get(0).getCid());
+            CURRENT_CATEGORY = videoCategories.get(0).getCid();
+//            VrSyncPlayInfo.obtain().setCategory(CURRENT_CATEGORY);
+            VrSyncPlayInfo.obtain().setTag(2);
 //            ViewPager2Helper.bind(magicIndicator, viewPagerVideoList);
             viewPagerVideoList.registerOnPageChangeCallback(new ViewPager2.OnPageChangeCallback() {
                 @Override
@@ -134,6 +138,7 @@ public class VideoFragment extends Fragment {
                     super.onPageScrolled(position, positionOffset, positionOffsetPixels);
                     magicIndicator.onPageScrolled(position, positionOffset, positionOffsetPixels);
                     VrSyncPlayInfo.obtain().restoreVideoInfo();
+                    VrSyncPlayInfo.obtain().setTag(2);
                 }
 
                 @Override
@@ -141,8 +146,10 @@ public class VideoFragment extends Fragment {
                     super.onPageSelected(position);
                     magicIndicator.onPageSelected(position);
 
-                    VrSyncPlayInfo.obtain().setCategory(videoCategories.get(position).getCid());
+                    CURRENT_CATEGORY = videoCategories.get(position).getCid();
+//                    VrSyncPlayInfo.obtain().setCategory(CURRENT_CATEGORY);
                     VrSyncPlayInfo.obtain().restoreVideoInfo();
+                    VrSyncPlayInfo.obtain().setTag(2);
                 }
 
                 @Override

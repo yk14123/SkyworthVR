@@ -193,6 +193,7 @@ public class MainActivity extends AppCompatActivity implements RadioGroup.OnChec
 
                     @Override
                     public void onNext(Long value) {
+                        Log.d("MyLog", "-----定时器时间finish，执行任务成功！-----");
                         VrSyncPlayInfo.obtain().restoreVideoInfo();
                     }
 
@@ -221,8 +222,8 @@ public class MainActivity extends AppCompatActivity implements RadioGroup.OnChec
 
 
     private void closeMainDialog() {
-        Log.d("MyLog", "-----关闭MainActivity的控制dialog-----");
         if (vrModeMainDialog != null && vrModeMainDialog.isShowing()) {
+            Log.d("MyLog", "-----关闭MainActivity的控制dialog-----");
             vrModeMainDialog.dismiss();
         }
     }
