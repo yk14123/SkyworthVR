@@ -177,17 +177,17 @@ public class MainActivity extends AppCompatActivity implements RadioGroup.OnChec
     }
 
     /**
-     * 5分钟之后，视频重新选择
+     * 2分钟之后，视频重新选择
      */
     private void startTimeTask() {
-        Observable.timer(5, TimeUnit.MINUTES)
+        Observable.timer(2, TimeUnit.MINUTES)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new Observer<Long>() {
                     @Override
                     public void onSubscribe(Disposable d) {
                         closeTimer(null);
-                        Log.d("MyLog", "-----开启5分钟定时器-----");
+                        Log.d("MyLog", "-----开启2分钟定时器-----");
                         mDisposable = d;
                     }
 
@@ -215,7 +215,7 @@ public class MainActivity extends AppCompatActivity implements RadioGroup.OnChec
     @SuppressWarnings("unused")
     public void closeTimer(VrCancelTimeTask vrCancelTimeTask) {
         if (mDisposable != null && !mDisposable.isDisposed()) {
-            Log.d("MyLog", "-----关闭5分钟定时器-----");
+            Log.d("MyLog", "-----关闭2分钟定时器-----");
             mDisposable.dispose();
         }
     }

@@ -1,14 +1,13 @@
 package com.chinafocus.hvrskyworthvr.ui.main.media;
 
+import android.annotation.SuppressLint;
 import android.content.Intent;
-import android.os.Build;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Log;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.ViewModelProvider;
 
@@ -26,11 +25,13 @@ import com.chinafocus.hvrskyworthvr.service.event.VrMediaDisConnect;
 import com.chinafocus.hvrskyworthvr.service.event.VrMediaSyncMediaInfo;
 import com.chinafocus.hvrskyworthvr.service.event.VrMediaWaitSelected;
 import com.chinafocus.hvrskyworthvr.service.event.VrRotation;
+import com.chinafocus.hvrskyworthvr.service.event.VrSyncMediaStatus;
 import com.chinafocus.hvrskyworthvr.service.event.VrSyncPlayInfo;
 import com.chinafocus.hvrskyworthvr.ui.dialog.VideoDetailDialog;
 import com.chinafocus.hvrskyworthvr.ui.dialog.VrModeVideoLinkingDialog;
 import com.chinafocus.hvrskyworthvr.util.statusbar.StatusBarCompatFactory;
 import com.google.android.exoplayer2.Player;
+import com.google.android.exoplayer2.SimpleExoPlayer;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -51,10 +52,6 @@ public class MediaPlayActivity extends AppCompatActivity implements ViewBindHelp
     public static final String MEDIA_CATEGORY_TAG = "media_category_tag";
     public static final String MEDIA_LINK_VR = "media_link_vr";
 
-    private int video_tag;
-    private int category;
-    private int video_id;
-    private long seek;
     private boolean linkingVr;
 
     private VrModeVideoLinkingDialog modeVideoLinkingDialog;
@@ -63,7 +60,6 @@ public class MediaPlayActivity extends AppCompatActivity implements ViewBindHelp
     private ExoMediaHelper mExoMediaHelper;
     private MediaViewModel mediaViewModel;
 
-    @RequiresApi(api = Build.VERSION_CODES.N)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         StatusBarCompatFactory.getInstance().setStatusBarImmerse(this, false);
@@ -75,27 +71,28 @@ public class MediaPlayActivity extends AppCompatActivity implements ViewBindHelp
 
         mediaViewModel = new ViewModelProvider(this).get(MediaViewModel.class);
 
-        String tag = "";
-        if (video_tag == 1) {
-            tag = "publish";
-        } else if (video_tag == 2) {
-            tag = "video";
-        }
+        loadNetData();
+        observerNetData();
+    }
 
-        mediaViewModel.getVideoDetailData(tag, video_id);
+    /**
+     * 订阅数据
+     */
+    @SuppressLint("NewApi")
+    private void observerNetData() {
         mediaViewModel.videoDetailMutableLiveData.observe(this, videoDetail -> {
             Log.e("MyLog", " videoDetail >>> " + videoDetail.getTitle());
 
             List<VideoDetail.FilesBean> filesBeanList = null;
-
-            if (video_tag == 1) {
+            int tagNet = VrSyncPlayInfo.obtain().getTag();
+            if (tagNet == 1) {
                 filesBeanList =
                         videoDetail
                                 .getFiles()
                                 .stream()
                                 .filter(filesBean -> (filesBean.getType() == 10 && filesBean.getBitrate() == 8000) || (filesBean.getType() == 6))
                                 .collect(Collectors.toList());
-            } else if (video_tag == 2) {
+            } else if (tagNet == 2) {
                 filesBeanList =
                         videoDetail
                                 .getFiles()
@@ -130,7 +127,7 @@ public class MediaPlayActivity extends AppCompatActivity implements ViewBindHelp
                 mExoMediaHelper.onStart();
                 mExoMediaHelper.prepareSource(format, videoUrl, null, subtitle);
                 mExoMediaHelper.onResume();
-                mExoMediaHelper.seekTo(seek);
+                mExoMediaHelper.seekTo(VrSyncPlayInfo.obtain().getSeekTime());
 
                 mExoMediaHelper.getPlayer().addListener(new Player.EventListener() {
                     @Override
@@ -165,16 +162,15 @@ public class MediaPlayActivity extends AppCompatActivity implements ViewBindHelp
             }
 
         });
-
     }
 
     private void handleIntent() {
         Intent intent = getIntent();
 
-        video_tag = intent.getIntExtra(MEDIA_FROM_TAG, -1);
-        category = intent.getIntExtra(MEDIA_CATEGORY_TAG, -1);
-        video_id = intent.getIntExtra(MEDIA_ID, -1);
-        seek = intent.getLongExtra(MEDIA_SEEK, 0L);
+        int video_tag = intent.getIntExtra(MEDIA_FROM_TAG, -1);
+        int category = intent.getIntExtra(MEDIA_CATEGORY_TAG, -1);
+        int video_id = intent.getIntExtra(MEDIA_ID, -1);
+        long seek = intent.getLongExtra(MEDIA_SEEK, 0L);
         linkingVr = intent.getBooleanExtra(MEDIA_LINK_VR, false);
 
         Log.d("MyLog", "------当前播放页面的初始状态Intent"
@@ -186,6 +182,11 @@ public class MediaPlayActivity extends AppCompatActivity implements ViewBindHelp
         VrSyncPlayInfo.obtain().saveAllState(video_tag, category, video_id, seek);
     }
 
+    /**
+     * 初始化View
+     *
+     * @param savedInstanceState Bundle数据
+     */
     private void initView(Bundle savedInstanceState) {
         mLandPlayerView = findViewById(R.id.player_view_land);
         mLandPlayerView.setControllerPadding(
@@ -232,18 +233,19 @@ public class MediaPlayActivity extends AppCompatActivity implements ViewBindHelp
 
         linkingVr = true;
 
-        long duration = mExoMediaHelper.getPlayer().getDuration();
-        long currentPosition = mExoMediaHelper.getPlayer().getCurrentPosition();
+        SimpleExoPlayer player = mExoMediaHelper.getPlayer();
+        if (player == null) {
+            return;
+        }
 
-        Log.e("MyLog", "duration >>> " + duration + " >>> currentPosition >>> " + currentPosition);
-
-        if (currentPosition < duration) {
-            VrSyncPlayInfo.obtain().setSeekTime(currentPosition);
-            // 4.pad端静音
-            mExoMediaHelper.getPlayer().setVolume(0f);
-        } else {
+        if (player.getPlaybackState() == STATE_ENDED) {
             setResult(RESULT_CODE_ACTIVE_DIALOG);
             finish();
+        } else {
+            VrSyncPlayInfo.obtain().setSeekTime(player.getCurrentPosition());
+            // 4.pad端静音且暂停
+            player.setVolume(0f);
+            player.pause();
         }
 
         // 3.给VR同步视频信息
@@ -254,7 +256,6 @@ public class MediaPlayActivity extends AppCompatActivity implements ViewBindHelp
                         VrSyncPlayInfo.obtain().getVideoId(),
                         VrSyncPlayInfo.obtain().getSeekTime()
                 );
-
     }
 
     /**
@@ -285,6 +286,7 @@ public class MediaPlayActivity extends AppCompatActivity implements ViewBindHelp
      * @param vrMediaWaitSelected 等待VR选片
      */
     @Subscribe()
+    @SuppressWarnings("unused")
     public void waitSelectedFromVR(VrMediaWaitSelected vrMediaWaitSelected) {
         if (vrMediaWaitSelected == null) {
             Log.d("MyLog", "-----VR端还在播放，Pad端提前播放完了-----");
@@ -302,6 +304,25 @@ public class MediaPlayActivity extends AppCompatActivity implements ViewBindHelp
     }
 
     /**
+     * VR端控制Pad暂停或播放
+     *
+     * @param vrSyncMediaStatus 同步播放/暂停
+     */
+    @Subscribe()
+    @SuppressWarnings("unused")
+    public void syncMediaStatus(VrSyncMediaStatus vrSyncMediaStatus) {
+        int playStatusTag = vrSyncMediaStatus.getPlayStatusTag();
+        SimpleExoPlayer player = mExoMediaHelper.getPlayer();
+        if (player != null) {
+            if (playStatusTag == 1) {
+                player.play();
+            } else if (playStatusTag == 2) {
+                player.pause();
+            }
+        }
+    }
+
+    /**
      * 戴上VR眼镜后，在VR眼镜内部切换影片!
      * Pad端需要同步展示
      *
@@ -312,18 +333,23 @@ public class MediaPlayActivity extends AppCompatActivity implements ViewBindHelp
     public void loadNextSyncMediaFromVR(VrMediaSyncMediaInfo vrMediaSyncMediaInfo) {
         Log.d("MyLog", "-----VR端加载了新的影片 >>> "
                 + VrSyncPlayInfo.obtain());
-
         // 1.关闭当前dialog
         closeAllDialog();
+        // 2.加载视频详情！
+        loadNetData();
+    }
 
+    /**
+     * 加载视频详情
+     */
+    private void loadNetData() {
         String temp = "";
-        video_tag = VrSyncPlayInfo.obtain().getTag();
+        int video_tag = VrSyncPlayInfo.obtain().getTag();
         if (video_tag == 1) {
             temp = "publish";
         } else if (video_tag == 2) {
             temp = "video";
         }
-
         // 2.加载视频
         mediaViewModel.getVideoDetailData(temp, VrSyncPlayInfo.obtain().getVideoId());
     }

@@ -23,6 +23,7 @@ public class VrSyncPlayInfo {
         this.mTag = mTag;
     }
 
+    @SuppressWarnings("unused")
     public void setCategory(int mCategory) {
         this.mCategory = mCategory;
     }

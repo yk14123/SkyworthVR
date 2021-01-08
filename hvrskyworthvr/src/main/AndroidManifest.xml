@@ -21,13 +21,14 @@
         android:theme="@style/AppTheme"
         android:usesCleartextTraffic="true"
         tools:targetApi="m">
-<!--        <service-->
-<!--            android:name=".service.SocketService"-->
-<!--            android:exported="true"-->
-<!--            android:permission="android.permission.BIND_JOB_SERVICE" />-->
+        <!--        <service-->
+        <!--            android:name=".service.SocketService"-->
+        <!--            android:exported="true"-->
+        <!--            android:permission="android.permission.BIND_JOB_SERVICE" />-->
 
         <activity
             android:name=".ui.main.media.MediaPlayActivity"
+            android:launchMode="singleTop"
             android:screenOrientation="landscape" />
         <activity
             android:name=".ui.login.LoginActivity"

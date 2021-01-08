@@ -15,6 +15,7 @@ import com.chinafocus.hvrskyworthvr.service.event.VrMediaDisConnect;
 import com.chinafocus.hvrskyworthvr.service.event.VrMediaSyncMediaInfo;
 import com.chinafocus.hvrskyworthvr.service.event.VrMediaWaitSelected;
 import com.chinafocus.hvrskyworthvr.service.event.VrRotation;
+import com.chinafocus.hvrskyworthvr.service.event.VrSyncMediaStatus;
 import com.chinafocus.hvrskyworthvr.service.event.VrSyncPlayInfo;
 import com.chinafocus.lib_bluetooth.BluetoothEngineHelper;
 import com.chinafocus.lib_bluetooth.BluetoothEngineService;
@@ -37,17 +38,17 @@ public class BluetoothService implements BluetoothEngineService.AsyncThreadReadB
     private static final int SYNC_PLAY = 3;
     private static final int SYNC_ROTATION = 4;
     private static final int SYNC_WAIT_VR_SELECTED = 5;
+    private static final int SYNC_MEDIA_PLAY_STATUS = 6;
 
     private static final int MESSAGE_CONNECT = 10001;
     private static final int MESSAGE_DISCONNECT = 10002;
     private static final int MESSAGE_SYNC_PLAY = 10003;
     private static final int MESSAGE_SYNC_WAIT_VR_SELECTED = 10004;
+    private static final int MESSAGE_SYNC_WAIT_PLAY_STATUS = 10005;
 
     private final ExecutorService executor;
 
     private final BluetoothEngineHelper bluetoothEngineHelper;
-
-    private byte[] mediaInfo = new byte[34];
 
     private BluetoothService() {
         bluetoothEngineHelper = new BluetoothEngineHelper(mHandler, this);
@@ -144,21 +145,36 @@ public class BluetoothService implements BluetoothEngineService.AsyncThreadReadB
                     // 链接错误
                     break;
                 case MESSAGE_CONNECT:
-                    handConnect();
+                    postConnect();
                     break;
                 case MESSAGE_DISCONNECT:
-                    handDisconnect();
+                    postDisconnect();
                     break;
                 case MESSAGE_SYNC_PLAY:
-                    byte[] readBuf = (byte[]) msg.obj;
-                    handSyncPlay(readBuf, msg.arg1);
+                    postSyncPlay();
                     break;
                 case MESSAGE_SYNC_WAIT_VR_SELECTED:
-                    handWaitVrSelected();
+                    postWaitVrSelected();
+                    break;
+                case MESSAGE_SYNC_WAIT_PLAY_STATUS:
+                    int playTag = (int) msg.obj;
+                    postPlayStatus(playTag);
                     break;
             }
         }
     };
+
+    /**
+     * 发送播放/暂停事件
+     *
+     * @param playTag 1.播放 2.暂停
+     */
+    private void postPlayStatus(int playTag) {
+        Log.d("MyLog", "------收到VR的播放/暂停需求 >>> " + playTag);
+        VrSyncMediaStatus obtain = VrSyncMediaStatus.obtain();
+        obtain.setPlayStatusTag(playTag);
+        EventBus.getDefault().post(VrSyncMediaStatus.obtain());
+    }
 
     private void onHandleWork(byte[] bytes, int len) {
 
@@ -169,21 +185,18 @@ public class BluetoothService implements BluetoothEngineService.AsyncThreadReadB
             // 队列
             int messageBodyLen = ByteBuffer.wrap(bytes).getInt(cursor);
             int messageLen = messageBodyLen + 4;
-            int tag = ByteBuffer.wrap(bytes).getInt(cursor + 4);
+            int eventTag = ByteBuffer.wrap(bytes).getInt(cursor + 4);
 //            int category = ByteBuffer.wrap(bytes).getInt(cursor + 8);
 
-            if (len != 30) {
+            if (len > 100) {
                 Log.i("MyLog", "socketInputStream.read"
-                        + " >>> 消息类型是 : " + tag
+                        + " >>> 消息类型是 : " + eventTag
                         + " >>> 消息总长度是 : " + len
                         + " >>> cursor : " + cursor
                 );
             }
 
-            switch (tag) {
-                case SYNC_ROTATION:
-                    handRotation(bytes, cursor + 14);
-                    break;
+            switch (eventTag) {
                 case CONNECT:
                     mHandler.obtainMessage(MESSAGE_CONNECT).sendToTarget();
                     break;
@@ -192,11 +205,19 @@ public class BluetoothService implements BluetoothEngineService.AsyncThreadReadB
                     break;
                 case SYNC_PLAY:
                     // 这里多加了2 是因为unity使用了框架，封装成了object，多了2个short类型
-                    System.arraycopy(bytes, 0, mediaInfo, 0, mediaInfo.length);
-                    mHandler.obtainMessage(MESSAGE_SYNC_PLAY, cursor + 14, -1, mediaInfo).sendToTarget();
+                    handSyncPlay(bytes, cursor + 14);
+                    mHandler.obtainMessage(MESSAGE_SYNC_PLAY).sendToTarget();
+                    break;
+                case SYNC_ROTATION:
+                    handRotation(bytes, cursor + 14);
                     break;
                 case SYNC_WAIT_VR_SELECTED:
                     mHandler.obtainMessage(MESSAGE_SYNC_WAIT_VR_SELECTED).sendToTarget();
+                    break;
+                case SYNC_MEDIA_PLAY_STATUS:
+                    int i = handMediaStatus(bytes, cursor + 14);
+                    Log.d("MyLog", " ------------------------- i >>> " + i);
+                    mHandler.obtainMessage(MESSAGE_SYNC_WAIT_PLAY_STATUS, i).sendToTarget();
                     break;
             }
 
@@ -207,14 +228,14 @@ public class BluetoothService implements BluetoothEngineService.AsyncThreadReadB
     /**
      * VR没有取下来的时候，进入VR选片
      */
-    private void handWaitVrSelected() {
+    private void postWaitVrSelected() {
         EventBus.getDefault().post(VrMediaWaitSelected.obtain());
     }
 
     /**
      * 处理断开连接
      */
-    private void handDisconnect() {
+    private void postDisconnect() {
         if (Constants.ACTIVITY_TAG == Constants.ACTIVITY_MAIN) {
             EventBus.getDefault().post(VrMainDisConnect.obtain());
         } else if (Constants.ACTIVITY_TAG == Constants.ACTIVITY_MEDIA) {
@@ -225,12 +246,30 @@ public class BluetoothService implements BluetoothEngineService.AsyncThreadReadB
     /**
      * 处理连接
      */
-    private void handConnect() {
+    private void postConnect() {
         if (Constants.ACTIVITY_TAG == Constants.ACTIVITY_MAIN) {
             EventBus.getDefault().post(VrMainConnect.obtain());
         } else if (Constants.ACTIVITY_TAG == Constants.ACTIVITY_MEDIA) {
             EventBus.getDefault().post(VrMediaConnect.obtain());
         }
+    }
+
+    /**
+     * 处理媒体播放信息
+     */
+    private void postSyncPlay() {
+        if (Constants.ACTIVITY_TAG == Constants.ACTIVITY_MAIN) {
+            EventBus.getDefault().post(VrMainSyncMediaInfo.obtain());
+        } else if (Constants.ACTIVITY_TAG == Constants.ACTIVITY_MEDIA) {
+            EventBus.getDefault().post(VrMediaSyncMediaInfo.obtain());
+        }
+    }
+
+    /**
+     * 处理视频播放和暂停
+     */
+    private int handMediaStatus(byte[] bytes, int head) {
+        return ByteBuffer.wrap(bytes).getInt(head);
     }
 
     /**
@@ -247,14 +286,7 @@ public class BluetoothService implements BluetoothEngineService.AsyncThreadReadB
         VrSyncPlayInfo obtain = VrSyncPlayInfo.obtain();
 
         obtain.saveAllState(tag, category, id, seek);
-
-        Log.e("MyLog", "-----收到VR端同步过来的Media信息 obtain >> " + obtain);
-
-        if (Constants.ACTIVITY_TAG == Constants.ACTIVITY_MAIN) {
-            EventBus.getDefault().post(VrMainSyncMediaInfo.obtain());
-        } else if (Constants.ACTIVITY_TAG == Constants.ACTIVITY_MEDIA) {
-            EventBus.getDefault().post(VrMediaSyncMediaInfo.obtain());
-        }
+        Log.d("MyLog", "-----收到VR端同步过来的Media信息 obtain >> " + obtain);
     }
 
     /**

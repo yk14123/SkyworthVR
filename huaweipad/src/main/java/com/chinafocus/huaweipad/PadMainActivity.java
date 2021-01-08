@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
+import android.os.SystemClock;
 import android.view.View;
 import android.widget.TextView;
 
@@ -18,8 +19,8 @@ public class PadMainActivity extends AppCompatActivity {
     private StringBuilder stringBuilder;
 
     private Handler handler = new Handler(Looper.getMainLooper());
-    //    private BluetoothEngineVRHelper bluetoothEngineHelper;
-    private BluetoothEngineHelper bluetoothEngineHelper;
+    private BluetoothEngineVRHelper bluetoothEngineHelper;
+//    private BluetoothEngineHelper bluetoothEngineHelper;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -32,10 +33,11 @@ public class PadMainActivity extends AppCompatActivity {
 //        AndroidInterface.getInstance().init(getApplication());
 //        AndroidInterface.getInstance().getBluetoothUtils().resume();
 
-//        bluetoothEngineHelper = new BluetoothEngineVRHelper();
-        bluetoothEngineHelper = new BluetoothEngineHelper();
-//        bluetoothEngineHelper.initBluetoothEngine(this);
-        bluetoothEngineHelper.startBluetoothEngine(this);
+        bluetoothEngineHelper = new BluetoothEngineVRHelper();
+//        bluetoothEngineHelper = new BluetoothEngineHelper();
+        bluetoothEngineHelper.initBluetoothEngine(this);
+//        bluetoothEngineHelper.startBluetoothEngine(this);
+
     }
 
 
@@ -43,14 +45,26 @@ public class PadMainActivity extends AppCompatActivity {
     protected void onDestroy() {
         super.onDestroy();
 //        releaseAll();
-//        bluetoothEngineHelper.releaseAll();
-        bluetoothEngineHelper.releaseAll(this);
+        bluetoothEngineHelper.releaseAll();
+//        bluetoothEngineHelper.releaseAll(this);
     }
 
 
     public void sendString(View view) {
-        bluetoothEngineHelper.sendMessage("pad端 --- > 发送字符串");
-        bluetoothEngineHelper.retryConnect();
+
+        new Thread(new Runnable() {
+            int i;
+
+            @Override
+            public void run() {
+                while (true) {
+                    bluetoothEngineHelper.sendMessage("VR --- > 发送字符串" + ++i);
+                    SystemClock.sleep(11);
+                }
+            }
+        }).start();
+
+//        bluetoothEngineHelper.retryConnect();
     }
 
     public void clearMessage(View view) {
