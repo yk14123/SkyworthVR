@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".ui.setting.SettingActivity">
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/appCompatTextView5"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/setting_title"
+        android:textColor="@color/color_black"
+        android:textSize="22sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.092" />
+
+    <com.chinafocus.hvrskyworthvr.ui.widget.SettingViewGroup
+        android:id="@+id/view_devices_wifi"
+        android:layout_width="392dp"
+        android:layout_height="112dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.165"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.24"
+        app:settingType="settingType_wifi" />
+
+    <com.chinafocus.hvrskyworthvr.ui.widget.SettingViewGroup
+        android:id="@+id/view_devices_bluetooth"
+        android:layout_width="392dp"
+        android:layout_height="112dp"
+        android:layout_marginTop="16dp"
+        app:layout_constraintEnd_toEndOf="@+id/view_devices_wifi"
+        app:layout_constraintStart_toStartOf="@+id/view_devices_wifi"
+        app:layout_constraintTop_toBottomOf="@+id/view_devices_wifi"
+        app:settingType="settingType_bluetooth" />
+
+    <com.chinafocus.hvrskyworthvr.ui.widget.SettingViewGroup
+        android:id="@+id/view_devices_alias"
+        android:layout_width="392dp"
+        android:layout_height="112dp"
+        android:layout_marginTop="16dp"
+        app:layout_constraintEnd_toEndOf="@+id/view_devices_bluetooth"
+        app:layout_constraintStart_toStartOf="@+id/view_devices_bluetooth"
+        app:layout_constraintTop_toBottomOf="@+id/view_devices_bluetooth"
+        app:settingType="settingType_alias" />
+
+    <include
+        layout="@layout/include_setting_device_info"
+        android:layout_width="392dp"
+        android:layout_height="368dp"
+        app:layout_constraintBottom_toBottomOf="@+id/view_devices_alias"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.838"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/view_devices_wifi" />
+
+    <androidx.appcompat.widget.AppCompatButton
+        android:layout_width="176dp"
+        android:layout_height="54dp"
+        android:background="@drawable/selector_setting_ok_bg"
+        android:enabled="false"
+        android:gravity="center"
+        android:text="@string/setting_all_done"
+        android:textColor="@color/color_white"
+        android:textSize="16sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/view_devices_alias"
+        app:layout_constraintVertical_bias="0.432" />
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>

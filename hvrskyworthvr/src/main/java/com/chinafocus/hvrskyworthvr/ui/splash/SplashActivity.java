@@ -13,7 +13,7 @@ import com.blankj.utilcode.util.PermissionUtils;
 import com.chinafocus.hvrskyworthvr.R;
 import com.chinafocus.hvrskyworthvr.global.Constants;
 import com.chinafocus.hvrskyworthvr.model.bean.DefaultCloudUrl;
-import com.chinafocus.hvrskyworthvr.ui.main.MainActivity;
+import com.chinafocus.hvrskyworthvr.ui.setting.SettingActivity;
 
 import java.util.concurrent.TimeUnit;
 
@@ -73,7 +73,8 @@ public class SplashActivity extends AppCompatActivity {
                     @Override
                     public void onComplete() {
 //                        startActivity(new Intent(SplashActivity.this, LoginActivity.class));
-                        startActivity(new Intent(SplashActivity.this, MainActivity.class));
+//                        startActivity(new Intent(SplashActivity.this, MainActivity.class));
+                        startActivity(new Intent(SplashActivity.this, SettingActivity.class));
                         finish();
                     }
 

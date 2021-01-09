@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <attr name="settingType" format="enum">
+        <enum name="settingType_wifi" value="1" />
+        <enum name="settingType_bluetooth" value="2" />
+        <enum name="settingType_alias" value="3" />
+    </attr>
+
+    <declare-styleable name="SettingViewGroup">
+        <attr name="settingType" />
+    </declare-styleable>
+</resources>

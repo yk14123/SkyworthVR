@@ -15,4 +15,25 @@
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
 
+    <string name="setting_title">产品配置</string>
+    <string name="setting_all_done">完成，进入主页</string>
+
+    <string name="setting_status_wifi_main_title">*WLAN设置</string>
+    <string name="setting_status_wifi_connecting">正在连接…</string>
+    <string name="setting_status_wifi_connect_error">连接失败，点击重新连接</string>
+    <string name="setting_status_wifi_check_again">⚠️已连接但无网络，请检查</string>
+    <string name="setting_status_wifi_success">已连接至：</string>
+
+    <string name="setting_status_bluetooth_main_title">*配对 VR 眼镜</string>
+    <string name="setting_status_bluetooth_sub_title">正在自动配对…</string>
+    <string name="setting_status_bluetooth_sub_body">请确保 VR 眼镜已开机</string>
+    <string name="setting_status_bluetooth_retry">点击重试</string>
+    <string name="setting_status_bluetooth_success">已配对：</string>
+    <string name="setting_status_bluetooth_error">配对失败，请检查设置</string>
+
+    <string name="setting_status_alias_main_title">设备名称</string>
+    <string name="setting_status_alias_result">去设置</string>
+    <string name="setting_status_alias_empty"></string>
+
+
 </resources>

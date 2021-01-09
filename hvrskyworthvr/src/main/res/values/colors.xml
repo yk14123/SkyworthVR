@@ -10,6 +10,18 @@
     <color name="color_F2">#F2F2F2</color>
     <color name="color_72F3">#B8F3F3F3</color>
     <color name="color_white">#FFFFFF</color>
+    <color name="color_black">#000000</color>
+
+    <color name="color_setting_id">#2C2C33</color>
+    <color name="color_setting_id_create">#5A5A62</color>
+    <color name="color_setting_status_gray">#A0A0A3</color>
+    <color name="color_setting_status_yellow">#F79707</color>
+    <color name="color_setting_status_success">#19C79D</color>
+
+    <color name="color_DA">#DADADD</color>
+
+    <color name="color_ok_enable_start">#11C378</color>
+    <color name="color_ok_enable_end">#29B88D</color>
 
     <color name="color_test_checked">#479722</color>
     <color name="color_indicator">#6DD400</color>

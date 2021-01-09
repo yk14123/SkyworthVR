@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="392dp"
+    android:layout_height="112dp"
+    android:background="@drawable/shape_setting_normal_bg">
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/tv_setting_main_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:drawableEnd="@null"
+        android:drawablePadding="10dp"
+        android:textColor="@color/color_setting_id"
+        android:textSize="20sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.111"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.269"
+        tools:text="*WLAN设置" />
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/tv_setting_result"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="13dp"
+        android:textColor="@color/color_setting_status_gray"
+        android:textSize="16sp"
+        app:layout_constraintStart_toStartOf="@+id/tv_setting_main_title"
+        app:layout_constraintTop_toBottomOf="@+id/tv_setting_main_title"
+        tools:text="连接失败，点击重新连接" />
+
+    <androidx.appcompat.widget.AppCompatImageView
+        android:id="@+id/iv_setting_set"
+        android:layout_width="34dp"
+        android:layout_height="45dp"
+        android:padding="10dp"
+        android:src="@drawable/sky_worth_setting_device_status_enter"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.911"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/tv_setting_sub_status_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="5dp"
+        android:textColor="@color/color_setting_status_gray"
+        android:textSize="13sp"
+        android:visibility="visible"
+        app:layout_constraintStart_toStartOf="@+id/tv_setting_main_title"
+        app:layout_constraintTop_toBottomOf="@+id/tv_setting_main_title"
+        tools:text="ChinaFocus 01" />
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/tv_setting_sub_status_body"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="3dp"
+        android:textColor="@color/color_setting_status_gray"
+        android:textSize="13sp"
+        android:visibility="visible"
+        app:layout_constraintStart_toStartOf="@+id/tv_setting_sub_status_title"
+        app:layout_constraintTop_toBottomOf="@+id/tv_setting_sub_status_title"
+        tools:text="已连接但无网络，请检查" />
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/tv_setting_retry"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:padding="10dp"
+        android:text="@string/setting_status_bluetooth_retry"
+        android:textColor="@color/color_setting_status_success"
+        android:textSize="19sp"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.893"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

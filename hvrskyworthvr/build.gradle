@@ -37,7 +37,7 @@ dependencies {
 
     testImplementation 'junit:junit:4.13'
     // blankJ
-    implementation 'com.blankj:utilcodex:1.29.0'
+    implementation 'com.blankj:utilcodex:1.30.5'
     // 自定义RadioButton
     implementation 'com.zaaach:tabradiobutton:1.0.2'
     // vLayout
