@@ -136,12 +136,14 @@ public class BluetoothEngineHelper {
     /**
      * Makes this device discoverable for 300 seconds (5 minutes).
      * 启用自身设备可检测性
+     * 默认是2分钟，最大封顶时间是5分钟（300ms）
+     * 时间传0就是永远都可以被发现。不安全
      */
     private void ensureDiscoverable(Context context) {
         if (mBluetoothAdapter.getScanMode() !=
                 BluetoothAdapter.SCAN_MODE_CONNECTABLE_DISCOVERABLE) {
             Intent discoverableIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_DISCOVERABLE);
-            discoverableIntent.putExtra(BluetoothAdapter.EXTRA_DISCOVERABLE_DURATION, 300);
+            discoverableIntent.putExtra(BluetoothAdapter.EXTRA_DISCOVERABLE_DURATION, 120);
             context.startActivity(discoverableIntent);
         }
     }

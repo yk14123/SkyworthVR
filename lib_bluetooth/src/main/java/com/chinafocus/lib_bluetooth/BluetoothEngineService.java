@@ -30,6 +30,8 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.UUID;
 
+import static com.chinafocus.lib_bluetooth.Constants.MESSAGE_RETRY;
+
 /**
  * This class does all the work for setting up and managing Bluetooth
  * connections with other devices. It has a thread that listens for
@@ -55,6 +57,14 @@ public class BluetoothEngineService {
     private final Handler mHandler;
     private int mState;
     private int mNewState;
+
+    private boolean isBluetoothDeviceOnceConnected;
+
+    private boolean isStopBluetoothEngine;
+
+    public void setBluetoothDeviceOnceConnected(boolean bluetoothDeviceOnceConnected) {
+        isBluetoothDeviceOnceConnected = bluetoothDeviceOnceConnected;
+    }
 
     // Constants that indicate the current connection state
     public static final int STATE_NONE = 0;       // we're doing nothing
@@ -225,6 +235,8 @@ public class BluetoothEngineService {
         mState = STATE_NONE;
         // Update UI title
         updateUserInterfaceTitle();
+
+        isStopBluetoothEngine = true;
     }
 
     /**
@@ -260,8 +272,10 @@ public class BluetoothEngineService {
         // Update UI title
         updateUserInterfaceTitle();
 
-        // Start the service over to restart listening mode
-        BluetoothEngineService.this.start();
+        if (!isStopBluetoothEngine) {
+            // Start the service over to restart listening mode
+            BluetoothEngineService.this.start();
+        }
     }
 
     /**
@@ -279,8 +293,10 @@ public class BluetoothEngineService {
         // Update UI title
         updateUserInterfaceTitle();
 
-        // Start the service over to restart listening mode
-        BluetoothEngineService.this.start();
+        if (!isStopBluetoothEngine) {
+            // Start the service over to restart listening mode
+            BluetoothEngineService.this.start();
+        }
     }
 
     /**
@@ -409,9 +425,15 @@ public class BluetoothEngineService {
                 } catch (IOException e2) {
                     Log.e(TAG, "------蓝牙引擎>>> [客户端] >>> unable to close() socket during connection failure---------", e2);
                 }
-
                 Log.e(TAG, "------蓝牙引擎>>> [客户端] >>> mmSocket.connect() 抛出异常，没有阻塞！");
-                connectionFailed();
+
+                if (!isBluetoothDeviceOnceConnected) {
+                    // 未匹配转换成开始匹配后，点击取消匹配，则需要重新retry
+                    mHandler.obtainMessage(MESSAGE_RETRY).sendToTarget();
+                } else {
+                    connectionFailed();
+                }
+
                 return;
             }
 

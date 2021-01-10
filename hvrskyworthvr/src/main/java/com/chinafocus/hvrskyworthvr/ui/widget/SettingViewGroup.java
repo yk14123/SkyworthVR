@@ -72,7 +72,6 @@ public class SettingViewGroup extends FrameLayout {
         mTvSettingMainTitle = findViewById(R.id.tv_setting_main_title);
         mTvSettingResult = findViewById(R.id.tv_setting_result);
         mIvSettingSet = findViewById(R.id.iv_setting_set);
-        mIvSettingSet = findViewById(R.id.iv_setting_set);
 
         mTvSettingSubTitle = findViewById(R.id.tv_setting_sub_status_title);
         mTvSettingSubBody = findViewById(R.id.tv_setting_sub_status_body);
@@ -80,6 +79,14 @@ public class SettingViewGroup extends FrameLayout {
 
         postStatusMessage(INIT);
 
+    }
+
+    public AppCompatImageView getIvSettingSet() {
+        return mIvSettingSet;
+    }
+
+    public AppCompatTextView getTvSettingRetry() {
+        return mTvSettingRetry;
     }
 
     public void postStatusMessage(@MessageType int messageType) {
@@ -90,34 +97,35 @@ public class SettingViewGroup extends FrameLayout {
 
         switch (messageType) {
             case INIT:
-                if (isWifi()) {
+                if (isWifiType()) {
                     initSettingWifi();
-                } else if (isBluetooth()) {
+                } else if (isBluetoothType()) {
                     initSettingBluetooth();
-                } else if (isAlias()) {
+                } else if (isAliasType()) {
                     initSettingAlias();
                 }
                 break;
             case CONNECTING:
-                if (isWifi()) {
+                if (isWifiType()) {
                     setWifiConnecting();
-                } else if (isBluetooth()) {
+                } else if (isBluetoothType()) {
                     initSettingBluetooth();
                 }
                 break;
             case CONNECT_SUCCESS:
-                if (isWifi()) {
+                if (isWifiType()) {
                     setWifiSuccess(name);
-                } else if (isBluetooth()) {
+                } else if (isBluetoothType()) {
                     setBluetoothSuccess(name);
-                } else if (isAlias()) {
+                } else if (isAliasType()) {
                     setAliasSuccess(name);
                 }
                 break;
             case CONNECT_ERROR:
-                if (isWifi()) {
+                if (isWifiType()) {
+                    // TODO PAD端 WIFI没有连接失败
                     setWifiError();
-                } else if (isBluetooth()) {
+                } else if (isBluetoothType()) {
                     setBluetoothError();
                 }
 //                else if (isAlias()) {
@@ -125,7 +133,7 @@ public class SettingViewGroup extends FrameLayout {
 //                }
                 break;
             case CONNECT_CHECK_AGAIN:
-                if (isWifi()) {
+                if (isWifiType()) {
                     setWifiCheckAgain(name);
                 }
                 break;
@@ -140,6 +148,7 @@ public class SettingViewGroup extends FrameLayout {
 
     private void initSettingBluetooth() {
         switchSubTitle(true);
+        clearMainTitleDrawable();
         mTvSettingRetry.setVisibility(GONE);
         mIvSettingSet.setVisibility(GONE);
         mTvSettingMainTitle.setText(getContext().getString(R.string.setting_status_bluetooth_main_title));
@@ -207,15 +216,15 @@ public class SettingViewGroup extends FrameLayout {
         setFinalResultMessage(R.string.setting_status_wifi_success, R.color.color_setting_status_success, name);
     }
 
-    private boolean isWifi() {
+    private boolean isWifiType() {
         return mSettingType == SETTING_VIEW_GROUP_WIFI;
     }
 
-    private boolean isBluetooth() {
+    private boolean isBluetoothType() {
         return mSettingType == SETTING_VIEW_GROUP_BLUETOOTH;
     }
 
-    private boolean isAlias() {
+    private boolean isAliasType() {
         return mSettingType == SETTING_VIEW_GROUP_ALIAS;
     }
 

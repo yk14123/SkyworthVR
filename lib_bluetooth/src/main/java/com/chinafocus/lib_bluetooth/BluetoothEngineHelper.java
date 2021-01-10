@@ -14,6 +14,8 @@ import android.util.Log;
 import java.util.Objects;
 import java.util.Set;
 
+import static com.chinafocus.lib_bluetooth.Constants.MESSAGE_RETRY;
+
 public class BluetoothEngineHelper {
 
     private static final String TAG = "BluetoothEngineService";
@@ -24,6 +26,8 @@ public class BluetoothEngineHelper {
 
     private final Handler mHandler;
     private final BluetoothEngineService.AsyncThreadReadBytes mAsyncThreadReadBytes;
+
+    private boolean isRegisterReceiver;
 
     public BluetoothEngineHelper(Handler mHandler, BluetoothEngineService.AsyncThreadReadBytes asyncThreadReadBytes) {
         this.mHandler = mHandler;
@@ -51,7 +55,9 @@ public class BluetoothEngineHelper {
                 }
                 bluetoothEngineService.start();
 
-                if (!tryConnectBondedDevices()) {
+                boolean b = tryConnectBondedDevices();
+                bluetoothEngineService.setBluetoothDeviceOnceConnected(b);
+                if (!b) {
 //                    ensureDiscoverable(activity);
                     // Register for broadcasts when a device is discovered.
                     IntentFilter filter = new IntentFilter(BluetoothDevice.ACTION_FOUND);
@@ -60,6 +66,8 @@ public class BluetoothEngineHelper {
                     // Register for broadcasts when discovery has finished
                     filter = new IntentFilter(BluetoothAdapter.ACTION_DISCOVERY_FINISHED);
                     activity.registerReceiver(receiver, filter);
+
+                    isRegisterReceiver = true;
 
                     doDiscovery();
                 }
@@ -168,6 +176,9 @@ public class BluetoothEngineHelper {
 
     // Create a BroadcastReceiver for ACTION_FOUND.
     private final BroadcastReceiver receiver = new BroadcastReceiver() {
+
+        private boolean isFound;
+
         public void onReceive(Context context, Intent intent) {
             String action = intent.getAction();
             // When discovery finds a device
@@ -182,12 +193,16 @@ public class BluetoothEngineHelper {
                         Log.d(TAG, "发现设备 deviceName >>> " + deviceName + " MAC address >>> " + deviceAddress);
                         // 开始链接蓝牙
                         if (deviceName.startsWith("中图云创")) {
+                            isFound = true;
                             connectDevice(deviceAddress);
                         }
                     }
                 }
             } else if (BluetoothAdapter.ACTION_DISCOVERY_FINISHED.equals(action)) {
                 Log.d(TAG, "----------蓝牙扫描完毕-----------");
+                if (!isFound) {
+                    mHandler.obtainMessage(MESSAGE_RETRY).sendToTarget();
+                }
             }
         }
     };
@@ -206,15 +221,22 @@ public class BluetoothEngineHelper {
      * 释放引擎
      */
     public void releaseAll(Context context) {
+        cancelDiscoveryAndUnregisterReceiver(context);
+
+        if (bluetoothEngineService != null) {
+            bluetoothEngineService.stopEngine();
+        }
+    }
+
+    public void cancelDiscoveryAndUnregisterReceiver(Context context) {
         // Make sure we're not doing discovery anymore
         if (mBluetoothAdapter != null) {
             mBluetoothAdapter.cancelDiscovery();
         }
-        // Don't forget to unregister the ACTION_FOUND receiver.
-        context.unregisterReceiver(receiver);
-
-        if (bluetoothEngineService != null) {
-            bluetoothEngineService.stopEngine();
+        if (isRegisterReceiver) {
+            isRegisterReceiver = false;
+            // Don't forget to unregister the ACTION_FOUND receiver.
+            context.unregisterReceiver(receiver);
         }
     }
 

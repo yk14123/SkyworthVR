@@ -34,6 +34,9 @@
     <string name="setting_status_alias_main_title">设备名称</string>
     <string name="setting_status_alias_result">去设置</string>
     <string name="setting_status_alias_empty"></string>
+    <string name="setting_status_alias_title">设置设备名称</string>
+    <string name="setting_status_cancel">取消</string>
+    <string name="setting_status_ok">确定</string>
 
 
 </resources>

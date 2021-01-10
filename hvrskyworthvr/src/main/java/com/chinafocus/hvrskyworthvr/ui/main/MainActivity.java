@@ -84,7 +84,6 @@ public class MainActivity extends AppCompatActivity implements RadioGroup.OnChec
         initFragments();
         radioGroup.check(R.id.rb_main_video);
 
-        BluetoothService.getInstance().startBluetoothEngine(this);
     }
 
     @Override

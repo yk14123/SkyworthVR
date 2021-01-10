@@ -62,6 +62,7 @@
         app:layout_constraintTop_toTopOf="@+id/view_devices_wifi" />
 
     <androidx.appcompat.widget.AppCompatButton
+        android:id="@+id/bt_setting_all_done"
         android:layout_width="176dp"
         android:layout_height="54dp"
         android:background="@drawable/selector_setting_ok_bg"

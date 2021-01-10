@@ -8,18 +8,20 @@
 
     <androidx.appcompat.widget.AppCompatTextView
         android:id="@+id/tv_setting_main_title"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:layout_marginStart="32dp"
         android:drawableEnd="@null"
         android:drawablePadding="10dp"
         android:textColor="@color/color_setting_id"
         android:textSize="20sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.111"
+        app:layout_constraintHorizontal_bias="0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.269"
+        app:layout_constraintWidth_max="wrap"
         tools:text="*WLAN设置" />
 
     <androidx.appcompat.widget.AppCompatTextView
@@ -32,18 +34,6 @@
         app:layout_constraintStart_toStartOf="@+id/tv_setting_main_title"
         app:layout_constraintTop_toBottomOf="@+id/tv_setting_main_title"
         tools:text="连接失败，点击重新连接" />
-
-    <androidx.appcompat.widget.AppCompatImageView
-        android:id="@+id/iv_setting_set"
-        android:layout_width="34dp"
-        android:layout_height="45dp"
-        android:padding="10dp"
-        android:src="@drawable/sky_worth_setting_device_status_enter"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.911"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
 
     <androidx.appcompat.widget.AppCompatTextView
         android:id="@+id/tv_setting_sub_status_title"
@@ -81,6 +71,18 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.893"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <androidx.appcompat.widget.AppCompatImageView
+        android:id="@+id/iv_setting_set"
+        android:layout_width="34dp"
+        android:layout_height="45dp"
+        android:padding="10dp"
+        android:src="@drawable/sky_worth_setting_device_status_enter"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.911"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 

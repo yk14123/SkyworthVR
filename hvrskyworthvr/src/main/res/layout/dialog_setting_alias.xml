@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="400dp"
+    android:layout_height="212dp"
+    android:background="@drawable/shape_setting_alias_bg">
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/setting_status_alias_title"
+        android:textColor="@color/color_black"
+        android:textSize="22sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.125" />
+
+    <androidx.appcompat.widget.AppCompatEditText
+        android:id="@+id/et_setting_alias"
+        android:layout_width="336dp"
+        android:layout_height="wrap_content"
+        android:background="@color/color_white"
+        android:paddingStart="16dp"
+        android:paddingTop="8dp"
+        android:paddingEnd="16dp"
+        android:paddingBottom="8dp"
+        android:textColor="@color/color_black"
+        android:textSize="19sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.433" />
+
+    <androidx.appcompat.widget.AppCompatButton
+        android:id="@+id/bt_setting_alias_cancel"
+        android:layout_width="160dp"
+        android:layout_height="48dp"
+        android:background="@drawable/shape_setting_cancel_bg"
+        android:gravity="center"
+        android:text="@string/setting_status_cancel"
+        android:textColor="@color/color_setting_id_create"
+        android:textSize="16sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.133"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.863" />
+
+    <androidx.appcompat.widget.AppCompatButton
+        android:id="@+id/bt_setting_alias_confirm"
+        android:layout_width="160dp"
+        android:layout_height="48dp"
+        android:background="@drawable/shape_setting_ok_enable"
+        android:gravity="center"
+        android:text="@string/setting_status_ok"
+        android:textColor="@color/color_white"
+        android:textSize="16sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.866"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.863" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

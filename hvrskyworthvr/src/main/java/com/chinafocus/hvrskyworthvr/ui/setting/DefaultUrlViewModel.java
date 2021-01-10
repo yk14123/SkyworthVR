@@ -1,4 +1,4 @@
-package com.chinafocus.hvrskyworthvr.ui.splash;
+package com.chinafocus.hvrskyworthvr.ui.setting;
 
 import android.app.Application;
 
