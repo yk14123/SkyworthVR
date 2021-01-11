@@ -5,12 +5,17 @@ import android.content.Intent;
 import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
 import android.text.TextUtils;
+import android.util.Log;
 
-import com.blankj.utilcode.util.NetworkUtils;
+import com.chinafocus.hvrskyworthvr.global.Constants;
+import com.chinafocus.hvrskyworthvr.model.bean.DefaultCloudUrl;
+import com.chinafocus.hvrskyworthvr.net.ApiService;
+import com.chinafocus.lib_network.net.ApiManager;
+import com.chinafocus.lib_network.net.errorhandler.ExceptionHandle;
+import com.chinafocus.lib_network.net.errorhandler.HttpErrorHandler;
+import com.chinafocus.lib_network.net.observer.BaseObserver;
 
-import io.reactivex.Single;
 import io.reactivex.android.schedulers.AndroidSchedulers;
-import io.reactivex.observers.DisposableSingleObserver;
 import io.reactivex.schedulers.Schedulers;
 
 public class WifiService {
@@ -87,28 +92,37 @@ public class WifiService {
                 mWifiStatusListener.wifiStatusInit();
             }
         } else {
-            Single
-                    .fromCallable(NetworkUtils::isAvailable)
+            ApiManager
+                    .getService(ApiService.class)
+                    .getDefaultCloudUrl()
                     .subscribeOn(Schedulers.io())
-                    .observeOn(AndroidSchedulers.mainThread())
-                    .subscribe(new DisposableSingleObserver<Boolean>() {
+                    .observeOn(AndroidSchedulers.mainThread(), true)
+                    .onErrorResumeNext(new HttpErrorHandler<>())
+                    .subscribe(new BaseObserver<DefaultCloudUrl>() {
                         @Override
-                        public void onSuccess(Boolean aBoolean) {
-                            if (aBoolean) {
-                                // 如果网络正常，则成功连接
-                                if (mWifiStatusListener != null) {
-                                    mWifiStatusListener.wifiConnectSuccess(wifiConnectedName);
-                                }
-                            } else {
-                                // 如果WIFI链接，但是路由器没有网络
-                                if (mWifiStatusListener != null) {
-                                    mWifiStatusListener.wifiNetWorkError(wifiConnectedName);
-                                }
+                        public void onSuccess(DefaultCloudUrl defaultCloudUrlBaseResponse) {
+
+                            Constants.DEFAULT_URL = defaultCloudUrlBaseResponse.getCloudUrl();
+                            Log.d("MyLog", "-----DEFAULT_URL >>>" + Constants.DEFAULT_URL);
+                            // 如果网络正常，则成功连接
+                            if (mWifiStatusListener != null) {
+                                mWifiStatusListener.wifiConnectSuccess(wifiConnectedName);
                             }
                         }
 
                         @Override
-                        public void onError(Throwable e) {
+                        public void onFailure(ExceptionHandle.ResponseThrowable e) {
+                            Log.e("MyLog", "-----初始化 DEFAULT_URL 失败 >>> " + e.message);
+                            // 如果WIFI链接，但是路由器没有网络
+                            if (mWifiStatusListener != null) {
+                                mWifiStatusListener.wifiNetWorkError(wifiConnectedName);
+                            }
+                        }
+
+                        @Override
+                        protected void onServiceMessage(String errMsg) {
+                            Log.e("MyLog", "-----服务端返回 DEFAULT_URL 异常 >>> " + errMsg);
+                            // 如果WIFI链接，但是路由器没有网络
                             if (mWifiStatusListener != null) {
                                 mWifiStatusListener.wifiNetWorkError(wifiConnectedName);
                             }

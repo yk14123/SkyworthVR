@@ -6,12 +6,8 @@ import android.view.View;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.AppCompatButton;
-import androidx.lifecycle.Observer;
-import androidx.lifecycle.ViewModelProvider;
 
 import com.chinafocus.hvrskyworthvr.R;
-import com.chinafocus.hvrskyworthvr.global.Constants;
-import com.chinafocus.hvrskyworthvr.model.bean.DefaultCloudUrl;
 import com.chinafocus.hvrskyworthvr.service.AliasService;
 import com.chinafocus.hvrskyworthvr.service.BluetoothService;
 import com.chinafocus.hvrskyworthvr.service.WifiService;
@@ -49,17 +45,6 @@ public class SettingActivity extends AppCompatActivity {
         handleWifi();
         handleBluetooth();
         handleAlias();
-
-        DefaultUrlViewModel model = new ViewModelProvider(this).get(DefaultUrlViewModel.class);
-        model.getDefaultCloudUrl();
-
-        model.defaultCloudUrlMutableLiveData.observe(this, new Observer<DefaultCloudUrl>() {
-            @Override
-            public void onChanged(DefaultCloudUrl defaultCloudUrl) {
-                Constants.DEFAULT_URL = defaultCloudUrl.getCloudUrl();
-            }
-        });
-
     }
 
     private void handleAlias() {
