@@ -36,6 +36,7 @@ import com.google.android.exoplayer2.SimpleExoPlayer;
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 
+import java.io.File;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
@@ -119,6 +120,12 @@ public class MediaPlayActivity extends AppCompatActivity implements ViewBindHelp
                 } else if (filesBean.getType() == 6) {
                     subtitle = Constants.DEFAULT_URL + filesBean.getFilePath();
                 }
+            }
+
+            String[] split = videoUrl.split("/");
+            File file = new File(getExternalFilesDir(""), split[split.length - 1]);
+            if (file.exists()) {
+                videoUrl = file.getAbsolutePath();
             }
 
             Log.e("MyLog", " 当前视频播放地址是 videoUrl >>> " + videoUrl);

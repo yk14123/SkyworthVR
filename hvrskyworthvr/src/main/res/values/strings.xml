@@ -1,6 +1,6 @@
 <resources>
-    <string name="app_name">农家360</string>
-    <string name="splash_title">欢迎体验农家360</string>
+    <string name="app_name">大眼360</string>
+    <string name="splash_title">欢迎体验大眼360</string>
     <string name="splash_copyright">Copyright © 2020 ChinaFocus. All rights reserved.</string>
 
     <string name="login_des">登录</string>

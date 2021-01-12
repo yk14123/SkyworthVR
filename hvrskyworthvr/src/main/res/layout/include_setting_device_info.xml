@@ -37,7 +37,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="3dp"
         android:layout_marginEnd="18dp"
-        android:text="山西省长治市上党区振兴村山西省长治市上党区振兴村"
+        android:text="中图云创"
         android:textColor="@color/color_setting_id_create"
         android:textSize="12sp"
         app:layout_constraintEnd_toStartOf="@+id/appCompatImageView5"
@@ -51,7 +51,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="10dp"
         android:layout_marginEnd="18dp"
-        android:text="39274595683927459568392745956811"
+        android:text="392745956839"
         android:textColor="@color/color_setting_id_create"
         android:textSize="12sp"
         app:layout_constraintEnd_toStartOf="@+id/appCompatImageView5"
@@ -71,11 +71,11 @@
         app:layout_constraintVertical_bias="0.652" />
 
     <androidx.appcompat.widget.AppCompatTextView
-        android:id="@+id/appCompatTextView6"
+        android:id="@+id/tv_uuid"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="6dp"
-        android:text="等待自动生成"
+        android:text="c92838fa113sloqlq134"
         android:textColor="@color/color_setting_id_create"
         android:textSize="12sp"
         app:layout_constraintStart_toStartOf="@+id/appCompatTextView9"
@@ -97,8 +97,9 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="12dp"
-        app:layout_constraintBottom_toBottomOf="@+id/appCompatTextView6"
-        app:layout_constraintStart_toEndOf="@+id/appCompatTextView6"
-        app:layout_constraintTop_toTopOf="@+id/appCompatTextView6" />
+        android:visibility="invisible"
+        app:layout_constraintBottom_toBottomOf="@+id/tv_uuid"
+        app:layout_constraintStart_toEndOf="@+id/tv_uuid"
+        app:layout_constraintTop_toTopOf="@+id/tv_uuid" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

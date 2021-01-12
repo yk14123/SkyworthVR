@@ -7,11 +7,13 @@
     tools:context=".ui.main.about.AboutFragment">
 
     <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/tv_back_door"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="32dp"
-        android:layout_marginTop="24dp"
-        android:text="山西省长治市上党区振兴村"
+        android:layout_marginStart="22dp"
+        android:layout_marginTop="14dp"
+        android:padding="10dp"
+        android:text="中图云创智能科技(北京)有限公司"
         android:textColor="@color/color_333"
         android:textSize="22sp"
         app:layout_constraintStart_toStartOf="parent"
@@ -22,6 +24,7 @@
         android:layout_width="127dp"
         android:layout_height="127dp"
         android:src="@drawable/sky_worth_about_qr_code"
+        android:visibility="invisible"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.6"
@@ -37,6 +40,7 @@
         android:text="扫描二维码安装农家360\n随时随地免费观看 VR 视频"
         android:textColor="@color/color_333"
         android:textSize="22sp"
+        android:visibility="invisible"
         app:layout_constraintStart_toStartOf="@+id/appCompatImageView2"
         app:layout_constraintTop_toBottomOf="@+id/appCompatImageView2" />
 
@@ -48,6 +52,7 @@
         android:text="用户协议   关于我们"
         android:textColor="@color/color_D9"
         android:textSize="15sp"
+        android:visibility="invisible"
         app:layout_constraintStart_toStartOf="@+id/appCompatTextView"
         app:layout_constraintTop_toBottomOf="@+id/appCompatTextView" />
 
@@ -58,8 +63,21 @@
         android:text="中图云创 版权所有\nCopyright © 2020 ChinaFocus. All rights reserved."
         android:textColor="@color/color_D9"
         android:textSize="13sp"
+        android:visibility="invisible"
         app:layout_constraintStart_toStartOf="@+id/appCompatTextView2"
         app:layout_constraintTop_toBottomOf="@+id/appCompatTextView2" />
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="中图云创 版权所有\nCopyright © 2020 ChinaFocus. All rights reserved."
+        android:textColor="@color/color_D9"
+        android:textSize="13sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.75"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

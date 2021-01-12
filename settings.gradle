@@ -1,7 +1,12 @@
+//include ':Farmhouse360VRv5'
+//include ':Farmhouse360VRv4'
+//include ':Farmhouse360VRnew'
+include ':Farmhouse360VR'
 include ':lib_bluetooth'
 include ':skyworthvr'
 include ':huaweipad'
 include ':hvrskyworthvr'
 //include ':app'
 include ':lib_network'
+include ':unity_wifi_library'
 rootProject.name = "HvrSkyWorth"

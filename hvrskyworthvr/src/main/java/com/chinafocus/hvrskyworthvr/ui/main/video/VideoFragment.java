@@ -129,7 +129,7 @@ public class VideoFragment extends Fragment {
             setViewPager2ScrollTouchSlop(viewPagerVideoList, 150);
 
             CURRENT_CATEGORY = videoCategories.get(0).getCid();
-//            VrSyncPlayInfo.obtain().setCategory(CURRENT_CATEGORY);
+            VrSyncPlayInfo.obtain().setCategory(CURRENT_CATEGORY);
             VrSyncPlayInfo.obtain().setTag(2);
 //            ViewPager2Helper.bind(magicIndicator, viewPagerVideoList);
             viewPagerVideoList.registerOnPageChangeCallback(new ViewPager2.OnPageChangeCallback() {
@@ -147,7 +147,7 @@ public class VideoFragment extends Fragment {
                     magicIndicator.onPageSelected(position);
 
                     CURRENT_CATEGORY = videoCategories.get(position).getCid();
-//                    VrSyncPlayInfo.obtain().setCategory(CURRENT_CATEGORY);
+                    VrSyncPlayInfo.obtain().setCategory(CURRENT_CATEGORY);
                     VrSyncPlayInfo.obtain().restoreVideoInfo();
                     VrSyncPlayInfo.obtain().setTag(2);
                 }
