@@ -7,13 +7,18 @@ import android.view.View;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.AppCompatButton;
 
+import com.blankj.utilcode.util.SPUtils;
 import com.chinafocus.hvrskyworthvr.R;
 import com.chinafocus.hvrskyworthvr.service.AliasService;
 import com.chinafocus.hvrskyworthvr.service.BluetoothService;
 import com.chinafocus.hvrskyworthvr.service.WifiService;
 import com.chinafocus.hvrskyworthvr.ui.main.MainActivity;
 import com.chinafocus.hvrskyworthvr.ui.widget.SettingViewGroup;
+import com.chinafocus.lib_bluetooth.BluetoothEngineService;
 
+import static com.chinafocus.hvrskyworthvr.global.Constants.BLUETOOTH_DEVICE_CONNECTED_NAME;
+import static com.chinafocus.hvrskyworthvr.global.Constants.CURRENT_VR_ONLINE_STATUS;
+import static com.chinafocus.hvrskyworthvr.global.Constants.VR_ONLINE_STATUS;
 import static com.chinafocus.hvrskyworthvr.ui.widget.SettingViewGroup.CONNECTING;
 import static com.chinafocus.hvrskyworthvr.ui.widget.SettingViewGroup.CONNECT_CHECK_AGAIN;
 import static com.chinafocus.hvrskyworthvr.ui.widget.SettingViewGroup.CONNECT_ERROR;
@@ -100,8 +105,15 @@ public class SettingActivity extends AppCompatActivity {
     }
 
     private void handleBluetooth() {
-        mSettingBluetoothView.postStatusMessage(INIT);
-        BluetoothService.getInstance().startBluetoothEngine(this);
+        int bluetoothCurrentStatus = BluetoothService.getInstance().getBluetoothCurrentStatus();
+        if (bluetoothCurrentStatus == BluetoothEngineService.STATE_CONNECTED) {
+            mSettingBluetoothView.postStatusMessage(CONNECT_SUCCESS, SPUtils.getInstance().getString(BLUETOOTH_DEVICE_CONNECTED_NAME));
+            isBluetoothConnected = true;
+            checkedEnterMainActivityEnable();
+        } else {
+            mSettingBluetoothView.postStatusMessage(INIT);
+            BluetoothService.getInstance().startBluetoothEngine(this);
+        }
         BluetoothService.getInstance().setBluetoothStatusListener(new BluetoothService.BluetoothStatusListener() {
             @Override
             public void autoConnecting() {
@@ -112,6 +124,7 @@ public class SettingActivity extends AppCompatActivity {
 
             @Override
             public void connectSuccess(String deviceName) {
+                SPUtils.getInstance().put(BLUETOOTH_DEVICE_CONNECTED_NAME, deviceName);
                 mSettingBluetoothView.postStatusMessage(CONNECT_SUCCESS, deviceName);
                 isBluetoothConnected = true;
                 checkedEnterMainActivityEnable();
@@ -142,7 +155,9 @@ public class SettingActivity extends AppCompatActivity {
     }
 
     private void enterMainActivity(View v) {
-        startActivity(new Intent(this, MainActivity.class));
+        Intent intent = new Intent(this, MainActivity.class);
+        intent.putExtra(VR_ONLINE_STATUS, CURRENT_VR_ONLINE_STATUS);
+        startActivity(intent);
         finish();
     }
 }

@@ -26,6 +26,8 @@ import java.nio.ByteBuffer;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
+import static com.chinafocus.hvrskyworthvr.global.Constants.VR_OFFLINE;
+import static com.chinafocus.hvrskyworthvr.global.Constants.VR_ONLINE;
 import static com.chinafocus.lib_bluetooth.Constants.MESSAGE_DEVICE_NAME;
 import static com.chinafocus.lib_bluetooth.Constants.MESSAGE_RETRY;
 import static com.chinafocus.lib_bluetooth.Constants.MESSAGE_STATE_CHANGE;
@@ -127,11 +129,18 @@ public class BluetoothService implements BluetoothEngineService.AsyncThreadReadB
         void connectError();
     }
 
+    private int bluetoothCurrentStatus;
+
+    public int getBluetoothCurrentStatus() {
+        return bluetoothCurrentStatus;
+    }
+
     private final Handler mHandler = new Handler(Looper.getMainLooper()) {
         @Override
         public void handleMessage(Message msg) {
             switch (msg.what) {
                 case MESSAGE_STATE_CHANGE:
+                    bluetoothCurrentStatus = msg.arg1;
                     switch (msg.arg1) {
                         case BluetoothEngineService.STATE_CONNECTED:
                             // 链接成功
@@ -278,6 +287,7 @@ public class BluetoothService implements BluetoothEngineService.AsyncThreadReadB
         } else if (Constants.ACTIVITY_TAG == Constants.ACTIVITY_MEDIA) {
             EventBus.getDefault().post(VrMediaDisConnect.obtain());
         }
+        Constants.CURRENT_VR_ONLINE_STATUS = VR_OFFLINE;
     }
 
     /**
@@ -289,6 +299,7 @@ public class BluetoothService implements BluetoothEngineService.AsyncThreadReadB
         } else if (Constants.ACTIVITY_TAG == Constants.ACTIVITY_MEDIA) {
             EventBus.getDefault().post(VrMediaConnect.obtain());
         }
+        Constants.CURRENT_VR_ONLINE_STATUS = VR_ONLINE;
     }
 
     /**

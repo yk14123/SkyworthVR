@@ -44,6 +44,9 @@ import io.reactivex.schedulers.Schedulers;
 import static com.chinafocus.hvrskyworthvr.global.Constants.REQUEST_CODE_VR_MEDIA_ACTIVITY;
 import static com.chinafocus.hvrskyworthvr.global.Constants.RESULT_CODE_ACTIVE_DIALOG;
 import static com.chinafocus.hvrskyworthvr.global.Constants.RESULT_CODE_INACTIVE_DIALOG;
+import static com.chinafocus.hvrskyworthvr.global.Constants.VR_OFFLINE;
+import static com.chinafocus.hvrskyworthvr.global.Constants.VR_ONLINE;
+import static com.chinafocus.hvrskyworthvr.global.Constants.VR_ONLINE_STATUS;
 import static com.chinafocus.hvrskyworthvr.ui.main.media.MediaPlayActivity.MEDIA_CATEGORY_TAG;
 import static com.chinafocus.hvrskyworthvr.ui.main.media.MediaPlayActivity.MEDIA_FROM_TAG;
 import static com.chinafocus.hvrskyworthvr.ui.main.media.MediaPlayActivity.MEDIA_ID;
@@ -70,6 +73,8 @@ public class MainActivity extends AppCompatActivity implements RadioGroup.OnChec
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        int currentVRStatus = getIntent().getIntExtra(VR_ONLINE_STATUS, VR_OFFLINE);
+
         AppCompatImageView publishBg = findViewById(R.id.iv_main_publish_bg);
         AppCompatImageView videoBg = findViewById(R.id.iv_main_video_bg);
         AppCompatImageView aboutBg = findViewById(R.id.iv_main_about_bg);
@@ -84,6 +89,15 @@ public class MainActivity extends AppCompatActivity implements RadioGroup.OnChec
         initFragments();
         radioGroup.check(R.id.rb_main_video);
 
+        if (currentVRStatus == VR_OFFLINE) {
+            disConnectFromVR(null);
+        } else if (currentVRStatus == VR_ONLINE) {
+//            connectToVR(null);
+            // 1.关闭定时器
+            closeTimer(null);
+            // 2.展示控制画面
+            showVrModeMainDialog();
+        }
     }
 
     @Override

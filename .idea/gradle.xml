@@ -12,13 +12,13 @@
         <option name="modules">
           <set>
             <option value="$PROJECT_DIR$" />
-            <option value="$PROJECT_DIR$/Farmhouse360VR" />
+            <option value="$PROJECT_DIR$/Farmhouse360VRv7" />
             <option value="$PROJECT_DIR$/huaweipad" />
             <option value="$PROJECT_DIR$/hvrskyworthvr" />
             <option value="$PROJECT_DIR$/lib_bluetooth" />
             <option value="$PROJECT_DIR$/lib_network" />
-            <option value="$PROJECT_DIR$/skyworthvr" />
-            <option value="$PROJECT_DIR$/unity_wifi_library" />
+            <option value="$PROJECT_DIR$/lib_skyworthvr" />
+            <option value="$PROJECT_DIR$/skyworthvrwifi" />
           </set>
         </option>
         <option name="resolveModulePerSourceSet" value="false" />
