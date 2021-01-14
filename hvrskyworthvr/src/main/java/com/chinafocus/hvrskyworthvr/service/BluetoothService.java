@@ -1,6 +1,7 @@
 package com.chinafocus.hvrskyworthvr.service;
 
 import android.app.Activity;
+import android.content.Context;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
@@ -53,6 +54,9 @@ public class BluetoothService implements BluetoothEngineService.AsyncThreadReadB
 
     private final BluetoothEngineHelper bluetoothEngineHelper;
 
+    private int bluetoothCurrentStatus;
+    private String currentBluetoothDeviceName;
+
     private BluetoothService() {
         bluetoothEngineHelper = new BluetoothEngineHelper(mHandler, this);
         executor = Executors.newSingleThreadExecutor();
@@ -71,7 +75,20 @@ public class BluetoothService implements BluetoothEngineService.AsyncThreadReadB
         return instance;
     }
 
-    public void unBondDevice(Activity activity) {
+    public void onStart(Activity activity) {
+        if (bluetoothCurrentStatus == BluetoothEngineService.STATE_CONNECTED) {
+            if (mBluetoothStatusListener != null) {
+                mBluetoothStatusListener.connectSuccess(currentBluetoothDeviceName);
+            }
+        } else {
+            if (mBluetoothStatusListener != null) {
+                mBluetoothStatusListener.autoConnecting();
+            }
+            BluetoothService.getInstance().startBluetoothEngine(activity);
+        }
+    }
+
+    public void unBondDevice(Context activity) {
         bluetoothEngineHelper.unBondDevice(activity);
     }
 
@@ -129,12 +146,6 @@ public class BluetoothService implements BluetoothEngineService.AsyncThreadReadB
         void connectError();
     }
 
-    private int bluetoothCurrentStatus;
-
-    public int getBluetoothCurrentStatus() {
-        return bluetoothCurrentStatus;
-    }
-
     private final Handler mHandler = new Handler(Looper.getMainLooper()) {
         @Override
         public void handleMessage(Message msg) {
@@ -154,6 +165,7 @@ public class BluetoothService implements BluetoothEngineService.AsyncThreadReadB
                             if (mBluetoothStatusListener != null) {
                                 mBluetoothStatusListener.autoConnecting();
                             }
+                            currentBluetoothDeviceName = null;
                             break;
                     }
                     break;
@@ -169,10 +181,10 @@ public class BluetoothService implements BluetoothEngineService.AsyncThreadReadB
 //                    break;
                 case MESSAGE_DEVICE_NAME:
                     // save the connected device's name
-                    String deviceName = msg.getData().getString(com.chinafocus.lib_bluetooth.Constants.DEVICE_NAME);
+                    currentBluetoothDeviceName = msg.getData().getString(com.chinafocus.lib_bluetooth.Constants.DEVICE_NAME);
                     // 设备名称
                     if (mBluetoothStatusListener != null) {
-                        mBluetoothStatusListener.connectSuccess(deviceName);
+                        mBluetoothStatusListener.connectSuccess(currentBluetoothDeviceName);
                     }
                     break;
                 case MESSAGE_RETRY:

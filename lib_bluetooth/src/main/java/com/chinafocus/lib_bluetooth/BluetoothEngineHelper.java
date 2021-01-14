@@ -58,6 +58,9 @@ public class BluetoothEngineHelper {
                 boolean b = tryConnectBondedDevices();
                 bluetoothEngineService.setBluetoothDeviceOnceConnected(b);
                 if (!b) {
+
+                    receiver.setFound(false);
+
 //                    ensureDiscoverable(activity);
                     // Register for broadcasts when a device is discovered.
                     IntentFilter filter = new IntentFilter(BluetoothDevice.ACTION_FOUND);
@@ -65,6 +68,8 @@ public class BluetoothEngineHelper {
 
                     // Register for broadcasts when discovery has finished
                     filter = new IntentFilter(BluetoothAdapter.ACTION_DISCOVERY_FINISHED);
+
+
                     activity.registerReceiver(receiver, filter);
 
                     isRegisterReceiver = true;
@@ -175,10 +180,17 @@ public class BluetoothEngineHelper {
     }
 
     // Create a BroadcastReceiver for ACTION_FOUND.
-    private final BroadcastReceiver receiver = new BroadcastReceiver() {
+    private final MyBluetoothReceiver receiver = new MyBluetoothReceiver();
+
+    private class MyBluetoothReceiver extends BroadcastReceiver {
 
         private boolean isFound;
 
+        public void setFound(boolean found) {
+            isFound = found;
+        }
+
+        @Override
         public void onReceive(Context context, Intent intent) {
             String action = intent.getAction();
             // When discovery finds a device
@@ -205,7 +217,7 @@ public class BluetoothEngineHelper {
                 }
             }
         }
-    };
+    }
 
     /**
      * pad端解除蓝牙绑定。只有用户手动解除！

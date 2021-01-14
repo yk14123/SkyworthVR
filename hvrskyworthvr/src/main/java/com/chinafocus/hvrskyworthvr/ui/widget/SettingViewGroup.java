@@ -1,5 +1,6 @@
 package com.chinafocus.hvrskyworthvr.ui.widget;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.graphics.drawable.Drawable;
@@ -15,6 +16,10 @@ import androidx.appcompat.widget.AppCompatTextView;
 import androidx.core.content.ContextCompat;
 
 import com.chinafocus.hvrskyworthvr.R;
+import com.chinafocus.hvrskyworthvr.service.AliasService;
+import com.chinafocus.hvrskyworthvr.service.BluetoothService;
+import com.chinafocus.hvrskyworthvr.service.WifiService;
+import com.chinafocus.hvrskyworthvr.util.TimeOutClickUtil;
 
 import java.util.Objects;
 
@@ -78,15 +83,6 @@ public class SettingViewGroup extends FrameLayout {
         mTvSettingRetry = findViewById(R.id.tv_setting_retry);
 
         postStatusMessage(INIT);
-
-    }
-
-    public AppCompatImageView getIvSettingSet() {
-        return mIvSettingSet;
-    }
-
-    public AppCompatTextView getTvSettingRetry() {
-        return mTvSettingRetry;
     }
 
     public void postStatusMessage(@MessageType int messageType) {
@@ -108,8 +104,6 @@ public class SettingViewGroup extends FrameLayout {
             case CONNECTING:
                 if (isWifiType()) {
                     setWifiConnecting();
-                } else if (isBluetoothType()) {
-                    initSettingBluetooth();
                 }
                 break;
             case CONNECT_SUCCESS:
@@ -144,6 +138,7 @@ public class SettingViewGroup extends FrameLayout {
         switchSubTitle(false);
         mTvSettingMainTitle.setText(getContext().getString(R.string.setting_status_alias_main_title));
         setFinalResultMessage(R.string.setting_status_alias_result, R.color.color_setting_status_gray);
+        mIvSettingSet.setOnClickListener(v -> AliasService.getInstance().onClick(v.getContext()));
     }
 
     private void initSettingBluetooth() {
@@ -154,12 +149,20 @@ public class SettingViewGroup extends FrameLayout {
         mTvSettingMainTitle.setText(getContext().getString(R.string.setting_status_bluetooth_main_title));
         mTvSettingSubTitle.setText(getContext().getString(R.string.setting_status_bluetooth_sub_title));
         mTvSettingSubBody.setText(getContext().getString(R.string.setting_status_bluetooth_sub_body));
+
+        mTvSettingRetry.setOnClickListener(v -> BluetoothService.getInstance().startBluetoothEngine((Activity) v.getContext()));
+        mTvSettingMainTitle.setOnClickListener(v -> TimeOutClickUtil.startTimeOutClick(() -> BluetoothService.getInstance().unBondDevice(v.getContext())));
     }
 
     private void initSettingWifi() {
         switchSubTitle(false);
         mTvSettingMainTitle.setText(getContext().getString(R.string.setting_status_wifi_main_title));
         setFinalResultMessage(R.string.setting_status_alias_result, R.color.color_setting_status_gray);
+
+        mIvSettingSet.setOnClickListener(v -> {
+            WifiService.getInstance().startSettingWifi(v.getContext());
+            postStatusMessage(CONNECTING);
+        });
     }
 
     private void setFinalResultMessage(int result, int color) {

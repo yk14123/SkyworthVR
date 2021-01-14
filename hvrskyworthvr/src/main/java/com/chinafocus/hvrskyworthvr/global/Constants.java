@@ -3,7 +3,6 @@ package com.chinafocus.hvrskyworthvr.global;
 public class Constants {
     public static final String ACCOUNT_NAME = "account_name";
     public static final String DEVICE_ALIAS = "device_alias";
-    public static final String BLUETOOTH_DEVICE_CONNECTED_NAME = "bluetooth_device_connected_name";
     public static final String VR_ONLINE_STATUS = "vr_online_status";
     public static String DEFAULT_URL = "";
 
