@@ -12,6 +12,7 @@ import com.chinafocus.hvrskyworthvr.service.AliasService;
 import com.chinafocus.hvrskyworthvr.service.BluetoothService;
 import com.chinafocus.hvrskyworthvr.service.WifiService;
 import com.chinafocus.hvrskyworthvr.ui.main.MainActivity;
+import com.chinafocus.hvrskyworthvr.ui.widget.DeviceInfoViewGroup;
 import com.chinafocus.hvrskyworthvr.ui.widget.SettingViewGroup;
 
 import static com.chinafocus.hvrskyworthvr.global.Constants.CURRENT_VR_ONLINE_STATUS;
@@ -29,7 +30,10 @@ public class SettingActivity extends AppCompatActivity {
 
     private boolean isWifiConnected;
     private boolean isBluetoothConnected;
-    private AppCompatButton mBtAllDone;
+    private AppCompatButton mBtAllReadyDone;
+
+
+    private DeviceInfoViewGroup mDeviceInfoViewGroup;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -40,8 +44,10 @@ public class SettingActivity extends AppCompatActivity {
         mSettingBluetoothView = findViewById(R.id.view_devices_bluetooth);
         mSettingAliasView = findViewById(R.id.view_devices_alias);
 
-        mBtAllDone = findViewById(R.id.bt_setting_all_done);
-        mBtAllDone.setOnClickListener(this::enterMainActivity);
+        mDeviceInfoViewGroup = findViewById(R.id.view_devices_info);
+
+        mBtAllReadyDone = findViewById(R.id.bt_setting_all_done);
+        mBtAllReadyDone.setOnClickListener(this::enterMainActivity);
 
         handleWifi();
         handleBluetooth();
@@ -72,8 +78,12 @@ public class SettingActivity extends AppCompatActivity {
             }
 
             @Override
-            public void wifiConnectSuccess(String name) {
+            public void wifiConnectedSuccess(String name) {
                 mSettingWifiView.postStatusMessage(CONNECT_SUCCESS, name);
+            }
+
+            @Override
+            public void checkedNetWorkConnectedSuccess() {
                 isWifiConnected = true;
                 checkedEnterMainActivityEnable();
             }
@@ -83,6 +93,11 @@ public class SettingActivity extends AppCompatActivity {
                 mSettingWifiView.postStatusMessage(CONNECT_CHECK_AGAIN, name);
                 isWifiConnected = false;
                 checkedEnterMainActivityEnable();
+            }
+
+            @Override
+            public void loadAccountName(String name) {
+                mDeviceInfoViewGroup.postAccountName(name);
             }
         });
     }
@@ -95,7 +110,7 @@ public class SettingActivity extends AppCompatActivity {
     }
 
     private void handleBluetooth() {
-        BluetoothService.getInstance().setBluetoothStatusListener(new BluetoothService.BluetoothStatusListener() {
+        BluetoothService.getInstance().registerBluetoothStatusListener(new BluetoothService.BluetoothStatusListener() {
             @Override
             public void autoConnecting() {
                 mSettingBluetoothView.postStatusMessage(INIT);
@@ -104,7 +119,7 @@ public class SettingActivity extends AppCompatActivity {
             }
 
             @Override
-            public void connectSuccess(String deviceName) {
+            public void connectedDeviceName(String deviceName) {
                 mSettingBluetoothView.postStatusMessage(CONNECT_SUCCESS, deviceName);
                 isBluetoothConnected = true;
                 checkedEnterMainActivityEnable();
@@ -116,14 +131,19 @@ public class SettingActivity extends AppCompatActivity {
                 isBluetoothConnected = false;
                 checkedEnterMainActivityEnable();
             }
+
+            @Override
+            public void onSyncUUIDSuccess(String uuid) {
+                mDeviceInfoViewGroup.postUUIDMessage(uuid);
+            }
         });
     }
 
     private void checkedEnterMainActivityEnable() {
         if (isBluetoothConnected && isWifiConnected) {
-            mBtAllDone.setEnabled(true);
+            mBtAllReadyDone.setEnabled(true);
         } else {
-            mBtAllDone.setEnabled(false);
+            mBtAllReadyDone.setEnabled(false);
         }
     }
 

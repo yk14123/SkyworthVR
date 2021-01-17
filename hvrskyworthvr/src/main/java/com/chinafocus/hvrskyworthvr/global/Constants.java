@@ -2,7 +2,10 @@ package com.chinafocus.hvrskyworthvr.global;
 
 public class Constants {
     public static final String ACCOUNT_NAME = "account_name";
+    public static final String DEVICE_UUID = "device_uuid";
+    // TODO 换成新接口后，设备别名，每次都从网络获取，所以该值废弃
     public static final String DEVICE_ALIAS = "device_alias";
+
     public static final String VR_ONLINE_STATUS = "vr_online_status";
     public static String DEFAULT_URL = "";
 

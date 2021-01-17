@@ -80,4 +80,13 @@ public class WifiEngineHelper {
         }
     }
 
+    /**
+     * 忘记当前Wifi，会自动连接其他已保存网络
+     */
+    public void forgetWifi() {
+        if (mWifiUtils != null) {
+            mWifiUtils.forget();
+        }
+    }
+
 }

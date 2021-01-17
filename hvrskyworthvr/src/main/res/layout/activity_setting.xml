@@ -51,8 +51,8 @@
         app:layout_constraintTop_toBottomOf="@+id/view_devices_bluetooth"
         app:settingType="settingType_alias" />
 
-    <include
-        layout="@layout/include_setting_device_info"
+    <com.chinafocus.hvrskyworthvr.ui.widget.DeviceInfoViewGroup
+        android:id="@+id/view_devices_info"
         android:layout_width="392dp"
         android:layout_height="368dp"
         app:layout_constraintBottom_toBottomOf="@+id/view_devices_alias"

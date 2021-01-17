@@ -5,8 +5,12 @@ import android.content.Context;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
+import android.text.TextUtils;
 import android.util.Log;
 
+import androidx.annotation.NonNull;
+
+import com.blankj.utilcode.util.SPUtils;
 import com.chinafocus.hvrskyworthvr.global.Constants;
 import com.chinafocus.hvrskyworthvr.service.event.VrMainConnect;
 import com.chinafocus.hvrskyworthvr.service.event.VrMainDisConnect;
@@ -24,9 +28,11 @@ import com.chinafocus.lib_bluetooth.BluetoothEngineService;
 import org.greenrobot.eventbus.EventBus;
 
 import java.nio.ByteBuffer;
+import java.util.UUID;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
+import static com.chinafocus.hvrskyworthvr.global.Constants.DEVICE_UUID;
 import static com.chinafocus.hvrskyworthvr.global.Constants.VR_OFFLINE;
 import static com.chinafocus.hvrskyworthvr.global.Constants.VR_ONLINE;
 import static com.chinafocus.lib_bluetooth.Constants.MESSAGE_DEVICE_NAME;
@@ -43,12 +49,15 @@ public class BluetoothService implements BluetoothEngineService.AsyncThreadReadB
     private static final int SYNC_ROTATION = 4;
     private static final int SYNC_WAIT_VR_SELECTED = 5;
     private static final int SYNC_MEDIA_PLAY_STATUS = 6;
+    private static final int SYNC_DEVICE_UUID = 7;
+    private static final int BLUETOOTH_RETRY_CONNECT = 8;
 
     private static final int MESSAGE_CONNECT = 10001;
     private static final int MESSAGE_DISCONNECT = 10002;
     private static final int MESSAGE_SYNC_PLAY = 10003;
     private static final int MESSAGE_SYNC_WAIT_VR_SELECTED = 10004;
     private static final int MESSAGE_SYNC_WAIT_PLAY_STATUS = 10005;
+    private static final int MESSAGE_SYNC_DEVICE_UUID = 10006;
 
     private final ExecutorService executor;
 
@@ -78,7 +87,7 @@ public class BluetoothService implements BluetoothEngineService.AsyncThreadReadB
     public void onStart(Activity activity) {
         if (bluetoothCurrentStatus == BluetoothEngineService.STATE_CONNECTED) {
             if (mBluetoothStatusListener != null) {
-                mBluetoothStatusListener.connectSuccess(currentBluetoothDeviceName);
+                mBluetoothStatusListener.connectedDeviceName(currentBluetoothDeviceName);
             }
         } else {
             if (mBluetoothStatusListener != null) {
@@ -104,9 +113,57 @@ public class BluetoothService implements BluetoothEngineService.AsyncThreadReadB
         bluetoothEngineHelper.startBluetoothEngine(activity);
     }
 
+    /**
+     * 蓝牙重连
+     */
+    private void sendBluetoothRetryConnect() {
+        Log.d("MyLog", "-----发送给VR端的uuid " + " >>> 蓝牙重连 ");
+        sendUUIDMessage(1, "bluetoothRetryConnect", BLUETOOTH_RETRY_CONNECT);
+    }
+
+    private void sendUUIDMessage(int tag, @NonNull String uuid) {
+        sendUUIDMessage(tag, uuid, SYNC_DEVICE_UUID);
+    }
+
+
+    /**
+     * message格式是 {int:totalBody长度,int:消息类型,int:消息二级分类,short:MessageBody长度,int:tag,string:UUID}
+     *
+     * @param tag        UUid是否存在
+     * @param uuid       uuid值
+     * @param messageTag messageTag
+     */
+    private void sendUUIDMessage(int tag, @NonNull String uuid, int messageTag) {
+
+        Log.d("MyLog", "-----发送给VR端的uuid" +
+                " >>> pad是否存在uuid值（-1不存在，1存在） : " + tag
+                + " >>> uuid : " + uuid);
+
+        executor.execute(() -> {
+
+            byte[] uuidBytes = uuid.getBytes();
+            int uuidLength = uuidBytes.length;
+            byte[] mediaInfoByte = new byte[22 + uuidLength];
+            System.arraycopy(uuidBytes, 0, mediaInfoByte, 22, uuidLength);
+
+            ByteBuffer.wrap(mediaInfoByte).putInt(14 + uuidLength); //长度表示totalBody
+            ByteBuffer.wrap(mediaInfoByte).putInt(4, messageTag);
+            ByteBuffer.wrap(mediaInfoByte).putInt(8, messageTag);
+
+            ByteBuffer.wrap(mediaInfoByte).putShort(12, (short) (uuidLength + 8));//MessageBody长度
+            ByteBuffer.wrap(mediaInfoByte).putInt(14, tag);
+            ByteBuffer.wrap(mediaInfoByte).putInt(18, uuidLength);
+
+            bluetoothEngineHelper.sendMessage(mediaInfoByte);
+
+
+        });
+
+    }
+
     public void sendMessage(int videoTag, int videoCategory, int videoId, long seek) {
 
-        Log.e("MyLog", "-----发送给VR端的信息" +
+        Log.d("MyLog", "-----发送给VR端的信息" +
                 " >>> video_tag : " + videoTag
                 + " >>> video_category : " + videoCategory
                 + " >>> video_id : " + videoId
@@ -134,17 +191,25 @@ public class BluetoothService implements BluetoothEngineService.AsyncThreadReadB
 
     private BluetoothStatusListener mBluetoothStatusListener;
 
-    public void setBluetoothStatusListener(BluetoothStatusListener bluetoothStatusListener) {
+    public void registerBluetoothStatusListener(BluetoothStatusListener bluetoothStatusListener) {
         mBluetoothStatusListener = bluetoothStatusListener;
     }
 
     public interface BluetoothStatusListener {
         void autoConnecting();
 
-        void connectSuccess(String deviceName);
+        void connectedDeviceName(String deviceName);
 
         void connectError();
+
+        void onSyncUUIDSuccess(String uuid);
+
     }
+
+    /**
+     * 第一次联通蓝牙会同步UUID。
+     */
+    private boolean isStartSyncUUIDOnce;
 
     private final Handler mHandler = new Handler(Looper.getMainLooper()) {
         @Override
@@ -154,6 +219,13 @@ public class BluetoothService implements BluetoothEngineService.AsyncThreadReadB
                     bluetoothCurrentStatus = msg.arg1;
                     switch (msg.arg1) {
                         case BluetoothEngineService.STATE_CONNECTED:
+//                            if (mBluetoothStatusListener != null) {
+//                                mBluetoothStatusListener.connectedSuccess();
+//                            }
+                            if (!isStartSyncUUIDOnce) {
+                                isStartSyncUUIDOnce = true;
+                                BluetoothService.getInstance().startSynchronizedUUID();
+                            }
                             // 链接成功
                             break;
                         case BluetoothEngineService.STATE_CONNECTING:
@@ -184,7 +256,7 @@ public class BluetoothService implements BluetoothEngineService.AsyncThreadReadB
                     currentBluetoothDeviceName = msg.getData().getString(com.chinafocus.lib_bluetooth.Constants.DEVICE_NAME);
                     // 设备名称
                     if (mBluetoothStatusListener != null) {
-                        mBluetoothStatusListener.connectSuccess(currentBluetoothDeviceName);
+                        mBluetoothStatusListener.connectedDeviceName(currentBluetoothDeviceName);
                     }
                     break;
                 case MESSAGE_RETRY:
@@ -209,12 +281,27 @@ public class BluetoothService implements BluetoothEngineService.AsyncThreadReadB
                     postWaitVrSelected();
                     break;
                 case MESSAGE_SYNC_WAIT_PLAY_STATUS:
-                    int playTag = (int) msg.obj;
-                    postPlayStatus(playTag);
+                    postPlayStatus((int) msg.obj);
+                    break;
+                case MESSAGE_SYNC_DEVICE_UUID:
+                    postSyncDeviceUUID((String) msg.obj);
                     break;
             }
         }
+
     };
+
+    private void postSyncDeviceUUID(String uuid) {
+        if (mBluetoothStatusListener != null) {
+            mBluetoothStatusListener.onSyncUUIDSuccess(uuid);
+        }
+        sendBluetoothRetryConnect();
+
+        // 检查网络接口是否可以正常访问！
+        WifiService.getInstance().setCurrentDeviceUUID(uuid);
+        WifiService.getInstance().checkNetworkConnected();
+        WifiService.getInstance().loadAccountName();
+    }
 
     /**
      * 发送播放/暂停事件
@@ -277,9 +364,49 @@ public class BluetoothService implements BluetoothEngineService.AsyncThreadReadB
                     Log.d("MyLog", " ------------------------- i >>> " + i);
                     mHandler.obtainMessage(MESSAGE_SYNC_WAIT_PLAY_STATUS, i).sendToTarget();
                     break;
+                case SYNC_DEVICE_UUID:
+                    handSyncUUID(bytes, cursor + 14);
+                    break;
             }
 
             cursor += messageLen;
+        }
+    }
+
+    /**
+     * 通过蓝牙开启双端同步UUID
+     */
+    public void startSynchronizedUUID() {
+        String string = SPUtils.getInstance().getString(DEVICE_UUID);
+        if (TextUtils.isEmpty(string)) {
+            // pad无
+            sendUUIDMessage(-1, "NoUUID");
+        } else {
+            // pad有
+            sendUUIDMessage(1, string);
+        }
+    }
+
+    private void handSyncUUID(byte[] bytes, int tagHead) {
+        int tag = ByteBuffer.wrap(bytes).getInt(tagHead);
+
+        if (tag == -1) {
+            // 创建UUID
+            String createUUID = UUID.randomUUID().toString().replace("-", "");
+            SPUtils.getInstance().put(DEVICE_UUID, createUUID);
+            sendUUIDMessage(1, createUUID);
+
+        } else if (tag == 1) {
+
+            int uuidLen = ByteBuffer.wrap(bytes).getInt(tagHead + 4);
+            byte[] uuidBytes = new byte[uuidLen];
+            System.arraycopy(bytes, tagHead + 8, uuidBytes, 0, uuidLen);
+
+            String uuid = new String(uuidBytes);
+
+            Log.d("MyLog", "------收到VR端的UUID <<< tag == 1 uuid : " + uuid + " uuidLen <<< " + uuidLen);
+
+            mHandler.obtainMessage(MESSAGE_SYNC_DEVICE_UUID, uuid).sendToTarget();
         }
     }
 

@@ -21,6 +21,9 @@ import io.reactivex.schedulers.Schedulers;
 public class WifiService {
 
     private WifiManager mWifiManager;
+    private String mWifiConnectedName;
+    private String mCurrentDeviceUUID;
+    private String mAccountName;
 
     private WifiService() {
     }
@@ -36,6 +39,33 @@ public class WifiService {
             }
         }
         return instance;
+    }
+
+    /**
+     * 获取当前渠道名称
+     *
+     * @return 渠道名称
+     */
+    public String getAccountName() {
+        return mAccountName;
+    }
+
+    /**
+     * 获取当前设备UUID
+     *
+     * @return CurrentDeviceUUID
+     */
+    public String getCurrentDeviceUUID() {
+        return mCurrentDeviceUUID;
+    }
+
+    /**
+     * 设置当前设备UUID
+     *
+     * @param currentDeviceUUID CurrentDeviceUUID
+     */
+    public void setCurrentDeviceUUID(String currentDeviceUUID) {
+        mCurrentDeviceUUID = currentDeviceUUID;
     }
 
     /**
@@ -78,20 +108,37 @@ public class WifiService {
     }
 
     public interface WifiStatusListener {
+        // wifi状态初始化的时候调用
         void wifiStatusInit();
 
-        void wifiConnectSuccess(String name);
+        // wifi链接成功，但该wifi是否可以上网，暂不知道
+        void wifiConnectedSuccess(String name);
 
+        // 检查网络，连接正常
+        void checkedNetWorkConnectedSuccess();
+
+        // 检查网络，连接错误
         void wifiNetWorkError(String name);
+
+        // 加载渠道名称
+        void loadAccountName(String name);
     }
 
-    public void onStart(Context context) {
-        String wifiConnectedName = getWifiConnectedName(context);
-        if (TextUtils.isEmpty(wifiConnectedName)) {
+    /**
+     * 当网络通顺后，加载渠道名称
+     */
+    public void loadAccountName() {
+        if (!TextUtils.isEmpty(mCurrentDeviceUUID) && TextUtils.isEmpty(mAccountName)) {
+            // TODO 当网络通畅后，访问渠道接口，拿到渠道名称
             if (mWifiStatusListener != null) {
-                mWifiStatusListener.wifiStatusInit();
+                mAccountName = "账户名称";
+                mWifiStatusListener.loadAccountName(mAccountName);
             }
-        } else {
+        }
+    }
+
+    public void checkNetworkConnected() {
+        if (!TextUtils.isEmpty(mCurrentDeviceUUID) && !TextUtils.isEmpty(mWifiConnectedName)) {
             ApiManager
                     .getService(ApiService.class)
                     .getDefaultCloudUrl()
@@ -101,12 +148,11 @@ public class WifiService {
                     .subscribe(new BaseObserver<DefaultCloudUrl>() {
                         @Override
                         public void onSuccess(DefaultCloudUrl defaultCloudUrlBaseResponse) {
-
                             Constants.DEFAULT_URL = defaultCloudUrlBaseResponse.getCloudUrl();
                             Log.d("MyLog", "-----DEFAULT_URL >>>" + Constants.DEFAULT_URL);
                             // 如果网络正常，则成功连接
                             if (mWifiStatusListener != null) {
-                                mWifiStatusListener.wifiConnectSuccess(wifiConnectedName);
+                                mWifiStatusListener.checkedNetWorkConnectedSuccess();
                             }
                         }
 
@@ -115,7 +161,7 @@ public class WifiService {
                             Log.e("MyLog", "-----初始化 DEFAULT_URL 失败 >>> " + e.message);
                             // 如果WIFI链接，但是路由器没有网络
                             if (mWifiStatusListener != null) {
-                                mWifiStatusListener.wifiNetWorkError(wifiConnectedName);
+                                mWifiStatusListener.wifiNetWorkError(mWifiConnectedName);
                             }
                         }
 
@@ -124,10 +170,25 @@ public class WifiService {
                             Log.e("MyLog", "-----服务端返回 DEFAULT_URL 异常 >>> " + errMsg);
                             // 如果WIFI链接，但是路由器没有网络
                             if (mWifiStatusListener != null) {
-                                mWifiStatusListener.wifiNetWorkError(wifiConnectedName);
+                                mWifiStatusListener.wifiNetWorkError(mWifiConnectedName);
                             }
                         }
                     });
+        }
+    }
+
+    public void onStart(Context context) {
+        mWifiConnectedName = getWifiConnectedName(context);
+        if (TextUtils.isEmpty(mWifiConnectedName)) {
+            if (mWifiStatusListener != null) {
+                mWifiStatusListener.wifiStatusInit();
+            }
+        } else {
+            if (mWifiStatusListener != null) {
+                mWifiStatusListener.wifiConnectedSuccess(mWifiConnectedName);
+            }
+            checkNetworkConnected();
+            loadAccountName();
         }
     }
 

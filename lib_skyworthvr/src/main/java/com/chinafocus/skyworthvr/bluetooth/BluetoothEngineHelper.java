@@ -15,6 +15,7 @@ import com.ssnwt.vr.androidmanager.AndroidInterface;
 import com.ssnwt.vr.androidmanager.bluetooth.BluetoothUtils;
 import com.unity3d.player.UnityPlayer;
 
+import java.nio.ByteBuffer;
 import java.nio.charset.StandardCharsets;
 import java.util.Set;
 
@@ -52,10 +53,22 @@ public class BluetoothEngineHelper {
                     break;
                 case Constants.MESSAGE_READ:
                     byte[] readBuf = (byte[]) msg.obj;
-                    // construct a string from the valid bytes in the buffer
-                    String s = new String(Base64.encode(readBuf, 0, msg.arg1, Base64.DEFAULT), StandardCharsets.US_ASCII);
-                    Log.e(TAG, " readMessage :" + s);
-                    UnityPlayer.UnitySendMessage(UNITY_NAME, "ReadData", s);
+                    int tag = ByteBuffer.wrap(readBuf).getInt(4);
+                    if (tag == 7) {
+                        int status = ByteBuffer.wrap(readBuf).getInt(14);
+                        int len = ByteBuffer.wrap(readBuf).getInt(18);
+                        String s = new String(readBuf, 22, len);
+                        Log.e(TAG, " readUUIDMessage >>> " + status + ";" + s);
+                        UnityPlayer.UnitySendMessage(UNITY_NAME, "ReadUUID", status + ";" + s);
+                    } else if (tag == 8) {
+                        Log.e(TAG, " RetryConnect >>> ");
+                        UnityPlayer.UnitySendMessage(UNITY_NAME, "RetryConnect", "");
+                    } else {
+                        // construct a string from the valid bytes in the buffer
+                        String s = new String(Base64.encode(readBuf, 0, msg.arg1, Base64.NO_WRAP), StandardCharsets.US_ASCII);
+                        Log.e(TAG, " readMessage :" + s);
+                        UnityPlayer.UnitySendMessage(UNITY_NAME, "ReadData", s);
+                    }
                     break;
                 case Constants.MESSAGE_DEVICE_NAME:
                     // save the connected device's name

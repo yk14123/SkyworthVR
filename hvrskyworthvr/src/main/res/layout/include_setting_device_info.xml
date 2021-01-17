@@ -33,17 +33,19 @@
         app:layout_constraintVertical_bias="0.37" />
 
     <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/tv_setting_device_info_account_name"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="3dp"
         android:layout_marginEnd="18dp"
-        android:text="中图云创"
+        tools:text="等待自动生成"
         android:textColor="@color/color_setting_id_create"
         android:textSize="12sp"
         app:layout_constraintEnd_toStartOf="@+id/appCompatImageView5"
         app:layout_constraintHorizontal_bias="0"
         app:layout_constraintStart_toStartOf="@+id/appCompatTextView7"
-        app:layout_constraintTop_toBottomOf="@+id/appCompatTextView10" />
+        app:layout_constraintTop_toBottomOf="@+id/appCompatTextView10"
+        app:layout_constraintWidth_max="wrap" />
 
     <androidx.appcompat.widget.AppCompatTextView
         android:id="@+id/appCompatTextView10"
@@ -72,27 +74,30 @@
 
     <androidx.appcompat.widget.AppCompatTextView
         android:id="@+id/tv_uuid"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="6dp"
-        android:text="c92838fa113sloqlq134"
         android:textColor="@color/color_setting_id_create"
         android:textSize="12sp"
+        android:layout_marginEnd="10dp"
+        app:layout_constraintHorizontal_bias="0"
+        app:layout_constraintWidth_max="wrap"
+        app:layout_constraintEnd_toStartOf="@+id/appCompatImageView5"
         app:layout_constraintStart_toStartOf="@+id/appCompatTextView9"
-        app:layout_constraintTop_toBottomOf="@+id/appCompatTextView9" />
+        app:layout_constraintTop_toBottomOf="@+id/appCompatTextView9"
+        tools:text="c92838fa11c92838fa11c92838fa1111" />
 
     <androidx.appcompat.widget.AppCompatImageView
         android:id="@+id/appCompatImageView5"
-        android:layout_width="132dp"
-        android:layout_height="268dp"
+        android:layout_width="122dp"
+        android:layout_height="264dp"
         android:scaleType="fitXY"
         android:src="@drawable/sky_worth_setting_device_info_icon"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.843"
-        app:layout_constraintStart_toStartOf="parent" />
+        app:layout_constraintEnd_toEndOf="parent" />
 
     <ProgressBar
+        android:id="@+id/pb_device_info_uuid"
         style="?android:attr/progressBarStyleSmall"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -101,5 +106,16 @@
         app:layout_constraintBottom_toBottomOf="@+id/tv_uuid"
         app:layout_constraintStart_toEndOf="@+id/tv_uuid"
         app:layout_constraintTop_toTopOf="@+id/tv_uuid" />
+
+    <ProgressBar
+        android:id="@+id/pb_device_info_account_name"
+        style="?android:attr/progressBarStyleSmall"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="12dp"
+        android:visibility="invisible"
+        app:layout_constraintBottom_toBottomOf="@+id/tv_setting_device_info_account_name"
+        app:layout_constraintStart_toEndOf="@+id/tv_setting_device_info_account_name"
+        app:layout_constraintTop_toTopOf="@+id/tv_setting_device_info_account_name" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
