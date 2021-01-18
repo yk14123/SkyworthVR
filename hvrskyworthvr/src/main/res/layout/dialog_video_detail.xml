@@ -12,7 +12,7 @@
         android:layout_marginEnd="30dp"
         android:layout_marginBottom="65dp"
         android:padding="10dp"
-        android:src="@drawable/sky_worth_video_detail_close"
+        android:src="@drawable/sky_worth_video_detail_close_railway"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
 

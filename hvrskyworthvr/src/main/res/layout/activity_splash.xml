@@ -9,22 +9,22 @@
 
     <androidx.appcompat.widget.AppCompatImageView
         android:id="@+id/appCompatImageView6"
-        android:layout_width="160dp"
-        android:layout_height="74dp"
-        android:scaleType="fitCenter"
-        android:src="@drawable/sky_worth_splash_logo_new"
+        android:layout_width="128dp"
+        android:layout_height="128dp"
+        android:scaleType="fitXY"
+        android:src="@drawable/sky_worth_splash_logo_railway"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.422" />
+        app:layout_constraintVertical_bias="0.387" />
 
     <androidx.appcompat.widget.AppCompatTextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="24dp"
         android:text="@string/splash_title"
-        android:textColor="@color/color_333"
+        android:textColor="@color/color_black"
         android:textSize="26sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"

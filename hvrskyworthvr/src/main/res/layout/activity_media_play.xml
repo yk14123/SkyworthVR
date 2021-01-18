@@ -17,8 +17,8 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:played_color="@color/colorAccent"
-        app:scrubber_drawable="@drawable/icon_exo_seekbar"
+        app:played_color="@color/color_indicator"
+        app:scrubber_drawable="@drawable/icon_exo_seekbar_railway"
         app:show_buffering="when_playing"
         app:show_timeout="3000"
         app:surface_type="spherical_gl_surface_view" />

@@ -131,7 +131,7 @@ public class WifiService {
         if (!TextUtils.isEmpty(mCurrentDeviceUUID) && TextUtils.isEmpty(mAccountName)) {
             // TODO 当网络通畅后，访问渠道接口，拿到渠道名称
             if (mWifiStatusListener != null) {
-                mAccountName = "账户名称";
+                mAccountName = "中国铁路文工团";
                 mWifiStatusListener.loadAccountName(mAccountName);
             }
         }

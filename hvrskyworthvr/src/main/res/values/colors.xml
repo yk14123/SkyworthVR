@@ -17,15 +17,15 @@
     <color name="color_setting_id_create">#5A5A62</color>
     <color name="color_setting_status_gray">#A0A0A3</color>
     <color name="color_setting_status_yellow">#F79707</color>
-    <color name="color_setting_status_success">#19C79D</color>
+    <color name="color_setting_status_success">#EFB029</color>
 
     <color name="color_DA">#DADADD</color>
 
-    <color name="color_ok_enable_start">#11C378</color>
-    <color name="color_ok_enable_end">#29B88D</color>
+    <color name="color_ok_enable_start">#FFD648</color>
+    <color name="color_ok_enable_end">#EFB029</color>
 
-    <color name="color_test_checked">#479722</color>
-    <color name="color_indicator">#6DD400</color>
+    <color name="color_test_checked">#FEBB3F</color>
+    <color name="color_indicator">#FFD648</color>
     <color name="video_media_bg">#99000000</color>
     <color name="video_media_detail_bg">#33000000</color>
 

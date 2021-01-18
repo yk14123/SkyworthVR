@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <selector xmlns:android="http://schemas.android.com/apk/res/android">
-    <item android:drawable="@drawable/sky_worth_main_video_checked" android:state_checked="true" />
+    <item android:drawable="@drawable/sky_worth_main_video_checked_railway" android:state_checked="true" />
     <item android:drawable="@drawable/sky_worth_main_video_unchecked" android:state_checked="false" />
 </selector>
