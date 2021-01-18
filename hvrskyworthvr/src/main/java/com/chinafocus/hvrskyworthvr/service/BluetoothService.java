@@ -387,6 +387,7 @@ public class BluetoothService implements BluetoothEngineService.AsyncThreadReadB
         }
     }
 
+    // int:totalBody长度 int:tag类型 int:category类型 short:messageBody长度 int:是否有UUID int:uuid长度 string：uuid值
     private void handSyncUUID(byte[] bytes, int tagHead) {
         int tag = ByteBuffer.wrap(bytes).getInt(tagHead);
 
@@ -403,6 +404,7 @@ public class BluetoothService implements BluetoothEngineService.AsyncThreadReadB
             System.arraycopy(bytes, tagHead + 8, uuidBytes, 0, uuidLen);
 
             String uuid = new String(uuidBytes);
+            SPUtils.getInstance().put(DEVICE_UUID, uuid);
 
             Log.d("MyLog", "------收到VR端的UUID <<< tag == 1 uuid : " + uuid + " uuidLen <<< " + uuidLen);
 
