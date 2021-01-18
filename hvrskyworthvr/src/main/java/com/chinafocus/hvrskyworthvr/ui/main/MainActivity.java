@@ -274,7 +274,7 @@ public class MainActivity extends AppCompatActivity implements RadioGroup.OnChec
             switchFragment(mAboutFragment);
             switchBackgroundDrawable(R.id.iv_main_about_bg);
             setAboutBgShow(true);
-            VrSyncPlayInfo.obtain().setTag(1);
+            VrSyncPlayInfo.obtain().setTag(2);
         }
     }
 

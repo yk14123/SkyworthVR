@@ -18,7 +18,6 @@ public class DeviceInfoViewGroup extends FrameLayout {
 
     private AppCompatTextView mTvUuid;
     private ProgressBar mProgressBar;
-    private ProgressBar mPbAccountName;
     private AppCompatTextView mTvAccountName;
 
     public DeviceInfoViewGroup(@NonNull Context context) {
@@ -41,7 +40,6 @@ public class DeviceInfoViewGroup extends FrameLayout {
         mTvUuid = findViewById(R.id.tv_uuid);
         mProgressBar = findViewById(R.id.pb_device_info_uuid);
 
-        mPbAccountName = findViewById(R.id.pb_device_info_account_name);
         mTvAccountName = findViewById(R.id.tv_setting_device_info_account_name);
 
         String accountName = WifiService.getInstance().getAccountName();
@@ -60,12 +58,11 @@ public class DeviceInfoViewGroup extends FrameLayout {
     }
 
     private void showInitAccountName() {
-        mTvAccountName.setText("等待自动生成");
-        mPbAccountName.setVisibility(VISIBLE);
+        mTvAccountName.setText("");
     }
 
     private void showAutoSyncUUID() {
-        mTvUuid.setText("等待自动生成");
+        mTvUuid.setText("戴上眼镜后自动同步");
         mProgressBar.setVisibility(VISIBLE);
     }
 
@@ -76,6 +73,5 @@ public class DeviceInfoViewGroup extends FrameLayout {
 
     public void postAccountName(String name) {
         mTvAccountName.setText(name);
-        mPbAccountName.setVisibility(INVISIBLE);
     }
 }

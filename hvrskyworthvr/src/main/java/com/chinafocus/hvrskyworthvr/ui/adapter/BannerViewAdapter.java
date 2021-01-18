@@ -66,6 +66,9 @@ public class BannerViewAdapter extends RecyclerView.Adapter<BaseViewHolder> {
             } else if (id == 10091) {
                 // 奇松与怪石
                 media_category_tag = 13;
+            } else if (id == 10080) {
+                // 俏花旦
+                media_category_tag = 16;
             } else {
                 media_category_tag = CURRENT_CATEGORY;
             }

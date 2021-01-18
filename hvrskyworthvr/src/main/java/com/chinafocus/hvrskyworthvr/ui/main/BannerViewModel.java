@@ -38,6 +38,15 @@ public class BannerViewModel extends BaseViewModel {
                                 .stream()
                                 .filter(banner -> !banner.getType().equals("field"))
                                 .collect(Collectors.toList());
+
+                        Banner banner = new Banner();
+                        banner.setTitle("俏花旦");
+                        banner.setIntro("中国杂技团《俏花旦》，是一支集体空竹表演，其最特别的是在杂技中融入京剧艺术元素，通过京剧服饰、音乐、动作、身段等运用，体现了国粹的大气和典雅华丽。演员身着京剧服饰，表演技巧新颖巧妙，动作惊险高难又不失轻松愉快，文活武演妩媚阳刚，是目前国际杂技表演中最具代表性、最具知名度的表演之一。");
+                        banner.setId(10080);
+                        banner.setType("video");
+                        banner.setCoverImg("test-temp-cover/700X400/slide/qiaohuadan.jpg");
+
+                        filterList.add(2, banner);
                         bannerMutableLiveData.postValue(filterList);
                     }
 
