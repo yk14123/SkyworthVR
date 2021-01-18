@@ -107,15 +107,4 @@
         app:layout_constraintStart_toEndOf="@+id/tv_uuid"
         app:layout_constraintTop_toTopOf="@+id/tv_uuid" />
 
-    <ProgressBar
-        android:id="@+id/pb_device_info_account_name"
-        style="?android:attr/progressBarStyleSmall"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="12dp"
-        android:visibility="invisible"
-        app:layout_constraintBottom_toBottomOf="@+id/tv_setting_device_info_account_name"
-        app:layout_constraintStart_toEndOf="@+id/tv_setting_device_info_account_name"
-        app:layout_constraintTop_toTopOf="@+id/tv_setting_device_info_account_name" />
-
 </androidx.constraintlayout.widget.ConstraintLayout>
