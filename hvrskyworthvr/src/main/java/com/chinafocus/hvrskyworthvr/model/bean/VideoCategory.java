@@ -3,36 +3,26 @@ package com.chinafocus.hvrskyworthvr.model.bean;
 
 public class VideoCategory {
     /**
-     * cid : 1
-     * nameCn : 世界风景
-     * nameEn : Science and Technology
+     * id : 11
+     * name : 场域视频
      */
 
-    private int cid;
-    private String nameCn;
-    private String nameEn;
+    private int id;
+    private String name;
 
-    public int getCid() {
-        return cid;
+    public int getId() {
+        return id;
     }
 
-    public void setCid(int cid) {
-        this.cid = cid;
+    public void setId(int id) {
+        this.id = id;
     }
 
-    public String getNameCn() {
-        return nameCn;
+    public String getName() {
+        return name;
     }
 
-    public void setNameCn(String nameCn) {
-        this.nameCn = nameCn;
-    }
-
-    public String getNameEn() {
-        return nameEn;
-    }
-
-    public void setNameEn(String nameEn) {
-        this.nameEn = nameEn;
+    public void setName(String name) {
+        this.name = name;
     }
 }

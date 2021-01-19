@@ -24,6 +24,7 @@ import com.chinafocus.hvrskyworthvr.util.MyRollHandler;
 import com.chinafocus.hvrskyworthvr.util.widget.BaseFragmentStateAdapter;
 
 import net.lucode.hackware.magicindicator.MagicIndicator;
+import net.lucode.hackware.magicindicator.buildins.UIUtil;
 import net.lucode.hackware.magicindicator.buildins.commonnavigator.CommonNavigator;
 import net.lucode.hackware.magicindicator.buildins.commonnavigator.abs.CommonNavigatorAdapter;
 import net.lucode.hackware.magicindicator.buildins.commonnavigator.abs.IPagerIndicator;
