@@ -20,10 +20,12 @@ import com.chinafocus.hvrskyworthvr.service.event.VrSyncPlayInfo;
 import com.chinafocus.hvrskyworthvr.ui.adapter.BannerViewAdapter;
 import com.chinafocus.hvrskyworthvr.ui.main.BannerViewModel;
 import com.chinafocus.hvrskyworthvr.ui.main.video.sublist.VideoListFragment;
+import com.chinafocus.hvrskyworthvr.ui.widget.GradientLinePagerIndicator;
 import com.chinafocus.hvrskyworthvr.util.MyRollHandler;
 import com.chinafocus.hvrskyworthvr.util.widget.BaseFragmentStateAdapter;
 
 import net.lucode.hackware.magicindicator.MagicIndicator;
+import net.lucode.hackware.magicindicator.buildins.UIUtil;
 import net.lucode.hackware.magicindicator.buildins.commonnavigator.CommonNavigator;
 import net.lucode.hackware.magicindicator.buildins.commonnavigator.abs.CommonNavigatorAdapter;
 import net.lucode.hackware.magicindicator.buildins.commonnavigator.abs.IPagerIndicator;
@@ -76,7 +78,6 @@ public class VideoFragment extends Fragment {
         MagicIndicator magicIndicator = requireView().findViewById(R.id.magic_Indicator);
         viewPagerVideoList = requireView().findViewById(R.id.vp_video_list);
 
-
         VideoViewModel videoViewModel = new ViewModelProvider(this).get(VideoViewModel.class);
         videoViewModel.getVideoCategory();
         videoViewModel.videoCategoryMutableLiveData.observe(getViewLifecycleOwner(), videoCategories -> {
@@ -104,10 +105,16 @@ public class VideoFragment extends Fragment {
 
                 @Override
                 public IPagerIndicator getIndicator(Context context) {
-                    LinePagerIndicator indicator = new LinePagerIndicator(context);
+                    GradientLinePagerIndicator indicator = new GradientLinePagerIndicator(context);
                     indicator.setMode(LinePagerIndicator.MODE_EXACTLY);
                     indicator.setLineWidth(53 * 2.5f);
-                    indicator.setColors(getResources().getColor(R.color.color_indicator));
+                    indicator.setRoundRadius(UIUtil.dip2px(context, 3));
+//                    indicator.setColors(getResources().getColor(R.color.color_indicator));
+                    int[] colors = {
+                            getResources().getColor(R.color.color_ok_enable_start),
+                            getResources().getColor(R.color.color_ok_enable_end)
+                    };
+                    indicator.setGradientColors(colors);
                     return indicator;
                 }
             });
