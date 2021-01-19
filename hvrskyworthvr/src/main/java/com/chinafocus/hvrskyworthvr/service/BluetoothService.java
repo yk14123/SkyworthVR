@@ -12,6 +12,7 @@ import androidx.annotation.NonNull;
 
 import com.blankj.utilcode.util.SPUtils;
 import com.chinafocus.hvrskyworthvr.global.Constants;
+import com.chinafocus.hvrskyworthvr.model.multibean.DeviceInfoManager;
 import com.chinafocus.hvrskyworthvr.service.event.VrMainConnect;
 import com.chinafocus.hvrskyworthvr.service.event.VrMainDisConnect;
 import com.chinafocus.hvrskyworthvr.service.event.VrMainSyncMediaInfo;
@@ -297,10 +298,11 @@ public class BluetoothService implements BluetoothEngineService.AsyncThreadReadB
         }
         sendBluetoothRetryConnect();
 
+        DeviceInfoManager.getInstance().postDeviceUUID(uuid);
+
         // 检查网络接口是否可以正常访问！
-        WifiService.getInstance().setCurrentDeviceUUID(uuid);
-        WifiService.getInstance().checkNetworkConnected();
-        WifiService.getInstance().loadAccountName();
+        WifiService.getInstance().initDeviceInfo();
+//        WifiService.getInstance().loadAccountName();
     }
 
     /**

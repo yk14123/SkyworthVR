@@ -5,24 +5,15 @@ import android.content.Intent;
 import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
 import android.text.TextUtils;
-import android.util.Log;
 
-import com.chinafocus.hvrskyworthvr.global.Constants;
-import com.chinafocus.hvrskyworthvr.model.bean.DefaultCloudUrl;
-import com.chinafocus.hvrskyworthvr.net.ApiService;
-import com.chinafocus.lib_network.net.ApiManager;
-import com.chinafocus.lib_network.net.errorhandler.ExceptionHandle;
-import com.chinafocus.lib_network.net.errorhandler.HttpErrorHandler;
-import com.chinafocus.lib_network.net.observer.BaseObserver;
-
-import io.reactivex.android.schedulers.AndroidSchedulers;
-import io.reactivex.schedulers.Schedulers;
+import com.chinafocus.hvrskyworthvr.model.multibean.DeviceInfoManager;
 
 public class WifiService {
 
     private WifiManager mWifiManager;
     private String mWifiConnectedName;
-    private String mCurrentDeviceUUID;
+
+    //    private String mCurrentDeviceUUID;
     private String mAccountName;
 
     private WifiService() {
@@ -48,24 +39,6 @@ public class WifiService {
      */
     public String getAccountName() {
         return mAccountName;
-    }
-
-    /**
-     * 获取当前设备UUID
-     *
-     * @return CurrentDeviceUUID
-     */
-    public String getCurrentDeviceUUID() {
-        return mCurrentDeviceUUID;
-    }
-
-    /**
-     * 设置当前设备UUID
-     *
-     * @param currentDeviceUUID CurrentDeviceUUID
-     */
-    public void setCurrentDeviceUUID(String currentDeviceUUID) {
-        mCurrentDeviceUUID = currentDeviceUUID;
     }
 
     /**
@@ -128,7 +101,7 @@ public class WifiService {
      * 当网络通顺后，加载渠道名称
      */
     public void loadAccountName() {
-        if (!TextUtils.isEmpty(mCurrentDeviceUUID) && TextUtils.isEmpty(mAccountName)) {
+        if (DeviceInfoManager.getInstance().isDeviceUUIDExist() && TextUtils.isEmpty(mAccountName)) {
             // TODO 当网络通畅后，访问渠道接口，拿到渠道名称
             if (mWifiStatusListener != null) {
                 mAccountName = "账户名称";
@@ -137,43 +110,44 @@ public class WifiService {
         }
     }
 
-    public void checkNetworkConnected() {
-        if (!TextUtils.isEmpty(mCurrentDeviceUUID) && !TextUtils.isEmpty(mWifiConnectedName)) {
-            ApiManager
-                    .getService(ApiService.class)
-                    .getDefaultCloudUrl()
-                    .subscribeOn(Schedulers.io())
-                    .observeOn(AndroidSchedulers.mainThread(), true)
-                    .onErrorResumeNext(new HttpErrorHandler<>())
-                    .subscribe(new BaseObserver<DefaultCloudUrl>() {
-                        @Override
-                        public void onSuccess(DefaultCloudUrl defaultCloudUrlBaseResponse) {
-                            Constants.DEFAULT_URL = defaultCloudUrlBaseResponse.getCloudUrl();
-                            Log.d("MyLog", "-----DEFAULT_URL >>>" + Constants.DEFAULT_URL);
-                            // 如果网络正常，则成功连接
-                            if (mWifiStatusListener != null) {
-                                mWifiStatusListener.checkedNetWorkConnectedSuccess();
-                            }
-                        }
+    public void initDeviceInfo() {
 
-                        @Override
-                        public void onFailure(ExceptionHandle.ResponseThrowable e) {
-                            Log.e("MyLog", "-----初始化 DEFAULT_URL 失败 >>> " + e.message);
-                            // 如果WIFI链接，但是路由器没有网络
-                            if (mWifiStatusListener != null) {
-                                mWifiStatusListener.wifiNetWorkError(mWifiConnectedName);
-                            }
-                        }
-
-                        @Override
-                        protected void onServiceMessage(String errMsg) {
-                            Log.e("MyLog", "-----服务端返回 DEFAULT_URL 异常 >>> " + errMsg);
-                            // 如果WIFI链接，但是路由器没有网络
-                            if (mWifiStatusListener != null) {
-                                mWifiStatusListener.wifiNetWorkError(mWifiConnectedName);
-                            }
-                        }
-                    });
+        if (DeviceInfoManager.getInstance().isDeviceUUIDExist() && !TextUtils.isEmpty(mWifiConnectedName)) {
+//            ApiManager
+//                    .getService(ApiService.class)
+//                    .getDefaultCloudUrl()
+//                    .subscribeOn(Schedulers.io())
+//                    .observeOn(AndroidSchedulers.mainThread(), true)
+//                    .onErrorResumeNext(new HttpErrorHandler<>())
+//                    .subscribe(new BaseObserver<DefaultCloudUrl>() {
+//                        @Override
+//                        public void onSuccess(DefaultCloudUrl defaultCloudUrlBaseResponse) {
+//                            Constants.DEFAULT_URL = defaultCloudUrlBaseResponse.getCloudUrl();
+//                            Log.d("MyLog", "-----DEFAULT_URL >>>" + Constants.DEFAULT_URL);
+//                            // 如果网络正常，则成功连接
+//                            if (mWifiStatusListener != null) {
+//                                mWifiStatusListener.checkedNetWorkConnectedSuccess();
+//                            }
+//                        }
+//
+//                        @Override
+//                        public void onFailure(ExceptionHandle.ResponseThrowable e) {
+//                            Log.e("MyLog", "-----初始化 DEFAULT_URL 失败 >>> " + e.message);
+//                            // 如果WIFI链接，但是路由器没有网络
+//                            if (mWifiStatusListener != null) {
+//                                mWifiStatusListener.wifiNetWorkError(mWifiConnectedName);
+//                            }
+//                        }
+//
+//                        @Override
+//                        protected void onServiceMessage(String errMsg) {
+//                            Log.e("MyLog", "-----服务端返回 DEFAULT_URL 异常 >>> " + errMsg);
+//                            // 如果WIFI链接，但是路由器没有网络
+//                            if (mWifiStatusListener != null) {
+//                                mWifiStatusListener.wifiNetWorkError(mWifiConnectedName);
+//                            }
+//                        }
+//                    });
         }
     }
 
@@ -187,8 +161,8 @@ public class WifiService {
             if (mWifiStatusListener != null) {
                 mWifiStatusListener.wifiConnectedSuccess(mWifiConnectedName);
             }
-            checkNetworkConnected();
-            loadAccountName();
+            initDeviceInfo();
+//            loadAccountName();
         }
     }
 

@@ -1,5 +1,6 @@
 package com.chinafocus.hvrskyworthvr.ui.splash;
 
+import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Bundle;
 import android.widget.Toast;
@@ -10,6 +11,7 @@ import com.blankj.utilcode.constant.PermissionConstants;
 import com.blankj.utilcode.util.BarUtils;
 import com.blankj.utilcode.util.PermissionUtils;
 import com.chinafocus.hvrskyworthvr.R;
+import com.chinafocus.hvrskyworthvr.model.multibean.DeviceInfoManager;
 import com.chinafocus.hvrskyworthvr.ui.setting.SettingActivity;
 
 import java.util.concurrent.TimeUnit;
@@ -19,6 +21,7 @@ import io.reactivex.observers.DisposableCompletableObserver;
 
 public class SplashActivity extends AppCompatActivity {
 
+    @SuppressLint("CheckResult")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -43,6 +46,41 @@ public class SplashActivity extends AppCompatActivity {
         }).request();
 
 
+//        DeviceInfo userInfoBean = new DeviceInfo();
+//        userInfoBean.setAlias("");
+//        userInfoBean.setAppNo("003");
+//        userInfoBean.setUserNo("1345966352287924224");
+//        userInfoBean.setUniqueId("41426b75cfb945c79b01b4a669bbd283");
+//        RequestBody body = FormBody.create(MediaType.parse("application/json; charset=utf-8"), new Gson().toJson(userInfoBean));
+//
+//        ApiManager
+//                .getService(ApiMultiService.class)
+//                .initDeviceInfo(body)
+//                .subscribeOn(Schedulers.io())
+//                .observeOn(AndroidSchedulers.mainThread())
+//                .subscribe(baseResponse -> {
+//                    Log.e("MyLog", " baseResponse >>> " + baseResponse.getErrCode());
+//                });
+//
+//        ApiManager
+//                .getService(ApiMultiService.class)
+//                .getDefaultCloudUrl(body)
+//                .subscribeOn(Schedulers.io())
+//                .observeOn(AndroidSchedulers.mainThread())
+//                .subscribe(baseResponse -> {
+//                    Log.e("MyLog", " getCloudUrl >>> " + baseResponse.getData().getCloudUrl());
+//                });
+//
+//        ApiManager
+//                .getService(ApiMultiService.class)
+//                .getDeviceInfo(body)
+//                .subscribeOn(Schedulers.io())
+//                .observeOn(AndroidSchedulers.mainThread())
+//                .subscribe(baseResponse -> {
+//                    Log.e("MyLog", " getCustomerName >>> " + baseResponse.getData().getCustomerName());
+//                });
+
+
     }
 
     private void delayStartLoginActivity() {
@@ -51,8 +89,13 @@ public class SplashActivity extends AppCompatActivity {
                 .subscribe(new DisposableCompletableObserver() {
                     @Override
                     public void onComplete() {
-                        startActivity(new Intent(SplashActivity.this, SettingActivity.class));
-                        finish();
+                        boolean userNoInit = DeviceInfoManager.getInstance().isUserNumberExist();
+                        if (userNoInit) {
+                            startActivity(new Intent(SplashActivity.this, SettingActivity.class));
+                            finish();
+                        } else {
+                            Toast.makeText(getApplicationContext(), "请先初始化渠道号", Toast.LENGTH_LONG).show();
+                        }
                     }
 
                     @Override

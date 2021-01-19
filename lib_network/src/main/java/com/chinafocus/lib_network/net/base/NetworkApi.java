@@ -4,12 +4,10 @@ package com.chinafocus.lib_network.net.base;
 import com.chinafocus.lib_network.net.IEnvironment;
 import com.chinafocus.lib_network.net.INetworkRequiredInfo;
 import com.chinafocus.lib_network.net.errorhandler.HttpErrorHandler;
-import com.chinafocus.lib_network.net.interceptor.RequestInterceptor;
 
 import java.util.HashMap;
 
 import io.reactivex.Observable;
-import io.reactivex.ObservableSource;
 import io.reactivex.ObservableTransformer;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.schedulers.Schedulers;
@@ -40,7 +38,7 @@ public abstract class NetworkApi implements IEnvironment {
 //        mIsFormal = EnvironmentActivity.isOfficialEnvironment(networkRequiredInfo.getApplicationContext());
     }
 
-    protected Retrofit getRetrofit(Class service) {
+    protected <T> Retrofit getRetrofit(Class<T> service) {
         if (retrofitHashMap.get(mBaseUrl + service.getName()) != null) {
             return retrofitHashMap.get(mBaseUrl + service.getName());
         }
@@ -74,15 +72,10 @@ public abstract class NetworkApi implements IEnvironment {
 
 
     public <T> ObservableTransformer<T, T> applySchedulers() {
-        return new ObservableTransformer<T, T>() {
-            @Override
-            public ObservableSource<T> apply(Observable<T> upstream) {
-                return (Observable<T>) upstream
-                        .subscribeOn(Schedulers.io())
-                        .observeOn(AndroidSchedulers.mainThread())
-                        .onErrorResumeNext(new HttpErrorHandler<T>());
-            }
-        };
+        return upstream -> (Observable<T>) upstream
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .onErrorResumeNext(new HttpErrorHandler<>());
     }
 
     /**

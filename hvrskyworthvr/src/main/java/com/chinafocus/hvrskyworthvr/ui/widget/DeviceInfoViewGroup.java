@@ -12,6 +12,7 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.widget.AppCompatTextView;
 
 import com.chinafocus.hvrskyworthvr.R;
+import com.chinafocus.hvrskyworthvr.model.multibean.DeviceInfoManager;
 import com.chinafocus.hvrskyworthvr.service.WifiService;
 
 public class DeviceInfoViewGroup extends FrameLayout {
@@ -49,7 +50,7 @@ public class DeviceInfoViewGroup extends FrameLayout {
             postAccountName(accountName);
         }
 
-        String currentDeviceUUID = WifiService.getInstance().getCurrentDeviceUUID();
+        String currentDeviceUUID = DeviceInfoManager.getInstance().getDeviceUUID();
         if (TextUtils.isEmpty(currentDeviceUUID)) {
             showAutoSyncUUID();
         } else {
