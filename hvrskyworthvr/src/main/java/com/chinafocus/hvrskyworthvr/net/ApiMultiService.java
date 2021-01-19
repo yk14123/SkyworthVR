@@ -25,10 +25,10 @@ public interface ApiMultiService {
     Observable<BaseResponse<Object>> initDeviceInfo(@Body RequestBody body);
 
     @POST("farm360/cstmHwAlias/getHwAlias")
-    Observable<BaseResponse<DeviceInfo>> getDeviceInfo(@Body RequestBody body);
+    Observable<BaseResponse<DeviceInfo>> getDeviceInfoName(@Body RequestBody body);
 
     @POST("farm360/cstmHwAlias/editHwAlias")
-    Observable<BaseResponse<Object>> alterDeviceAlias(@Body RequestBody body);
+    Observable<BaseResponse<Object>> postSetDeviceAlias(@Body RequestBody body);
 
 
 //    @GET("store-api/index/slide")

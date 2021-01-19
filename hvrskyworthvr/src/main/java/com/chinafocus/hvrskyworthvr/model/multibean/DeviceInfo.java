@@ -1,6 +1,8 @@
 package com.chinafocus.hvrskyworthvr.model.multibean;
 
-public class DeviceInfo {
+import androidx.annotation.NonNull;
+
+public class DeviceInfo implements Cloneable {
 
     /**
      * uniqueId : 41426b75cfb945c79b01b4a669bbd283
@@ -64,5 +66,11 @@ public class DeviceInfo {
 
     public void setCustomerName(String customerName) {
         this.customerName = customerName;
+    }
+
+    @NonNull
+    @Override
+    public DeviceInfo clone() throws CloneNotSupportedException {
+        return (DeviceInfo) super.clone();
     }
 }

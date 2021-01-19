@@ -13,11 +13,15 @@ import com.blankj.utilcode.util.PermissionUtils;
 import com.chinafocus.hvrskyworthvr.R;
 import com.chinafocus.hvrskyworthvr.model.multibean.DeviceInfoManager;
 import com.chinafocus.hvrskyworthvr.ui.setting.SettingActivity;
+import com.google.gson.Gson;
 
 import java.util.concurrent.TimeUnit;
 
 import io.reactivex.Completable;
 import io.reactivex.observers.DisposableCompletableObserver;
+import okhttp3.FormBody;
+import okhttp3.MediaType;
+import okhttp3.RequestBody;
 
 public class SplashActivity extends AppCompatActivity {
 
@@ -51,8 +55,9 @@ public class SplashActivity extends AppCompatActivity {
 //        userInfoBean.setAppNo("003");
 //        userInfoBean.setUserNo("1345966352287924224");
 //        userInfoBean.setUniqueId("41426b75cfb945c79b01b4a669bbd283");
-//        RequestBody body = FormBody.create(MediaType.parse("application/json; charset=utf-8"), new Gson().toJson(userInfoBean));
+
 //
+
 //        ApiManager
 //                .getService(ApiMultiService.class)
 //                .initDeviceInfo(body)

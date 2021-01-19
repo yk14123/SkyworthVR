@@ -13,7 +13,6 @@ import androidx.appcompat.widget.AppCompatTextView;
 
 import com.chinafocus.hvrskyworthvr.R;
 import com.chinafocus.hvrskyworthvr.model.multibean.DeviceInfoManager;
-import com.chinafocus.hvrskyworthvr.service.WifiService;
 
 public class DeviceInfoViewGroup extends FrameLayout {
 
@@ -42,8 +41,10 @@ public class DeviceInfoViewGroup extends FrameLayout {
         mProgressBar = findViewById(R.id.pb_device_info_uuid);
 
         mTvAccountName = findViewById(R.id.tv_setting_device_info_account_name);
+        AppCompatTextView tvAccountId = findViewById(R.id.tv_setting_device_info_account_id);
+        tvAccountId.setText(DeviceInfoManager.getInstance().getDeviceAccountId());
 
-        String accountName = WifiService.getInstance().getAccountName();
+        String accountName = DeviceInfoManager.getInstance().getDeviceInfoName();
         if (TextUtils.isEmpty(accountName)) {
             showInitAccountName();
         } else {

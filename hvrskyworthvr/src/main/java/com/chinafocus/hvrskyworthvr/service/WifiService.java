@@ -5,16 +5,25 @@ import android.content.Intent;
 import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
 import android.text.TextUtils;
+import android.util.Log;
 
+import com.chinafocus.hvrskyworthvr.global.Constants;
+import com.chinafocus.hvrskyworthvr.model.bean.DefaultCloudUrl;
+import com.chinafocus.hvrskyworthvr.model.multibean.DeviceInfo;
 import com.chinafocus.hvrskyworthvr.model.multibean.DeviceInfoManager;
+import com.chinafocus.hvrskyworthvr.net.ApiMultiService;
+import com.chinafocus.lib_network.net.ApiManager;
+import com.chinafocus.lib_network.net.errorhandler.ExceptionHandle;
+import com.chinafocus.lib_network.net.errorhandler.HttpErrorHandler;
+import com.chinafocus.lib_network.net.observer.BaseObserver;
+
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.schedulers.Schedulers;
 
 public class WifiService {
 
     private WifiManager mWifiManager;
     private String mWifiConnectedName;
-
-    //    private String mCurrentDeviceUUID;
-    private String mAccountName;
 
     private WifiService() {
     }
@@ -30,15 +39,6 @@ public class WifiService {
             }
         }
         return instance;
-    }
-
-    /**
-     * 获取当前渠道名称
-     *
-     * @return 渠道名称
-     */
-    public String getAccountName() {
-        return mAccountName;
     }
 
     /**
@@ -94,60 +94,12 @@ public class WifiService {
         void wifiNetWorkError(String name);
 
         // 加载渠道名称
-        void loadAccountName(String name);
-    }
-
-    /**
-     * 当网络通顺后，加载渠道名称
-     */
-    public void loadAccountName() {
-        if (DeviceInfoManager.getInstance().isDeviceUUIDExist() && TextUtils.isEmpty(mAccountName)) {
-            // TODO 当网络通畅后，访问渠道接口，拿到渠道名称
-            if (mWifiStatusListener != null) {
-                mAccountName = "账户名称";
-                mWifiStatusListener.loadAccountName(mAccountName);
-            }
-        }
+        void loadAccountNameAndAlias(String accountName, String alias);
     }
 
     public void initDeviceInfo() {
-
         if (DeviceInfoManager.getInstance().isDeviceUUIDExist() && !TextUtils.isEmpty(mWifiConnectedName)) {
-//            ApiManager
-//                    .getService(ApiService.class)
-//                    .getDefaultCloudUrl()
-//                    .subscribeOn(Schedulers.io())
-//                    .observeOn(AndroidSchedulers.mainThread(), true)
-//                    .onErrorResumeNext(new HttpErrorHandler<>())
-//                    .subscribe(new BaseObserver<DefaultCloudUrl>() {
-//                        @Override
-//                        public void onSuccess(DefaultCloudUrl defaultCloudUrlBaseResponse) {
-//                            Constants.DEFAULT_URL = defaultCloudUrlBaseResponse.getCloudUrl();
-//                            Log.d("MyLog", "-----DEFAULT_URL >>>" + Constants.DEFAULT_URL);
-//                            // 如果网络正常，则成功连接
-//                            if (mWifiStatusListener != null) {
-//                                mWifiStatusListener.checkedNetWorkConnectedSuccess();
-//                            }
-//                        }
-//
-//                        @Override
-//                        public void onFailure(ExceptionHandle.ResponseThrowable e) {
-//                            Log.e("MyLog", "-----初始化 DEFAULT_URL 失败 >>> " + e.message);
-//                            // 如果WIFI链接，但是路由器没有网络
-//                            if (mWifiStatusListener != null) {
-//                                mWifiStatusListener.wifiNetWorkError(mWifiConnectedName);
-//                            }
-//                        }
-//
-//                        @Override
-//                        protected void onServiceMessage(String errMsg) {
-//                            Log.e("MyLog", "-----服务端返回 DEFAULT_URL 异常 >>> " + errMsg);
-//                            // 如果WIFI链接，但是路由器没有网络
-//                            if (mWifiStatusListener != null) {
-//                                mWifiStatusListener.wifiNetWorkError(mWifiConnectedName);
-//                            }
-//                        }
-//                    });
+            registerDeviceInfo();
         }
     }
 
@@ -162,8 +114,93 @@ public class WifiService {
                 mWifiStatusListener.wifiConnectedSuccess(mWifiConnectedName);
             }
             initDeviceInfo();
-//            loadAccountName();
         }
+    }
+
+    private void postDeviceInfoName() {
+        ApiManager
+                .getService(ApiMultiService.class)
+                .getDeviceInfoName(DeviceInfoManager.getInstance().getRequestBody())
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread(), true)
+                .onErrorResumeNext(new HttpErrorHandler<>())
+                .subscribe(new BaseObserver<DeviceInfo>() {
+                    @Override
+                    public void onSuccess(DeviceInfo deviceInfo) {
+                        DeviceInfoManager.getInstance().postAliasAndName(deviceInfo.getAlias(), deviceInfo.getCustomerName());
+                        if (mWifiStatusListener != null) {
+                            mWifiStatusListener.loadAccountNameAndAlias(
+                                    DeviceInfoManager.getInstance().getDeviceInfoName(),
+                                    DeviceInfoManager.getInstance().getDeviceAlias());
+                        }
+                        postResourcesBaseUrl();
+                    }
+
+                    @Override
+                    public void onFailure(ExceptionHandle.ResponseThrowable e) {
+                        // 如果WIFI链接，但是路由器没有网络
+                        if (mWifiStatusListener != null) {
+                            mWifiStatusListener.wifiNetWorkError(mWifiConnectedName);
+                        }
+                    }
+                });
+    }
+
+    private void postResourcesBaseUrl() {
+        ApiManager
+                .getService(ApiMultiService.class)
+                .getDefaultCloudUrl(DeviceInfoManager.getInstance().getRequestBody())
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread(), true)
+                .onErrorResumeNext(new HttpErrorHandler<>())
+                .subscribe(new BaseObserver<DefaultCloudUrl>() {
+                    @Override
+                    public void onSuccess(DefaultCloudUrl defaultCloudUrl) {
+                        Constants.DEFAULT_URL = defaultCloudUrl.getCloudUrl();
+                        Log.d("MyLog", "-----DEFAULT_URL >>>" + Constants.DEFAULT_URL);
+                        // 如果WIFI链接，但是路由器没有网络
+                        if (mWifiStatusListener != null) {
+                            mWifiStatusListener.checkedNetWorkConnectedSuccess();
+                        }
+                    }
+
+                    @Override
+                    public void onFailure(ExceptionHandle.ResponseThrowable e) {
+                        // 如果WIFI链接，但是路由器没有网络
+                        if (mWifiStatusListener != null) {
+                            mWifiStatusListener.wifiNetWorkError(mWifiConnectedName);
+                        }
+                    }
+                });
+    }
+
+    private void registerDeviceInfo() {
+        ApiManager
+                .getService(ApiMultiService.class)
+                .initDeviceInfo(DeviceInfoManager.getInstance().getRequestBody())
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread(), true)
+                .onErrorResumeNext(new HttpErrorHandler<>())
+                .subscribe(new BaseObserver<Object>() {
+                    @Override
+                    public void onSuccess(Object o) {
+                        postDeviceInfoName();
+                    }
+
+                    @Override
+                    public void onFailure(ExceptionHandle.ResponseThrowable e) {
+                        // 如果WIFI链接，但是路由器没有网络
+                        if (mWifiStatusListener != null) {
+                            mWifiStatusListener.wifiNetWorkError(mWifiConnectedName);
+                        }
+                    }
+
+                    @Override
+                    protected void onServiceMessage(String errMsg) {
+                        super.onServiceMessage(errMsg);
+                        postDeviceInfoName();
+                    }
+                });
     }
 
 }

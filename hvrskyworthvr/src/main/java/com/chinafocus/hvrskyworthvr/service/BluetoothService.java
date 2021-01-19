@@ -302,7 +302,6 @@ public class BluetoothService implements BluetoothEngineService.AsyncThreadReadB
 
         // 检查网络接口是否可以正常访问！
         WifiService.getInstance().initDeviceInfo();
-//        WifiService.getInstance().loadAccountName();
     }
 
     /**

@@ -15,12 +15,10 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatDialog;
 import androidx.appcompat.widget.AppCompatEditText;
 
-import com.blankj.utilcode.util.SPUtils;
 import com.chinafocus.hvrskyworthvr.R;
+import com.chinafocus.hvrskyworthvr.model.multibean.DeviceInfoManager;
 
 import java.util.Objects;
-
-import static com.chinafocus.hvrskyworthvr.global.Constants.DEVICE_ALIAS;
 
 public class SettingAliasDialog extends AppCompatDialog {
 
@@ -83,7 +81,7 @@ public class SettingAliasDialog extends AppCompatDialog {
     @Override
     public void show() {
         super.show();
-        mEditText.setText(SPUtils.getInstance().getString(DEVICE_ALIAS));
+        mEditText.setText(DeviceInfoManager.getInstance().getDeviceAlias());
         //弹出对话框后直接弹出键盘
         mEditText.setFocusableInTouchMode(true);
         mEditText.requestFocus();

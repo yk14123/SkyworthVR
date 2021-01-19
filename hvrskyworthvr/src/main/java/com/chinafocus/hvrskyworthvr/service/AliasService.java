@@ -6,10 +6,16 @@ import android.util.Log;
 
 import androidx.annotation.NonNull;
 
-import com.blankj.utilcode.util.SPUtils;
+import com.chinafocus.hvrskyworthvr.model.multibean.DeviceInfoManager;
+import com.chinafocus.hvrskyworthvr.net.ApiMultiService;
 import com.chinafocus.hvrskyworthvr.ui.dialog.SettingAliasDialog;
+import com.chinafocus.lib_network.net.ApiManager;
+import com.chinafocus.lib_network.net.errorhandler.ExceptionHandle;
+import com.chinafocus.lib_network.net.errorhandler.HttpErrorHandler;
+import com.chinafocus.lib_network.net.observer.BaseObserver;
 
-import static com.chinafocus.hvrskyworthvr.global.Constants.DEVICE_ALIAS;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.schedulers.Schedulers;
 
 public class AliasService {
 
@@ -31,17 +37,38 @@ public class AliasService {
         return instance;
     }
 
+    private void postSetDeviceInfoAlias(String newName) {
+        ApiManager
+                .getService(ApiMultiService.class)
+                .postSetDeviceAlias(DeviceInfoManager.getInstance().getRequestAliasBody(newName))
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread(), true)
+                .onErrorResumeNext(new HttpErrorHandler<>())
+                .subscribe(new BaseObserver<Object>() {
+                    @Override
+                    public void onSuccess(Object deviceInfo) {
+                        DeviceInfoManager.getInstance().postDeviceAlias(newName);
+                        if (mAliasStatusListener != null) {
+                            mAliasStatusListener.aliasSettingSuccess(newName);
+                        }
+                    }
+
+                    @Override
+                    public void onFailure(ExceptionHandle.ResponseThrowable e) {
+                        if (mAliasStatusListener != null) {
+                            mAliasStatusListener.aliasSettingError();
+                        }
+                    }
+                });
+    }
+
     public void onClick(Context context) {
         if (mSettingAliasDialog == null) {
             mSettingAliasDialog = new SettingAliasDialog(context);
             mSettingAliasDialog.setAliasSettingListener(name -> {
                 Log.e("MyLog", "name>>>" + name);
                 if (!TextUtils.isEmpty(name)) {
-                    // TODO 这里后期需要添加网络接口
-                    if (mAliasStatusListener != null) {
-                        mAliasStatusListener.aliasSettingSuccess(name);
-                    }
-                    SPUtils.getInstance().put(DEVICE_ALIAS, name);
+                    postSetDeviceInfoAlias(name);
                 } else {
                     initDefaultDeviceName();
                 }
@@ -58,7 +85,7 @@ public class AliasService {
     }
 
     private void initDefaultDeviceName() {
-        String name = SPUtils.getInstance().getString(DEVICE_ALIAS);
+        String name = DeviceInfoManager.getInstance().getDeviceAlias();
         if (!TextUtils.isEmpty(name)) {
             if (mAliasStatusListener != null) {
                 mAliasStatusListener.aliasSettingSuccess(name);
@@ -76,6 +103,8 @@ public class AliasService {
         void aliasStatusInit();
 
         void aliasSettingSuccess(String name);
+
+        void aliasSettingError();
 
     }
 

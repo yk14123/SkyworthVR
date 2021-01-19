@@ -1,8 +1,5 @@
 package com.chinafocus.hvrskyworthvr.ui.login;
 
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.AppCompatEditText;
-
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.Editable;
@@ -10,11 +7,12 @@ import android.text.TextUtils;
 import android.view.View;
 import android.widget.Toast;
 
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.AppCompatEditText;
+
 import com.blankj.utilcode.util.BarUtils;
-import com.blankj.utilcode.util.SPUtils;
-import com.chinafocus.hvrskyworthvr.ui.main.MainActivity;
 import com.chinafocus.hvrskyworthvr.R;
-import com.chinafocus.hvrskyworthvr.global.Constants;
+import com.chinafocus.hvrskyworthvr.ui.main.MainActivity;
 
 import java.util.Objects;
 
@@ -60,6 +58,6 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     }
 
     private void saveAccount(String s) {
-        SPUtils.getInstance().put(Constants.ACCOUNT_NAME, s);
+//        SPUtils.getInstance().put(Constants.ACCOUNT_NAME, s);
     }
 }

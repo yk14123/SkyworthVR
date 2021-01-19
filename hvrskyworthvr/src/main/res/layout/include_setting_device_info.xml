@@ -38,27 +38,27 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="3dp"
         android:layout_marginEnd="18dp"
-        tools:text="等待自动生成"
         android:textColor="@color/color_setting_id_create"
         android:textSize="12sp"
         app:layout_constraintEnd_toStartOf="@+id/appCompatImageView5"
         app:layout_constraintHorizontal_bias="0"
         app:layout_constraintStart_toStartOf="@+id/appCompatTextView7"
-        app:layout_constraintTop_toBottomOf="@+id/appCompatTextView10"
-        app:layout_constraintWidth_max="wrap" />
+        app:layout_constraintTop_toBottomOf="@+id/tv_setting_device_info_account_id"
+        app:layout_constraintWidth_max="wrap"
+        tools:text="等待自动生成" />
 
     <androidx.appcompat.widget.AppCompatTextView
-        android:id="@+id/appCompatTextView10"
+        android:id="@+id/tv_setting_device_info_account_id"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="10dp"
         android:layout_marginEnd="18dp"
-        android:text="392745956839"
         android:textColor="@color/color_setting_id_create"
         android:textSize="12sp"
         app:layout_constraintEnd_toStartOf="@+id/appCompatImageView5"
         app:layout_constraintStart_toStartOf="@+id/appCompatTextView7"
-        app:layout_constraintTop_toBottomOf="@+id/appCompatTextView7" />
+        app:layout_constraintTop_toBottomOf="@+id/appCompatTextView7"
+        tools:text="392745956839" />
 
     <androidx.appcompat.widget.AppCompatTextView
         android:id="@+id/appCompatTextView7"
@@ -77,14 +77,14 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="6dp"
+        android:layout_marginEnd="10dp"
         android:textColor="@color/color_setting_id_create"
         android:textSize="12sp"
-        android:layout_marginEnd="10dp"
-        app:layout_constraintHorizontal_bias="0"
-        app:layout_constraintWidth_max="wrap"
         app:layout_constraintEnd_toStartOf="@+id/appCompatImageView5"
+        app:layout_constraintHorizontal_bias="0"
         app:layout_constraintStart_toStartOf="@+id/appCompatTextView9"
         app:layout_constraintTop_toBottomOf="@+id/appCompatTextView9"
+        app:layout_constraintWidth_max="wrap"
         tools:text="c92838fa11c92838fa11c92838fa1111" />
 
     <androidx.appcompat.widget.AppCompatImageView

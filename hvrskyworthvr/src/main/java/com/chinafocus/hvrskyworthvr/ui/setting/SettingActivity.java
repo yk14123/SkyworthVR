@@ -3,6 +3,7 @@ package com.chinafocus.hvrskyworthvr.ui.setting;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.AppCompatButton;
@@ -65,6 +66,11 @@ public class SettingActivity extends AppCompatActivity {
             public void aliasSettingSuccess(String name) {
                 mSettingAliasView.postStatusMessage(CONNECT_SUCCESS, name);
             }
+
+            @Override
+            public void aliasSettingError() {
+                Toast.makeText(getApplicationContext(), "修改设备名称失败", Toast.LENGTH_SHORT).show();
+            }
         });
     }
 
@@ -96,8 +102,9 @@ public class SettingActivity extends AppCompatActivity {
             }
 
             @Override
-            public void loadAccountName(String name) {
-                mDeviceInfoViewGroup.postAccountName(name);
+            public void loadAccountNameAndAlias(String accountName, String alias) {
+                mDeviceInfoViewGroup.postAccountName(accountName);
+                mSettingAliasView.postStatusMessage(CONNECT_SUCCESS, alias);
             }
         });
     }
