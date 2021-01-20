@@ -44,6 +44,7 @@ import io.reactivex.schedulers.Schedulers;
 import static com.chinafocus.hvrskyworthvr.global.Constants.REQUEST_CODE_VR_MEDIA_ACTIVITY;
 import static com.chinafocus.hvrskyworthvr.global.Constants.RESULT_CODE_ACTIVE_DIALOG;
 import static com.chinafocus.hvrskyworthvr.global.Constants.RESULT_CODE_INACTIVE_DIALOG;
+import static com.chinafocus.hvrskyworthvr.global.Constants.RESULT_CODE_SELF_INACTIVE_DIALOG;
 import static com.chinafocus.hvrskyworthvr.global.Constants.VR_OFFLINE;
 import static com.chinafocus.hvrskyworthvr.global.Constants.VR_ONLINE;
 import static com.chinafocus.hvrskyworthvr.global.Constants.VR_ONLINE_STATUS;
@@ -250,8 +251,10 @@ public class MainActivity extends AppCompatActivity implements RadioGroup.OnChec
         } else if (resultCode == RESULT_CODE_ACTIVE_DIALOG) {
             showVrModeMainDialog();
             closeTimer(null);
+        } else if (resultCode == RESULT_CODE_SELF_INACTIVE_DIALOG) {
+            VrSyncPlayInfo.obtain().restoreVideoInfo();
+            closeTimer(null);
         }
-
         super.onActivityResult(requestCode, resultCode, data);
     }
 

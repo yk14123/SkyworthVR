@@ -14,9 +14,10 @@ public class Constants {
     public static int REQUEST_CODE_PAD_MEDIA_ACTIVITY = 10002;
 
     public static int RESULT_CODE_INACTIVE_DIALOG = 10003;
-    public static int RESULT_CODE_ACTIVE_DIALOG = 10004;
+    public static int RESULT_CODE_SELF_INACTIVE_DIALOG = 10004;
+    public static int RESULT_CODE_ACTIVE_DIALOG = 10005;
 
     public static int CURRENT_VR_ONLINE_STATUS = 10006;
-    public static int VR_ONLINE = 10005;
     public static int VR_OFFLINE = 10006;
+    public static int VR_ONLINE = 10007;
 }

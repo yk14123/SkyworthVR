@@ -88,7 +88,6 @@ public class MediaPlayActivity extends AppCompatActivity implements ViewBindHelp
             String format = "";
             String subtitle = "";
 
-
             String videoTempUrl = videoDetail.getVideoUrl();
             if (!TextUtils.isEmpty(videoTempUrl)) {
                 videoUrl = ConfigManager.getInstance().getDefaultUrl() + videoTempUrl;
