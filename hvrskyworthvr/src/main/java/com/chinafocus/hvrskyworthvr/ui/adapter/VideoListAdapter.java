@@ -13,8 +13,9 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.blankj.utilcode.util.TimeUtils;
 import com.bumptech.glide.Glide;
 import com.chinafocus.hvrskyworthvr.R;
-import com.chinafocus.hvrskyworthvr.global.Constants;
+import com.chinafocus.hvrskyworthvr.global.ConfigManager;
 import com.chinafocus.hvrskyworthvr.model.bean.VideoDataInfo;
+import com.chinafocus.hvrskyworthvr.net.ImageProcess;
 import com.chinafocus.hvrskyworthvr.service.event.VrCancelTimeTask;
 import com.chinafocus.hvrskyworthvr.service.event.VrSyncPlayInfo;
 import com.chinafocus.hvrskyworthvr.ui.main.media.MediaPlayActivity;
@@ -66,7 +67,7 @@ public class VideoListAdapter extends RecyclerView.Adapter<BaseViewHolder> {
     public void onBindViewHolder(@NonNull BaseViewHolder holder, int position) {
 
         Glide.with(holder.itemView.getContext())
-                .load(Constants.DEFAULT_URL + videoLists.get(position).getImgUrl())
+                .load(ConfigManager.getInstance().getDefaultUrl() + videoLists.get(position).getImgUrl() + ImageProcess.process(700, 395))
                 .into((ImageView) holder.getView(R.id.iv_video_list_bg));
 
         String time = TimeUtils.millis2String(videoLists.get(position).getDuration() * 1000, "mm:ss");

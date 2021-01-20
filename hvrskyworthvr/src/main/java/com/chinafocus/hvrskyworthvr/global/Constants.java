@@ -4,7 +4,6 @@ public class Constants {
     public static final String DEVICE_UUID = "device_uuid";
 
     public static final String VR_ONLINE_STATUS = "vr_online_status";
-    public static String DEFAULT_URL = "";
 
     public static int ACTIVITY_TAG;
     public static final int ACTIVITY_MAIN = 101;

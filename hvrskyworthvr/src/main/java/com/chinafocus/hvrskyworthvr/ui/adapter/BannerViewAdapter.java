@@ -13,8 +13,9 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
 import com.chinafocus.hvrskyworthvr.R;
-import com.chinafocus.hvrskyworthvr.global.Constants;
+import com.chinafocus.hvrskyworthvr.global.ConfigManager;
 import com.chinafocus.hvrskyworthvr.model.bean.VideoDataInfo;
+import com.chinafocus.hvrskyworthvr.net.ImageProcess;
 import com.chinafocus.hvrskyworthvr.service.event.VrCancelTimeTask;
 import com.chinafocus.hvrskyworthvr.service.event.VrSyncPlayInfo;
 import com.chinafocus.hvrskyworthvr.ui.main.media.MediaPlayActivity;
@@ -77,7 +78,7 @@ public class BannerViewAdapter extends RecyclerView.Adapter<BaseViewHolder> {
                 .setText(R.id.tv_banner_des, banner.getIntro());
 
         Glide.with(holder.itemView.getContext())
-                .load(Constants.DEFAULT_URL + banner.getImgUrl())
+                .load(ConfigManager.getInstance().getDefaultUrl() + banner.getImgUrl() + ImageProcess.process(2160, 1080))
                 .apply(RequestOptions.bitmapTransform(colorFilterTransformation))
                 .into((ImageView) holder.getView(R.id.iv_banner_bg));
 

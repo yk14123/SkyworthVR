@@ -17,6 +17,7 @@ import com.chinafocus.hvrskyworthvr.exo.tools.ExoMediaHelper;
 import com.chinafocus.hvrskyworthvr.exo.tools.ViewBindHelper;
 import com.chinafocus.hvrskyworthvr.exo.ui.PlayerView;
 import com.chinafocus.hvrskyworthvr.exo.ui.spherical.SphericalGLSurfaceView;
+import com.chinafocus.hvrskyworthvr.global.ConfigManager;
 import com.chinafocus.hvrskyworthvr.global.Constants;
 import com.chinafocus.hvrskyworthvr.service.BluetoothService;
 import com.chinafocus.hvrskyworthvr.service.event.VrMediaConnect;
@@ -90,7 +91,7 @@ public class MediaPlayActivity extends AppCompatActivity implements ViewBindHelp
 
             String videoTempUrl = videoDetail.getVideoUrl();
             if (!TextUtils.isEmpty(videoTempUrl)) {
-                videoUrl = Constants.DEFAULT_URL + videoTempUrl;
+                videoUrl = ConfigManager.getInstance().getDefaultUrl() + videoTempUrl;
             } else {
                 Toast.makeText(getApplicationContext(), "当前无播放地址", Toast.LENGTH_SHORT).show();
                 return;
@@ -104,7 +105,7 @@ public class MediaPlayActivity extends AppCompatActivity implements ViewBindHelp
 
             String temp = videoDetail.getSubtitle();
             if (!TextUtils.isEmpty(temp)) {
-                subtitle = Constants.DEFAULT_URL + temp;
+                subtitle = ConfigManager.getInstance().getDefaultUrl() + temp;
             }
 
             String[] split = videoUrl.split("/");

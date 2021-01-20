@@ -7,10 +7,10 @@ import android.net.wifi.WifiManager;
 import android.text.TextUtils;
 import android.util.Log;
 
-import com.chinafocus.hvrskyworthvr.global.Constants;
+import com.chinafocus.hvrskyworthvr.global.ConfigManager;
+import com.chinafocus.hvrskyworthvr.model.DeviceInfoManager;
 import com.chinafocus.hvrskyworthvr.model.bean.DefaultCloudUrl;
 import com.chinafocus.hvrskyworthvr.model.bean.DeviceInfo;
-import com.chinafocus.hvrskyworthvr.model.DeviceInfoManager;
 import com.chinafocus.hvrskyworthvr.net.ApiMultiService;
 import com.chinafocus.hvrskyworthvr.net.RequestBodyManager;
 import com.chinafocus.lib_network.net.ApiManager;
@@ -157,8 +157,9 @@ public class WifiService {
                 .subscribe(new BaseObserver<DefaultCloudUrl>() {
                     @Override
                     public void onSuccess(DefaultCloudUrl defaultCloudUrl) {
-                        Constants.DEFAULT_URL = defaultCloudUrl.getCloudUrl();
-                        Log.d("MyLog", "-----DEFAULT_URL >>>" + Constants.DEFAULT_URL);
+                        ConfigManager.getInstance().setDefaultUrl(defaultCloudUrl.getCloudUrl());
+                        ConfigManager.getInstance().setCloudNo(defaultCloudUrl.getCloudNo());
+                        Log.d("MyLog", "-----DEFAULT_URL >>>" + defaultCloudUrl.getCloudUrl());
                         // 如果WIFI链接，但是路由器没有网络
                         if (mWifiStatusListener != null) {
                             mWifiStatusListener.checkedNetWorkConnectedSuccess();

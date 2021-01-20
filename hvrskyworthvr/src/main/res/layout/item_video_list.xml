@@ -12,7 +12,7 @@
         android:layout_width="280dp"
         android:layout_height="158dp"
         android:layout_marginEnd="10dp"
-        android:scaleType="fitXY"
+        android:scaleType="centerCrop"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         tools:src="#f00" />

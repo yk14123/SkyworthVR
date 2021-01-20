@@ -10,8 +10,17 @@ public class DefaultCloudUrl {
 
     private int id;
     private String cloudName;
+    private String cloudNo;
     private String cloudUrl;
     private int isDefault;
+
+    public String getCloudNo() {
+        return cloudNo;
+    }
+
+    public void setCloudNo(String cloudNo) {
+        this.cloudNo = cloudNo;
+    }
 
     public int getId() {
         return id;
