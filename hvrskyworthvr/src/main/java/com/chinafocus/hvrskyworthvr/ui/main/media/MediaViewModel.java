@@ -6,7 +6,8 @@ import androidx.annotation.NonNull;
 import androidx.lifecycle.MutableLiveData;
 
 import com.chinafocus.hvrskyworthvr.model.bean.VideoDetail;
-import com.chinafocus.hvrskyworthvr.net.ApiService;
+import com.chinafocus.hvrskyworthvr.net.ApiMultiService;
+import com.chinafocus.hvrskyworthvr.net.RequestBodyManager;
 import com.chinafocus.lib_network.net.ApiManager;
 import com.chinafocus.lib_network.net.base.BaseViewModel;
 import com.chinafocus.lib_network.net.errorhandler.ExceptionHandle;
@@ -20,11 +21,11 @@ public class MediaViewModel extends BaseViewModel {
         super(application);
     }
 
-    void getVideoDetailData(String tag, int id) {
+    void getVideoDetailData(int tag, int id) {
         addSubscribe(
                 ApiManager
-                        .getService(ApiService.class)
-                        .getVideoDetailData(tag, id),
+                        .getService(ApiMultiService.class)
+                        .getVideoDetailData(RequestBodyManager.getVideoDetailDataRequestBody(tag, id)),
                 new BaseObserver<VideoDetail>() {
                     @Override
                     public void onSuccess(VideoDetail videoDetail) {

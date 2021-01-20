@@ -1,27 +1,24 @@
 package com.chinafocus.hvrskyworthvr.ui.main.publish;
 
-import androidx.lifecycle.ViewModelProvider;
-
 import android.os.Bundle;
-
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.fragment.app.Fragment;
-import androidx.recyclerview.widget.GridLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-import androidx.viewpager2.widget.ViewPager2;
-
 import android.os.Looper;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.fragment.app.Fragment;
+import androidx.lifecycle.ViewModelProvider;
+import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+import androidx.viewpager2.widget.ViewPager2;
+
 import com.chinafocus.hvrskyworthvr.R;
 import com.chinafocus.hvrskyworthvr.ui.adapter.BannerViewAdapter;
-import com.chinafocus.hvrskyworthvr.ui.main.BannerViewModel;
 import com.chinafocus.hvrskyworthvr.ui.adapter.VideoListAdapter;
+import com.chinafocus.hvrskyworthvr.ui.main.BannerViewModel;
 import com.chinafocus.hvrskyworthvr.util.MyRollHandler;
-
 
 import java.lang.reflect.Field;
 
@@ -52,9 +49,9 @@ public class PublishFragment extends Fragment {
         viewPagerBanner.setOffscreenPageLimit(3);
 
         BannerViewModel bannerViewModel = new ViewModelProvider(this).get(BannerViewModel.class);
-        bannerViewModel.getDefaultCloudUrl();
-        bannerViewModel.bannerMutableLiveData.observe(getViewLifecycleOwner(), bannerList -> {
-            viewPagerBanner.setAdapter(new BannerViewAdapter(bannerList));
+        bannerViewModel.getPublishBanner();
+        bannerViewModel.publishBannerMutableLiveData.observe(getViewLifecycleOwner(), bannerList -> {
+            viewPagerBanner.setAdapter(new BannerViewAdapter(bannerList, 1));
             viewPagerBanner.setCurrentItem(currentItem, false);
             setViewPager2ScrollTouchSlop(viewPagerBanner, 1);
             startRollHandler();
@@ -65,7 +62,7 @@ public class PublishFragment extends Fragment {
 
         PublishViewModel publishViewModel = new ViewModelProvider(this).get(PublishViewModel.class);
         publishViewModel.getVideoListData();
-        publishViewModel.videoListDataMutableLiveData.observe(getViewLifecycleOwner(), videoListData -> recyclerView.setAdapter(new VideoListAdapter(videoListData.getList(), 1)));
+        publishViewModel.videoListDataMutableLiveData.observe(getViewLifecycleOwner(), videoListData -> recyclerView.setAdapter(new VideoListAdapter(videoListData, 1)));
 
     }
 

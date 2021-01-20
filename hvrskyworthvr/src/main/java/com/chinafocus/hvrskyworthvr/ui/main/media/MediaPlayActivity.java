@@ -18,7 +18,6 @@ import com.chinafocus.hvrskyworthvr.exo.tools.ViewBindHelper;
 import com.chinafocus.hvrskyworthvr.exo.ui.PlayerView;
 import com.chinafocus.hvrskyworthvr.exo.ui.spherical.SphericalGLSurfaceView;
 import com.chinafocus.hvrskyworthvr.global.Constants;
-import com.chinafocus.hvrskyworthvr.model.bean.VideoDetail;
 import com.chinafocus.hvrskyworthvr.service.BluetoothService;
 import com.chinafocus.hvrskyworthvr.service.event.VrMediaConnect;
 import com.chinafocus.hvrskyworthvr.service.event.VrMediaDisConnect;
@@ -37,9 +36,7 @@ import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 
 import java.io.File;
-import java.util.List;
 import java.util.Objects;
-import java.util.stream.Collectors;
 
 import static com.chinafocus.hvrskyworthvr.global.Constants.RESULT_CODE_ACTIVE_DIALOG;
 import static com.chinafocus.hvrskyworthvr.global.Constants.RESULT_CODE_INACTIVE_DIALOG;
@@ -61,6 +58,8 @@ public class MediaPlayActivity extends AppCompatActivity implements ViewBindHelp
     private ExoMediaHelper mExoMediaHelper;
     private MediaViewModel mediaViewModel;
 
+    private int nextId;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         StatusBarCompatFactory.getInstance().setStatusBarImmerse(this, false);
@@ -72,7 +71,7 @@ public class MediaPlayActivity extends AppCompatActivity implements ViewBindHelp
 
         mediaViewModel = new ViewModelProvider(this).get(MediaViewModel.class);
 
-        loadNetData();
+        loadNetData(VrSyncPlayInfo.obtain().getVideoId());
         observerNetData();
     }
 
@@ -82,44 +81,30 @@ public class MediaPlayActivity extends AppCompatActivity implements ViewBindHelp
     @SuppressLint("NewApi")
     private void observerNetData() {
         mediaViewModel.videoDetailMutableLiveData.observe(this, videoDetail -> {
-            Log.e("MyLog", " videoDetail >>> " + videoDetail.getTitle());
+            Log.d("MyLog", "-----当前播放视频的标题是 >>> " + videoDetail.getTitle());
 
-            List<VideoDetail.FilesBean> filesBeanList = null;
-            int tagNet = VrSyncPlayInfo.obtain().getTag();
-            if (tagNet == 1) {
-                filesBeanList =
-                        videoDetail
-                                .getFiles()
-                                .stream()
-                                .filter(filesBean -> (filesBean.getType() == 10 && filesBean.getBitrate() == 8000) || (filesBean.getType() == 6))
-                                .collect(Collectors.toList());
-            } else if (tagNet == 2) {
-                filesBeanList =
-                        videoDetail
-                                .getFiles()
-                                .stream()
-                                .filter(filesBean -> (filesBean.getType() == 1 && filesBean.getBitrate() == 8000) || (filesBean.getType() == 6))
-                                .collect(Collectors.toList());
-            }
+            String videoUrl;
+            String format = "";
+            String subtitle = "";
 
-            if (filesBeanList == null) {
+
+            String videoTempUrl = videoDetail.getVideoUrl();
+            if (!TextUtils.isEmpty(videoTempUrl)) {
+                videoUrl = Constants.DEFAULT_URL + videoTempUrl;
+            } else {
+                Toast.makeText(getApplicationContext(), "当前无播放地址", Toast.LENGTH_SHORT).show();
                 return;
             }
 
-            String format = "";
-            String videoUrl = "";
-            String subtitle = "";
-            for (VideoDetail.FilesBean filesBean : filesBeanList) {
-                if (filesBean.getType() == 1 || filesBean.getType() == 10) {
-                    videoUrl = Constants.DEFAULT_URL + filesBean.getFilePath();
-                    if (videoUrl.toLowerCase().endsWith("m3u8")) {
-                        format = "m3u8";
-                    } else if (videoUrl.toLowerCase().endsWith("mp4")) {
-                        format = "mp4";
-                    }
-                } else if (filesBean.getType() == 6) {
-                    subtitle = Constants.DEFAULT_URL + filesBean.getFilePath();
-                }
+            if (videoUrl.toLowerCase().endsWith("m3u8")) {
+                format = "m3u8";
+            } else if (videoUrl.toLowerCase().endsWith("mp4")) {
+                format = "mp4";
+            }
+
+            String temp = videoDetail.getSubtitle();
+            if (!TextUtils.isEmpty(temp)) {
+                subtitle = Constants.DEFAULT_URL + temp;
             }
 
             String[] split = videoUrl.split("/");
@@ -128,45 +113,45 @@ public class MediaPlayActivity extends AppCompatActivity implements ViewBindHelp
                 videoUrl = file.getAbsolutePath();
             }
 
-            Log.e("MyLog", " 当前视频播放地址是 videoUrl >>> " + videoUrl);
+            nextId = videoDetail.getNextId();
 
-            if (!TextUtils.isEmpty(videoUrl)) {
-                mExoMediaHelper.onStart();
-                mExoMediaHelper.prepareSource(format, videoUrl, null, subtitle);
-                mExoMediaHelper.onResume();
-                mExoMediaHelper.seekTo(VrSyncPlayInfo.obtain().getSeekTime());
+            Log.d("MyLog", "-----当前视频播放地址是 videoUrl >>> " + videoUrl);
 
-                mExoMediaHelper.getPlayer().addListener(new Player.EventListener() {
-                    @Override
-                    public void onPlaybackStateChanged(int state) {
-                        if (linkingVr && state == STATE_ENDED) {
-                            // 3. Pad 位于播放结束界面时，如果此时 VR 被激活则 VR 端直接进入一级视频列表界面，Pad 回到视频列表界面的「不可选片状态」
-                            // 不用接受命令。
-                            // 当链接状态，播放结束后
-                            waitSelectedFromVR(null);
-                        } else if (!linkingVr && state == STATE_ENDED) {
-                            VrSyncPlayInfo.obtain().restoreVideoInfo();
-                            Log.e("MyLog", "当前播放完了:" + VrSyncPlayInfo.obtain());
-                        }
+            mExoMediaHelper.onStart();
+            mExoMediaHelper.prepareSource(format, videoUrl, null, subtitle);
+            mExoMediaHelper.onResume();
+            mExoMediaHelper.seekTo(VrSyncPlayInfo.obtain().getSeekTime());
+
+            mExoMediaHelper.getPlayer().addListener(new Player.EventListener() {
+                @Override
+                public void onPlaybackStateChanged(int state) {
+                    if (linkingVr && state == STATE_ENDED) {
+                        // 3. Pad 位于播放结束界面时，如果此时 VR 被激活则 VR 端直接进入一级视频列表界面，Pad 回到视频列表界面的「不可选片状态」
+                        // 不用接受命令。
+                        // 当链接状态，播放结束后
+                        waitSelectedFromVR(null);
+                    } else if (!linkingVr && state == STATE_ENDED) {
+                        VrSyncPlayInfo.obtain().restoreVideoInfo();
+                        Log.e("MyLog", "当前播放完了:" + VrSyncPlayInfo.obtain());
                     }
-                });
-
-                if (linkingVr) {
-                    mExoMediaHelper.getPlayer().setVolume(0f);
-                    mLandPlayerView.showController();
-                    ((SphericalGLSurfaceView) Objects.requireNonNull(mLandPlayerView.getVideoSurfaceView())).syncTouchVR();
                 }
+            });
 
-                mLandPlayerView.setVideoTitle(videoDetail.getTitle());
-
-                if (videoDetailDialog == null) {
-                    videoDetailDialog = new VideoDetailDialog(this);
-                    videoDetailDialog.setOnShowListener(dialog -> mLandPlayerView.hideController());
-                    videoDetailDialog.setOnDismissListener(dialog -> mLandPlayerView.showController());
-                }
-                videoDetailDialog.setTitle(videoDetail.getTitle());
-                videoDetailDialog.setMessage(videoDetail.getIntro());
+            if (linkingVr) {
+                mExoMediaHelper.getPlayer().setVolume(0f);
+                mLandPlayerView.showController();
+                ((SphericalGLSurfaceView) Objects.requireNonNull(mLandPlayerView.getVideoSurfaceView())).syncTouchVR();
             }
+
+            mLandPlayerView.setVideoTitle(videoDetail.getTitle());
+
+            if (videoDetailDialog == null) {
+                videoDetailDialog = new VideoDetailDialog(this);
+                videoDetailDialog.setOnShowListener(dialog -> mLandPlayerView.hideController());
+                videoDetailDialog.setOnDismissListener(dialog -> mLandPlayerView.showController());
+            }
+            videoDetailDialog.setTitle(videoDetail.getTitle());
+            videoDetailDialog.setMessage(videoDetail.getDescription());
 
         });
     }
@@ -343,22 +328,22 @@ public class MediaPlayActivity extends AppCompatActivity implements ViewBindHelp
         // 1.关闭当前dialog
         closeAllDialog();
         // 2.加载视频详情！
-        loadNetData();
+        loadNetData(VrSyncPlayInfo.obtain().getVideoId());
     }
 
     /**
      * 加载视频详情
      */
-    private void loadNetData() {
-        String temp = "";
+    private void loadNetData(int videoId) {
+        int temp = -1;
         int video_tag = VrSyncPlayInfo.obtain().getTag();
         if (video_tag == 1) {
-            temp = "publish";
+            temp = 2;
         } else if (video_tag == 2) {
-            temp = "video";
+            temp = 1;
         }
         // 2.加载视频
-        mediaViewModel.getVideoDetailData(temp, VrSyncPlayInfo.obtain().getVideoId());
+        mediaViewModel.getVideoDetailData(temp, videoId);
     }
 
     /**
@@ -421,13 +406,13 @@ public class MediaPlayActivity extends AppCompatActivity implements ViewBindHelp
 
     @Override
     public void onPlayNextVideo() {
-//        if (mVideoInfoPresenter != null && mNextVideoId != 0L) {
-//            mViewBindHelper.setChangeVideoInfo(true);
-////            mExoMediaHelper.clearStartPosition();
-//            mViewBindHelper.clearVideoRatioLang();
-//            mVideoInfoPresenter.getVideoInfoNewFromChannel(mNextVideoId, mChannelId);
-//        }
-        Toast.makeText(this, "暂无下一个影片", Toast.LENGTH_SHORT).show();
+        if (nextId != 0) {
+            VrSyncPlayInfo.obtain().clearVideoTime();
+            VrSyncPlayInfo.obtain().setVideoId(nextId);
+            loadNetData(nextId);
+        } else {
+            Toast.makeText(this, "暂无下一个影片", Toast.LENGTH_SHORT).show();
+        }
     }
 
     @Override

@@ -6,8 +6,9 @@ import android.util.Log;
 
 import androidx.annotation.NonNull;
 
-import com.chinafocus.hvrskyworthvr.model.multibean.DeviceInfoManager;
+import com.chinafocus.hvrskyworthvr.model.DeviceInfoManager;
 import com.chinafocus.hvrskyworthvr.net.ApiMultiService;
+import com.chinafocus.hvrskyworthvr.net.RequestBodyManager;
 import com.chinafocus.hvrskyworthvr.ui.dialog.SettingAliasDialog;
 import com.chinafocus.lib_network.net.ApiManager;
 import com.chinafocus.lib_network.net.errorhandler.ExceptionHandle;
@@ -40,7 +41,7 @@ public class AliasService {
     private void postSetDeviceInfoAlias(String newName) {
         ApiManager
                 .getService(ApiMultiService.class)
-                .postSetDeviceAlias(DeviceInfoManager.getInstance().getRequestAliasBody(newName))
+                .postSetDeviceAlias(RequestBodyManager.getRequestAliasBody(newName))
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread(), true)
                 .onErrorResumeNext(new HttpErrorHandler<>())

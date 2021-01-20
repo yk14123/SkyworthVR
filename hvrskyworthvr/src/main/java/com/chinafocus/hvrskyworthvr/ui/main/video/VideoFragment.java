@@ -67,9 +67,9 @@ public class VideoFragment extends Fragment {
         viewPagerBanner.setOffscreenPageLimit(3);
 
         BannerViewModel bannerViewModel = new ViewModelProvider(this).get(BannerViewModel.class);
-        bannerViewModel.getDefaultCloudUrl();
-        bannerViewModel.bannerMutableLiveData.observe(getViewLifecycleOwner(), bannerList -> {
-            viewPagerBanner.setAdapter(new BannerViewAdapter(bannerList));
+        bannerViewModel.getVideoBanner();
+        bannerViewModel.videoBannerMutableLiveData.observe(getViewLifecycleOwner(), bannerList -> {
+            viewPagerBanner.setAdapter(new BannerViewAdapter(bannerList, 2));
             setViewPager2ScrollTouchSlop(viewPagerBanner, 1);
             viewPagerBanner.setCurrentItem(1, false);
             startRollHandler();
@@ -98,7 +98,7 @@ public class VideoFragment extends Fragment {
                     scaleTitleView.setTextSize(20);
                     scaleTitleView.setNormalColor(getResources().getColor(R.color.color_333));
                     scaleTitleView.setSelectedColor(getResources().getColor(R.color.color_test_checked));
-                    scaleTitleView.setText(videoCategories.get(index).getNameCn());
+                    scaleTitleView.setText(videoCategories.get(index).getName());
                     scaleTitleView.setOnClickListener(view
                             -> viewPagerVideoList.setCurrentItem(index, false));
                     return scaleTitleView;
@@ -127,7 +127,7 @@ public class VideoFragment extends Fragment {
             for (VideoCategory temp : videoCategories) {
                 VideoListFragment videoListFragment = VideoListFragment.newInstance();
                 Bundle bundle = new Bundle();
-                bundle.putInt(VideoListFragment.VIDEO_LIST_CATEGORY, temp.getCid());
+                bundle.putInt(VideoListFragment.VIDEO_LIST_CATEGORY, temp.getId());
                 videoListFragment.setArguments(bundle);
                 fragments.add(videoListFragment);
             }
@@ -136,7 +136,7 @@ public class VideoFragment extends Fragment {
             viewPagerVideoList.setAdapter(adapter);
             setViewPager2ScrollTouchSlop(viewPagerVideoList, 150);
 
-            CURRENT_CATEGORY = videoCategories.get(0).getCid();
+            CURRENT_CATEGORY = videoCategories.get(0).getId();
             VrSyncPlayInfo.obtain().setCategory(CURRENT_CATEGORY);
             VrSyncPlayInfo.obtain().setTag(2);
 //            ViewPager2Helper.bind(magicIndicator, viewPagerVideoList);
@@ -154,7 +154,7 @@ public class VideoFragment extends Fragment {
                     super.onPageSelected(position);
                     magicIndicator.onPageSelected(position);
 
-                    CURRENT_CATEGORY = videoCategories.get(position).getCid();
+                    CURRENT_CATEGORY = videoCategories.get(position).getId();
                     VrSyncPlayInfo.obtain().setCategory(CURRENT_CATEGORY);
                     VrSyncPlayInfo.obtain().restoreVideoInfo();
                     VrSyncPlayInfo.obtain().setTag(2);

@@ -16,7 +16,7 @@ import androidx.appcompat.app.AppCompatDialog;
 import androidx.appcompat.widget.AppCompatEditText;
 
 import com.chinafocus.hvrskyworthvr.R;
-import com.chinafocus.hvrskyworthvr.model.multibean.DeviceInfoManager;
+import com.chinafocus.hvrskyworthvr.model.DeviceInfoManager;
 
 import java.util.Objects;
 

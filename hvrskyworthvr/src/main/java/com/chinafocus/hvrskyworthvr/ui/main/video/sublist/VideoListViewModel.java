@@ -5,16 +5,19 @@ import android.app.Application;
 import androidx.annotation.NonNull;
 import androidx.lifecycle.MutableLiveData;
 
-import com.chinafocus.hvrskyworthvr.model.bean.VideoListData;
-import com.chinafocus.hvrskyworthvr.net.ApiService;
+import com.chinafocus.hvrskyworthvr.model.bean.VideoDataInfo;
+import com.chinafocus.hvrskyworthvr.net.ApiMultiService;
+import com.chinafocus.hvrskyworthvr.net.RequestBodyManager;
 import com.chinafocus.lib_network.net.ApiManager;
 import com.chinafocus.lib_network.net.base.BaseViewModel;
 import com.chinafocus.lib_network.net.errorhandler.ExceptionHandle;
 import com.chinafocus.lib_network.net.observer.BaseObserver;
 
+import java.util.List;
+
 public class VideoListViewModel extends BaseViewModel {
 
-    MutableLiveData<VideoListData> videoDataMutableLiveData = new MutableLiveData<>();
+    MutableLiveData<List<VideoDataInfo>> videoDataMutableLiveData = new MutableLiveData<>();
 
     public VideoListViewModel(@NonNull Application application) {
         super(application);
@@ -23,11 +26,11 @@ public class VideoListViewModel extends BaseViewModel {
     void getVideoData(int category) {
         addSubscribe(
                 ApiManager
-                        .getService(ApiService.class)
-                        .getVideoListData(category, 1, 100, 1),
-                new BaseObserver<VideoListData>() {
+                        .getService(ApiMultiService.class)
+                        .getVideoListData(RequestBodyManager.getVideoListRequestBody(category)),
+                new BaseObserver<List<VideoDataInfo>>() {
                     @Override
-                    public void onSuccess(VideoListData videoListData) {
+                    public void onSuccess(List<VideoDataInfo> videoListData) {
                         videoDataMutableLiveData.postValue(videoListData);
                     }
 

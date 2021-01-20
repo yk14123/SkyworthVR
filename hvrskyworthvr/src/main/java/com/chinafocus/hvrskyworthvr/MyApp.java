@@ -2,7 +2,7 @@ package com.chinafocus.hvrskyworthvr;
 
 import android.app.Application;
 
-import com.chinafocus.hvrskyworthvr.model.multibean.DeviceInfoManager;
+import com.chinafocus.hvrskyworthvr.model.DeviceInfoManager;
 import com.chinafocus.hvrskyworthvr.net.NetworkRequestInfo;
 import com.chinafocus.lib_network.net.ApiManager;
 

@@ -14,7 +14,7 @@ import com.blankj.utilcode.util.TimeUtils;
 import com.bumptech.glide.Glide;
 import com.chinafocus.hvrskyworthvr.R;
 import com.chinafocus.hvrskyworthvr.global.Constants;
-import com.chinafocus.hvrskyworthvr.model.bean.VideoListData;
+import com.chinafocus.hvrskyworthvr.model.bean.VideoDataInfo;
 import com.chinafocus.hvrskyworthvr.service.event.VrCancelTimeTask;
 import com.chinafocus.hvrskyworthvr.service.event.VrSyncPlayInfo;
 import com.chinafocus.hvrskyworthvr.ui.main.media.MediaPlayActivity;
@@ -27,14 +27,13 @@ import static com.chinafocus.hvrskyworthvr.global.Constants.REQUEST_CODE_PAD_MED
 import static com.chinafocus.hvrskyworthvr.ui.main.media.MediaPlayActivity.MEDIA_CATEGORY_TAG;
 import static com.chinafocus.hvrskyworthvr.ui.main.media.MediaPlayActivity.MEDIA_FROM_TAG;
 import static com.chinafocus.hvrskyworthvr.ui.main.media.MediaPlayActivity.MEDIA_ID;
-import static com.chinafocus.hvrskyworthvr.ui.main.video.VideoFragment.CURRENT_CATEGORY;
 
 public class VideoListAdapter extends RecyclerView.Adapter<BaseViewHolder> {
 
-    private List<VideoListData.ListBean> videoLists;
+    private List<VideoDataInfo> videoLists;
     private int video_tag;
 
-    public VideoListAdapter(List<VideoListData.ListBean> videoLists, int tag) {
+    public VideoListAdapter(List<VideoDataInfo> videoLists, int tag) {
         this.videoLists = videoLists;
         this.video_tag = tag;
     }
@@ -54,7 +53,10 @@ public class VideoListAdapter extends RecyclerView.Adapter<BaseViewHolder> {
             Intent intent = new Intent(parent.getContext(), MediaPlayActivity.class);
             intent.putExtra(MEDIA_ID, id);
             intent.putExtra(MEDIA_FROM_TAG, video_tag);
-            intent.putExtra(MEDIA_CATEGORY_TAG, CURRENT_CATEGORY);
+            if (video_tag == 2) {
+                intent.putExtra(MEDIA_CATEGORY_TAG, Integer.parseInt(videoLists.get(adapterPosition).getClassify()));
+            }
+//            intent.putExtra(MEDIA_CATEGORY_TAG, CURRENT_CATEGORY);
             ((Activity) parent.getContext()).startActivityForResult(intent, REQUEST_CODE_PAD_MEDIA_ACTIVITY);
         });
         return baseViewHolder;
@@ -64,7 +66,7 @@ public class VideoListAdapter extends RecyclerView.Adapter<BaseViewHolder> {
     public void onBindViewHolder(@NonNull BaseViewHolder holder, int position) {
 
         Glide.with(holder.itemView.getContext())
-                .load(Constants.DEFAULT_URL + videoLists.get(position).getCoverImg())
+                .load(Constants.DEFAULT_URL + videoLists.get(position).getImgUrl())
                 .into((ImageView) holder.getView(R.id.iv_video_list_bg));
 
         String time = TimeUtils.millis2String(videoLists.get(position).getDuration() * 1000, "mm:ss");

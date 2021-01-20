@@ -44,7 +44,7 @@ public class VideoListFragment extends Fragment {
         VideoListViewModel videoListViewModel = new ViewModelProvider(this).get(VideoListViewModel.class);
         videoListViewModel.getVideoData(category);
         videoListViewModel.videoDataMutableLiveData.observe(getViewLifecycleOwner(), videoData -> {
-            recyclerView.setAdapter(new VideoListAdapter(videoData.getList(), 2));
+            recyclerView.setAdapter(new VideoListAdapter(videoData, 2));
         });
 
     }

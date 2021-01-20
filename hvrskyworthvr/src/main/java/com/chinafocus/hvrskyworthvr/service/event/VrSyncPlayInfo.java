@@ -28,7 +28,6 @@ public class VrSyncPlayInfo {
         this.mCategory = mCategory;
     }
 
-    @SuppressWarnings("unused")
     public void setVideoId(int mVideoId) {
         this.mVideoId = mVideoId;
     }

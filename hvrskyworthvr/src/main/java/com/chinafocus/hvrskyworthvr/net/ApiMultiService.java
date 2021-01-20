@@ -1,12 +1,10 @@
 package com.chinafocus.hvrskyworthvr.net;
 
-import com.chinafocus.hvrskyworthvr.model.bean.Banner;
 import com.chinafocus.hvrskyworthvr.model.bean.DefaultCloudUrl;
-import com.chinafocus.hvrskyworthvr.model.bean.PublishDataList;
 import com.chinafocus.hvrskyworthvr.model.bean.VideoCategory;
+import com.chinafocus.hvrskyworthvr.model.bean.VideoDataInfo;
 import com.chinafocus.hvrskyworthvr.model.bean.VideoDetail;
-import com.chinafocus.hvrskyworthvr.model.bean.VideoListData;
-import com.chinafocus.hvrskyworthvr.model.multibean.DeviceInfo;
+import com.chinafocus.hvrskyworthvr.model.bean.DeviceInfo;
 import com.chinafocus.lib_network.net.beans.BaseResponse;
 
 import java.util.List;
@@ -18,7 +16,7 @@ import retrofit2.http.POST;
 
 public interface ApiMultiService {
 
-    String appNo = "003";
+    String APP_NO = "003";
 
     @POST("farm360/sysCloud/defaultCloudUrl")
     Observable<BaseResponse<DefaultCloudUrl>> getDefaultCloudUrl(@Body RequestBody body);
@@ -33,19 +31,19 @@ public interface ApiMultiService {
     Observable<BaseResponse<Object>> postSetDeviceAlias(@Body RequestBody body);
 
     @POST("farm360/content/viewSlides")
-    Observable<BaseResponse<List<Banner>>> getPublishBanner(@Body RequestBody body);
+    Observable<BaseResponse<List<VideoDataInfo>>> getPublishBanner(@Body RequestBody body);
 
     @POST("farm360/content/videoSlides")
-    Observable<BaseResponse<List<Banner>>> getVideoBanner(@Body RequestBody body);
+    Observable<BaseResponse<List<VideoDataInfo>>> getVideoBanner(@Body RequestBody body);
 
     @POST("farm360/content/viewList")
-    Observable<BaseResponse<List<PublishDataList>>> getPublishListData(@Body RequestBody body);
+    Observable<BaseResponse<List<VideoDataInfo>>> getPublishListData(@Body RequestBody body);
 
     @POST("farm360/content/myClassify")
-    Observable<BaseResponse<List<VideoCategory>>> getVideoCateGory(@Body RequestBody body);
+    Observable<BaseResponse<List<VideoCategory>>> getVideoCategory(@Body RequestBody body);
 
     @POST("farm360/content/videoList")
-    Observable<BaseResponse<VideoListData>> getVideoListData(@Body RequestBody body);
+    Observable<BaseResponse<List<VideoDataInfo>>> getVideoListData(@Body RequestBody body);
 
     @POST("farm360/content/videoDtl")
     Observable<BaseResponse<VideoDetail>> getVideoDetailData(@Body RequestBody body);

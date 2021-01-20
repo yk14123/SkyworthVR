@@ -12,7 +12,7 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.widget.AppCompatTextView;
 
 import com.chinafocus.hvrskyworthvr.R;
-import com.chinafocus.hvrskyworthvr.model.multibean.DeviceInfoManager;
+import com.chinafocus.hvrskyworthvr.model.DeviceInfoManager;
 
 public class DeviceInfoViewGroup extends FrameLayout {
 

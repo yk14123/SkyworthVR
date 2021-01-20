@@ -12,7 +12,7 @@ import androidx.annotation.NonNull;
 
 import com.blankj.utilcode.util.SPUtils;
 import com.chinafocus.hvrskyworthvr.global.Constants;
-import com.chinafocus.hvrskyworthvr.model.multibean.DeviceInfoManager;
+import com.chinafocus.hvrskyworthvr.model.DeviceInfoManager;
 import com.chinafocus.hvrskyworthvr.service.event.VrMainConnect;
 import com.chinafocus.hvrskyworthvr.service.event.VrMainDisConnect;
 import com.chinafocus.hvrskyworthvr.service.event.VrMainSyncMediaInfo;

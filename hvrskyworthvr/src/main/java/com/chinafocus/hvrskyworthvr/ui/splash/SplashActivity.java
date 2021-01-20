@@ -11,17 +11,13 @@ import com.blankj.utilcode.constant.PermissionConstants;
 import com.blankj.utilcode.util.BarUtils;
 import com.blankj.utilcode.util.PermissionUtils;
 import com.chinafocus.hvrskyworthvr.R;
-import com.chinafocus.hvrskyworthvr.model.multibean.DeviceInfoManager;
+import com.chinafocus.hvrskyworthvr.model.DeviceInfoManager;
 import com.chinafocus.hvrskyworthvr.ui.setting.SettingActivity;
-import com.google.gson.Gson;
 
 import java.util.concurrent.TimeUnit;
 
 import io.reactivex.Completable;
 import io.reactivex.observers.DisposableCompletableObserver;
-import okhttp3.FormBody;
-import okhttp3.MediaType;
-import okhttp3.RequestBody;
 
 public class SplashActivity extends AppCompatActivity {
 

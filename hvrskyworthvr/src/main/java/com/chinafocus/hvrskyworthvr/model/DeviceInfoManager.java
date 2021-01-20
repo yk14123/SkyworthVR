@@ -1,19 +1,15 @@
-package com.chinafocus.hvrskyworthvr.model.multibean;
+package com.chinafocus.hvrskyworthvr.model;
 
 import android.content.Context;
 import android.text.TextUtils;
 
+import com.chinafocus.hvrskyworthvr.model.bean.DeviceInfo;
 import com.chinafocus.hvrskyworthvr.net.ApiMultiService;
-import com.google.gson.Gson;
 
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
-
-import okhttp3.FormBody;
-import okhttp3.MediaType;
-import okhttp3.RequestBody;
 
 public class DeviceInfoManager {
 
@@ -30,7 +26,7 @@ public class DeviceInfoManager {
     private final DeviceInfo mDeviceInfo;
 
     public void initDeviceInfo(Context context) {
-        mDeviceInfo.setAppNo(ApiMultiService.appNo);
+        mDeviceInfo.setAppNo(ApiMultiService.APP_NO);
         mDeviceInfo.setAlias("");
         File file = new File(context.getExternalFilesDir(""), "userNo.txt");
         try (
@@ -42,32 +38,6 @@ public class DeviceInfoManager {
         } catch (IOException e) {
             e.printStackTrace();
         }
-    }
-
-    public DeviceInfo cloneDeviceInfo() {
-        try {
-            return mDeviceInfo.clone();
-        } catch (CloneNotSupportedException e) {
-            e.printStackTrace();
-            return null;
-        }
-    }
-
-    private RequestBody getRequestBody(DeviceInfo deviceInfo) {
-        return FormBody
-                .create(
-                        MediaType.parse("application/json; charset=utf-8"),
-                        new Gson().toJson(deviceInfo));
-    }
-
-    public RequestBody getRequestAliasBody(String newName) {
-        DeviceInfo deviceInfo = cloneDeviceInfo();
-        deviceInfo.setAlias(newName);
-        return getRequestBody(deviceInfo);
-    }
-
-    public RequestBody getRequestBody() {
-        return getRequestBody(mDeviceInfo);
     }
 
     public boolean isUserNumberExist() {
