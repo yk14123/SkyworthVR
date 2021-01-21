@@ -37,6 +37,9 @@
     <string name="setting_status_alias_title">设置设备名称</string>
     <string name="setting_status_cancel">取消</string>
     <string name="setting_status_ok">确定</string>
+    <string name="about_user_protocol">用户协议</string>
+    <string name="about_privacy_protocol">隐私协议</string>
+    <string name="about_us_protocol">关于我们</string>
 
 
 </resources>

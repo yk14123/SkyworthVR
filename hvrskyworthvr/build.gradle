@@ -62,6 +62,8 @@ dependencies {
     // eventBus
     implementation 'org.greenrobot:eventbus:3.2.0'
     annotationProcessor 'org.greenrobot:eventbus-annotation-processor:3.2.0'
+    // 腾讯x5游览器
+    implementation 'com.tencent.tbs.tbssdk:sdk:43697'
     // 网络模块
     implementation project(path: ':lib_network')
     // 蓝牙通讯模块

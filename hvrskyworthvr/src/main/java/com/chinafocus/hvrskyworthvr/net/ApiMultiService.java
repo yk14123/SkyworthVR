@@ -17,6 +17,9 @@ import retrofit2.http.POST;
 public interface ApiMultiService {
 
     String APP_NO = "003";
+    String ABOUT_USER_PROTOCOL = "";
+    String ABOUT_PRIVACY_PROTOCOL = "";
+    String ABOUT_US_PROTOCOL = "";
 
     @POST("farm360/sysCloud/defaultCloudUrl")
     Observable<BaseResponse<DefaultCloudUrl>> getDefaultCloudUrl(@Body RequestBody body);

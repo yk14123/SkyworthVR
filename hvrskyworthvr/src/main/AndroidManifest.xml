@@ -22,9 +22,11 @@
         android:usesCleartextTraffic="true"
         tools:targetApi="m">
         <activity
-            android:name=".ui.setting.SettingActivity"
+            android:name=".ui.main.about.WebAboutActivity"
             android:screenOrientation="landscape" />
-        <!-- <service -->
+        <activity
+            android:name=".ui.setting.SettingActivity"
+            android:screenOrientation="landscape" /> <!-- <service -->
         <!-- android:name=".service.SocketService" -->
         <!-- android:exported="true" -->
         <!-- android:permission="android.permission.BIND_JOB_SERVICE" /> -->
@@ -47,11 +49,8 @@
         <activity
             android:name=".ui.main.MainActivity"
             android:screenOrientation="landscape">
-
             <!-- <intent-filter> -->
             <!-- <action android:name="android.intent.action.MAIN" /> -->
-
-
             <!-- <category android:name="android.intent.category.LAUNCHER" /> -->
             <!-- </intent-filter> -->
         </activity>

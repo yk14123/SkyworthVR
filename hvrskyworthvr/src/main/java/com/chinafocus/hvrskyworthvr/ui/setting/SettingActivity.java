@@ -16,8 +16,6 @@ import com.chinafocus.hvrskyworthvr.ui.main.MainActivity;
 import com.chinafocus.hvrskyworthvr.ui.widget.DeviceInfoViewGroup;
 import com.chinafocus.hvrskyworthvr.ui.widget.SettingViewGroup;
 
-import static com.chinafocus.hvrskyworthvr.global.Constants.CURRENT_VR_ONLINE_STATUS;
-import static com.chinafocus.hvrskyworthvr.global.Constants.VR_ONLINE_STATUS;
 import static com.chinafocus.hvrskyworthvr.ui.widget.SettingViewGroup.CONNECT_CHECK_AGAIN;
 import static com.chinafocus.hvrskyworthvr.ui.widget.SettingViewGroup.CONNECT_ERROR;
 import static com.chinafocus.hvrskyworthvr.ui.widget.SettingViewGroup.CONNECT_SUCCESS;
@@ -163,7 +161,6 @@ public class SettingActivity extends AppCompatActivity {
 
     private void enterMainActivity(View v) {
         Intent intent = new Intent(this, MainActivity.class);
-        intent.putExtra(VR_ONLINE_STATUS, CURRENT_VR_ONLINE_STATUS);
         startActivity(intent);
         finish();
     }

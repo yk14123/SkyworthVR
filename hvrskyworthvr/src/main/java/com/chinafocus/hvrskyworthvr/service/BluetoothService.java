@@ -13,6 +13,7 @@ import androidx.annotation.NonNull;
 import com.blankj.utilcode.util.SPUtils;
 import com.chinafocus.hvrskyworthvr.global.Constants;
 import com.chinafocus.hvrskyworthvr.model.DeviceInfoManager;
+import com.chinafocus.hvrskyworthvr.service.event.VrAboutConnect;
 import com.chinafocus.hvrskyworthvr.service.event.VrMainConnect;
 import com.chinafocus.hvrskyworthvr.service.event.VrMainDisConnect;
 import com.chinafocus.hvrskyworthvr.service.event.VrMainSyncMediaInfo;
@@ -33,9 +34,6 @@ import java.util.UUID;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-import static com.chinafocus.hvrskyworthvr.global.Constants.DEVICE_UUID;
-import static com.chinafocus.hvrskyworthvr.global.Constants.VR_OFFLINE;
-import static com.chinafocus.hvrskyworthvr.global.Constants.VR_ONLINE;
 import static com.chinafocus.lib_bluetooth.Constants.MESSAGE_DEVICE_NAME;
 import static com.chinafocus.lib_bluetooth.Constants.MESSAGE_RETRY;
 import static com.chinafocus.lib_bluetooth.Constants.MESSAGE_STATE_CHANGE;
@@ -43,6 +41,12 @@ import static com.chinafocus.lib_bluetooth.Constants.MESSAGE_TOAST;
 
 
 public class BluetoothService implements BluetoothEngineService.AsyncThreadReadBytes {
+
+    public static final int VR_STATUS_OFFLINE = 10006;
+    public static final int VR_STATUS_ONLINE = 10007;
+    public static int CURRENT_VR_ONLINE_STATUS = VR_STATUS_OFFLINE;
+
+    private static final String DEVICE_UUID = "device_uuid";
 
     private static final int CONNECT = 1;
     private static final int DISCONNECT = 2;
@@ -429,7 +433,7 @@ public class BluetoothService implements BluetoothEngineService.AsyncThreadReadB
         } else if (Constants.ACTIVITY_TAG == Constants.ACTIVITY_MEDIA) {
             EventBus.getDefault().post(VrMediaDisConnect.obtain());
         }
-        Constants.CURRENT_VR_ONLINE_STATUS = VR_OFFLINE;
+        CURRENT_VR_ONLINE_STATUS = VR_STATUS_OFFLINE;
     }
 
     /**
@@ -440,8 +444,10 @@ public class BluetoothService implements BluetoothEngineService.AsyncThreadReadB
             EventBus.getDefault().post(VrMainConnect.obtain());
         } else if (Constants.ACTIVITY_TAG == Constants.ACTIVITY_MEDIA) {
             EventBus.getDefault().post(VrMediaConnect.obtain());
+        } else if (Constants.ACTIVITY_TAG == Constants.ACTIVITY_ABOUT) {
+            EventBus.getDefault().post(VrAboutConnect.obtain());
         }
-        Constants.CURRENT_VR_ONLINE_STATUS = VR_ONLINE;
+        CURRENT_VR_ONLINE_STATUS = VR_STATUS_ONLINE;
     }
 
     /**

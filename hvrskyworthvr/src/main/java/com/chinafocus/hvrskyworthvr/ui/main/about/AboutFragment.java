@@ -8,14 +8,15 @@ import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.widget.AppCompatTextView;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.chinafocus.hvrskyworthvr.R;
+import com.chinafocus.hvrskyworthvr.model.DeviceInfoManager;
+import com.chinafocus.hvrskyworthvr.net.ApiMultiService;
 import com.chinafocus.hvrskyworthvr.ui.setting.SettingActivity;
 import com.chinafocus.hvrskyworthvr.util.TimeOutClickUtil;
-
-import static com.chinafocus.hvrskyworthvr.global.Constants.*;
 
 public class AboutFragment extends Fragment {
 
@@ -37,15 +38,27 @@ public class AboutFragment extends Fragment {
         mViewModel = new ViewModelProvider(this).get(AboutViewModel.class);
         // TODO: Use the ViewModel
 
-        requireView().findViewById(R.id.tv_back_door).setOnClickListener(v -> {
-            TimeOutClickUtil.startTimeOutClick(this::startSettingActivity);
-        });
+        AppCompatTextView textView = requireView().findViewById(R.id.tv_back_door);
+        textView.setText(DeviceInfoManager.getInstance().getDeviceAccountName());
+        textView.setOnClickListener(v -> TimeOutClickUtil.startTimeOutClick(this::startSettingActivity));
+
+        requireView().findViewById(R.id.tv_about_user_protocol)
+                .setOnClickListener(
+                        v -> WebAboutActivity.startWebAboutActivity(requireActivity(), getString(R.string.about_user_protocol), ApiMultiService.ABOUT_USER_PROTOCOL)
+                );
+        requireView().findViewById(R.id.tv_about_privacy_protocol)
+                .setOnClickListener(
+                        v -> WebAboutActivity.startWebAboutActivity(requireActivity(), getString(R.string.about_privacy_protocol), ApiMultiService.ABOUT_PRIVACY_PROTOCOL)
+                );
+        requireView().findViewById(R.id.tv_about_us_protocol)
+                .setOnClickListener(
+                        v -> WebAboutActivity.startWebAboutActivity(requireActivity(), getString(R.string.about_us_protocol), ApiMultiService.ABOUT_US_PROTOCOL)
+                );
 
     }
 
     private void startSettingActivity() {
         startActivity(new Intent(getActivity(), SettingActivity.class));
-        ACTIVITY_TAG = ACTIVITY_SETTING;
     }
 
 }
