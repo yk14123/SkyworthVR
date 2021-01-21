@@ -56,8 +56,7 @@ public class DeviceInfoManager {
         mDeviceInfo.setUniqueId(uuid);
     }
 
-    public void postAliasAndName(String alias, String customerName) {
-        postDeviceAlias(alias);
+    public void postDeviceAccountName(String customerName) {
         mDeviceInfo.setCustomerName(customerName);
     }
 
@@ -69,7 +68,7 @@ public class DeviceInfoManager {
         return mDeviceInfo.getAlias();
     }
 
-    public String getDeviceInfoName() {
+    public String getDeviceAccountName() {
         return mDeviceInfo.getCustomerName();
     }
 

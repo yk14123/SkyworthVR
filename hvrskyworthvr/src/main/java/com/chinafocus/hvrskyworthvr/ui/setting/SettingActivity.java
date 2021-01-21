@@ -158,6 +158,7 @@ public class SettingActivity extends AppCompatActivity {
     protected void onStop() {
         super.onStop();
         BluetoothService.getInstance().cancelDiscoveryAndUnregisterReceiver(this);
+        AliasService.getInstance().clearAliasDialog();
     }
 
     private void enterMainActivity(View v) {

@@ -128,11 +128,12 @@ public class WifiService {
                 .subscribe(new BaseObserver<DeviceInfo>() {
                     @Override
                     public void onSuccess(DeviceInfo deviceInfo) {
-                        DeviceInfoManager.getInstance().postAliasAndName(deviceInfo.getAlias(), deviceInfo.getCustomerName());
+                        DeviceInfoManager.getInstance().postDeviceAccountName(deviceInfo.getCustomerName());
+                        DeviceInfoManager.getInstance().postDeviceAlias(deviceInfo.getAlias());
                         if (mWifiStatusListener != null) {
                             mWifiStatusListener.loadAccountNameAndAlias(
-                                    DeviceInfoManager.getInstance().getDeviceInfoName(),
-                                    DeviceInfoManager.getInstance().getDeviceAlias());
+                                    deviceInfo.getCustomerName(),
+                                    deviceInfo.getAlias());
                         }
                         postResourcesBaseUrl();
                     }

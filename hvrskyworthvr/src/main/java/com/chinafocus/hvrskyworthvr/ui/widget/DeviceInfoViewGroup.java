@@ -44,7 +44,7 @@ public class DeviceInfoViewGroup extends FrameLayout {
         AppCompatTextView tvAccountId = findViewById(R.id.tv_setting_device_info_account_id);
         tvAccountId.setText(DeviceInfoManager.getInstance().getDeviceAccountId());
 
-        String accountName = DeviceInfoManager.getInstance().getDeviceInfoName();
+        String accountName = DeviceInfoManager.getInstance().getDeviceAccountName();
         if (TextUtils.isEmpty(accountName)) {
             showInitAccountName();
         } else {

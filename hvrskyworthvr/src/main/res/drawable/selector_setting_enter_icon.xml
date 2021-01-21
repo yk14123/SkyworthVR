@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:drawable="@drawable/sky_worth_setting_device_status_enter_enable" android:state_enabled="true" />
+    <item android:drawable="@drawable/sky_worth_setting_device_status_enter_unable" android:state_enabled="false" />
+    <item android:drawable="@drawable/sky_worth_setting_device_status_enter_enable" />
+
+</selector>

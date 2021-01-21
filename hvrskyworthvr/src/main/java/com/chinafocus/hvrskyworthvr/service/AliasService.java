@@ -80,6 +80,10 @@ public class AliasService {
         }
     }
 
+    public void clearAliasDialog() {
+        mSettingAliasDialog = null;
+    }
+
     public void init(@NonNull AliasStatusListener aliasStatusListener) {
         mAliasStatusListener = aliasStatusListener;
         initDefaultDeviceName();

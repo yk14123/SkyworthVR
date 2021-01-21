@@ -138,6 +138,7 @@ public class SettingViewGroup extends FrameLayout {
         switchSubTitle(false);
         mTvSettingMainTitle.setText(getContext().getString(R.string.setting_status_alias_main_title));
         setFinalResultMessage(R.string.setting_status_alias_result, R.color.color_setting_status_gray);
+        mIvSettingSet.setEnabled(false);
         mIvSettingSet.setOnClickListener(v -> AliasService.getInstance().onClick(v.getContext()));
     }
 
@@ -184,6 +185,7 @@ public class SettingViewGroup extends FrameLayout {
     private void setAliasSuccess(String name) {
         switchSubTitle(false);
         setFinalResultMessage(R.string.setting_status_alias_empty, R.color.color_black, name);
+        mIvSettingSet.setEnabled(true);
     }
 
     private void setBluetoothSuccess(String name) {

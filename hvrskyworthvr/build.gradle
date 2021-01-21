@@ -12,6 +12,13 @@ android {
         versionName "1.0"
 
         testInstrumentationRunner "androidx.sky_worth_login_logo.runner.AndroidJUnitRunner"
+
+        javaCompileOptions {
+            annotationProcessorOptions {
+                arguments = [ eventBusIndex :'com.chinafocus.hvrskyworthvr.MyEventBusIndex' ]
+            } // 这里取什么名字，注解处理器就接收什么参数，并生成什么类，注解处理器接受参数
+        }
+
     }
 
     buildTypes {
@@ -54,6 +61,7 @@ dependencies {
     implementation 'com.google.android.exoplayer:exoplayer:2.12.2'
     // eventBus
     implementation 'org.greenrobot:eventbus:3.2.0'
+    annotationProcessor 'org.greenrobot:eventbus-annotation-processor:3.2.0'
     // 网络模块
     implementation project(path: ':lib_network')
     // 蓝牙通讯模块
