@@ -13,6 +13,7 @@ import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.chinafocus.hvrskyworthvr.R;
+import com.chinafocus.hvrskyworthvr.global.ConfigManager;
 import com.chinafocus.hvrskyworthvr.model.DeviceInfoManager;
 import com.chinafocus.hvrskyworthvr.net.ApiMultiService;
 import com.chinafocus.hvrskyworthvr.ui.setting.SettingActivity;
@@ -44,15 +45,24 @@ public class AboutFragment extends Fragment {
 
         requireView().findViewById(R.id.tv_about_user_protocol)
                 .setOnClickListener(
-                        v -> WebAboutActivity.startWebAboutActivity(requireActivity(), getString(R.string.about_user_protocol), ApiMultiService.ABOUT_USER_PROTOCOL)
+                        v -> WebAboutActivity.startWebAboutActivity(
+                                requireActivity(),
+                                getString(R.string.about_user_protocol),
+                                ConfigManager.getInstance().getDefaultUrl() + ApiMultiService.ABOUT_USER_PROTOCOL)
                 );
         requireView().findViewById(R.id.tv_about_privacy_protocol)
                 .setOnClickListener(
-                        v -> WebAboutActivity.startWebAboutActivity(requireActivity(), getString(R.string.about_privacy_protocol), ApiMultiService.ABOUT_PRIVACY_PROTOCOL)
+                        v -> WebAboutActivity.startWebAboutActivity(
+                                requireActivity(),
+                                getString(R.string.about_privacy_protocol),
+                                ConfigManager.getInstance().getDefaultUrl() + ApiMultiService.ABOUT_PRIVACY_PROTOCOL)
                 );
         requireView().findViewById(R.id.tv_about_us_protocol)
                 .setOnClickListener(
-                        v -> WebAboutActivity.startWebAboutActivity(requireActivity(), getString(R.string.about_us_protocol), ApiMultiService.ABOUT_US_PROTOCOL)
+                        v -> WebAboutActivity.startWebAboutActivity(
+                                requireActivity(),
+                                getString(R.string.about_us_protocol),
+                                ConfigManager.getInstance().getDefaultUrl() + ApiMultiService.ABOUT_US_PROTOCOL)
                 );
 
     }

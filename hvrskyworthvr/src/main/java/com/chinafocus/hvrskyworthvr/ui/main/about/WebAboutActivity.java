@@ -11,6 +11,7 @@ import androidx.appcompat.widget.AppCompatTextView;
 
 import com.chinafocus.hvrskyworthvr.R;
 import com.chinafocus.hvrskyworthvr.global.Constants;
+import com.chinafocus.hvrskyworthvr.net.ApiMultiService;
 import com.chinafocus.hvrskyworthvr.service.event.VrAboutConnect;
 import com.chinafocus.hvrskyworthvr.util.statusbar.StatusBarCompatFactory;
 import com.tencent.smtt.export.external.extension.interfaces.IX5WebViewExtension;
@@ -25,6 +26,8 @@ import org.greenrobot.eventbus.Subscribe;
 import static com.chinafocus.hvrskyworthvr.global.Constants.ACTIVITY_ABOUT;
 
 public class WebAboutActivity extends AppCompatActivity {
+
+    private AppCompatTextView mTvTitle;
 
     public static void startWebAboutActivity(Context context, String title, String url) {
         Intent intent = new Intent(context, WebAboutActivity.class);
@@ -53,11 +56,11 @@ public class WebAboutActivity extends AppCompatActivity {
         setContentView(R.layout.activity_web_about);
         findViewById(R.id.iv_mine_web_back).setOnClickListener(v -> finish());
 
-        AppCompatTextView tvTitle = findViewById(R.id.tv_mine_web_title);
+        mTvTitle = findViewById(R.id.tv_mine_web_title);
         mWebView = findViewById(R.id.web_about);
         initWebView();
 
-        tvTitle.setText(title);
+        mTvTitle.setText(title);
         mWebView.loadUrl(url);
     }
 
@@ -90,6 +93,10 @@ public class WebAboutActivity extends AppCompatActivity {
         mWebView.setWebViewClient(new WebViewClient() {
             @Override
             public boolean shouldOverrideUrlLoading(WebView webView, String url) {
+                Log.d("MyLog", "-----webView 跳转的url>>>" + url);
+                if (url.endsWith(ApiMultiService.ABOUT_PRIVACY_PROTOCOL)) {
+                    mTvTitle.setText(getString(R.string.about_privacy_protocol));
+                }
                 webView.loadUrl(url);
                 return true;
             }
