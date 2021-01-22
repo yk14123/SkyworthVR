@@ -397,10 +397,15 @@ public class BluetoothService implements BluetoothEngineService.AsyncThreadReadB
         int tag = ByteBuffer.wrap(bytes).getInt(tagHead);
 
         if (tag == -1) {
-            // 创建UUID
-            String createUUID = UUID.randomUUID().toString().replace("-", "");
-            SPUtils.getInstance().put(DEVICE_UUID, createUUID);
-            sendUUIDMessage(1, createUUID);
+            String string = SPUtils.getInstance().getString(DEVICE_UUID);
+            if (TextUtils.isEmpty(string)) {
+                // 创建UUID
+                String createUUID = UUID.randomUUID().toString().replace("-", "");
+                SPUtils.getInstance().put(DEVICE_UUID, createUUID);
+                sendUUIDMessage(1, createUUID);
+            } else {
+                sendUUIDMessage(1, string);
+            }
 
         } else if (tag == 1) {
 

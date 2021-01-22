@@ -9,3 +9,5 @@ lib_skyworthvr ：专门用于给unity生成[蓝牙通讯]和[wifi通讯]的aar,
 
 skyworthvrwifi ：[测试工程]测试创维wifi接口
 Farmhouse360VRvX : unity输出工程后，由AndroidStudio引入开机自启动后，生成给创维VR的apk
+
+huaweimdm : 华为MDM模块

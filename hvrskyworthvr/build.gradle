@@ -9,7 +9,7 @@ android {
         minSdkVersion 22
         targetSdkVersion 30
         versionCode 1
-        versionName "1.0"
+        versionName "2.0.0"
 
         testInstrumentationRunner "androidx.sky_worth_login_logo.runner.AndroidJUnitRunner"
 
@@ -68,4 +68,6 @@ dependencies {
     implementation project(path: ':lib_network')
     // 蓝牙通讯模块
     implementation project(path: ':lib_bluetooth')
+    // 华为MDM模块
+//    implementation project(path: ':huaweimdm')
 }

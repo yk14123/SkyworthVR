@@ -10,6 +10,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.AppCompatTextView;
 
 import com.chinafocus.hvrskyworthvr.R;
+import com.chinafocus.hvrskyworthvr.global.ConfigManager;
 import com.chinafocus.hvrskyworthvr.global.Constants;
 import com.chinafocus.hvrskyworthvr.net.ApiMultiService;
 import com.chinafocus.hvrskyworthvr.service.event.VrAboutConnect;
@@ -96,8 +97,10 @@ public class WebAboutActivity extends AppCompatActivity {
                 Log.d("MyLog", "-----webView 跳转的url>>>" + url);
                 if (url.endsWith(ApiMultiService.ABOUT_PRIVACY_PROTOCOL)) {
                     mTvTitle.setText(getString(R.string.about_privacy_protocol));
+                    webView.loadUrl(ConfigManager.getInstance().getDefaultUrl() + ApiMultiService.ABOUT_PRIVACY_PROTOCOL);
+                } else {
+                    webView.loadUrl(url);
                 }
-                webView.loadUrl(url);
                 return true;
             }
 

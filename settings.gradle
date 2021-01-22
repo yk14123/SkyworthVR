@@ -4,6 +4,7 @@ include ':lib_bluetooth'
 include ':lib_skyworthvr'
 include ':huaweipad'
 include ':hvrskyworthvr'
+include ':huaweimdm'
 //include ':app'
 include ':lib_network'
 rootProject.name = "HvrSkyWorth"

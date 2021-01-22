@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="current_state_wifi">"当前状态："</string>
+    <string name="current_state_google_account">"当前状态："</string>
+    <string name="current_state_screen_capture">"当前状态："</string>
+
+    <string name="enable_data_conn">启用数据连接</string>
+    <string name="state_not_actived">该应用未激活</string>
+    <string name="no_permission">无操作权限</string>
+    <string name="disable_warning">取消激活后将导致本软件的部分功能无法正常工作，您确定要取消激活么？</string>
+    <string name="accept_btn">同意</string>
+    <string name="exit_btn">退出</string>
+    <string name="know">已阅读</string>
+    <string name="not_show_anymore">不再提示</string>
+    <string name="title_license">免责声明与软件许可协议</string>
+    <string name="title_permissions">权限使用声明</string>
+    <string name="read_statement">若您点击同意并开始使用本软件，代表您已阅读并接受<a href="http://www.huawei.mdm.com">《免责声明与软件许可协议》</a>。</string>
+
+    <string name="state_restricted">已禁用</string>
+    <string name="state_nomal">未禁用</string>
+    <string name="state_disable">未启用功能</string>
+    <string name="state_enable">已启用功能</string>
+
+    <string name="enable_reboot">启动定时重启</string>
+    <string name="disable_reboot">取消定时重启</string>
+
+    <string name="disable_status_bar_expand_pane">禁用状态栏下拉菜单</string>
+    <string name="enable_status_bar_expand_pane">启用状态栏下拉菜单</string>
+
+    <string name="disable_back_button">禁用返回键</string>
+    <string name="enable_back_button">启用返回键</string>
+
+    <string name="disable_system_update">禁用系统升级功能</string>
+    <string name="enable_system_update">启用系统升级功能</string>
+
+    <string name="reboot_device">开启定时重启设备</string>
+    <string name="silent_active_admin">设置静默激活设备管理器</string>
+    <string name="silent_install">设置静默安装</string>
+    <string name="enter_splash">进入大眼360</string>
+
+    <string name="disable_uninstall">禁止卸载</string>
+    <string name="enable_uninstall">启用卸载</string>
+
+    <string name="add_persistent_app">添加应用始终运行</string>
+    <string name="remove_persistent_app">删除应用始终运行</string>
+
+    <string name="add_single_app">添加独占应用</string>
+    <string name="remove_single_app">清除独占应用</string>
+
+    <string name="add_super_white_list">添加可信任应用列表</string>
+    <string name="remove_super_white_list">删除可信任应用列表</string>
+
+    <string name="disable_screen_off">禁止休眠</string>
+    <string name="enable_screen_off">启用休眠</string>
+
+    <string name="disable_all_notification">禁止所有通知</string>
+    <string name="enable_all_notification">允许所有通知</string>
+
+    <string name="disable_keyguard_state">禁止锁屏</string>
+    <string name="enable_keyguard_state">允许锁屏</string>
+
+    <string name="disable_sleepByPowerButton_state">禁止电源键休眠</string>
+    <string name="enable_sleepByPowerButton_state">允许电源键休眠</string>
+
+    <string name="accessbiliityNo">请为App打开辅助功能开关！！</string>
+
+    <string name="mdm_app_name">大眼360Pad</string>
+
+</resources>
