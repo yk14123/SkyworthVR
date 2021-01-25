@@ -28,7 +28,7 @@ public class PublishFragment extends Fragment {
 
     private MyRollHandler mHandler;
     private ViewPager2 viewPagerBanner;
-    private int currentItem = 1;
+    private int currentItem = 10000;
 
     public static PublishFragment newInstance() {
         return new PublishFragment();

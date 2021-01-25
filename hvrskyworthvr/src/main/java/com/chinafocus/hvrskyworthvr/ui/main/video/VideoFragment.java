@@ -43,7 +43,7 @@ public class VideoFragment extends Fragment {
 
     private MyRollHandler mHandler;
     private ViewPager2 viewPagerBanner;
-    private int currentItem = 1;
+    private int currentItem = 10000;
     private ViewPager2 viewPagerVideoList;
 
     public static int CURRENT_CATEGORY;
@@ -70,8 +70,8 @@ public class VideoFragment extends Fragment {
         bannerViewModel.getVideoBanner();
         bannerViewModel.videoBannerMutableLiveData.observe(getViewLifecycleOwner(), bannerList -> {
             viewPagerBanner.setAdapter(new BannerViewAdapter(bannerList, 2));
+            viewPagerBanner.setCurrentItem(currentItem, false);
             setViewPager2ScrollTouchSlop(viewPagerBanner, 1);
-            viewPagerBanner.setCurrentItem(1, false);
             startRollHandler();
         });
 
