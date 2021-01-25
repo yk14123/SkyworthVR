@@ -4,6 +4,7 @@
 
 package com.chinafocus.huaweimdm;
 
+import android.app.Activity;
 import android.app.admin.DevicePolicyManager;
 import android.content.ComponentName;
 import android.content.Context;
@@ -17,8 +18,6 @@ import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
-
-import androidx.appcompat.app.AppCompatActivity;
 
 import com.chinafocus.huaweimdm.tools.TimerTaskManager;
 import com.huawei.android.app.admin.DeviceApplicationManager;
@@ -39,7 +38,7 @@ import java.util.List;
  * @author huawei mdm
  * @since 2019-10-23
  */
-public class MdmMainActivity extends AppCompatActivity {
+public class MdmMainActivity extends Activity {
     // 禁用/启用管理类
     private DeviceRestrictionManager mDeviceRestrictionManager = null;
     // 设备控制管理类
@@ -159,14 +158,18 @@ public class MdmMainActivity extends AppCompatActivity {
         enterSplashBtn.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
-                enterSplashActivity();
+                allDone();
             }
         });
     }
 
+    private void allDone() {
+        finish();
+    }
+
     private void enterSplashActivity() {
         Intent intent = new Intent();
-        intent.setClassName(getPackageName(), "com.chinafocus.hvr_local_v2.ui.splash.SplashActivity");
+        intent.setClassName(getPackageName(), "com.chinafocus.hvrskyworthvr.ui.splash.SplashActivity");
         MdmMainActivity.this.startActivity(intent);
         finish();
     }

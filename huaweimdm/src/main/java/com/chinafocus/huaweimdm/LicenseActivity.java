@@ -19,7 +19,7 @@ import android.widget.TextView;
  * @author huawei mdm
  * @since 2019-10-23
  */
-public class LicenseActivity extends Activity{
+public class LicenseActivity extends Activity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

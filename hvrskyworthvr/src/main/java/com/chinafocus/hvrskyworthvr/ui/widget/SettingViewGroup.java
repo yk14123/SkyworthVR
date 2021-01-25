@@ -153,7 +153,7 @@ public class SettingViewGroup extends FrameLayout {
         mTvSettingSubBody.setText(getContext().getString(R.string.setting_status_bluetooth_sub_body));
 
         mTvSettingRetry.setOnClickListener(v -> BluetoothService.getInstance().startBluetoothEngine((Activity) v.getContext()));
-        mTvSettingMainTitle.setOnClickListener(v -> TimeOutClickUtil.startTimeOutClick(() -> BluetoothService.getInstance().unBondDevice(v.getContext())));
+        mTvSettingMainTitle.setOnClickListener(v -> TimeOutClickUtil.getDefault().startTimeOutClick(() -> BluetoothService.getInstance().unBondDevice(v.getContext())));
     }
 
     private void initSettingWifi() {

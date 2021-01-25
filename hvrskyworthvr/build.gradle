@@ -15,7 +15,7 @@ android {
 
         javaCompileOptions {
             annotationProcessorOptions {
-                arguments = [ eventBusIndex :'com.chinafocus.hvrskyworthvr.MyEventBusIndex' ]
+                arguments = [eventBusIndex: 'com.chinafocus.hvrskyworthvr.MyEventBusIndex']
             } // 这里取什么名字，注解处理器就接收什么参数，并生成什么类，注解处理器接受参数
         }
 
@@ -69,5 +69,5 @@ dependencies {
     // 蓝牙通讯模块
     implementation project(path: ':lib_bluetooth')
     // 华为MDM模块
-//    implementation project(path: ':huaweimdm')
+    implementation project(path: ':huaweimdm')
 }

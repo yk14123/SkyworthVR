@@ -12,6 +12,7 @@ import androidx.appcompat.widget.AppCompatTextView;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 
+import com.chinafocus.huaweimdm.MdmMainActivity;
 import com.chinafocus.hvrskyworthvr.R;
 import com.chinafocus.hvrskyworthvr.global.ConfigManager;
 import com.chinafocus.hvrskyworthvr.model.DeviceInfoManager;
@@ -41,7 +42,10 @@ public class AboutFragment extends Fragment {
 
         AppCompatTextView textView = requireView().findViewById(R.id.tv_back_door);
         textView.setText(DeviceInfoManager.getInstance().getDeviceAccountName());
-        textView.setOnClickListener(v -> TimeOutClickUtil.startTimeOutClick(this::startSettingActivity));
+        textView.setOnClickListener(v -> TimeOutClickUtil.getDefault().startTimeOutClick(this::startSettingActivity));
+
+        requireView().findViewById(R.id.iv_setting_mdm).setOnClickListener(v -> TimeOutClickUtil.getMDM().startTimeOutClick(this::startMDMActivity));
+
 
         requireView().findViewById(R.id.tv_about_user_protocol)
                 .setOnClickListener(
@@ -69,6 +73,10 @@ public class AboutFragment extends Fragment {
 
     private void startSettingActivity() {
         startActivity(new Intent(getActivity(), SettingActivity.class));
+    }
+
+    private void startMDMActivity() {
+        startActivity(new Intent(getActivity(), MdmMainActivity.class));
     }
 
 }

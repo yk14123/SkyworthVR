@@ -2,21 +2,43 @@ package com.chinafocus.hvrskyworthvr.util;
 
 public class TimeOutClickUtil {
 
-    private static int count = 1;
-    private static long startTime;
+    private int count = 1;
+    private long startTime;
 
-    public static int TIME_OUT_MILLISECONDS = 3000;
-    public static int TIME_OUT_CLICK_COUNT = 10;
+    private int timeOutMilliseconds;
+    private int timeOutClickCount;
 
-    public static void startTimeOutClick(Runnable runnable) {
+    private static TimeOutClickUtil defaultInstance;
+    private static TimeOutClickUtil mdmInstance;
+
+    public TimeOutClickUtil(int timeOutMilliseconds, int timeOutClickCount) {
+        this.timeOutMilliseconds = timeOutMilliseconds;
+        this.timeOutClickCount = timeOutClickCount;
+    }
+
+    public static TimeOutClickUtil getDefault() {
+        if (defaultInstance == null) {
+            defaultInstance = new TimeOutClickUtil(3000, 10);
+        }
+        return defaultInstance;
+    }
+
+    public static TimeOutClickUtil getMDM() {
+        if (mdmInstance == null) {
+            mdmInstance = new TimeOutClickUtil(5000, 20);
+        }
+        return mdmInstance;
+    }
+
+    public void startTimeOutClick(Runnable runnable) {
         if (count == 1) {
             startTime = System.currentTimeMillis();
         }
         count++;
         long endTime = System.currentTimeMillis();
-        if ((endTime - startTime) > TIME_OUT_MILLISECONDS || count > TIME_OUT_CLICK_COUNT) {
+        if ((endTime - startTime) > timeOutMilliseconds || count > timeOutClickCount) {
             count = 1;
-        } else if (count == TIME_OUT_CLICK_COUNT && (endTime - startTime) < TIME_OUT_MILLISECONDS) {
+        } else if (count == timeOutClickCount && (endTime - startTime) < timeOutMilliseconds) {
             if (runnable != null) {
                 runnable.run();
             }

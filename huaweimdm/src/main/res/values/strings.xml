@@ -38,6 +38,7 @@
     <string name="silent_active_admin">设置静默激活设备管理器</string>
     <string name="silent_install">设置静默安装</string>
     <string name="enter_splash">进入大眼360</string>
+    <string name="all_done">完成设置</string>
 
     <string name="disable_uninstall">禁止卸载</string>
     <string name="enable_uninstall">启用卸载</string>
