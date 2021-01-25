@@ -159,6 +159,7 @@ public class BluetoothEngineService {
      */
     public synchronized void connected(BluetoothSocket socket, BluetoothDevice device) {
         Log.d(TAG, "-----------BluetoothSocket连接成功>>>设备的名字是:" + device.getName());
+        isStopBluetoothEngine = false;
 
         // Cancel the thread that completed the connection
         if (mClientConnectThread != null) {
