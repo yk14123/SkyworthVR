@@ -304,8 +304,12 @@ public class MediaPlayActivity extends AppCompatActivity implements ViewBindHelp
     @SuppressWarnings("unused")
     public void syncMediaStatus(VrSyncMediaStatus vrSyncMediaStatus) {
         int playStatusTag = vrSyncMediaStatus.getPlayStatusTag();
+        long seek = vrSyncMediaStatus.getSeek();
         SimpleExoPlayer player = mExoMediaHelper.getPlayer();
         if (player != null) {
+            if (vrSyncMediaStatus.seekNow()) {
+                player.seekTo(seek);
+            }
             if (playStatusTag == 1) {
                 player.play();
             } else if (playStatusTag == 2) {

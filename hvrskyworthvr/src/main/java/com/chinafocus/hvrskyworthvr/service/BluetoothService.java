@@ -286,7 +286,7 @@ public class BluetoothService implements BluetoothEngineService.AsyncThreadReadB
                     postWaitVrSelected();
                     break;
                 case MESSAGE_SYNC_WAIT_PLAY_STATUS:
-                    postPlayStatus((int) msg.obj);
+                    postPlayStatus();
                     break;
                 case MESSAGE_SYNC_DEVICE_UUID:
                     postSyncDeviceUUID((String) msg.obj);
@@ -310,13 +310,8 @@ public class BluetoothService implements BluetoothEngineService.AsyncThreadReadB
 
     /**
      * 发送播放/暂停事件
-     *
-     * @param playTag 1.播放 2.暂停
      */
-    private void postPlayStatus(int playTag) {
-        Log.d("MyLog", "------收到VR的播放/暂停需求 >>> " + playTag);
-        VrSyncMediaStatus obtain = VrSyncMediaStatus.obtain();
-        obtain.setPlayStatusTag(playTag);
+    private void postPlayStatus() {
         EventBus.getDefault().post(VrSyncMediaStatus.obtain());
     }
 
@@ -332,19 +327,20 @@ public class BluetoothService implements BluetoothEngineService.AsyncThreadReadB
             int eventTag = ByteBuffer.wrap(bytes).getInt(cursor + 4);
 //            int category = ByteBuffer.wrap(bytes).getInt(cursor + 8);
 
-            if (len > 100 && eventTag == SYNC_ROTATION) {
-                Log.i("MyLog", "socketInputStream.read"
-                        + " >>> 消息类型是 : " + eventTag
-                        + " >>> 消息总长度是 : " + len
-                        + " >>> cursor : " + cursor
-                );
-            } else if (eventTag != SYNC_ROTATION) {
+            if (len > 200 && eventTag == SYNC_ROTATION) {
                 Log.i("MyLog", "socketInputStream.read"
                         + " >>> 消息类型是 : " + eventTag
                         + " >>> 消息总长度是 : " + len
                         + " >>> cursor : " + cursor
                 );
             }
+//            else if (eventTag != SYNC_ROTATION) {
+//                Log.i("MyLog", "socketInputStream.read"
+//                        + " >>> 消息类型是 : " + eventTag
+//                        + " >>> 消息总长度是 : " + len
+//                        + " >>> cursor : " + cursor
+//                );
+//            }
 
             switch (eventTag) {
                 case CONNECT:
@@ -365,9 +361,8 @@ public class BluetoothService implements BluetoothEngineService.AsyncThreadReadB
                     mHandler.obtainMessage(MESSAGE_SYNC_WAIT_VR_SELECTED).sendToTarget();
                     break;
                 case SYNC_MEDIA_PLAY_STATUS:
-                    int i = handMediaStatus(bytes, cursor + 14);
-                    Log.d("MyLog", " ------------------------- i >>> " + i);
-                    mHandler.obtainMessage(MESSAGE_SYNC_WAIT_PLAY_STATUS, i).sendToTarget();
+                    handMediaStatus(bytes, cursor + 14);
+                    mHandler.obtainMessage(MESSAGE_SYNC_WAIT_PLAY_STATUS).sendToTarget();
                     break;
                 case SYNC_DEVICE_UUID:
                     handSyncUUID(bytes, cursor + 14);
@@ -469,8 +464,13 @@ public class BluetoothService implements BluetoothEngineService.AsyncThreadReadB
     /**
      * 处理视频播放和暂停
      */
-    private int handMediaStatus(byte[] bytes, int head) {
-        return ByteBuffer.wrap(bytes).getInt(head);
+    private void handMediaStatus(byte[] bytes, int head) {
+        int tag = ByteBuffer.wrap(bytes).getInt(head);
+        long seek = ByteBuffer.wrap(bytes).getLong(head + 4);
+
+        VrSyncMediaStatus obtain = VrSyncMediaStatus.obtain();
+        obtain.saveAllState(tag, seek);
+        Log.d("MyLog", "-----收到VR端同步过来的Media状态 obtain >> " + obtain);
     }
 
     /**

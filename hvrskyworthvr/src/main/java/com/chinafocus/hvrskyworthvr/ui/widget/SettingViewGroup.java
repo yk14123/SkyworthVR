@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.graphics.drawable.Drawable;
+import android.text.TextUtils;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.widget.FrameLayout;
@@ -184,7 +185,11 @@ public class SettingViewGroup extends FrameLayout {
 
     private void setAliasSuccess(String name) {
         switchSubTitle(false);
-        setFinalResultMessage(R.string.setting_status_alias_empty, R.color.color_black, name);
+        if (TextUtils.isEmpty(name)) {
+            setFinalResultMessage(R.string.setting_status_alias_result, R.color.color_setting_status_gray);
+        } else {
+            setFinalResultMessage(R.string.setting_status_alias_empty, R.color.color_black, name);
+        }
         mIvSettingSet.setEnabled(true);
     }
 
