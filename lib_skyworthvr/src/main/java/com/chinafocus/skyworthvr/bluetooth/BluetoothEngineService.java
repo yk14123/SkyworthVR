@@ -62,6 +62,8 @@ public class BluetoothEngineService {
     public static final int STATE_CONNECTING = 2; // now initiating an outgoing connection
     public static final int STATE_CONNECTED = 3;  // now connected to a remote device
 
+    private boolean isStopBluetoothEngine;
+
     /**
      * Constructor. Prepares a new BluetoothChat session.
      */
@@ -195,6 +197,7 @@ public class BluetoothEngineService {
      */
     public synchronized void stopEngine() {
         Log.d(TAG, "---------蓝牙引擎>>>关闭----------");
+        isStopBluetoothEngine = true;
 
         if (mClientConnectThread != null) {
             mClientConnectThread.cancel();
@@ -249,8 +252,10 @@ public class BluetoothEngineService {
         // Update UI title
         updateUserInterfaceTitle();
 
-        // Start the service over to restart listening mode
-        BluetoothEngineService.this.start();
+        if (!isStopBluetoothEngine) {
+            // Start the service over to restart listening mode
+            BluetoothEngineService.this.start();
+        }
     }
 
     /**
@@ -268,8 +273,10 @@ public class BluetoothEngineService {
         // Update UI title
         updateUserInterfaceTitle();
 
-        // Start the service over to restart listening mode
-        BluetoothEngineService.this.start();
+        if (!isStopBluetoothEngine) {
+            // Start the service over to restart listening mode
+            BluetoothEngineService.this.start();
+        }
     }
 
     /**

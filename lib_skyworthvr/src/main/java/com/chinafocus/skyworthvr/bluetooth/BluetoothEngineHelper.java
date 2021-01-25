@@ -241,6 +241,9 @@ public class BluetoothEngineHelper {
         if (bluetoothEngineService != null) {
             bluetoothEngineService.stopEngine();
         }
+        if (bluetoothEngineService != null) {
+            bluetoothEngineService.start();
+        }
         tryConnectBondedDevices();
     }
 }
