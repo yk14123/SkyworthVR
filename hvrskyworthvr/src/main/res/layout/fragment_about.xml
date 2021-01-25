@@ -89,7 +89,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:padding="10dp"
-        android:text="中图云创 版权所有\nCopyright © 2020 ChinaFocus. All rights reserved."
+        android:text="中图云创 版权所有\nCopyright © 2021 ChinaFocus. All rights reserved."
         android:textColor="@color/color_333"
         android:textSize="13sp"
         app:layout_constraintStart_toStartOf="@+id/tv_about_user_protocol"

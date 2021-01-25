@@ -311,6 +311,7 @@ public class MediaPlayActivity extends AppCompatActivity implements ViewBindHelp
             } else if (playStatusTag == 2) {
                 player.pause();
             }
+            mLandPlayerView.hideController();
         }
     }
 

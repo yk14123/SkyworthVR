@@ -45,43 +45,6 @@ public class SplashActivity extends AppCompatActivity {
             }
         }).request();
 
-
-//        DeviceInfo userInfoBean = new DeviceInfo();
-//        userInfoBean.setAlias("");
-//        userInfoBean.setAppNo("003");
-//        userInfoBean.setUserNo("1345966352287924224");
-//        userInfoBean.setUniqueId("41426b75cfb945c79b01b4a669bbd283");
-
-//
-
-//        ApiManager
-//                .getService(ApiMultiService.class)
-//                .initDeviceInfo(body)
-//                .subscribeOn(Schedulers.io())
-//                .observeOn(AndroidSchedulers.mainThread())
-//                .subscribe(baseResponse -> {
-//                    Log.e("MyLog", " baseResponse >>> " + baseResponse.getErrCode());
-//                });
-//
-//        ApiManager
-//                .getService(ApiMultiService.class)
-//                .getDefaultCloudUrl(body)
-//                .subscribeOn(Schedulers.io())
-//                .observeOn(AndroidSchedulers.mainThread())
-//                .subscribe(baseResponse -> {
-//                    Log.e("MyLog", " getCloudUrl >>> " + baseResponse.getData().getCloudUrl());
-//                });
-//
-//        ApiManager
-//                .getService(ApiMultiService.class)
-//                .getDeviceInfo(body)
-//                .subscribeOn(Schedulers.io())
-//                .observeOn(AndroidSchedulers.mainThread())
-//                .subscribe(baseResponse -> {
-//                    Log.e("MyLog", " getCustomerName >>> " + baseResponse.getData().getCustomerName());
-//                });
-
-
     }
 
     private void delayStartLoginActivity() {
