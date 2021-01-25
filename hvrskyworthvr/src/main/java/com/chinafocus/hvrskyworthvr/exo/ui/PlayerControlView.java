@@ -549,6 +549,7 @@ public class PlayerControlView extends FrameLayout {
         mVideoReplay = findViewById(R.id.exo_replay);
         if (mVideoReplay != null) {
             mVideoReplay.setOnClickListener(v -> {
+                        mInterAction.videoRetry();
                         if (player != null)
                             seekTo(player, player.getCurrentWindowIndex(), C.TIME_UNSET);
                     }

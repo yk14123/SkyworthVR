@@ -59,7 +59,8 @@ public class MediaPlayActivity extends AppCompatActivity implements ViewBindHelp
     private ExoMediaHelper mExoMediaHelper;
     private MediaViewModel mediaViewModel;
 
-    private int nextId;
+    private int nextVideoId;
+    private int currentVideoId;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -113,7 +114,7 @@ public class MediaPlayActivity extends AppCompatActivity implements ViewBindHelp
                 videoUrl = file.getAbsolutePath();
             }
 
-            nextId = videoDetail.getNextId();
+            nextVideoId = videoDetail.getNextId();
 
             Log.d("MyLog", "-----当前视频播放地址是 videoUrl >>> " + videoUrl);
 
@@ -161,17 +162,17 @@ public class MediaPlayActivity extends AppCompatActivity implements ViewBindHelp
 
         int video_tag = intent.getIntExtra(MEDIA_FROM_TAG, -1);
         int category = intent.getIntExtra(MEDIA_CATEGORY_TAG, -1);
-        int video_id = intent.getIntExtra(MEDIA_ID, -1);
+        currentVideoId = intent.getIntExtra(MEDIA_ID, -1);
         long seek = intent.getLongExtra(MEDIA_SEEK, 0L);
         linkingVr = intent.getBooleanExtra(MEDIA_LINK_VR, false);
 
         Log.d("MyLog", "------当前播放页面的初始状态Intent"
                 + " >>> video_tag : " + video_tag
                 + " >>> category : " + category
-                + " >>> video_id : " + video_id
+                + " >>> video_id : " + currentVideoId
                 + " >>> seek : " + seek
                 + " >>> linkingVr : " + linkingVr);
-        VrSyncPlayInfo.obtain().saveAllState(video_tag, category, video_id, seek);
+        VrSyncPlayInfo.obtain().saveAllState(video_tag, category, currentVideoId, seek);
     }
 
     /**
@@ -411,10 +412,11 @@ public class MediaPlayActivity extends AppCompatActivity implements ViewBindHelp
 
     @Override
     public void onPlayNextVideo() {
-        if (nextId != 0) {
+        if (nextVideoId != 0) {
             VrSyncPlayInfo.obtain().clearVideoTime();
-            VrSyncPlayInfo.obtain().setVideoId(nextId);
-            loadNetData(nextId);
+            VrSyncPlayInfo.obtain().setVideoId(nextVideoId);
+            loadNetData(nextVideoId);
+            currentVideoId = nextVideoId;
         } else {
             Toast.makeText(this, "暂无下一个影片", Toast.LENGTH_SHORT).show();
         }
@@ -436,6 +438,11 @@ public class MediaPlayActivity extends AppCompatActivity implements ViewBindHelp
         if (videoDetailDialog != null && !videoDetailDialog.isShowing()) {
             videoDetailDialog.show();
         }
+    }
+
+    @Override
+    public void onVideoRetry() {
+        VrSyncPlayInfo.obtain().setVideoId(currentVideoId);
     }
 
     /**

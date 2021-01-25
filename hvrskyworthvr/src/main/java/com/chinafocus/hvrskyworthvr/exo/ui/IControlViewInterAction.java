@@ -38,6 +38,10 @@ public interface IControlViewInterAction {
     default void onVideoNextPlay() {
     }
 
+    // 重播
+    default void videoRetry(){
+    }
+
     // ================== 下面3个接口 澳门快讯项目用不到
 
     // 视频设置画面与投诉
