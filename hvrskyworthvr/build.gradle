@@ -58,10 +58,12 @@ dependencies {
     implementation 'jp.wasabeef:glide-transformations:4.1.0'
     annotationProcessor 'com.github.bumptech.glide:compiler:4.11.0'
     // exoplayer
-    implementation 'com.google.android.exoplayer:exoplayer:2.12.2'
+    implementation 'com.google.android.exoplayer:exoplayer:2.11.6'
     // eventBus
     implementation 'org.greenrobot:eventbus:3.2.0'
     annotationProcessor 'org.greenrobot:eventbus-annotation-processor:3.2.0'
+    // rxbinding
+    implementation 'com.jakewharton.rxbinding2:rxbinding:2.1.1'
     // 腾讯x5游览器
     implementation 'com.tencent.tbs.tbssdk:sdk:43697'
     // 网络模块

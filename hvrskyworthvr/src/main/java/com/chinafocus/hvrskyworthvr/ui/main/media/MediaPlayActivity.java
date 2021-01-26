@@ -124,8 +124,9 @@ public class MediaPlayActivity extends AppCompatActivity implements ViewBindHelp
             mExoMediaHelper.seekTo(VrSyncPlayInfo.obtain().getSeekTime());
 
             mExoMediaHelper.getPlayer().addListener(new Player.EventListener() {
+
                 @Override
-                public void onPlaybackStateChanged(int state) {
+                public void onPlayerStateChanged(boolean playWhenReady, int state) {
                     if (linkingVr && state == STATE_ENDED) {
                         // 3. Pad 位于播放结束界面时，如果此时 VR 被激活则 VR 端直接进入一级视频列表界面，Pad 回到视频列表界面的「不可选片状态」
                         // 不用接受命令。
@@ -136,6 +137,18 @@ public class MediaPlayActivity extends AppCompatActivity implements ViewBindHelp
                         Log.e("MyLog", "当前播放完了:" + VrSyncPlayInfo.obtain());
                     }
                 }
+//                @Override
+//                public void onPlaybackStateChanged(int state) {
+//                    if (linkingVr && state == STATE_ENDED) {
+//                        // 3. Pad 位于播放结束界面时，如果此时 VR 被激活则 VR 端直接进入一级视频列表界面，Pad 回到视频列表界面的「不可选片状态」
+//                        // 不用接受命令。
+//                        // 当链接状态，播放结束后
+//                        waitSelectedFromVR(null);
+//                    } else if (!linkingVr && state == STATE_ENDED) {
+//                        VrSyncPlayInfo.obtain().restoreVideoInfo();
+//                        Log.e("MyLog", "当前播放完了:" + VrSyncPlayInfo.obtain());
+//                    }
+//                }
             });
 
             if (linkingVr) {
@@ -238,7 +251,7 @@ public class MediaPlayActivity extends AppCompatActivity implements ViewBindHelp
             VrSyncPlayInfo.obtain().setSeekTime(player.getCurrentPosition());
             // 4.pad端静音且暂停
             player.setVolume(0f);
-            player.pause();
+            player.setPlayWhenReady(false);
         }
 
         // 3.给VR同步视频信息
@@ -308,13 +321,13 @@ public class MediaPlayActivity extends AppCompatActivity implements ViewBindHelp
         long seek = vrSyncMediaStatus.getSeek();
         SimpleExoPlayer player = mExoMediaHelper.getPlayer();
         if (player != null) {
-            if (vrSyncMediaStatus.seekNow()) {
-                player.seekTo(seek);
-            }
             if (playStatusTag == 1) {
-                player.play();
+                if (vrSyncMediaStatus.seekNow()) {
+                    player.seekTo(seek);
+                }
+                player.setPlayWhenReady(true);
             } else if (playStatusTag == 2) {
-                player.pause();
+                player.setPlayWhenReady(false);
             }
             mLandPlayerView.hideController();
         }

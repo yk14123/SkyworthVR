@@ -13,11 +13,10 @@ import com.chinafocus.hvrskyworthvr.exo.ui.PlayerView;
 import com.google.android.exoplayer2.C;
 import com.google.android.exoplayer2.DefaultLoadControl;
 import com.google.android.exoplayer2.ExoPlaybackException;
-import com.google.android.exoplayer2.MediaItem;
+import com.google.android.exoplayer2.Format;
 import com.google.android.exoplayer2.Player;
 import com.google.android.exoplayer2.SimpleExoPlayer;
 import com.google.android.exoplayer2.extractor.mp3.Mp3Extractor;
-import com.google.android.exoplayer2.extractor.mp4.Mp4Extractor;
 import com.google.android.exoplayer2.source.BehindLiveWindowException;
 import com.google.android.exoplayer2.source.MediaSource;
 import com.google.android.exoplayer2.source.MergingMediaSource;
@@ -29,9 +28,11 @@ import com.google.android.exoplayer2.upstream.DataSpec;
 import com.google.android.exoplayer2.upstream.DefaultBandwidthMeter;
 import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory;
 import com.google.android.exoplayer2.upstream.DefaultHttpDataSourceFactory;
+import com.google.android.exoplayer2.upstream.FileDataSource;
 import com.google.android.exoplayer2.upstream.HttpDataSource;
-import com.google.android.exoplayer2.upstream.cache.CacheDataSink;
+import com.google.android.exoplayer2.upstream.cache.CacheDataSinkFactory;
 import com.google.android.exoplayer2.upstream.cache.CacheDataSource;
+import com.google.android.exoplayer2.upstream.cache.CacheDataSourceFactory;
 import com.google.android.exoplayer2.upstream.cache.SimpleCache;
 import com.google.android.exoplayer2.util.MimeTypes;
 import com.google.android.exoplayer2.util.Util;
@@ -39,6 +40,7 @@ import com.google.android.exoplayer2.util.Util;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 import static com.google.android.exoplayer2.DefaultLoadControl.DEFAULT_BUFFER_FOR_PLAYBACK_AFTER_REBUFFER_MS;
 import static com.google.android.exoplayer2.DefaultLoadControl.DEFAULT_BUFFER_FOR_PLAYBACK_MS;
@@ -92,11 +94,11 @@ public class ExoMediaHelper {
         if (player == null) {
             player = new SimpleExoPlayer.Builder(mContext)
                     .setLoadControl(new DefaultLoadControl.Builder()
-                            .setBufferDurationsMs(30_000, 30_000,
+                            .setBufferDurationsMs(30_000, 50_000,
                                     DEFAULT_BUFFER_FOR_PLAYBACK_MS,
                                     DEFAULT_BUFFER_FOR_PLAYBACK_AFTER_REBUFFER_MS)
                             .setPrioritizeTimeOverSizeThresholds(true)
-                            .build())
+                            .createDefaultLoadControl())
                     .build();
             // 监听
             player.addListener(new PlayerEventListener());
@@ -121,9 +123,9 @@ public class ExoMediaHelper {
          *  resetState 是否重置状态
          */
         if (mediaSource != null) {
-//            player.prepare(mediaSource, !haveStartPosition, false);
-            player.setMediaSource(mediaSource, !haveStartPosition);
-            player.prepare();
+            player.prepare(mediaSource, !haveStartPosition, false);
+//            player.setMediaSource(mediaSource, !haveStartPosition);
+//            player.prepare();
         }
     }
 
@@ -225,24 +227,43 @@ public class ExoMediaHelper {
 //        return new DefaultDataSourceFactory(context, BANDWIDTH_METER,
 //                new DefaultHttpDataSourceFactory(userAgent, BANDWIDTH_METER));
 
-        // 创建加载数据的工厂
+
+        //        // 创建加载数据的工厂
         DefaultDataSourceFactory upstreamFactory = new DefaultDataSourceFactory(context, BANDWIDTH_METER,
-                new DefaultHttpDataSourceFactory());
+                new DefaultHttpDataSourceFactory(userAgent, BANDWIDTH_METER));
 
         // 创建SimpleCache
         SimpleCache simpleCache = VideoCache.getInstance(context);
 
         //把缓存对象cache和负责缓存数据读取、写入的工厂类CacheDataSinkFactory 相关联
-        CacheDataSink.Factory factory = new CacheDataSink.Factory();
-        factory.setCache(simpleCache);
+        CacheDataSinkFactory cacheDataSinkFactory = new CacheDataSinkFactory(simpleCache, Long.MAX_VALUE);
 
-        CacheDataSource.Factory factoryDataSource = new CacheDataSource.Factory();
-        factoryDataSource.setCache(simpleCache);
-        factoryDataSource.setUpstreamDataSourceFactory(upstreamFactory);
-        factoryDataSource.setCacheWriteDataSinkFactory(factory);
-        factoryDataSource.setFlags(CacheDataSource.FLAG_BLOCK_ON_CACHE);
+        return new CacheDataSourceFactory(
+                simpleCache,
+                upstreamFactory,
+                new FileDataSource.Factory(),
+                cacheDataSinkFactory,
+                CacheDataSource.FLAG_BLOCK_ON_CACHE,
+                null);
 
-        return factoryDataSource;
+//        // 创建加载数据的工厂
+//        DefaultDataSourceFactory upstreamFactory = new DefaultDataSourceFactory(context, BANDWIDTH_METER,
+//                new DefaultHttpDataSourceFactory());
+//
+//        // 创建SimpleCache
+//        SimpleCache simpleCache = VideoCache.getInstance(context);
+//
+//        //把缓存对象cache和负责缓存数据读取、写入的工厂类CacheDataSinkFactory 相关联
+//        CacheDataSink.Factory factory = new CacheDataSink.Factory();
+//        factory.setCache(simpleCache);
+//
+//        CacheDataSource.Factory factoryDataSource = new CacheDataSource.Factory();
+//        factoryDataSource.setCache(simpleCache);
+//        factoryDataSource.setUpstreamDataSourceFactory(upstreamFactory);
+//        factoryDataSource.setCacheWriteDataSinkFactory(factory);
+//        factoryDataSource.setFlags(CacheDataSource.FLAG_BLOCK_ON_CACHE);
+//
+//        return factoryDataSource;
     }
 
     // TODO setPlayWhenReady可用于开始和暂停播放
@@ -259,10 +280,9 @@ public class ExoMediaHelper {
 
         MediaSource audioSource = null;
         if (!TextUtils.isEmpty(audioUrl)) {
-            MediaItem build = new MediaItem.Builder().setUri(Uri.parse(audioUrl)).build();
             audioSource =
                     new ProgressiveMediaSource.Factory(mMediaDataSourceFactory, Mp3Extractor.FACTORY)
-                            .createMediaSource(build);
+                            .createMediaSource(Uri.parse(audioUrl));
         }
         if (audioSource != null) {
             mediaSources.add(audioSource);
@@ -273,19 +293,19 @@ public class ExoMediaHelper {
         if (videoFormat.equalsIgnoreCase("m3u8")) {
             // 创建资源
             // TODO MediaSource实例不适用于重新使用的情况。 如果您想用相同的media多次准备播放器，请每次使用新的实例。
-            MediaItem build = new MediaItem.Builder()
-                    .setUri(Uri.parse(videoUrl)).setMimeType(MimeTypes.APPLICATION_M3U8)
-                    .build();
+//            MediaItem build = new MediaItem.Builder()
+//                    .setUri(Uri.parse(videoUrl)).setMimeType(MimeTypes.APPLICATION_M3U8)
+//                    .build();
             videoSource =
                     new HlsMediaSource.Factory(mMediaDataSourceFactory)
-                            .createMediaSource(build);
+                            .createMediaSource(Uri.parse(videoUrl));
         } else if (videoFormat.equalsIgnoreCase("mp4")) {
-            MediaItem build = new MediaItem.Builder()
-                    .setUri(Uri.parse(videoUrl))
-                    .build();
+//            MediaItem build = new MediaItem.Builder()
+//                    .setUri()
+//                    .build();
             videoSource =
-                    new ProgressiveMediaSource.Factory(mMediaDataSourceFactory, Mp4Extractor.FACTORY)
-                            .createMediaSource(build);
+                    new ProgressiveMediaSource.Factory(mMediaDataSourceFactory)
+                            .createMediaSource(Uri.parse(videoUrl));
         }
 
         if (videoSource != null) {
@@ -297,13 +317,25 @@ public class ExoMediaHelper {
         if (!TextUtils.isEmpty(subTitle)) {
 
             Log.d("MyLog", "视频字幕地址是 >>>" + subTitle);
+//            MediaItem.Subtitle subtitle =
+//                    new MediaItem.Subtitle(Uri.parse(subTitle), MimeTypes.TEXT_SSA, null, C.SELECTION_FLAG_DEFAULT);
+//
+//            subtitleSource =
+//                    new SingleSampleMediaSource.Factory(mMediaDataSourceFactory)
+//                            .createMediaSource(subtitle, C.TIME_UNSET);
 
-            MediaItem.Subtitle subtitle =
-                    new MediaItem.Subtitle(Uri.parse(subTitle), MimeTypes.TEXT_SSA, null, C.SELECTION_FLAG_DEFAULT);
+            // 创建字幕
+            Format subtitleFormat =
+                    Format.createTextSampleFormat(
+                            /* id= */ null,
+                            MimeTypes.TEXT_SSA,
+                            C.SELECTION_FLAG_DEFAULT,
+                            Locale.getDefault().getLanguage());
 
             subtitleSource =
                     new SingleSampleMediaSource.Factory(mMediaDataSourceFactory)
-                            .createMediaSource(subtitle, C.TIME_UNSET);
+                            .createMediaSource(Uri.parse(subTitle), subtitleFormat, C.TIME_UNSET);
+
         }
 
         if (subtitleSource != null) {
@@ -390,25 +422,8 @@ public class ExoMediaHelper {
     public class PlayerEventListener implements Player.EventListener {
 
         @Override
-        public void onPlaybackStateChanged(int state) {
-            Log.e("MyLog", "onPlaybackStateChanged >>> " + state);
-        }
-
-        @Override
         public void onPlayerError(ExoPlaybackException error) {
             Log.e("MyLog", "ExoPlaybackException >>> " + error.getMessage());
-            if (isBehindLiveWindow(error)) {
-                clearStartPosition();
-                // 遇到BehindLiveWindowException这个错误，重头播放！
-                // 在播放直播地址的时候，横竖屏切换，偶尔回报这个错误！
-                // 是从开始播放，但是状态不重置
-                initializePlayer();
-                player.setMediaSource(mediaSource, true);
-                player.prepare();
-            } else {
-                // 其他错误，弹出控制页面
-            }
-
             if (error.type == ExoPlaybackException.TYPE_SOURCE) {
                 IOException cause = error.getSourceException();
                 if (cause instanceof HttpDataSource.HttpDataSourceException) {
@@ -426,12 +441,10 @@ public class ExoMediaHelper {
                         // although note that it may be null.
                     }
                     // 当前是网络错误，就一直无限轮询请求
-                    player.prepare();
+                    player.retry();
                 }
             }
-
         }
-
     }
 
     private static boolean isBehindLiveWindow(ExoPlaybackException e) {

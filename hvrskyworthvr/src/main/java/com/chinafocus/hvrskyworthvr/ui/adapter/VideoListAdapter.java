@@ -19,6 +19,7 @@ import com.chinafocus.hvrskyworthvr.net.ImageProcess;
 import com.chinafocus.hvrskyworthvr.service.event.VrCancelTimeTask;
 import com.chinafocus.hvrskyworthvr.service.event.VrSyncPlayInfo;
 import com.chinafocus.hvrskyworthvr.ui.main.media.MediaPlayActivity;
+import com.chinafocus.hvrskyworthvr.util.ViewClickUtil;
 
 import org.greenrobot.eventbus.EventBus;
 
@@ -44,8 +45,8 @@ public class VideoListAdapter extends RecyclerView.Adapter<BaseViewHolder> {
     public BaseViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View inflate = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_video_list, parent, false);
         BaseViewHolder baseViewHolder = new BaseViewHolder(inflate);
-        baseViewHolder.itemView.setOnClickListener(v -> {
 
+        ViewClickUtil.click(baseViewHolder.itemView, () -> {
             VrSyncPlayInfo.obtain().clearVideoTime();
             EventBus.getDefault().post(VrCancelTimeTask.obtain());
 
@@ -60,6 +61,7 @@ public class VideoListAdapter extends RecyclerView.Adapter<BaseViewHolder> {
 //            intent.putExtra(MEDIA_CATEGORY_TAG, CURRENT_CATEGORY);
             ((Activity) parent.getContext()).startActivityForResult(intent, REQUEST_CODE_PAD_MEDIA_ACTIVITY);
         });
+
         return baseViewHolder;
     }
 

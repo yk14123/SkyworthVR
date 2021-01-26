@@ -24,12 +24,12 @@ public class VideoCache {
     @SuppressLint("NewApi")
     public static SimpleCache getInstance(Context context) {
         if (sDownloadCache == null) {
-             String externalSDCardPath = SDCardPathUtil.getExternalCache(context, SDCardPathUtil.INNER);
+            String externalSDCardPath = SDCardPathUtil.getExternalCache(context, SDCardPathUtil.INNER);
             // video缓存目录：/storage/0123-4567/Android/data/com.chinafocus.hvr_local_v2/cache/ExoCache/
             // 设置，应用，存储，删除缓存，会连同cache文件夹一起清空！
             // 设置，应用，存储，删除文件，会连同file文件夹+cache文件夹一起清空！
             sDownloadCache = new SimpleCache(new File(externalSDCardPath, "ExoCache"),
-                    new LeastRecentlyUsedCacheEvictor(512 * 1024 * 1024),
+                    new LeastRecentlyUsedCacheEvictor(5L * 1024 * 1024 * 1024),
                     new ExoDatabaseProvider(context));
         }
         return sDownloadCache;

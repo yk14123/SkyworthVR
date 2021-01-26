@@ -63,6 +63,7 @@ public class BluetoothEngineService {
     public static final int STATE_CONNECTED = 3;  // now connected to a remote device
 
     private boolean isStopBluetoothEngine;
+    final static String ERROR_TAG = "error_tag";
 
     /**
      * Constructor. Prepares a new BluetoothChat session.
@@ -98,7 +99,7 @@ public class BluetoothEngineService {
      * session in listening (server) mode. Called by the Activity onResume()
      */
     public synchronized void start() {
-        Log.d(TAG, "-------蓝牙引擎>>>start-------");
+        Log.d(TAG, "------蓝牙引擎>>> start -------");
 
         // Cancel any thread attempting to make a connection
         if (mClientConnectThread != null) {
@@ -158,7 +159,7 @@ public class BluetoothEngineService {
      * @param device The BluetoothDevice that has been connected
      */
     public synchronized void connected(BluetoothSocket socket, BluetoothDevice device) {
-        Log.d(TAG, "-----------BluetoothSocket连接成功>>>设备的名字是:" + device.getName());
+        Log.d(TAG, "------蓝牙引擎>>> 连接成功! >>> 设备的名字是 : " + device.getName());
         isStopBluetoothEngine = false;
 
         // Cancel the thread that completed the connection
@@ -197,7 +198,7 @@ public class BluetoothEngineService {
      * Stop all threads
      */
     public synchronized void stopEngine() {
-        Log.d(TAG, "---------蓝牙引擎>>>关闭----------");
+        Log.d(TAG, "------蓝牙引擎>>> 关闭----------");
         isStopBluetoothEngine = true;
 
         if (mClientConnectThread != null) {
@@ -242,10 +243,12 @@ public class BluetoothEngineService {
      * Indicate that the connection attempt failed and notify the UI Activity.
      */
     private void connectionFailed() {
+        Log.e(TAG, "------connectionFailed------当以[客户端]的身份链接失败的时候调用");
         // Send a failure message back to the Activity
         Message msg = mHandler.obtainMessage(Constants.MESSAGE_TOAST);
         Bundle bundle = new Bundle();
         bundle.putString(Constants.TOAST, "Unable to connect device");
+        bundle.putString(ERROR_TAG, "connectionFailed");
         msg.setData(bundle);
         mHandler.sendMessage(msg);
 
@@ -263,6 +266,7 @@ public class BluetoothEngineService {
      * Indicate that the connection was lost and notify the UI Activity.
      */
     private void connectionLost() {
+        Log.e(TAG, "------connectionLost------当成功连接后，InputStream.read抛出异常的时候回调");
         // Send a failure message back to the Activity
         Message msg = mHandler.obtainMessage(Constants.MESSAGE_TOAST);
         Bundle bundle = new Bundle();
@@ -296,14 +300,14 @@ public class BluetoothEngineService {
                 tmp = mAdapter.listenUsingRfcommWithServiceRecord(NAME_SECURE,
                         MY_UUID_SECURE);
             } catch (IOException e) {
-                Log.e(TAG, "--------蓝牙引擎>>> [服务端] >>> 监听错误 listen() failed--------", e);
+                Log.e(TAG, "------蓝牙引擎>>> [服务端] >>> 监听错误 listen() failed--------", e);
             }
             mmServerSocket = tmp;
             mState = STATE_LISTEN;
         }
 
         public void run() {
-            Log.d(TAG, "---------蓝牙引擎>>> [服务端] >>> 阻塞等待中 --------");
+            Log.d(TAG, "------蓝牙引擎>>> [服务端] >>> 阻塞等待中 --------");
             setName("AcceptThread");
 
             BluetoothSocket socket;
@@ -319,7 +323,7 @@ public class BluetoothEngineService {
                     socket = mmServerSocket.accept();
                     Log.d(TAG, "------蓝牙引擎>>> [服务端] >>> ServiceSocket成功链接------");
                 } catch (IOException e) {
-                    Log.e(TAG, "-------蓝牙引擎>>> [服务端] >>> 连接失败 accept() failed--------");
+                    Log.e(TAG, "------蓝牙引擎>>> [服务端] >>> 连接失败 accept() failed--------");
                     break;
                 }
 
@@ -380,14 +384,14 @@ public class BluetoothEngineService {
                 tmp = device.createRfcommSocketToServiceRecord(
                         MY_UUID_SECURE);
             } catch (IOException e) {
-                Log.e(TAG, "---------蓝牙引擎>>> [客户端] >>> create() failed----------", e);
+                Log.e(TAG, "------蓝牙引擎>>> [客户端] >>> create() failed----------", e);
             }
             mmSocket = tmp;
             mState = STATE_CONNECTING;
         }
 
         public void run() {
-            Log.d(TAG, "---------蓝牙链接>>> [客户端] >>> 开始链接---------");
+            Log.d(TAG, "------蓝牙链接>>> [客户端] >>> 开始链接---------");
             setName("ConnectThread");
 
             // Always cancel discovery because it will slow down a connection

@@ -19,6 +19,7 @@ import com.chinafocus.hvrskyworthvr.model.DeviceInfoManager;
 import com.chinafocus.hvrskyworthvr.net.ApiMultiService;
 import com.chinafocus.hvrskyworthvr.ui.setting.SettingActivity;
 import com.chinafocus.hvrskyworthvr.util.TimeOutClickUtil;
+import com.chinafocus.hvrskyworthvr.util.ViewClickUtil;
 
 public class AboutFragment extends Fragment {
 
@@ -46,28 +47,29 @@ public class AboutFragment extends Fragment {
 
         requireView().findViewById(R.id.iv_setting_mdm).setOnClickListener(v -> TimeOutClickUtil.getMDM().startTimeOutClick(this::startMDMActivity));
 
+        ViewClickUtil.click(
+                requireView().findViewById(R.id.tv_about_user_protocol),
+                () -> WebAboutActivity.startWebAboutActivity(
+                        requireActivity(),
+                        getString(R.string.about_user_protocol),
+                        ConfigManager.getInstance().getDefaultUrl() + ApiMultiService.ABOUT_USER_PROTOCOL)
+        );
 
-        requireView().findViewById(R.id.tv_about_user_protocol)
-                .setOnClickListener(
-                        v -> WebAboutActivity.startWebAboutActivity(
-                                requireActivity(),
-                                getString(R.string.about_user_protocol),
-                                ConfigManager.getInstance().getDefaultUrl() + ApiMultiService.ABOUT_USER_PROTOCOL)
-                );
-        requireView().findViewById(R.id.tv_about_privacy_protocol)
-                .setOnClickListener(
-                        v -> WebAboutActivity.startWebAboutActivity(
-                                requireActivity(),
-                                getString(R.string.about_privacy_protocol),
-                                ConfigManager.getInstance().getDefaultUrl() + ApiMultiService.ABOUT_PRIVACY_PROTOCOL)
-                );
-        requireView().findViewById(R.id.tv_about_us_protocol)
-                .setOnClickListener(
-                        v -> WebAboutActivity.startWebAboutActivity(
-                                requireActivity(),
-                                getString(R.string.about_us_protocol),
-                                ConfigManager.getInstance().getDefaultUrl() + ApiMultiService.ABOUT_US_PROTOCOL)
-                );
+        ViewClickUtil.click(
+                requireView().findViewById(R.id.tv_about_privacy_protocol),
+                () -> WebAboutActivity.startWebAboutActivity(
+                        requireActivity(),
+                        getString(R.string.about_privacy_protocol),
+                        ConfigManager.getInstance().getDefaultUrl() + ApiMultiService.ABOUT_PRIVACY_PROTOCOL)
+        );
+
+        ViewClickUtil.click(
+                requireView().findViewById(R.id.tv_about_us_protocol),
+                () -> WebAboutActivity.startWebAboutActivity(
+                        requireActivity(),
+                        getString(R.string.about_us_protocol),
+                        ConfigManager.getInstance().getDefaultUrl() + ApiMultiService.ABOUT_US_PROTOCOL)
+        );
 
     }
 
