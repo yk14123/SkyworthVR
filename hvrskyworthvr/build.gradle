@@ -21,10 +21,26 @@ android {
 
     }
 
+    signingConfigs {
+        release {
+            keyAlias 'hvr'
+            keyPassword '123456'
+            storeFile file('./hvr.keystore')
+            storePassword '123456'
+            v2SigningEnabled true
+        }
+    }
+
     buildTypes {
         release {
+//            applicationIdSuffix ".only.release"
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+            signingConfig signingConfigs.release
+        }
+        debug {
+//            applicationIdSuffix ".only.debug"
+            debuggable true
         }
     }
     compileOptions {

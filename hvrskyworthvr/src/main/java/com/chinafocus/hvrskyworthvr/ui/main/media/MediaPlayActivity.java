@@ -425,6 +425,7 @@ public class MediaPlayActivity extends AppCompatActivity implements ViewBindHelp
 
     @Override
     public void onPlayNextVideo() {
+        Log.d("MyLog", " nextId >>> " + nextVideoId);
         if (nextVideoId != 0) {
             VrSyncPlayInfo.obtain().clearVideoTime();
             VrSyncPlayInfo.obtain().setVideoId(nextVideoId);

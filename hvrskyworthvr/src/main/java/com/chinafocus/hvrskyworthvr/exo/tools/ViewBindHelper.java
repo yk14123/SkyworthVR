@@ -1,7 +1,6 @@
 package com.chinafocus.hvrskyworthvr.exo.tools;
 
 import android.graphics.Color;
-import android.util.Log;
 
 import com.chinafocus.hvrskyworthvr.exo.ui.IControlViewInterAction;
 import com.chinafocus.hvrskyworthvr.exo.ui.PlayerView;
@@ -63,7 +62,6 @@ public class ViewBindHelper {
             @Override
             public void onVideoNextPlay() {
                 // 播放下一个
-                Log.e("MyLog", "next play");
                 if (mPlayVideoListener != null) {
                     mPlayVideoListener.onPlayNextVideo();
                 }
