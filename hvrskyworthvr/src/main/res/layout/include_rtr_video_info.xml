@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/appCompatTextView6"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="20dp"
+        android:text="海豚——人间天使"
+        android:textColor="@color/color_white"
+        android:textSize="30sp"
+        app:layout_constraintBottom_toTopOf="@+id/appCompatTextView8"
+        app:layout_constraintEnd_toEndOf="@+id/appCompatTextView8"
+        app:layout_constraintStart_toStartOf="@+id/appCompatTextView8" />
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/appCompatTextView8"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="48dp"
+        android:layout_marginTop="226dp"
+        android:layout_marginEnd="48dp"
+        android:text="海豚是智商很高的动物，它们有着可爱的形态和活泼的性格，在海洋馆的动物表演环节中一直受人瞩目。通过人类的训练，海豚能够表演许多精彩的节目，比如玩篮球、钻铁环、跳高、与人握手互动、和人一起“唱歌”等，甚至有些海豚还可以画画。"
+        android:textColor="@color/color_white"
+        android:textSize="15sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <androidx.appcompat.widget.AppCompatButton
+        android:id="@+id/appCompatButton"
+        android:layout_width="64dp"
+        android:layout_height="34dp"
+        android:layout_marginTop="29dp"
+        android:text="播放"
+        android:gravity="center"
+        android:textColor="@color/color_white"
+        android:textSize="16sp"
+        android:background="#f00"
+        app:layout_constraintStart_toStartOf="@+id/appCompatTextView8"
+        app:layout_constraintTop_toBottomOf="@+id/appCompatTextView8" />
+
+    <ProgressBar
+        android:id="@+id/progressBar"
+        android:layout_width="36dp"
+        android:layout_height="5dp"
+        android:layout_marginEnd="17dp"
+        android:visibility="invisible"
+        app:layout_constraintBottom_toBottomOf="@+id/appCompatButton"
+        app:layout_constraintEnd_toStartOf="@+id/appCompatTextView10"
+        app:layout_constraintTop_toTopOf="@+id/appCompatButton" />
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/appCompatTextView10"
+        android:layout_width="wrap_content"
+        android:layout_height="0dp"
+        android:layout_marginEnd="3dp"
+        android:gravity="center"
+        android:text="6"
+        android:textColor="@color/color_white"
+        android:textSize="16sp"
+        app:layout_constraintBaseline_toBaselineOf="@+id/appCompatTextView11"
+        app:layout_constraintEnd_toStartOf="@+id/appCompatTextView11" />
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/appCompatTextView11"
+        android:layout_width="wrap_content"
+        android:layout_height="0dp"
+        android:text="/26"
+        android:textColor="@color/color_white"
+        android:textSize="13sp"
+        app:layout_constraintBaseline_toBaselineOf="@+id/appCompatButton"
+        app:layout_constraintEnd_toEndOf="@+id/appCompatTextView8" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

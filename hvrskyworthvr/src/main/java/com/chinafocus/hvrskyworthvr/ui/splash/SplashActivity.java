@@ -8,11 +8,11 @@ import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.blankj.utilcode.constant.PermissionConstants;
-import com.blankj.utilcode.util.BarUtils;
 import com.blankj.utilcode.util.PermissionUtils;
 import com.chinafocus.hvrskyworthvr.R;
 import com.chinafocus.hvrskyworthvr.model.DeviceInfoManager;
 import com.chinafocus.hvrskyworthvr.ui.setting.SettingActivity;
+import com.chinafocus.hvrskyworthvr.util.statusbar.StatusBarCompatFactory;
 
 import java.util.concurrent.TimeUnit;
 
@@ -25,9 +25,9 @@ public class SplashActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_splash);
 
-        BarUtils.setStatusBarLightMode(this, true);
+        StatusBarCompatFactory.getInstance().setStatusBarImmerse(this, false);
+        setContentView(R.layout.activity_splash);
 
         PermissionUtils.permission(
                 PermissionConstants.STORAGE,

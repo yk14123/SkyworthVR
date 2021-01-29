@@ -12,7 +12,7 @@ import com.chinafocus.hvrskyworthvr.R;
 import com.chinafocus.hvrskyworthvr.service.AliasService;
 import com.chinafocus.hvrskyworthvr.service.BluetoothService;
 import com.chinafocus.hvrskyworthvr.service.WifiService;
-import com.chinafocus.hvrskyworthvr.ui.main.MainActivity;
+import com.chinafocus.hvrskyworthvr.rtr.main.RtrMainActivity;
 import com.chinafocus.hvrskyworthvr.ui.widget.DeviceInfoViewGroup;
 import com.chinafocus.hvrskyworthvr.ui.widget.SettingViewGroup;
 
@@ -160,7 +160,8 @@ public class SettingActivity extends AppCompatActivity {
     }
 
     private void enterMainActivity(View v) {
-        Intent intent = new Intent(this, MainActivity.class);
+//        Intent intent = new Intent(this, MainActivity.class);
+        Intent intent = new Intent(this, RtrMainActivity.class);
         startActivity(intent);
         finish();
     }
