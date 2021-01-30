@@ -4,8 +4,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="236dp"
     android:layout_height="130dp"
-    android:clipToPadding="false"
     android:clipChildren="false"
+    android:clipToPadding="false"
     android:paddingStart="14dp"
     android:paddingTop="16dp"
     android:paddingEnd="14dp">
@@ -15,11 +15,11 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:scaleType="centerCrop"
-        android:src="#f00"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:round="8dp" />
+        app:round="8dp"
+        tools:src="#f00" />
 
     <androidx.appcompat.widget.AppCompatTextView
         android:id="@+id/tv_video_list_duration"

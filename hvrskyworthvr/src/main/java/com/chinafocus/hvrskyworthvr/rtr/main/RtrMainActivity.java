@@ -8,6 +8,7 @@ import androidx.viewpager2.widget.ViewPager2;
 
 import com.chinafocus.hvrskyworthvr.R;
 import com.chinafocus.hvrskyworthvr.rtr.videolist.RtrVideoFragment;
+import com.chinafocus.hvrskyworthvr.ui.widget.BgMediaPlayerViewGroup;
 import com.chinafocus.hvrskyworthvr.ui.widget.ScaleTransitionPagerTitleView;
 import com.chinafocus.hvrskyworthvr.util.statusbar.StatusBarCompatFactory;
 import com.chinafocus.hvrskyworthvr.util.widget.BaseFragmentStateAdapter;
@@ -24,6 +25,8 @@ import java.util.List;
 
 public class RtrMainActivity extends AppCompatActivity {
 
+    private BgMediaPlayerViewGroup mBgMediaPlayerViewGroup;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -32,6 +35,7 @@ public class RtrMainActivity extends AppCompatActivity {
 
         MagicIndicator magicIndicator = findViewById(R.id.magic_Indicator);
         ViewPager2 viewPagerVideoList = findViewById(R.id.vp_video_list);
+        mBgMediaPlayerViewGroup = findViewById(R.id.view_bg_media_player);
         viewPagerVideoList.setUserInputEnabled(false);
 
         List<RtrVideoFragment> fragments = new ArrayList<>();
@@ -78,5 +82,9 @@ public class RtrMainActivity extends AppCompatActivity {
 
         ViewPager2Helper.bind(magicIndicator, viewPagerVideoList);
 
+    }
+
+    public void postVideoBgAndMenuVideoUrl(String bg, String url) {
+        mBgMediaPlayerViewGroup.postVideoBgAndMenuVideoUrl(bg,url);
     }
 }

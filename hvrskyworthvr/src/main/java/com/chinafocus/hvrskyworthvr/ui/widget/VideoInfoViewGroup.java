@@ -7,10 +7,18 @@ import android.widget.FrameLayout;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.widget.AppCompatTextView;
 
 import com.chinafocus.hvrskyworthvr.R;
+import com.chinafocus.hvrskyworthvr.model.bean.VideoContentList;
 
 public class VideoInfoViewGroup extends FrameLayout {
+
+    private AppCompatTextView mTvTitle;
+    private AppCompatTextView mTvIntro;
+    private AppCompatTextView mTvIndex;
+    private AppCompatTextView mTvTotalCount;
+
     public VideoInfoViewGroup(@NonNull Context context) {
         this(context, null);
     }
@@ -27,5 +35,17 @@ public class VideoInfoViewGroup extends FrameLayout {
     private void init(Context context) {
         LayoutInflater.from(context).inflate(R.layout.include_rtr_video_info, this);
 
+        mTvTitle = findViewById(R.id.tv_video_title);
+        mTvIntro = findViewById(R.id.tv_video_intro);
+        findViewById(R.id.bt_video_play);
+        mTvIndex = findViewById(R.id.tv_video_index);
+        mTvTotalCount = findViewById(R.id.tv_video_total_count);
+    }
+
+    public void postVideoContentInfo(VideoContentList videoContentInfo, int pos, int total) {
+        mTvTitle.setText(videoContentInfo.getTitle());
+        mTvIntro.setText(videoContentInfo.getIntro());
+        mTvIndex.setText(pos + "");
+        mTvTotalCount.setText("/" + total);
     }
 }

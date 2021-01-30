@@ -5,14 +5,20 @@
     android:layout_height="match_parent">
 
     <com.chinafocus.hvrskyworthvr.exo.ui.PlayerView
+        android:id="@+id/player_view_surface_land"
         android:layout_width="0dp"
         android:layout_height="0dp"
+        app:controller_layout_id="@null"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        app:resize_mode="fill"
+        app:show_buffering="never"
+        app:surface_type="surface_view" />
 
     <com.chinafocus.hvrskyworthvr.ui.widget.BackgroundAnimationRelativeLayout
+        android:id="@+id/view_background_change_animation"
         android:layout_width="0dp"
         android:layout_height="0dp"
         app:layout_constraintBottom_toBottomOf="parent"
@@ -21,6 +27,7 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <androidx.appcompat.widget.AppCompatImageView
+        android:id="@+id/iv_main_video_cover"
         android:layout_width="0dp"
         android:layout_height="0dp"
         app:layout_constraintBottom_toBottomOf="parent"

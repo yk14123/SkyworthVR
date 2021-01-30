@@ -2,6 +2,7 @@ package com.chinafocus.hvrskyworthvr.net;
 
 import com.chinafocus.hvrskyworthvr.model.bean.DefaultCloudUrl;
 import com.chinafocus.hvrskyworthvr.model.bean.VideoCategory;
+import com.chinafocus.hvrskyworthvr.model.bean.VideoContentList;
 import com.chinafocus.hvrskyworthvr.model.bean.VideoDataInfo;
 import com.chinafocus.hvrskyworthvr.model.bean.VideoDetail;
 import com.chinafocus.hvrskyworthvr.model.bean.DeviceInfo;
@@ -50,4 +51,7 @@ public interface ApiMultiService {
 
     @POST("farm360/content/videoDtl")
     Observable<BaseResponse<VideoDetail>> getVideoDetailData(@Body RequestBody body);
+
+    @POST("farm360/content/contentList")
+    Observable<BaseResponse<List<VideoContentList>>> getVideoContentList(@Body RequestBody body);
 }

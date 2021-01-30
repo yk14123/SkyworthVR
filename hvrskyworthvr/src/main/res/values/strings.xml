@@ -40,6 +40,7 @@
     <string name="about_user_protocol">用户协议</string>
     <string name="about_privacy_protocol">隐私协议</string>
     <string name="about_us_protocol">关于我们</string>
+    <string name="video_play">播放</string>
 
 
 </resources>

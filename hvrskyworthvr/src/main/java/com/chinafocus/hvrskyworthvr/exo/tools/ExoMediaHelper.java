@@ -6,8 +6,6 @@ import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Log;
 
-import androidx.appcompat.app.AppCompatActivity;
-
 import com.chinafocus.hvrskyworthvr.exo.VideoCache;
 import com.chinafocus.hvrskyworthvr.exo.ui.PlayerView;
 import com.google.android.exoplayer2.C;
@@ -64,7 +62,7 @@ public class ExoMediaHelper {
     private boolean startAutoPlay;
     private PlayerView mLandscapePlayerView;
 
-    public ExoMediaHelper(AppCompatActivity activity, PlayerView playerView) {
+    public ExoMediaHelper(Context activity, PlayerView playerView) {
         mContext = activity.getApplicationContext();
         // 初始化加载数据工厂
         mMediaDataSourceFactory = buildDataSourceFactory(mContext);
@@ -266,6 +264,10 @@ public class ExoMediaHelper {
 //        return factoryDataSource;
     }
 
+    public void prepareSource(String videoUrl) {
+        prepareSource(videoUrl, null, null);
+    }
+
     // TODO setPlayWhenReady可用于开始和暂停播放
     // TODO 各种seekTo方法可用于在媒体内搜索
     // TODO setRepeatMode可用于控制媒体是否以及如何循环播放
@@ -274,7 +276,7 @@ public class ExoMediaHelper {
     /**
      * 设置播放地址来源 String fileName = "https://v360.oss-cn-beijing.aliyuncs.com/video/v360/cn/test_001/bszg.m3u8";
      */
-    public void prepareSource(String videoFormat, String videoUrl, String audioUrl, String subTitle) {
+    public void prepareSource(String videoUrl, String audioUrl, String subTitle) {
 
         List<MediaSource> mediaSources = new ArrayList<>();
 
@@ -290,7 +292,7 @@ public class ExoMediaHelper {
 
         MediaSource videoSource = null;
 
-        if (videoFormat.equalsIgnoreCase("m3u8")) {
+        if (videoUrl.toLowerCase().endsWith("m3u8")) {
             // 创建资源
             // TODO MediaSource实例不适用于重新使用的情况。 如果您想用相同的media多次准备播放器，请每次使用新的实例。
 //            MediaItem build = new MediaItem.Builder()
@@ -299,7 +301,7 @@ public class ExoMediaHelper {
             videoSource =
                     new HlsMediaSource.Factory(mMediaDataSourceFactory)
                             .createMediaSource(Uri.parse(videoUrl));
-        } else if (videoFormat.equalsIgnoreCase("mp4")) {
+        } else if (videoUrl.toLowerCase().endsWith("mp4")) {
 //            MediaItem build = new MediaItem.Builder()
 //                    .setUri()
 //                    .build();

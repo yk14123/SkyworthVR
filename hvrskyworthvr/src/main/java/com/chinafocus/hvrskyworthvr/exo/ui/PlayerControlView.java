@@ -1163,7 +1163,9 @@ public class PlayerControlView extends FrameLayout {
         if (mVideoNext != null && !shouldHideVideoNextButton) {
             mVideoNext.setVisibility(shouldShowReplayNextButton ? VISIBLE : GONE);
         } else {
-            mVideoNext.setVisibility(GONE);
+            if (mVideoNext != null) {
+                mVideoNext.setVisibility(GONE);
+            }
         }
         if (mVideoReplay != null) {
             mVideoReplay.setVisibility(shouldShowReplayNextButton ? VISIBLE : GONE);

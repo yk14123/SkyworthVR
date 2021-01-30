@@ -97,12 +97,6 @@ public class MediaPlayActivity extends AppCompatActivity implements ViewBindHelp
                 return;
             }
 
-            if (videoUrl.toLowerCase().endsWith("m3u8")) {
-                format = "m3u8";
-            } else if (videoUrl.toLowerCase().endsWith("mp4")) {
-                format = "mp4";
-            }
-
             String temp = videoDetail.getSubtitle();
             if (!TextUtils.isEmpty(temp)) {
                 subtitle = ConfigManager.getInstance().getDefaultUrl() + temp;
@@ -119,7 +113,7 @@ public class MediaPlayActivity extends AppCompatActivity implements ViewBindHelp
             Log.d("MyLog", "-----当前视频播放地址是 videoUrl >>> " + videoUrl);
 
             mExoMediaHelper.onStart();
-            mExoMediaHelper.prepareSource(format, videoUrl, null, subtitle);
+            mExoMediaHelper.prepareSource(videoUrl, null, subtitle);
             mExoMediaHelper.onResume();
             mExoMediaHelper.seekTo(VrSyncPlayInfo.obtain().getSeekTime());
 
