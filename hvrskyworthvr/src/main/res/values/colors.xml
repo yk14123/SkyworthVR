@@ -17,6 +17,8 @@
     <color name="color_black">#000000</color>
     <color name="color_F6">#F6F6F6</color>
 
+    <color name="color_black_a20">#33000000</color>
+
     <color name="color_theme_cold">#000822</color>
     <color name="color_theme_warm">#201100</color>
 

@@ -26,11 +26,13 @@ import com.bumptech.glide.request.transition.Transition;
 import com.chinafocus.hvrskyworthvr.R;
 import com.chinafocus.hvrskyworthvr.exo.tools.ExoMediaHelper;
 import com.chinafocus.hvrskyworthvr.exo.ui.PlayerView;
+import com.chinafocus.hvrskyworthvr.util.ColorUtil;
 import com.google.android.exoplayer2.Player;
 
 import jp.wasabeef.glide.transformations.CropTransformation;
 
 import static com.bumptech.glide.request.RequestOptions.bitmapTransform;
+import static com.google.android.exoplayer2.Player.STATE_READY;
 
 public class BgMediaPlayerViewGroup extends FrameLayout implements LifecycleObserver {
 
@@ -84,6 +86,7 @@ public class BgMediaPlayerViewGroup extends FrameLayout implements LifecycleObse
         if (mExoMediaHelper != null) {
             mExoMediaHelper.onStop();
         }
+        isFirst = false;
     }
 
     @OnLifecycleEvent(Lifecycle.Event.ON_STOP)
@@ -94,28 +97,47 @@ public class BgMediaPlayerViewGroup extends FrameLayout implements LifecycleObse
         }
     }
 
+    private boolean isFirst;
 
     private void handleMenuVideoUrl(String videoUrl) {
-//        Log.d("MyLog", " handleMenuVideoUrl >>> " + videoUrl);
+        Log.d("MyLog", " handleMenuVideoUrl >>> " + videoUrl);
         if (mExoMediaHelper == null) {
             mExoMediaHelper = new ExoMediaHelper(getContext(), mPlayerView);
-            mExoMediaHelper.restoreSavedInstanceState(null);
         }
 
         mExoMediaHelper.onStart();
         mExoMediaHelper.prepareSource(videoUrl);
         mExoMediaHelper.onResume();
-        mExoMediaHelper.getPlayer().setPlayWhenReady(true);
+        mExoMediaHelper.getPlayer().setPlayWhenReady(false);
         mExoMediaHelper.getPlayer().setRepeatMode(Player.REPEAT_MODE_ALL);
+        if (!isFirst) {
+            isFirst = true;
+            mExoMediaHelper.getPlayer().addListener(new Player.EventListener() {
 
-        mExoMediaHelper.getPlayer().addListener(new Player.EventListener() {
-            @Override
-            public void onIsPlayingChanged(boolean isPlaying) {
-                if (isPlaying) {
-                    mBackgroundAnimationRelativeLayout.setVisibility(INVISIBLE);
+                @Override
+                public void onIsPlayingChanged(boolean isPlaying) {
+                    if (isPlaying) {
+                        mBackgroundAnimationRelativeLayout.setVisibility(INVISIBLE);
+                    }
                 }
-            }
-        });
+
+                @Override
+                public void onPlayerStateChanged(boolean playWhenReady, int playbackState) {
+                    Log.e("MyLog", " onPlayerStateChanged playWhenReady >>> " + playWhenReady + " playbackState >>> " + playbackState);
+                    if (!playWhenReady && playbackState == STATE_READY) {
+                        postDelayed(new Runnable() {
+                            @Override
+                            public void run() {
+                                if (mExoMediaHelper.getPlayer() != null) {
+                                    mExoMediaHelper.getPlayer().setPlayWhenReady(true);
+                                }
+                            }
+                        }, 3000);
+                    }
+                }
+            });
+        }
+
 
     }
 
@@ -132,13 +154,17 @@ public class BgMediaPlayerViewGroup extends FrameLayout implements LifecycleObse
                             @Override
                             public void onGenerated(Palette palette) {
                                 int vibrantColor = palette.getVibrantColor(Color.WHITE);
-                                float[] floats = new float[3];
-                                Color.colorToHSV(vibrantColor, floats);
-                                float v = floats[0];
-                                if (v > 80 && v < 330) {
+
+                                int red = Color.red(vibrantColor);
+                                int green = Color.green(vibrantColor);
+                                int blue = Color.blue(vibrantColor);
+
+                                int cct = ColorUtil.calculateColorTemperature(red, green, blue);
+                                Log.e("MyLog", " cct >>> " + cct);
+                                if (cct > 5000) {
                                     // 冷色
                                     mCoverBg.setBackground(ResourcesCompat.getDrawable(getResources(), R.drawable.shape_color_cold_bg, null));
-                                } else if (v <= 80 || v >= 330) {
+                                } else {
                                     // 暖色
                                     mCoverBg.setBackground(ResourcesCompat.getDrawable(getResources(), R.drawable.shape_color_warm_bg, null));
                                 }

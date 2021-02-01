@@ -15,6 +15,7 @@ import com.chinafocus.hvrskyworthvr.model.bean.VideoContentList;
 import com.chinafocus.hvrskyworthvr.net.ImageProcess;
 import com.chinafocus.hvrskyworthvr.ui.adapter.BaseViewHolder;
 import com.chinafocus.hvrskyworthvr.util.ObjectAnimatorViewUtil;
+import com.chinafocus.hvrskyworthvr.util.TimeUtil;
 
 import java.util.List;
 
@@ -84,7 +85,7 @@ public class RtrVideoListViewAdapter extends RecyclerView.Adapter<BaseViewHolder
                 .load(ConfigManager.getInstance().getDefaultUrl() + mVideoContentLists.get(position).getImgUrl() + ImageProcess.process(584, 335))
                 .into((AppCompatImageView) holder.getView(R.id.iv_video_list_bg));
 
-        holder.setText(R.id.tv_video_list_duration, mVideoContentLists.get(position).getDuration() + "");
+        holder.setText(R.id.tv_video_list_duration, TimeUtil.timeParse(mVideoContentLists.get(position).getDuration()));
     }
 
     @Override

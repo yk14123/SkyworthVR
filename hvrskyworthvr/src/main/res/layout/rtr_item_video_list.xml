@@ -27,10 +27,15 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
         android:layout_marginBottom="8dp"
-        android:text="35:45"
+        android:background="@drawable/shape_video_item_duration_bg"
+        android:paddingStart="5dp"
+        android:paddingTop="2dp"
+        android:paddingEnd="5dp"
+        android:paddingBottom="2dp"
         android:textColor="@color/color_white"
         android:textSize="12sp"
         app:layout_constraintBottom_toBottomOf="@+id/iv_video_list_bg"
-        app:layout_constraintStart_toStartOf="@+id/iv_video_list_bg" />
+        app:layout_constraintStart_toStartOf="@+id/iv_video_list_bg"
+        tools:text="35:45" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
