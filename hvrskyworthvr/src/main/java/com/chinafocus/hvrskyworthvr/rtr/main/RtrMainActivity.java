@@ -85,6 +85,6 @@ public class RtrMainActivity extends AppCompatActivity {
     }
 
     public void postVideoBgAndMenuVideoUrl(String bg, String url) {
-        mBgMediaPlayerViewGroup.postVideoBgAndMenuVideoUrl(bg,url);
+        mBgMediaPlayerViewGroup.postVideoBgAndMenuVideoUrl(bg, url);
     }
 }

@@ -21,6 +21,11 @@
         android:usesCleartextTraffic="true"
         tools:targetApi="m">
         <activity
+            android:name=".rtr.media.RtrMediaPlayActivity"
+            android:launchMode="singleTop"
+            android:screenOrientation="landscape"
+            android:theme="@style/AppTheme" />
+        <activity
             android:name=".rtr.main.RtrMainActivity"
             android:screenOrientation="landscape"
             android:theme="@style/AppTheme" />

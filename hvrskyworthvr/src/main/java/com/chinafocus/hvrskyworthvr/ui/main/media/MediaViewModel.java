@@ -15,13 +15,13 @@ import com.chinafocus.lib_network.net.observer.BaseObserver;
 
 public class MediaViewModel extends BaseViewModel {
 
-    MutableLiveData<VideoDetail> videoDetailMutableLiveData = new MutableLiveData<>();
+    public MutableLiveData<VideoDetail> videoDetailMutableLiveData = new MutableLiveData<>();
 
     public MediaViewModel(@NonNull Application application) {
         super(application);
     }
 
-    void getVideoDetailData(int tag, int id) {
+    public void getVideoDetailData(int tag, int id) {
         addSubscribe(
                 ApiManager
                         .getService(ApiMultiService.class)

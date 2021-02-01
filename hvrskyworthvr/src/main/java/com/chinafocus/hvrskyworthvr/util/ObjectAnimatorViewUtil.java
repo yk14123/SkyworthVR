@@ -71,9 +71,9 @@ public class ObjectAnimatorViewUtil {
     }
 
     public void showZoomInImmediately(View view) {
-        view.setScaleX(1.12f);
-        view.setScaleY(1.12f);
-        float v1 = view.getHeight() * 0.06f;
+        view.setScaleX(1.14f);
+        view.setScaleY(1.14f);
+        float v1 = view.getHeight() * 0.07f;
         view.setTranslationY(-v1);
     }
 
@@ -105,9 +105,9 @@ public class ObjectAnimatorViewUtil {
             float fraction = animation.getAnimatedFraction();
 
             int height = mView.getHeight();
-            float v1 = fraction * (height * 0.06f);
+            float v1 = fraction * (height * 0.07f);
 
-            float scale = fraction * 0.12f + 1.f;
+            float scale = fraction * 0.14f + 1.f;
             mView.setScaleX(scale);
             mView.setScaleY(scale);
 
@@ -130,10 +130,10 @@ public class ObjectAnimatorViewUtil {
         @Override
         public void onAnimationUpdate(ValueAnimator animation) {
             float fraction = animation.getAnimatedFraction();
-            float scale = fraction * -0.12f + 1.12f;
+            float scale = fraction * -0.14f + 1.14f;
 
             int height = mView.getHeight();
-            float v1 = height * 0.06f;
+            float v1 = height * 0.07f;
             float v2 = fraction * -v1 + v1;
 
             mView.setScaleX(scale);
