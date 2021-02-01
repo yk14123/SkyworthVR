@@ -19,6 +19,7 @@ public class VideoInfoViewGroup extends FrameLayout {
     private AppCompatTextView mTvIntro;
     private AppCompatTextView mTvIndex;
     private AppCompatTextView mTvTotalCount;
+    private ImgConstraintLayout mImgConstraintLayout;
 
     public VideoInfoViewGroup(@NonNull Context context) {
         this(context, null);
@@ -36,6 +37,8 @@ public class VideoInfoViewGroup extends FrameLayout {
     private void init(Context context) {
         LayoutInflater.from(context).inflate(R.layout.include_rtr_video_info, this);
 
+        mImgConstraintLayout = findViewById(R.id.view_flash_bg);
+
         mTvTitle = findViewById(R.id.tv_video_title);
         mTvIntro = findViewById(R.id.tv_video_intro);
         findViewById(R.id.bt_video_play);
@@ -49,5 +52,7 @@ public class VideoInfoViewGroup extends FrameLayout {
         mTvIntro.setText(videoContentInfo.getIntro());
         mTvIndex.setText(++pos + "");
         mTvTotalCount.setText("/" + total);
+
+        mImgConstraintLayout.start();
     }
 }

@@ -29,7 +29,7 @@
         android:maxLines="2"
         android:minHeight="48dp"
         android:textColor="@color/color_white"
-        android:textSize="15sp"
+        android:textSize="16sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
@@ -86,5 +86,15 @@
         app:layout_constraintBaseline_toBaselineOf="@+id/bt_video_play"
         app:layout_constraintEnd_toEndOf="@+id/tv_video_intro"
         tools:text="/26" />
+
+    <com.chinafocus.hvrskyworthvr.ui.widget.ImgConstraintLayout
+        android:id="@+id/view_flash_bg"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:elevation="2dp"
+        app:layout_constraintBottom_toBottomOf="@+id/bt_video_play"
+        app:layout_constraintEnd_toEndOf="@+id/bt_video_play"
+        app:layout_constraintStart_toStartOf="@+id/bt_video_play"
+        app:layout_constraintTop_toTopOf="@+id/bt_video_play" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
