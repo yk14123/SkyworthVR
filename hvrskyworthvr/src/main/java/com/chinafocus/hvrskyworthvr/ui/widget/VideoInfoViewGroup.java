@@ -1,5 +1,6 @@
 package com.chinafocus.hvrskyworthvr.ui.widget;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
@@ -42,10 +43,11 @@ public class VideoInfoViewGroup extends FrameLayout {
         mTvTotalCount = findViewById(R.id.tv_video_total_count);
     }
 
+    @SuppressLint("SetTextI18n")
     public void postVideoContentInfo(VideoContentList videoContentInfo, int pos, int total) {
         mTvTitle.setText(videoContentInfo.getTitle());
         mTvIntro.setText(videoContentInfo.getIntro());
-        mTvIndex.setText(pos + "");
+        mTvIndex.setText(++pos + "");
         mTvTotalCount.setText("/" + total);
     }
 }
