@@ -9,6 +9,7 @@ import android.util.AttributeSet;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.SurfaceView;
+import android.view.View;
 import android.widget.FrameLayout;
 
 import androidx.annotation.NonNull;
@@ -39,6 +40,7 @@ public class BgMediaPlayerViewGroup extends FrameLayout implements LifecycleObse
     private AppCompatImageView mCoverBg;
 
     private CropTransformation mContentBgTransformation;
+    private MyRunnable mMyRunnable;
 
     public BgMediaPlayerViewGroup(@NonNull Context context) {
         this(context, null);
@@ -60,6 +62,8 @@ public class BgMediaPlayerViewGroup extends FrameLayout implements LifecycleObse
         mCoverBg = findViewById(R.id.iv_main_video_cover);
 
         mContentBgTransformation = new CropTransformation(2560, 1600);
+
+        mMyRunnable = new MyRunnable(mBackgroundAnimationRelativeLayout);
 
         ((LifecycleOwner) context).getLifecycle().addObserver(this);
     }
@@ -86,7 +90,8 @@ public class BgMediaPlayerViewGroup extends FrameLayout implements LifecycleObse
         ExoManager.getInstance().init(getContext(), mSurfaceView, isPlaying -> {
             Log.d("MyLog", " onIsPlayingChanged isPlaying >>> " + isPlaying);
             if (isPlaying) {
-                postDelayed(() -> mBackgroundAnimationRelativeLayout.setVisibility(INVISIBLE), 3000);
+                removeCallbacks(mMyRunnable);
+                postDelayed(mMyRunnable, 3000);
             } else {
                 mBackgroundAnimationRelativeLayout.setVisibility(VISIBLE);
             }
@@ -94,6 +99,19 @@ public class BgMediaPlayerViewGroup extends FrameLayout implements LifecycleObse
         ExoManager.getInstance().prepareSource(getContext(), videoUrl);
         ExoManager.getInstance().playNow();
 
+    }
+
+    private static class MyRunnable implements Runnable {
+        private View mView;
+
+        public MyRunnable(View view) {
+            mView = view;
+        }
+
+        @Override
+        public void run() {
+            mView.setVisibility(INVISIBLE);
+        }
     }
 
     private void handleVideoBgAndCover(String bgUrl) {
