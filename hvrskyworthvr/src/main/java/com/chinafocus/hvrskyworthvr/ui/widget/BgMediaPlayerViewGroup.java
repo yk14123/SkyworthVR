@@ -8,6 +8,7 @@ import android.graphics.drawable.Drawable;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.SurfaceView;
 import android.widget.FrameLayout;
 
 import androidx.annotation.NonNull;
@@ -24,25 +25,20 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.target.CustomTarget;
 import com.bumptech.glide.request.transition.Transition;
 import com.chinafocus.hvrskyworthvr.R;
-import com.chinafocus.hvrskyworthvr.exo.tools.ExoMediaHelper;
-import com.chinafocus.hvrskyworthvr.exo.ui.PlayerView;
+import com.chinafocus.hvrskyworthvr.exo.ExoManager;
 import com.chinafocus.hvrskyworthvr.util.ColorUtil;
-import com.google.android.exoplayer2.Player;
 
 import jp.wasabeef.glide.transformations.CropTransformation;
 
 import static com.bumptech.glide.request.RequestOptions.bitmapTransform;
-import static com.google.android.exoplayer2.Player.STATE_READY;
 
 public class BgMediaPlayerViewGroup extends FrameLayout implements LifecycleObserver {
 
-    private PlayerView mPlayerView;
+    private SurfaceView mSurfaceView;
     private BackgroundAnimationRelativeLayout mBackgroundAnimationRelativeLayout;
     private AppCompatImageView mCoverBg;
 
     private CropTransformation mContentBgTransformation;
-
-    private ExoMediaHelper mExoMediaHelper;
 
     public BgMediaPlayerViewGroup(@NonNull Context context) {
         this(context, null);
@@ -59,8 +55,7 @@ public class BgMediaPlayerViewGroup extends FrameLayout implements LifecycleObse
 
     private void init(Context context) {
         LayoutInflater.from(context).inflate(R.layout.include_rtr_video_media_player_view, this);
-        mPlayerView = findViewById(R.id.player_view_surface_land);
-        mPlayerView.hideController();
+        mSurfaceView = findViewById(R.id.player_surface_view);
         mBackgroundAnimationRelativeLayout = findViewById(R.id.view_background_change_animation);
         mCoverBg = findViewById(R.id.iv_main_video_cover);
 
@@ -77,67 +72,27 @@ public class BgMediaPlayerViewGroup extends FrameLayout implements LifecycleObse
     @OnLifecycleEvent(Lifecycle.Event.ON_START)
     public void onStart() {
         Log.d("MyLog", " OnLifecycleEvent >>> onStart");
-        mBackgroundAnimationRelativeLayout.setVisibility(VISIBLE);
+        ExoManager.getInstance().playNow();
     }
 
     @OnLifecycleEvent(Lifecycle.Event.ON_PAUSE)
     public void onPause() {
         Log.d("MyLog", " OnLifecycleEvent >>> onPause");
-        if (mExoMediaHelper != null) {
-            mExoMediaHelper.onStop();
-        }
-        isFirst = false;
+        ExoManager.getInstance().pauseNow();
     }
-
-    @OnLifecycleEvent(Lifecycle.Event.ON_STOP)
-    public void onStop() {
-        Log.d("MyLog", " OnLifecycleEvent >>> onStop");
-        if (mExoMediaHelper != null) {
-            mExoMediaHelper.onStop();
-        }
-    }
-
-    private boolean isFirst;
 
     private void handleMenuVideoUrl(String videoUrl) {
         Log.d("MyLog", " handleMenuVideoUrl >>> " + videoUrl);
-        if (mExoMediaHelper == null) {
-            mExoMediaHelper = new ExoMediaHelper(getContext(), mPlayerView);
-        }
-
-        mExoMediaHelper.onStart();
-        mExoMediaHelper.prepareSource(videoUrl);
-        mExoMediaHelper.onResume();
-        mExoMediaHelper.getPlayer().setPlayWhenReady(false);
-        mExoMediaHelper.getPlayer().setRepeatMode(Player.REPEAT_MODE_ALL);
-        if (!isFirst) {
-            isFirst = true;
-            mExoMediaHelper.getPlayer().addListener(new Player.EventListener() {
-
-                @Override
-                public void onIsPlayingChanged(boolean isPlaying) {
-                    if (isPlaying) {
-                        mBackgroundAnimationRelativeLayout.setVisibility(INVISIBLE);
-                    }
-                }
-
-                @Override
-                public void onPlayerStateChanged(boolean playWhenReady, int playbackState) {
-                    Log.e("MyLog", " onPlayerStateChanged playWhenReady >>> " + playWhenReady + " playbackState >>> " + playbackState);
-                    if (!playWhenReady && playbackState == STATE_READY) {
-                        postDelayed(new Runnable() {
-                            @Override
-                            public void run() {
-                                if (mExoMediaHelper.getPlayer() != null) {
-                                    mExoMediaHelper.getPlayer().setPlayWhenReady(true);
-                                }
-                            }
-                        }, 3000);
-                    }
-                }
-            });
-        }
-
+        ExoManager.getInstance().init(getContext(), mSurfaceView, isPlaying -> {
+            Log.d("MyLog", " onIsPlayingChanged isPlaying >>> " + isPlaying);
+            if (isPlaying) {
+                postDelayed(() -> mBackgroundAnimationRelativeLayout.setVisibility(INVISIBLE), 3000);
+            } else {
+                mBackgroundAnimationRelativeLayout.setVisibility(VISIBLE);
+            }
+        });
+        ExoManager.getInstance().prepareSource(getContext(), videoUrl);
+        ExoManager.getInstance().playNow();
 
     }
 

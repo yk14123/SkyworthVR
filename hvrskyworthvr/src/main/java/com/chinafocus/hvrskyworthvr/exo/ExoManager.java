@@ -3,18 +3,18 @@ package com.chinafocus.hvrskyworthvr.exo;
 import android.content.Context;
 import android.net.Uri;
 import android.text.TextUtils;
-import android.util.SparseArray;
+import android.util.Log;
+import android.view.SurfaceView;
+
+import androidx.annotation.NonNull;
 
 import com.google.android.exoplayer2.C;
-
 import com.google.android.exoplayer2.DefaultLoadControl;
 import com.google.android.exoplayer2.ExoPlaybackException;
 import com.google.android.exoplayer2.Format;
 import com.google.android.exoplayer2.Player;
 import com.google.android.exoplayer2.SimpleExoPlayer;
 import com.google.android.exoplayer2.extractor.mp3.Mp3Extractor;
-import com.google.android.exoplayer2.extractor.mp4.Mp4Extractor;
-import com.google.android.exoplayer2.source.BaseMediaSource;
 import com.google.android.exoplayer2.source.MediaSource;
 import com.google.android.exoplayer2.source.MergingMediaSource;
 import com.google.android.exoplayer2.source.ProgressiveMediaSource;
@@ -35,20 +35,13 @@ import com.google.android.exoplayer2.util.MimeTypes;
 import com.google.android.exoplayer2.util.Util;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Locale;
 
-import static com.google.android.exoplayer2.C.SELECTION_FLAG_DEFAULT;
-
-
-/**
- * @author
- * @date 2020/4/29
- * description：
- */
 public class ExoManager {
     private static ExoManager mExoManager;
-
-    private SparseArray<SimpleExoPlayer> mSimpleExoPlayers;
+    private SimpleExoPlayer mSimpleExoPlayer;
 
     private ExoManager() {
     }
@@ -66,27 +59,33 @@ public class ExoManager {
 
     /**
      * 初始化一个播放器
-     *
-     * @param context
-     * @return
      */
-    public SimpleExoPlayer init(Context context) {
-        SimpleExoPlayer simpleExoPlayer = new SimpleExoPlayer.Builder(context)
-//                new DefaultRenderersFactory(context))
+    public void init(Context context, SurfaceView surfaceView, Callback callback) {
+        if (mSimpleExoPlayer != null) {
+            return;
+        }
+
+        mSimpleExoPlayer = new SimpleExoPlayer.Builder(context)
                 .setLoadControl(new DefaultLoadControl.Builder()
                         .setBufferDurationsMs(DefaultLoadControl.DEFAULT_MIN_BUFFER_MS,
-                                20000,
+                                DefaultLoadControl.DEFAULT_MAX_BUFFER_MS,
                                 DefaultLoadControl.DEFAULT_BUFFER_FOR_PLAYBACK_MS,
                                 DefaultLoadControl.DEFAULT_BUFFER_FOR_PLAYBACK_AFTER_REBUFFER_MS)
                         .setPrioritizeTimeOverSizeThresholds(true)
                         .createDefaultLoadControl())
                 .build();
 
-        simpleExoPlayer.setPlayWhenReady(true);
-        simpleExoPlayer.setRepeatMode(Player.REPEAT_MODE_ALL);
-        simpleExoPlayer.addListener(new Player.EventListener() {
+        mSimpleExoPlayer.setVideoSurfaceView(surfaceView);
+        // 预览视频静音
+        mSimpleExoPlayer.setVolume(0f);
+        this.mCallback = callback;
+
+        mSimpleExoPlayer.setRepeatMode(Player.REPEAT_MODE_ALL);
+        mSimpleExoPlayer.addListener(new Player.EventListener() {
+
+            @SuppressWarnings("all")
             @Override
-            public void onPlayerError(ExoPlaybackException error) {
+            public void onPlayerError(@NonNull ExoPlaybackException error) {
                 if (error.type == ExoPlaybackException.TYPE_SOURCE) {
                     IOException cause = error.getSourceException();
                     if (cause instanceof HttpDataSource.HttpDataSourceException) {
@@ -106,89 +105,47 @@ public class ExoManager {
                         // 当前是网络错误，就一直无限轮询请求
 //                        simpleExoPlayer.retry();
                     }
-                    simpleExoPlayer.retry();
+                    mSimpleExoPlayer.retry();
                 }
             }
+
+            @Override
+            public void onIsPlayingChanged(boolean isPlaying) {
+                if (mCallback != null) {
+                    mCallback.onIsPlayingChanged(isPlaying);
+                }
+            }
+
         });
+    }
 
-        return simpleExoPlayer;
+    private Callback mCallback;
+
+    public interface Callback {
+        void onIsPlayingChanged(boolean isPlaying);
     }
 
     /**
-     * 注册一个管理的List的ExoPlayer
-     *
-     * @param context
-     * @param pos
-     * @return
+     * 释放全部ExoPlayer
      */
-    public SimpleExoPlayer init(Context context, int pos) {
-        if (mSimpleExoPlayers == null) {
-            mSimpleExoPlayers = new SparseArray<>();
-        }
-        // 重复的List位置，取出来复用！
-        SimpleExoPlayer simpleExoPlayer = mSimpleExoPlayers.get(pos);
-        if (simpleExoPlayer == null) {
-            SimpleExoPlayer player = init(context);
-            mSimpleExoPlayers.append(pos, player);
-            return player;
-        }
-        return simpleExoPlayer;
-    }
-
-    /**
-     * 当ViewPager滑动的时候，超出的item，需要回收ExoPlayer
-     *
-     * @param pos
-     */
-    public void destroyItem(int pos) {
-        if (mSimpleExoPlayers != null) {
-            SimpleExoPlayer simpleExoPlayer = mSimpleExoPlayers.get(pos);
-            if (simpleExoPlayer != null) {
-                simpleExoPlayer.setPlayWhenReady(false);
-                simpleExoPlayer.stop(true);
-                simpleExoPlayer.release();
-            }
-            mSimpleExoPlayers.delete(pos);
-        }
-    }
-
-    /**
-     * onResume的时候，恢复播放ExoPlayer
-     */
-    public void onResume() {
-        if (mSimpleExoPlayers != null && mSimpleExoPlayers.size() > 0) {
-            for (int i = 0; i < mSimpleExoPlayers.size(); i++) {
-                SimpleExoPlayer exoPlayer = mSimpleExoPlayers.valueAt(i);
-                exoPlayer.setPlayWhenReady(true);
-            }
-        }
-    }
-
-    /**
-     * onStop的时候，暂停播放ExoPlayer
-     */
-    public void onStop() {
-        if (mSimpleExoPlayers != null && mSimpleExoPlayers.size() > 0) {
-            for (int i = 0; i < mSimpleExoPlayers.size(); i++) {
-                SimpleExoPlayer exoPlayer = mSimpleExoPlayers.valueAt(i);
-                exoPlayer.setPlayWhenReady(false);
-            }
-        }
-    }
-
-    /**
-     * onDestroy的时候，释放全部ExoPlayer
-     */
+    @SuppressWarnings("unused")
     public void onDestroy() {
-        if (mSimpleExoPlayers != null && mSimpleExoPlayers.size() > 0) {
-            for (int i = 0; i < mSimpleExoPlayers.size(); i++) {
-                SimpleExoPlayer exoPlayer = mSimpleExoPlayers.valueAt(i);
-                exoPlayer.setPlayWhenReady(false);
-                exoPlayer.stop(true);
-                exoPlayer.release();
-            }
-            mSimpleExoPlayers.clear();
-            mSimpleExoPlayers = null;
+        if (mSimpleExoPlayer != null) {
+            mSimpleExoPlayer.setPlayWhenReady(false);
+            mSimpleExoPlayer.stop(true);
+            mSimpleExoPlayer.release();
+        }
+    }
+
+    public void playNow() {
+        if (mSimpleExoPlayer != null) {
+            mSimpleExoPlayer.setPlayWhenReady(true);
+        }
+    }
+
+    public void pauseNow() {
+        if (mSimpleExoPlayer != null) {
+            mSimpleExoPlayer.setPlayWhenReady(false);
         }
     }
 
@@ -217,98 +174,99 @@ public class ExoManager {
                 null);
     }
 
-    public BaseMediaSource prepareSource(Context context, String formatType, String fileName, String subtitle) {
+    public void prepareSource(Context context, String videoUrl) {
+        prepareSource(context, videoUrl, null, null);
+    }
 
-        BaseMediaSource LocalMediaSource;
-        if (formatType.equals("m3u8")) {
-            // 创建资源
-            // TODO MediaSource实例不适用于重新使用的情况。 如果您想用相同的media多次准备播放器，请每次使用新的实例。
-            LocalMediaSource = new HlsMediaSource.Factory(buildDataSourceFactory(context)).createMediaSource(Uri.parse(fileName));// 播放地址
-        } else if (formatType.equals("mp4")) {
-            // 创建资源
-            LocalMediaSource = new ProgressiveMediaSource.Factory(buildDataSourceFactory(context)).createMediaSource(Uri.parse(fileName));
-        } else {
-            // 创建资源
-            // TODO MediaSource实例不适用于重新使用的情况。 如果您想用相同的media多次准备播放器，请每次使用新的实例。
-            LocalMediaSource = new HlsMediaSource.Factory(buildDataSourceFactory(context)).createMediaSource(Uri.parse(fileName));// 播放地址
+    @SuppressWarnings("unused")
+    public void prepareSource(Context context, String videoUrl, String subtitle) {
+        prepareSource(context, videoUrl, null, subtitle);
+    }
+
+    /**
+     * 设置播放地址来源 String fileName = "https://v360.oss-cn-beijing.aliyuncs.com/video/v360/cn/test_001/bszg.m3u8";
+     */
+    public void prepareSource(Context context, String videoUrl, String audioUrl, String subTitle) {
+
+        List<MediaSource> mediaSources = new ArrayList<>();
+
+        MediaSource audioSource = null;
+        if (!TextUtils.isEmpty(audioUrl)) {
+            audioSource =
+                    new ProgressiveMediaSource.Factory(buildDataSourceFactory(context), Mp3Extractor.FACTORY)
+                            .createMediaSource(Uri.parse(audioUrl));
+        }
+        if (audioSource != null) {
+            mediaSources.add(audioSource);
         }
 
-        if (!TextUtils.isEmpty(subtitle)) {
+        MediaSource videoSource = null;
+
+        if (videoUrl.toLowerCase().endsWith("m3u8")) {
+            // 创建资源
+            // TODO MediaSource实例不适用于重新使用的情况。 如果您想用相同的media多次准备播放器，请每次使用新的实例。
+//            MediaItem build = new MediaItem.Builder()
+//                    .setUri(Uri.parse(videoUrl)).setMimeType(MimeTypes.APPLICATION_M3U8)
+//                    .build();
+            videoSource =
+                    new HlsMediaSource.Factory(buildDataSourceFactory(context))
+                            .createMediaSource(Uri.parse(videoUrl));
+        } else if (videoUrl.toLowerCase().endsWith("mp4")) {
+//            MediaItem build = new MediaItem.Builder()
+//                    .setUri()
+//                    .build();
+            videoSource =
+                    new ProgressiveMediaSource.Factory(buildDataSourceFactory(context))
+                            .createMediaSource(Uri.parse(videoUrl));
+        }
+
+        if (videoSource != null) {
+            mediaSources.add(videoSource);
+        }
+
+        MediaSource subtitleSource = null;
+
+        if (!TextUtils.isEmpty(subTitle)) {
+
+            Log.d("MyLog", "视频字幕地址是 >>>" + subTitle);
+//            MediaItem.Subtitle subtitle =
+//                    new MediaItem.Subtitle(Uri.parse(subTitle), MimeTypes.TEXT_SSA, null, C.SELECTION_FLAG_DEFAULT);
+//
+//            subtitleSource =
+//                    new SingleSampleMediaSource.Factory(mMediaDataSourceFactory)
+//                            .createMediaSource(subtitle, C.TIME_UNSET);
+
             // 创建字幕
             Format subtitleFormat =
                     Format.createTextSampleFormat(
                             /* id= */ null,
                             MimeTypes.TEXT_SSA,
-                            SELECTION_FLAG_DEFAULT,
+                            C.SELECTION_FLAG_DEFAULT,
                             Locale.getDefault().getLanguage());
 
-            MediaSource subtitleMediaSource =
+            subtitleSource =
                     new SingleSampleMediaSource.Factory(buildDataSourceFactory(context))
-                            .createMediaSource(Uri.parse(subtitle), subtitleFormat, C.TIME_UNSET);
+                            .createMediaSource(Uri.parse(subTitle), subtitleFormat, C.TIME_UNSET);
 
-            return new MergingMediaSource(LocalMediaSource, subtitleMediaSource);
         }
 
-        return LocalMediaSource;
+        if (subtitleSource != null) {
+            mediaSources.add(subtitleSource);
+        }
+
+        MediaSource mediaSource = null;
+
+        if (mediaSources.size() > 1) {
+            mediaSource = new MergingMediaSource(mediaSources.toArray(new MediaSource[0]));
+        } else if (mediaSources.size() == 1) {
+            mediaSource = videoSource;
+        }
+
+        if (mediaSource != null) {
+            mSimpleExoPlayer.prepare(mediaSource, true, true);
+        }
+
     }
 
-    public BaseMediaSource prepareSourceTest(Context context) {
-
-        Format subtitleFormat =
-                Format.createTextSampleFormat(
-                        /* id= */ null,
-                        MimeTypes.TEXT_SSA,
-                        SELECTION_FLAG_DEFAULT,
-                        Locale.getDefault().getLanguage());
-
-        MediaSource subtitleMediaSource =
-                new SingleSampleMediaSource.Factory(buildDataSourceFactory(context))
-                        .createMediaSource(Uri.parse("https://fdfs.expreader5g.net:9500/M00/00/D0/rBFBgl8EGJmAEvluAAAY65-Ftz8670.ass"), subtitleFormat, C.TIME_UNSET);
-
-//        String videoPath = "http://objtree-5g.expreader5g.net/test/1singleframe.mp4";
-        String videoPath = "http://bibf-demo.oss-cn-beijing.aliyuncs.com/video/10000000036.mp4";
-        String audioLeftPath = "http://objtree-5g.expreader5g.net/test/2leftaudio.mp3";
-        String audioRightPath = "http://objtree-5g.expreader5g.net/test/3rightaudio.mp3";
-        String videoFullPath = "http://objtree-5g.expreader5g.net/test/4frameleftaudio.mp4";
-
-        ProgressiveMediaSource videoSource = new ProgressiveMediaSource.Factory(buildDataSourceFactory(context), Mp4Extractor.FACTORY).createMediaSource(Uri.parse(videoPath));
-        ProgressiveMediaSource audioRightSource = new ProgressiveMediaSource.Factory(buildDataSourceFactory(context), Mp3Extractor.FACTORY).createMediaSource(Uri.parse(audioRightPath));
-        ProgressiveMediaSource audioLeftSource = new ProgressiveMediaSource.Factory(buildDataSourceFactory(context), Mp3Extractor.FACTORY).createMediaSource(Uri.parse(audioLeftPath));
-
-        // 多个音频和视频合成：第一个音频有效，后续无效。必须先音频，再视频
-        MergingMediaSource mergingMediaSource = new MergingMediaSource(audioLeftSource, videoSource, subtitleMediaSource);
-
-        return mergingMediaSource;
-//        return videoSource;
-    }
-
-    public BaseMediaSource prepareSourceTestChange(Context context) {
-
-        Format subtitleFormat =
-                Format.createTextSampleFormat(
-                        /* id= */ null,
-                        MimeTypes.TEXT_SSA,
-                        SELECTION_FLAG_DEFAULT,
-                        Locale.getDefault().getLanguage());
-
-        MediaSource subtitleMediaSource =
-                new SingleSampleMediaSource.Factory(buildDataSourceFactory(context))
-                        .createMediaSource(Uri.parse("https://fdfs.expreader5g.net:9500/M00/00/D0/rBFBgl8EGJmAEvluAAAY65-Ftz8670.ass"), subtitleFormat, C.TIME_UNSET);
-
-//        String videoPath = "http://objtree-5g.expreader5g.net/test/一、单画面.mp4";
-        String videoPath = "https://v360.oss-cn-beijing.aliyuncs.com/video/v360/cn/test_001/bszg.m3u8";
-        String audioLeftPath = "http://objtree-5g.expreader5g.net/test/2leftaudio.mp3";
-        String audioRightPath = "http://objtree-5g.expreader5g.net/test/3rightaudio.mp3";
-        String videoFullPath = "http://objtree-5g.expreader5g.net/test/4frameleftaudio.mp4";
-
-        HlsMediaSource videoSource = new HlsMediaSource.Factory(buildDataSourceFactory(context)).createMediaSource(Uri.parse(videoPath));
-        ProgressiveMediaSource audioRightSource = new ProgressiveMediaSource.Factory(buildDataSourceFactory(context), Mp3Extractor.FACTORY).createMediaSource(Uri.parse(audioRightPath));
-        ProgressiveMediaSource audioLeftSource = new ProgressiveMediaSource.Factory(buildDataSourceFactory(context), Mp3Extractor.FACTORY).createMediaSource(Uri.parse(audioLeftPath));
-
-        // 多个音频和视频合成：第一个音频有效，后续无效。必须先音频，再视频
-        MergingMediaSource mergingMediaSource = new MergingMediaSource(audioRightSource, videoSource, subtitleMediaSource);
-
-        return mergingMediaSource;
-    }
 
 }
