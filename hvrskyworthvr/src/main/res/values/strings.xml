@@ -42,5 +42,11 @@
     <string name="about_us_protocol">关于我们</string>
     <string name="video_play">播放</string>
 
+    <string name="media_video_intro">简介</string>
+    <string name="media_video_adjust">视角回正</string>
+    <string name="media_video_vr">VR观看</string>
+    <string name="media_video_intro_big">视频简介</string>
+    <string name="media_video_vr_sync">正在同步展示VR眼镜中的视频</string>
+
 
 </resources>

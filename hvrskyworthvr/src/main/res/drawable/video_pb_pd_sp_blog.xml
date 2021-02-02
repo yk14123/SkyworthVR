@@ -4,7 +4,7 @@
     <item android:id="@android:id/background">
         <shape>
             <!--            <corners android:radius="5dip" />-->
-            <solid android:color="@color/video_unplay_hint" />
+            <solid android:color="@color/color_video_unplayed" />
             <!--            <gradient-->
             <!--                android:startColor="#ff9d9e9d"-->
             <!--                android:centerColor="#ff5a5d5a"-->
@@ -27,7 +27,7 @@
                 <!--                    android:endColor="#c3b2ff"-->
                 <!--                    android:angle="270"-->
                 <!--                    />-->
-                <solid android:color="@color/video_buffer_hint" />
+                <solid android:color="@color/color_video_buffered" />
             </shape>
         </clip>
     </item>
@@ -44,7 +44,7 @@
                 <!--                    android:endColor="#8eefff"-->
                 <!--                    android:angle="270"-->
                 <!--                    />-->
-                <solid android:color="@color/colorAccent" />
+                <solid android:color="@color/color_ok_enable_start" />
             </shape>
         </clip>
     </item>

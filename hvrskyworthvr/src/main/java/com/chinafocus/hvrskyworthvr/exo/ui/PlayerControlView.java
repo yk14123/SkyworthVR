@@ -38,8 +38,9 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import androidx.annotation.Nullable;
+import androidx.appcompat.widget.AppCompatRadioButton;
+import androidx.appcompat.widget.AppCompatTextView;
 import androidx.constraintlayout.widget.Group;
-
 
 import com.chinafocus.hvrskyworthvr.R;
 import com.google.android.exoplayer2.C;
@@ -508,7 +509,7 @@ public class PlayerControlView extends FrameLayout {
         //------------------自定义区域------------------//
 
         // 画面回正
-        ImageButton resetContent = findViewById(R.id.exo_reset_content);
+        AppCompatRadioButton resetContent = findViewById(R.id.rtr_exo_reset_content);
         if (resetContent != null) {
             resetContent.setOnClickListener(v -> mInterAction.onVideoContentReset());
         }
@@ -518,7 +519,7 @@ public class PlayerControlView extends FrameLayout {
             enterScreen.setOnClickListener(v -> mInterAction.onEnterScreen());
         }
         // 连接VR眼镜
-        mLinkVr = findViewById(R.id.exo_link_vr);
+        mLinkVr = findViewById(R.id.rtr_exo_link_vr);
         if (mLinkVr != null) {
             mLinkVr.setOnClickListener(v -> mInterAction.onLinkVR());
         }
@@ -579,10 +580,16 @@ public class PlayerControlView extends FrameLayout {
             mReset.setOnClickListener(v -> mInterAction.onVideoContentReset());
         }
         // 更多投诉功能
-        mSetting = findViewById(R.id.exo_setting);
+        mSetting = findViewById(R.id.rtr_exo_setting);
         if (mSetting != null) {
             mSetting.setOnClickListener(v -> mInterAction.onVideoSetting());
         }
+
+        AppCompatTextView appCompatTextView = findViewById(R.id.tv_media_video_intro_small);
+        if (appCompatTextView != null) {
+            appCompatTextView.setOnClickListener(v -> mInterAction.onVideoSetting());
+        }
+
         // 当前网络状态：5G,4G,WIFI
         mNetStatus = findViewById(R.id.exo_text_net_status);
         if (mNetStatus != null) {
@@ -630,7 +637,7 @@ public class PlayerControlView extends FrameLayout {
     private ImageButton mReset;
     // 自定义设置页面
     @Nullable
-    private ImageButton mSetting;
+    private AppCompatRadioButton mSetting;
     // 进入主页面
     @Nullable
     private TextView mEnterHome;
@@ -639,7 +646,7 @@ public class PlayerControlView extends FrameLayout {
     private ImageButton mBack;
     // 进入VR眼镜
     @Nullable
-    private ImageButton mLinkVr;
+    private AppCompatRadioButton mLinkVr;
     private ImageButton mVideoRatio;
     private TextView mVideoLang;
     // 重播按钮

@@ -10,17 +10,18 @@
         android:id="@+id/player_view_land"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        android:visibility="visible"
-        app:bar_height="3dp"
-        app:controller_layout_id="@layout/exo_control_view_landscape_normal"
+        app:bar_height="2dp"
+        app:buffered_color="@color/color_video_buffered"
+        app:controller_layout_id="@layout/rtr_exo_control_view_landscape_normal"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:played_color="@color/colorAccent"
-        app:scrubber_drawable="@drawable/icon_exo_seekbar"
+        app:played_color="@color/color_ok_enable_start"
+        app:scrubber_drawable="@drawable/rtr_icon_exo_seekbar"
         app:show_buffering="when_playing"
         app:show_timeout="3000"
-        app:surface_type="spherical_gl_surface_view" />
+        app:surface_type="spherical_gl_surface_view"
+        app:unplayed_color="@color/color_video_unplayed" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

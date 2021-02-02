@@ -18,6 +18,8 @@
     <color name="color_F6">#F6F6F6</color>
 
     <color name="color_black_a20">#33000000</color>
+    <color name="color_black_a50">#80000000</color>
+    <color name="color_black_a60">#99000000</color>
 
     <color name="color_theme_cold">#000822</color>
     <color name="color_theme_warm">#201100</color>
@@ -40,4 +42,7 @@
 
     <color name="video_unplay_hint">#33FFFFFF</color>
     <color name="video_buffer_hint">#CCFFFFFF</color>
+
+    <color name="color_video_buffered">#B3FFFFFF</color>
+    <color name="color_video_unplayed">#59FFFFFF</color>
 </resources>
