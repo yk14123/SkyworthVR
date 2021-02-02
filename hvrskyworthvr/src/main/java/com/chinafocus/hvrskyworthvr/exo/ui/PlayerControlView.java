@@ -521,7 +521,7 @@ public class PlayerControlView extends FrameLayout {
         // 连接VR眼镜
         mLinkVr = findViewById(R.id.rtr_exo_link_vr);
         if (mLinkVr != null) {
-            mLinkVr.setOnClickListener(v -> mInterAction.onLinkVR());
+            mLinkVr.setOnClickListener(v -> mInterAction.onLinkVR(v));
         }
 //        // 分辨率
 //        mVideoRatio = findViewById(R.id.exo_video_ratio);

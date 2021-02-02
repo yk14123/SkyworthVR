@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Log;
+import android.view.View;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -431,7 +432,7 @@ public class MediaPlayActivity extends AppCompatActivity implements ViewBindHelp
     }
 
     @Override
-    public void onLinkVR() {
+    public void onLinkVR(View view) {
         if (modeVideoLinkingDialog == null) {
             modeVideoLinkingDialog = new VrModeVideoLinkingDialog(this);
         }

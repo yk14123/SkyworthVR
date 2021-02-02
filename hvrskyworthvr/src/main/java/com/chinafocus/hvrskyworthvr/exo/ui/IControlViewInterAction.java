@@ -1,5 +1,7 @@
 package com.chinafocus.hvrskyworthvr.exo.ui;
 
+import android.view.View;
+
 /**
  * @author
  * @date 2020/1/5
@@ -23,7 +25,7 @@ public interface IControlViewInterAction {
     }
 
     // 连接Vr眼镜
-    default void onLinkVR() {
+    default void onLinkVR(View view) {
     }
 
     // 进入屏保播放画面

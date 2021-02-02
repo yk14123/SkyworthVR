@@ -7,43 +7,44 @@
 
     <androidx.appcompat.widget.AppCompatImageView
         android:id="@+id/iv_dialog_info_close"
-        android:layout_width="50dp"
-        android:layout_height="50dp"
-        android:layout_marginEnd="30dp"
-        android:layout_marginBottom="65dp"
+        android:layout_width="52dp"
+        android:layout_height="52dp"
+        android:layout_marginTop="5dp"
+        android:layout_marginEnd="18dp"
         android:padding="10dp"
-        android:src="@drawable/sky_worth_video_detail_close"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
+        android:src="@drawable/sky_worth_video_detail_close_rtr"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
     <androidx.appcompat.widget.AppCompatTextView
         android:id="@+id/tv_dialog_info_title"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginStart="45dp"
-        android:layout_marginEnd="45dp"
-        android:layout_marginBottom="5dp"
+        android:layout_marginStart="96dp"
+        android:layout_marginEnd="96dp"
+        android:layout_marginBottom="480dp"
+        android:gravity="center"
         android:textColor="@color/color_white"
-        android:textSize="32sp"
-        app:layout_constraintBottom_toTopOf="@+id/tv_dialog_info_message"
+        android:textSize="26sp"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHeight_max="wrap"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="1"
-        tools:text="张掖丹霞——给你点颜色瞧瞧" />
+        tools:text="张掖丹霞——给你点颜色瞧瞧张掖丹霞——给你点颜色瞧瞧" />
 
     <androidx.appcompat.widget.AppCompatTextView
         android:id="@+id/tv_dialog_info_message"
-        android:layout_width="842dp"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginStart="45dp"
+        android:layout_marginStart="96dp"
+        android:layout_marginTop="60dp"
+        android:layout_marginEnd="96dp"
         android:lineSpacingExtra="10dp"
-        android:maxHeight="256dp"
-        android:textColor="@color/color_white"
-        android:textSize="20sp"
-        app:layout_constraintBottom_toTopOf="@+id/iv_dialog_info_close"
+        android:maxHeight="332dp"
+        android:textColor="@color/color_white_a80"
+        android:textSize="16sp"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/tv_dialog_info_title"
         tools:text="成都大熊猫繁育研究基地，是中国政府实施大熊猫等濒危野生动物迁地保护工程的主要研究基地之一，国家AAAA级旅游景区。成都大熊猫繁育研究基地，是中国政府实施大熊猫等濒危野生动物迁地保护工程的主要研究基地之一，国家AAAA级旅游景区。成都大熊猫繁育研究基地，是中国政府实施大熊猫等濒危野生动物迁地保护工程的主要研究基地之一，国家AAAA级旅游景区。成都大熊猫繁育研究基地，是中国政府实施大熊猫等濒危野生动物迁地保护工程的主要研究基地之一，国家AAAA级旅游景区。成都大熊猫繁育研究基地，是中国政府实施大熊猫等濒危野生动物迁地保护工程的主要研究基地之一，国家AAAA级旅游景区。成都大熊猫繁育研究基地，是中国政府实施大熊猫等濒危野生动物迁地保护工程的主要研究基地之一，国家AAAA级旅游景区。成都大熊猫繁育研究基地，是中国政府实施大熊猫等濒危野生动物迁地保护工程的主要研究基地之一，国家AAAA级旅游景区。成都大熊猫繁育研究基地，是中国政府实施大熊猫等濒危野生动物迁地保护工程的主要研究基地之一，国家AAAA级旅游景区。" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -65,6 +65,8 @@ dependencies {
     implementation 'com.blankj:utilcodex:1.30.5'
     // 自定义RadioButton
     implementation 'com.zaaach:tabradiobutton:1.0.2'
+    // BasePopup
+    implementation 'com.github.razerdp:BasePopup:2.2.3'
     // vLayout
     implementation 'com.alibaba.android:vlayout:1.3.0'
     // MagicIndicator

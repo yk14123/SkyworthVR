@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Log;
+import android.view.View;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -19,6 +20,8 @@ import com.chinafocus.hvrskyworthvr.exo.ui.PlayerView;
 import com.chinafocus.hvrskyworthvr.exo.ui.spherical.SphericalGLSurfaceView;
 import com.chinafocus.hvrskyworthvr.global.ConfigManager;
 import com.chinafocus.hvrskyworthvr.global.Constants;
+import com.chinafocus.hvrskyworthvr.rtr.dialog.RtrVideoDetailDialog;
+import com.chinafocus.hvrskyworthvr.rtr.popup.MediaVRLinkPopupWindow;
 import com.chinafocus.hvrskyworthvr.service.BluetoothService;
 import com.chinafocus.hvrskyworthvr.service.event.VrMediaConnect;
 import com.chinafocus.hvrskyworthvr.service.event.VrMediaDisConnect;
@@ -27,8 +30,6 @@ import com.chinafocus.hvrskyworthvr.service.event.VrMediaWaitSelected;
 import com.chinafocus.hvrskyworthvr.service.event.VrRotation;
 import com.chinafocus.hvrskyworthvr.service.event.VrSyncMediaStatus;
 import com.chinafocus.hvrskyworthvr.service.event.VrSyncPlayInfo;
-import com.chinafocus.hvrskyworthvr.ui.dialog.VideoDetailDialog;
-import com.chinafocus.hvrskyworthvr.ui.dialog.VrModeVideoLinkingDialog;
 import com.chinafocus.hvrskyworthvr.ui.main.media.MediaViewModel;
 import com.chinafocus.hvrskyworthvr.util.statusbar.StatusBarCompatFactory;
 import com.google.android.exoplayer2.Player;
@@ -54,8 +55,8 @@ public class RtrMediaPlayActivity extends AppCompatActivity implements ViewBindH
 
     private boolean linkingVr;
 
-    private VrModeVideoLinkingDialog modeVideoLinkingDialog;
-    private VideoDetailDialog videoDetailDialog;
+    private MediaVRLinkPopupWindow mMediaVRLinkPopupWindow;
+    private RtrVideoDetailDialog videoDetailDialog;
     private PlayerView mLandPlayerView;
     private ExoMediaHelper mExoMediaHelper;
     private MediaViewModel mediaViewModel;
@@ -155,7 +156,7 @@ public class RtrMediaPlayActivity extends AppCompatActivity implements ViewBindH
             mLandPlayerView.setVideoTitle(videoDetail.getTitle());
 
             if (videoDetailDialog == null) {
-                videoDetailDialog = new VideoDetailDialog(this);
+                videoDetailDialog = new RtrVideoDetailDialog(this);
                 videoDetailDialog.setOnShowListener(dialog -> mLandPlayerView.hideController());
                 videoDetailDialog.setOnDismissListener(dialog -> mLandPlayerView.showController());
             }
@@ -382,8 +383,8 @@ public class RtrMediaPlayActivity extends AppCompatActivity implements ViewBindH
         if (videoDetailDialog != null && videoDetailDialog.isShowing()) {
             videoDetailDialog.dismiss();
         }
-        if (modeVideoLinkingDialog != null && modeVideoLinkingDialog.isShowing()) {
-            modeVideoLinkingDialog.dismiss();
+        if (mMediaVRLinkPopupWindow != null && mMediaVRLinkPopupWindow.isShowing()) {
+            mMediaVRLinkPopupWindow.dismiss(false);
         }
     }
 
@@ -432,13 +433,13 @@ public class RtrMediaPlayActivity extends AppCompatActivity implements ViewBindH
     }
 
     @Override
-    public void onLinkVR() {
-        if (modeVideoLinkingDialog == null) {
-            modeVideoLinkingDialog = new VrModeVideoLinkingDialog(this);
+    public void onLinkVR(View view) {
+        if (mMediaVRLinkPopupWindow == null) {
+            mMediaVRLinkPopupWindow = new MediaVRLinkPopupWindow(this);
         }
 
-        if (!modeVideoLinkingDialog.isShowing()) {
-            modeVideoLinkingDialog.show();
+        if (!mMediaVRLinkPopupWindow.isShowing()) {
+            mMediaVRLinkPopupWindow.showPopupWindow(view);
         }
     }
 
