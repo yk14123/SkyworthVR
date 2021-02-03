@@ -18,13 +18,6 @@
         app:layout_constraintTop_toTopOf="parent"
         tools:ignore="ContentDescription" />
 
-    <View
-        android:id="@+id/view_title_holder"
-        android:layout_width="94dp"
-        android:layout_height="20dp"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
     <androidx.appcompat.widget.AppCompatTextView
         android:id="@+id/tv_media_video_intro_small"
         android:layout_width="76dp"
@@ -56,7 +49,7 @@
         android:textColor="@color/color_white"
         android:textSize="22sp"
         app:layout_constraintEnd_toStartOf="@+id/tv_media_video_intro_small"
-        app:layout_constraintStart_toEndOf="@+id/view_title_holder"
+        app:layout_constraintStart_toEndOf="@+id/exo_back"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_goneMarginEnd="151dp"
         tools:text="年曆史、7代人傳承，中國京劇第一世家堪稱人類藝術史奇觀！世家堪稱人類藝術史奇觀年曆史、7代人傳承，中國京劇第一世家堪稱人類藝術史奇觀！世家堪稱人類藝術史奇觀年曆史、7代人傳承，中國京劇第一世家堪稱人類藝術史奇觀！世家堪稱人類藝術史奇觀年曆史、7代人傳承，中國京劇第一世家堪稱人類藝術史奇觀！世家堪稱人類藝術史奇觀年曆史、7代人傳承，中國京劇第一世家堪稱人類藝術史奇觀！世家堪稱人類藝術史奇觀年曆史、7代人傳承，中國京劇第一世家堪稱人類藝術史奇觀！世家堪稱人類藝術史奇觀年曆史、7代人傳承，中國京劇第一世家堪稱人類藝術史奇觀！世家堪稱人類藝術史奇觀年曆史、7代人傳承，中國京劇第一世家堪稱人類藝術史奇觀！世家堪稱人類藝術史奇觀" />
@@ -262,8 +255,8 @@
         android:id="@+id/group_disconnect"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:visibility="gone"
-        app:constraint_referenced_ids="exo_back,rg_media_video,view_pos_holder,view_title_holder" />
+        android:visibility="visible"
+        app:constraint_referenced_ids="exo_back,rg_media_video,view_pos_holder" />
 
     <androidx.constraintlayout.widget.Group
         android:id="@+id/group_connect"

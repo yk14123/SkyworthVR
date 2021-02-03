@@ -19,11 +19,15 @@
     <color name="color_F6">#F6F6F6</color>
 
     <color name="color_black_a20">#33000000</color>
+    <color name="color_black_a40">#66000000</color>
     <color name="color_black_a50">#80000000</color>
     <color name="color_black_a60">#99000000</color>
+    <color name="color_black_a90">#E6000000</color>
 
-    <color name="color_theme_cold">#000822</color>
-    <color name="color_theme_warm">#201100</color>
+    <color name="color_theme_cold_start">#E6000822</color>
+    <color name="color_theme_cold_end">#1A000822</color>
+    <color name="color_theme_warm_start">#E6201100</color>
+    <color name="color_theme_warm_end">#1A201100</color>
 
     <color name="color_setting_id">#2C2C33</color>
     <color name="color_setting_id_create">#5A5A62</color>

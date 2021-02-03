@@ -16,10 +16,6 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.widget.AppCompatImageView;
 import androidx.core.content.res.ResourcesCompat;
-import androidx.lifecycle.Lifecycle;
-import androidx.lifecycle.LifecycleObserver;
-import androidx.lifecycle.LifecycleOwner;
-import androidx.lifecycle.OnLifecycleEvent;
 import androidx.palette.graphics.Palette;
 
 import com.bumptech.glide.Glide;
@@ -33,7 +29,7 @@ import jp.wasabeef.glide.transformations.CropTransformation;
 
 import static com.bumptech.glide.request.RequestOptions.bitmapTransform;
 
-public class BgMediaPlayerViewGroup extends FrameLayout implements LifecycleObserver {
+public class BgMediaPlayerViewGroup extends FrameLayout {
 
     private SurfaceView mSurfaceView;
     private BackgroundAnimationRelativeLayout mBackgroundAnimationRelativeLayout;
@@ -65,7 +61,6 @@ public class BgMediaPlayerViewGroup extends FrameLayout implements LifecycleObse
 
         mMyRunnable = new MyRunnable(mBackgroundAnimationRelativeLayout);
 
-        ((LifecycleOwner) context).getLifecycle().addObserver(this);
     }
 
     public void postVideoBgAndMenuVideoUrl(String bgUrl, String videoUrl) {
@@ -73,15 +68,11 @@ public class BgMediaPlayerViewGroup extends FrameLayout implements LifecycleObse
         handleMenuVideoUrl(videoUrl);
     }
 
-    @OnLifecycleEvent(Lifecycle.Event.ON_START)
-    public void onStart() {
-        Log.d("MyLog", " OnLifecycleEvent >>> onStart");
+    public void onDisconnect() {
         ExoManager.getInstance().playNow();
     }
 
-    @OnLifecycleEvent(Lifecycle.Event.ON_PAUSE)
-    public void onPause() {
-        Log.d("MyLog", " OnLifecycleEvent >>> onPause");
+    public void onConnect() {
         ExoManager.getInstance().pauseNow();
     }
 

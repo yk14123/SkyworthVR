@@ -43,7 +43,8 @@
         <item name="android:windowFullscreen">true</item>
         <item name="android:windowIsFloating">false</item>
         <item name="android:windowContentOverlay">@null</item>
-        <item name="android:windowBackground">@android:color/transparent</item><!-- 设置dialog背景为透明背景 -->
+        <item name="android:windowBackground">@android:color/transparent
+        </item><!-- 设置dialog背景为透明背景 -->
         <item name="android:backgroundDimAmount">0.3</item>
         <item name="android:backgroundDimEnabled">true</item><!-- 设置dialog背景不变暗 -->
     </style>
@@ -57,6 +58,20 @@
         </item><!-- 设置dialog背景为透明背景 -->
         <item name="android:backgroundDimAmount">0.6</item>
         <item name="android:backgroundDimEnabled">true</item><!-- 设置dialog背景不变暗 -->
+    </style>
+
+    <style name="MyVrModeLinkingDialog" parent="Theme.AppCompat.Dialog">
+        <item name="android:windowFullscreen">true</item>
+        <item name="android:windowCloseOnTouchOutside">false</item>
+        <item name="android:windowActionBar">false</item>
+        <item name="windowActionBar">false</item>
+        <item name="android:windowNoTitle">true</item>
+        <item name="windowNoTitle">true</item>
+        <item name="android:windowFrame">@android:color/transparent</item><!--边框-->
+        <item name="android:windowIsFloating">true</item><!--是否浮现在activity之上-->
+        <item name="android:windowIsTranslucent">true</item><!--半透明-->
+        <item name="android:windowBackground">@android:color/transparent</item><!--背景透明-->
+        <item name="android:backgroundDimAmount">0.6</item>
     </style>
 
 </resources>

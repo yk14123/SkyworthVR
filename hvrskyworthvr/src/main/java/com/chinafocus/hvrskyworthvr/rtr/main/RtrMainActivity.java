@@ -1,13 +1,25 @@
 package com.chinafocus.hvrskyworthvr.rtr.main;
 
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.viewpager2.widget.ViewPager2;
 
 import com.chinafocus.hvrskyworthvr.R;
+import com.chinafocus.hvrskyworthvr.global.Constants;
+import com.chinafocus.hvrskyworthvr.rtr.dialog.RtrVrModeMainDialog;
+import com.chinafocus.hvrskyworthvr.rtr.media.RtrMediaPlayActivity;
 import com.chinafocus.hvrskyworthvr.rtr.videolist.RtrVideoFragment;
+import com.chinafocus.hvrskyworthvr.service.BluetoothService;
+import com.chinafocus.hvrskyworthvr.service.event.VrCancelTimeTask;
+import com.chinafocus.hvrskyworthvr.service.event.VrMainConnect;
+import com.chinafocus.hvrskyworthvr.service.event.VrMainDisConnect;
+import com.chinafocus.hvrskyworthvr.service.event.VrMainSyncMediaInfo;
+import com.chinafocus.hvrskyworthvr.service.event.VrSyncPlayInfo;
 import com.chinafocus.hvrskyworthvr.ui.widget.BgMediaPlayerViewGroup;
 import com.chinafocus.hvrskyworthvr.ui.widget.ScaleTransitionPagerTitleView;
 import com.chinafocus.hvrskyworthvr.util.statusbar.StatusBarCompatFactory;
@@ -20,12 +32,38 @@ import net.lucode.hackware.magicindicator.buildins.commonnavigator.abs.CommonNav
 import net.lucode.hackware.magicindicator.buildins.commonnavigator.abs.IPagerIndicator;
 import net.lucode.hackware.magicindicator.buildins.commonnavigator.abs.IPagerTitleView;
 
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
+
+import io.reactivex.Observable;
+import io.reactivex.Observer;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.disposables.Disposable;
+import io.reactivex.schedulers.Schedulers;
+
+import static com.chinafocus.hvrskyworthvr.global.Constants.REQUEST_CODE_VR_MEDIA_ACTIVITY;
+import static com.chinafocus.hvrskyworthvr.global.Constants.RESULT_CODE_ACTIVE_DIALOG;
+import static com.chinafocus.hvrskyworthvr.global.Constants.RESULT_CODE_INACTIVE_DIALOG;
+import static com.chinafocus.hvrskyworthvr.global.Constants.RESULT_CODE_SELF_INACTIVE_DIALOG;
+import static com.chinafocus.hvrskyworthvr.service.BluetoothService.CURRENT_VR_ONLINE_STATUS;
+import static com.chinafocus.hvrskyworthvr.service.BluetoothService.VR_STATUS_OFFLINE;
+import static com.chinafocus.hvrskyworthvr.service.BluetoothService.VR_STATUS_ONLINE;
+import static com.chinafocus.hvrskyworthvr.ui.main.media.MediaPlayActivity.MEDIA_CATEGORY_TAG;
+import static com.chinafocus.hvrskyworthvr.ui.main.media.MediaPlayActivity.MEDIA_FROM_TAG;
+import static com.chinafocus.hvrskyworthvr.ui.main.media.MediaPlayActivity.MEDIA_ID;
+import static com.chinafocus.hvrskyworthvr.ui.main.media.MediaPlayActivity.MEDIA_LINK_VR;
+import static com.chinafocus.hvrskyworthvr.ui.main.media.MediaPlayActivity.MEDIA_SEEK;
 
 public class RtrMainActivity extends AppCompatActivity {
 
     private BgMediaPlayerViewGroup mBgMediaPlayerViewGroup;
+
+    private Disposable mDisposable;
+    private RtrVrModeMainDialog vrModeMainDialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -86,5 +124,188 @@ public class RtrMainActivity extends AppCompatActivity {
 
     public void postVideoBgAndMenuVideoUrl(String bg, String url) {
         mBgMediaPlayerViewGroup.postVideoBgAndMenuVideoUrl(bg, url);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if (CURRENT_VR_ONLINE_STATUS == VR_STATUS_OFFLINE) {
+            disConnectFromVR(null);
+        } else if (CURRENT_VR_ONLINE_STATUS == VR_STATUS_ONLINE) {
+            // 1.关闭定时器
+            closeTimer(null);
+            // 2.展示控制画面
+            showVrModeMainDialog();
+        }
+        Constants.ACTIVITY_TAG = Constants.ACTIVITY_MAIN;
+    }
+
+    /**
+     * 在首页戴上VR眼镜
+     *
+     * @param event 戴上VR眼镜事件
+     */
+    @Subscribe()
+    @SuppressWarnings("unused")
+    public void connectToVR(VrMainConnect event) {
+        Log.d("MyLog", "-----在首页戴上VR眼镜-----");
+
+        mBgMediaPlayerViewGroup.onConnect();
+
+//        ivAboutBg.post(() -> {
+        // 1.关闭定时器
+        closeTimer(null);
+        // 2.展示控制画面
+        showVrModeMainDialog();
+        // 3.给VR同步视频信息，如果当前video==-1的话，VR端需要切换到列表页面
+        BluetoothService.getInstance()
+                .sendMessage(
+                        VrSyncPlayInfo.obtain().getTag(),
+                        VrSyncPlayInfo.obtain().getCategory(),
+                        VrSyncPlayInfo.obtain().getVideoId(),
+                        VrSyncPlayInfo.obtain().getSeekTime()
+                );
+
+        if (VrSyncPlayInfo.obtain().getVideoId() != -1) {
+            startSyncMediaPlayActivity();
+        }
+//        });
+
+    }
+
+    /**
+     * 在首页取下VR眼镜
+     *
+     * @param event 取下VR眼镜事件
+     */
+    @Subscribe()
+    @SuppressWarnings("unused")
+    public void disConnectFromVR(VrMainDisConnect event) {
+        Log.d("MyLog", "-----在首页取下VR眼镜-----");
+        closeMainDialog();
+        startTimeTask();
+        mBgMediaPlayerViewGroup.onDisconnect();
+    }
+
+    /**
+     * 戴上VR后，VR选择了一个影片
+     *
+     * @param vrMainSyncMediaInfo VR选择影片事件
+     */
+    @Subscribe()
+    @SuppressWarnings("unused")
+    public void goToMediaPlayActivityAndActiveVRPlayerStatus(VrMainSyncMediaInfo vrMainSyncMediaInfo) {
+        Log.d("MyLog", "-----VR选择了一个影片,Pad需要从首页跳转播放-----");
+        closeTimer(null);
+        startSyncMediaPlayActivity();
+    }
+
+    private void startSyncMediaPlayActivity() {
+        Intent intent = new Intent(this, RtrMediaPlayActivity.class);
+        intent.putExtra(MEDIA_FROM_TAG, VrSyncPlayInfo.obtain().getTag());
+        intent.putExtra(MEDIA_CATEGORY_TAG, VrSyncPlayInfo.obtain().getCategory());
+        intent.putExtra(MEDIA_ID, VrSyncPlayInfo.obtain().getVideoId());
+        intent.putExtra(MEDIA_SEEK, VrSyncPlayInfo.obtain().getSeekTime());
+        intent.putExtra(MEDIA_LINK_VR, true);
+        startActivityForResult(intent, REQUEST_CODE_VR_MEDIA_ACTIVITY);
+    }
+
+
+    private void showVrModeMainDialog() {
+
+        if (vrModeMainDialog == null) {
+            vrModeMainDialog = new RtrVrModeMainDialog(this);
+        }
+
+        if (!vrModeMainDialog.isShowing()) {
+            vrModeMainDialog.show();
+        }
+    }
+
+    /**
+     * 2分钟之后，视频重新选择
+     */
+    private void startTimeTask() {
+        Observable.timer(2, TimeUnit.MINUTES)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Observer<Long>() {
+                    @Override
+                    public void onSubscribe(Disposable d) {
+                        closeTimer(null);
+                        Log.d("MyLog", "-----开启2分钟定时器-----");
+                        mDisposable = d;
+                    }
+
+                    @Override
+                    public void onNext(Long value) {
+                        Log.d("MyLog", "-----定时器时间finish，执行任务成功！-----");
+                        VrSyncPlayInfo.obtain().restoreVideoInfo();
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+
+                    }
+
+                    @Override
+                    public void onComplete() {
+                    }
+                });
+    }
+
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+
+        if (resultCode == RESULT_CODE_INACTIVE_DIALOG) {
+            closeMainDialog();
+            startTimeTask();
+        } else if (resultCode == RESULT_CODE_ACTIVE_DIALOG) {
+            showVrModeMainDialog();
+            closeTimer(null);
+        } else if (resultCode == RESULT_CODE_SELF_INACTIVE_DIALOG) {
+            VrSyncPlayInfo.obtain().restoreVideoInfo();
+            closeTimer(null);
+        }
+        super.onActivityResult(requestCode, resultCode, data);
+    }
+
+    /**
+     * 关闭定时器
+     */
+    @Subscribe()
+    @SuppressWarnings("unused")
+    public void closeTimer(VrCancelTimeTask vrCancelTimeTask) {
+        if (mDisposable != null && !mDisposable.isDisposed()) {
+            Log.d("MyLog", "-----关闭2分钟定时器-----");
+            mDisposable.dispose();
+        }
+    }
+
+
+    private void closeMainDialog() {
+        if (vrModeMainDialog != null && vrModeMainDialog.isShowing()) {
+            Log.d("MyLog", "-----关闭MainActivity的控制dialog-----");
+            vrModeMainDialog.dismiss();
+        }
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        EventBus.getDefault().register(this);
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        EventBus.getDefault().unregister(this);
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        BluetoothService.getInstance().releaseAll(this);
     }
 }

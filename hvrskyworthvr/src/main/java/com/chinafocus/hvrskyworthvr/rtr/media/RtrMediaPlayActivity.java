@@ -88,7 +88,6 @@ public class RtrMediaPlayActivity extends AppCompatActivity implements ViewBindH
             Log.d("MyLog", "-----当前播放视频的标题是 >>> " + videoDetail.getTitle());
 
             String videoUrl;
-            String format = "";
             String subtitle = "";
 
             String videoTempUrl = videoDetail.getVideoUrl();
@@ -370,7 +369,6 @@ public class RtrMediaPlayActivity extends AppCompatActivity implements ViewBindH
     @SuppressWarnings("unused")
     public void syncRotationFromVR(VrRotation vrRotation) {
         if (mLandPlayerView != null && linkingVr) {
-//        if (mLandPlayerView != null) {
             SphericalGLSurfaceView surfaceView = (SphericalGLSurfaceView) mLandPlayerView.getVideoSurfaceView();
             if (surfaceView != null) {
                 // 同步四元数
