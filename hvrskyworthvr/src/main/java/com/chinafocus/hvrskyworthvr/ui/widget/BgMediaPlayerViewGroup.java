@@ -38,6 +38,8 @@ public class BgMediaPlayerViewGroup extends FrameLayout {
     private CropTransformation mContentBgTransformation;
     private MyRunnable mMyRunnable;
 
+    private boolean mIsConnected;
+
     public BgMediaPlayerViewGroup(@NonNull Context context) {
         this(context, null);
     }
@@ -68,12 +70,9 @@ public class BgMediaPlayerViewGroup extends FrameLayout {
         handleMenuVideoUrl(videoUrl);
     }
 
-    public void onDisconnect() {
-        ExoManager.getInstance().playNow();
-    }
-
-    public void onConnect() {
-        ExoManager.getInstance().pauseNow();
+    public void onConnect(boolean isConnected) {
+        ExoManager.getInstance().setPlayOrPause(!isConnected);
+        this.mIsConnected = isConnected;
     }
 
     private void handleMenuVideoUrl(String videoUrl) {
@@ -88,8 +87,7 @@ public class BgMediaPlayerViewGroup extends FrameLayout {
             }
         });
         ExoManager.getInstance().prepareSource(getContext(), videoUrl);
-        ExoManager.getInstance().playNow();
-
+        ExoManager.getInstance().setPlayOrPause(!mIsConnected);
     }
 
     private static class MyRunnable implements Runnable {

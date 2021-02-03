@@ -139,6 +139,8 @@ public class RtrMainActivity extends AppCompatActivity {
             closeTimer(null);
             // 2.展示控制画面
             showVrModeMainDialog();
+            // 3.
+            mBgMediaPlayerViewGroup.onConnect(true);
         }
         Constants.ACTIVITY_TAG = Constants.ACTIVITY_MAIN;
     }
@@ -153,7 +155,7 @@ public class RtrMainActivity extends AppCompatActivity {
     public void connectToVR(VrMainConnect event) {
         Log.d("MyLog", "-----在首页戴上VR眼镜-----");
 
-        mBgMediaPlayerViewGroup.onConnect();
+        mBgMediaPlayerViewGroup.onConnect(true);
 
 //        ivAboutBg.post(() -> {
         // 1.关闭定时器
@@ -187,7 +189,7 @@ public class RtrMainActivity extends AppCompatActivity {
         Log.d("MyLog", "-----在首页取下VR眼镜-----");
         closeMainDialog();
         startTimeTask();
-        mBgMediaPlayerViewGroup.onDisconnect();
+        mBgMediaPlayerViewGroup.onConnect(false);
     }
 
     /**

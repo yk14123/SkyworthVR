@@ -54,7 +54,6 @@ public class RequestBodyManager {
         JSONObject jsonObject = new JSONObject();
         try {
             jsonObject.put("appNo", ApiMultiService.APP_NO);
-            jsonObject.put("classify", category);
             jsonObject.put("uniqueId", DeviceInfoManager.getInstance().getDeviceUUID());
             jsonObject.put("userNo", DeviceInfoManager.getInstance().getDeviceAccountId());
         } catch (JSONException e) {

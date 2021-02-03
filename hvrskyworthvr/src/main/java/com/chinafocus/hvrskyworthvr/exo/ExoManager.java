@@ -137,15 +137,9 @@ public class ExoManager {
         }
     }
 
-    public void playNow() {
+    public void setPlayOrPause(boolean b) {
         if (mSimpleExoPlayer != null) {
-            mSimpleExoPlayer.setPlayWhenReady(true);
-        }
-    }
-
-    public void pauseNow() {
-        if (mSimpleExoPlayer != null) {
-            mSimpleExoPlayer.setPlayWhenReady(false);
+            mSimpleExoPlayer.setPlayWhenReady(b);
         }
     }
 
