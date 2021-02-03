@@ -1,0 +1,144 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/ctl_mine_root"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/sky_worth_mine_bg_rtr"
+    tools:context=".rtr.mine.MineActivity">
+
+    <ImageButton
+        android:id="@+id/ib_mine_back"
+        android:layout_width="62dp"
+        android:layout_height="62dp"
+        android:layout_marginStart="26dp"
+        android:background="@null"
+        android:padding="20dp"
+        android:scaleType="center"
+        android:src="@drawable/rtr_icon_exo_back"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:ignore="ContentDescription" />
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/tv_back_door"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:includeFontPadding="false"
+        android:paddingStart="0dp"
+        android:paddingTop="10dp"
+        android:paddingEnd="10dp"
+        android:paddingBottom="10dp"
+        android:text="@string/mine_about"
+        android:textColor="@color/color_white"
+        android:textSize="22sp"
+        app:layout_constraintBottom_toBottomOf="@id/ib_mine_back"
+        app:layout_constraintStart_toEndOf="@id/ib_mine_back"
+        app:layout_constraintTop_toTopOf="@id/ib_mine_back" />
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/tv_mine_about_account"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="105dp"
+        android:layout_marginEnd="105dp"
+        android:textColor="@color/color_white"
+        android:textSize="26sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.393"
+        app:layout_constraintWidth_max="wrap"
+        tools:text="中国国家图书馆中国国家图书馆" />
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/tv_mine_about_uuid"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="12dp"
+        android:textColor="@color/color_white"
+        android:textSize="16sp"
+        app:layout_constraintStart_toStartOf="@+id/tv_mine_about_account"
+        app:layout_constraintTop_toBottomOf="@+id/tv_mine_about_account"
+        tools:text="UUID：HKSN79475H" />
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/appCompatTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="0dp"
+        android:layout_marginTop="8dp"
+        android:textColor="@color/color_333"
+        android:textSize="22sp"
+        android:visibility="gone"
+        app:layout_constraintStart_toStartOf="@+id/appCompatImageView2"
+        app:layout_constraintTop_toBottomOf="@+id/appCompatImageView2"
+        tools:text="扫描二维码安装农家360\n随时随地免费观看 VR 视频" />
+
+    <androidx.appcompat.widget.AppCompatImageView
+        android:id="@+id/appCompatImageView2"
+        android:layout_width="127dp"
+        android:layout_height="127dp"
+        android:src="@drawable/sky_worth_about_qr_code"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/tv_about_user_protocol"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="5dp"
+        android:padding="10dp"
+        android:text="@string/about_user_protocol"
+        android:textColor="@color/color_white"
+        android:textSize="13sp"
+        app:layout_constraintStart_toStartOf="@+id/appCompatTextView11"
+        app:layout_constraintTop_toBottomOf="@+id/appCompatTextView11" />
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/tv_about_privacy_protocol"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:padding="10dp"
+        android:text="@string/about_privacy_protocol"
+        android:textColor="@color/color_white"
+        android:textSize="13sp"
+        app:layout_constraintBaseline_toBaselineOf="@+id/tv_about_user_protocol"
+        app:layout_constraintStart_toEndOf="@+id/tv_about_user_protocol" />
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/tv_about_us_protocol"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:padding="10dp"
+        android:text="@string/about_us_protocol"
+        android:textColor="@color/color_white"
+        android:textSize="13sp"
+        app:layout_constraintBaseline_toBaselineOf="@+id/tv_about_privacy_protocol"
+        app:layout_constraintStart_toEndOf="@+id/tv_about_privacy_protocol" />
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/appCompatTextView11"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="150dp"
+        android:lineSpacingExtra="6dp"
+        android:padding="10dp"
+        android:text="@string/mine_about_copyright_intro"
+        android:textColor="@color/color_white_a60"
+        android:textSize="13sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="@+id/tv_mine_about_uuid" />
+
+    <androidx.appcompat.widget.AppCompatImageView
+        android:id="@+id/iv_setting_mdm"
+        android:layout_width="200dp"
+        android:layout_height="200dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

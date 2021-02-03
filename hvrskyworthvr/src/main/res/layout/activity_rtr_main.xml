@@ -29,13 +29,13 @@
         android:layout_width="0dp"
         android:layout_height="54dp"
         android:layout_marginStart="38dp"
-        app:layout_constraintBottom_toBottomOf="@+id/appCompatImageView7"
-        app:layout_constraintEnd_toStartOf="@+id/appCompatImageView7"
+        app:layout_constraintBottom_toBottomOf="@+id/iv_mine_about"
+        app:layout_constraintEnd_toStartOf="@+id/iv_mine_about"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/appCompatImageView7" />
+        app:layout_constraintTop_toTopOf="@+id/iv_mine_about" />
 
     <androidx.appcompat.widget.AppCompatImageView
-        android:id="@+id/appCompatImageView7"
+        android:id="@+id/iv_mine_about"
         android:layout_width="72dp"
         android:layout_height="72dp"
         android:layout_marginTop="10dp"

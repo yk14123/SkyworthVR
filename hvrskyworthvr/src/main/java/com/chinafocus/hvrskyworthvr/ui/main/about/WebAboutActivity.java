@@ -1,6 +1,6 @@
 package com.chinafocus.hvrskyworthvr.ui.main.about;
 
-import android.content.Context;
+import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
@@ -25,16 +25,17 @@ import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 
 import static com.chinafocus.hvrskyworthvr.global.Constants.ACTIVITY_ABOUT;
+import static com.chinafocus.hvrskyworthvr.global.Constants.RESULT_CODE_MINE_FINISH;
 
 public class WebAboutActivity extends AppCompatActivity {
 
     private AppCompatTextView mTvTitle;
 
-    public static void startWebAboutActivity(Context context, String title, String url) {
+    public static void startWebAboutActivity(Activity context, String title, String url) {
         Intent intent = new Intent(context, WebAboutActivity.class);
         intent.putExtra(WEB_TITLE, title);
         intent.putExtra(WEB_URL, url);
-        context.startActivity(intent);
+        context.startActivityForResult(intent, 1);
     }
 
     private static final String WEB_URL = "web_url";
@@ -120,7 +121,8 @@ public class WebAboutActivity extends AppCompatActivity {
     @Subscribe()
     @SuppressWarnings("unused")
     public void connectToVR(VrAboutConnect event) {
-        Log.d("MyLog", "-----在关于页面戴上VR眼镜-----");
+        Log.d("MyLog", "-----在[协议]页面中的戴上VR眼镜-----");
+        setResult(RESULT_CODE_MINE_FINISH);
         finish();
     }
 

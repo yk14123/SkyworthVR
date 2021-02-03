@@ -13,9 +13,13 @@ import com.chinafocus.hvrskyworthvr.R;
 import com.chinafocus.hvrskyworthvr.global.ConfigManager;
 import com.chinafocus.hvrskyworthvr.model.bean.VideoContentList;
 import com.chinafocus.hvrskyworthvr.net.ImageProcess;
+import com.chinafocus.hvrskyworthvr.service.event.VrCancelTimeTask;
+import com.chinafocus.hvrskyworthvr.service.event.VrSyncPlayInfo;
 import com.chinafocus.hvrskyworthvr.ui.adapter.BaseViewHolder;
 import com.chinafocus.hvrskyworthvr.util.ObjectAnimatorViewUtil;
 import com.chinafocus.hvrskyworthvr.util.TimeUtil;
+
+import org.greenrobot.eventbus.EventBus;
 
 import java.util.List;
 
@@ -44,6 +48,10 @@ public class RtrVideoListViewAdapter extends RecyclerView.Adapter<BaseViewHolder
             int temp = baseViewHolder.getAdapterPosition();
 
             if (temp != currentPos) {
+
+                VrSyncPlayInfo.obtain().restoreVideoInfo();
+                EventBus.getDefault().post(VrCancelTimeTask.obtain());
+
                 BaseViewHolder viewHolderForAdapterPositionOut = (BaseViewHolder) ((RecyclerView) parent).findViewHolderForAdapterPosition(currentPos);
                 if (viewHolderForAdapterPositionOut != null) {
                     // 旧的View startOut

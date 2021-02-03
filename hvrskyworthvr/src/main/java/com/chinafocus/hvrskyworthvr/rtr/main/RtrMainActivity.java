@@ -13,6 +13,7 @@ import com.chinafocus.hvrskyworthvr.R;
 import com.chinafocus.hvrskyworthvr.global.Constants;
 import com.chinafocus.hvrskyworthvr.rtr.dialog.RtrVrModeMainDialog;
 import com.chinafocus.hvrskyworthvr.rtr.media.RtrMediaPlayActivity;
+import com.chinafocus.hvrskyworthvr.rtr.mine.MineActivity;
 import com.chinafocus.hvrskyworthvr.rtr.videolist.RtrVideoFragment;
 import com.chinafocus.hvrskyworthvr.service.BluetoothService;
 import com.chinafocus.hvrskyworthvr.service.event.VrCancelTimeTask;
@@ -22,6 +23,7 @@ import com.chinafocus.hvrskyworthvr.service.event.VrMainSyncMediaInfo;
 import com.chinafocus.hvrskyworthvr.service.event.VrSyncPlayInfo;
 import com.chinafocus.hvrskyworthvr.ui.widget.BgMediaPlayerViewGroup;
 import com.chinafocus.hvrskyworthvr.ui.widget.ScaleTransitionPagerTitleView;
+import com.chinafocus.hvrskyworthvr.util.ViewClickUtil;
 import com.chinafocus.hvrskyworthvr.util.statusbar.StatusBarCompatFactory;
 import com.chinafocus.hvrskyworthvr.util.widget.BaseFragmentStateAdapter;
 import com.chinafocus.hvrskyworthvr.util.widget.ViewPager2Helper;
@@ -74,6 +76,7 @@ public class RtrMainActivity extends AppCompatActivity {
         MagicIndicator magicIndicator = findViewById(R.id.magic_Indicator);
         ViewPager2 viewPagerVideoList = findViewById(R.id.vp_video_list);
         mBgMediaPlayerViewGroup = findViewById(R.id.view_bg_media_player);
+        ViewClickUtil.click(findViewById(R.id.iv_mine_about), () -> startActivity(new Intent(RtrMainActivity.this, MineActivity.class)));
         viewPagerVideoList.setUserInputEnabled(false);
 
         List<RtrVideoFragment> fragments = new ArrayList<>();

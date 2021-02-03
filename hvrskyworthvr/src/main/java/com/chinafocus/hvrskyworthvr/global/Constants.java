@@ -12,4 +12,5 @@ public class Constants {
     public static int RESULT_CODE_INACTIVE_DIALOG = 10003;
     public static int RESULT_CODE_SELF_INACTIVE_DIALOG = 10004;
     public static int RESULT_CODE_ACTIVE_DIALOG = 10005;
+    public static int RESULT_CODE_MINE_FINISH = 10006;
 }
