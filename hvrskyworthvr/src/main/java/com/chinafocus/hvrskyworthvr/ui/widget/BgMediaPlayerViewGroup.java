@@ -71,8 +71,8 @@ public class BgMediaPlayerViewGroup extends FrameLayout {
     }
 
     public void onConnect(boolean isConnected) {
-        ExoManager.getInstance().setPlayOrPause(!isConnected);
         this.mIsConnected = isConnected;
+        ExoManager.getInstance().setPlayOrPause(!isConnected);
     }
 
     private void handleMenuVideoUrl(String videoUrl) {

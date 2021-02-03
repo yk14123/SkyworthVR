@@ -25,6 +25,8 @@ import static androidx.recyclerview.widget.RecyclerView.HORIZONTAL;
 public class RtrVideoSubFragment extends Fragment {
 
     private RtrVideoSubViewModel mViewModel;
+    private RtrVideoListViewAdapter mAdapter;
+    private RecyclerView mRecyclerView;
 
     public static RtrVideoSubFragment newInstance() {
         return new RtrVideoSubFragment();
@@ -45,24 +47,34 @@ public class RtrVideoSubFragment extends Fragment {
 
         VideoInfoViewGroup videoInfoViewGroup = requireView().findViewById(R.id.view_video_info);
 
-        RecyclerView recyclerView = requireView().findViewById(R.id.vp_video_list_detail);
+        mRecyclerView = requireView().findViewById(R.id.vp_video_list_detail);
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(requireContext(), HORIZONTAL, false);
         // 当页面退出的时候 调用onViewDetachedFromWindow
 //        linearLayoutManager.setRecycleChildrenOnDetach(true);
-        recyclerView.setLayoutManager(linearLayoutManager);
-
+        mRecyclerView.setLayoutManager(linearLayoutManager);
         mViewModel.videoDataMutableLiveData.observe(getViewLifecycleOwner(), videoContentLists -> {
-            RtrVideoListViewAdapter adapter = new RtrVideoListViewAdapter(videoContentLists);
-            adapter.setVideoInfoCallback(videoInfoViewGroup::postVideoContentInfo);
-            adapter.setBgAndMenuVideoUrlCallback((bg, videoUrl) -> ((RtrMainActivity) Objects.requireNonNull(getActivity())).postVideoBgAndMenuVideoUrl(bg, videoUrl));
-            recyclerView.setAdapter(adapter);
-            recyclerView.post(() -> {
-                BaseViewHolder holder = (BaseViewHolder) recyclerView.findViewHolderForAdapterPosition(0);
-                adapter.selectedItem(0, holder);
+            if (mAdapter == null) {
+                mAdapter = new RtrVideoListViewAdapter(videoContentLists);
+                mAdapter.setVideoInfoCallback(videoInfoViewGroup::postVideoContentInfo);
+                mAdapter.setBgAndMenuVideoUrlCallback((bg, videoUrl) -> ((RtrMainActivity) Objects.requireNonNull(getActivity())).postVideoBgAndMenuVideoUrl(bg, videoUrl));
+                mRecyclerView.setAdapter(mAdapter);
+            }
+            mRecyclerView.post(() -> {
+                BaseViewHolder holder = (BaseViewHolder) mRecyclerView.findViewHolderForAdapterPosition(0);
+                mAdapter.selectedItem(0, holder);
             });
 
         });
 
+    }
+
+    public void setItemPosition(int videoId) {
+        if (mAdapter != null) {
+            int index = mAdapter.getPositionFromVideoId(videoId);
+            mRecyclerView.scrollToPosition(index);
+            LinearLayoutManager mLayoutManager = (LinearLayoutManager) mRecyclerView.getLayoutManager();
+            Objects.requireNonNull(mLayoutManager).scrollToPositionWithOffset(index, 0);
+        }
     }
 
 }

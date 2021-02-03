@@ -31,6 +31,7 @@ import java.util.List;
 public class RtrVideoFragment extends Fragment {
 
     private RtrVideoViewModel mViewModel;
+    private List<RtrVideoSubFragment> mFragments;
 
     public static RtrVideoFragment newInstance() {
         return new RtrVideoFragment();
@@ -55,10 +56,10 @@ public class RtrVideoFragment extends Fragment {
 //        String[] strings = {"最美中国", "世界园林", "动物王国", "科普知识", "更多欣赏"};
         String[] strings = {};
 
-        List<RtrVideoSubFragment> fragments = new ArrayList<>();
+        mFragments = new ArrayList<>();
 //        for (String temp : strings) {
         RtrVideoSubFragment videoListFragment = RtrVideoSubFragment.newInstance();
-        fragments.add(videoListFragment);
+        mFragments.add(videoListFragment);
 //        }
 
         CommonNavigator commonNavigator = new CommonNavigator(requireActivity());
@@ -96,11 +97,15 @@ public class RtrVideoFragment extends Fragment {
 
         magicIndicator.setNavigator(commonNavigator);
 
-        BaseFragmentStateAdapter<RtrVideoSubFragment> adapter = new BaseFragmentStateAdapter<>(this, fragments);
+        BaseFragmentStateAdapter<RtrVideoSubFragment> adapter = new BaseFragmentStateAdapter<>(this, mFragments);
         viewPagerVideoList.setAdapter(adapter);
 
         ViewPager2Helper.bind(magicIndicator, viewPagerVideoList);
 
+    }
+
+    public void setItemPosition(int videoId) {
+        ((RtrVideoSubFragment) mFragments.get(0)).setItemPosition(videoId);
     }
 
 }

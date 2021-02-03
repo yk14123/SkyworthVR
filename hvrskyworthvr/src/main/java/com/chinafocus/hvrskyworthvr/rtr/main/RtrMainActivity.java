@@ -66,6 +66,7 @@ public class RtrMainActivity extends AppCompatActivity {
 
     private Disposable mDisposable;
     private RtrVrModeMainDialog vrModeMainDialog;
+    private List<RtrVideoFragment> mFragments;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -79,13 +80,13 @@ public class RtrMainActivity extends AppCompatActivity {
         ViewClickUtil.click(findViewById(R.id.iv_mine_about), () -> startActivity(new Intent(RtrMainActivity.this, MineActivity.class)));
         viewPagerVideoList.setUserInputEnabled(false);
 
-        List<RtrVideoFragment> fragments = new ArrayList<>();
+        mFragments = new ArrayList<>();
 
 //        String[] strings = {"全景出版", "全景视频"};
         String[] strings = {};
 //        for (int i = 0; i < strings.length; i++) {
         RtrVideoFragment videoListFragment = RtrVideoFragment.newInstance();
-        fragments.add(videoListFragment);
+        mFragments.add(videoListFragment);
 //        }
 
         CommonNavigator commonNavigator = new CommonNavigator(this);
@@ -118,7 +119,7 @@ public class RtrMainActivity extends AppCompatActivity {
 
         magicIndicator.setNavigator(commonNavigator);
 
-        BaseFragmentStateAdapter<RtrVideoFragment> adapter = new BaseFragmentStateAdapter<>(this, fragments);
+        BaseFragmentStateAdapter<RtrVideoFragment> adapter = new BaseFragmentStateAdapter<>(this, mFragments);
         viewPagerVideoList.setAdapter(adapter);
 
         ViewPager2Helper.bind(magicIndicator, viewPagerVideoList);
@@ -143,6 +144,7 @@ public class RtrMainActivity extends AppCompatActivity {
             mBgMediaPlayerViewGroup.onConnect(true);
         }
         Constants.ACTIVITY_TAG = Constants.ACTIVITY_MAIN;
+
     }
 
     /**
@@ -259,17 +261,20 @@ public class RtrMainActivity extends AppCompatActivity {
                 });
     }
 
-
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
-
         if (resultCode == RESULT_CODE_INACTIVE_DIALOG) {
+            mBgMediaPlayerViewGroup.onConnect(false);
             closeMainDialog();
             startTimeTask();
         } else if (resultCode == RESULT_CODE_ACTIVE_DIALOG) {
+            mBgMediaPlayerViewGroup.onConnect(true);
             showVrModeMainDialog();
             closeTimer(null);
         } else if (resultCode == RESULT_CODE_SELF_INACTIVE_DIALOG) {
+            // 修复RecyclerView位置
+            mBgMediaPlayerViewGroup.onConnect(false);
+            ((RtrVideoFragment) mFragments.get(0)).setItemPosition(VrSyncPlayInfo.obtain().getVideoId());
             VrSyncPlayInfo.obtain().restoreVideoInfo();
             closeTimer(null);
         }

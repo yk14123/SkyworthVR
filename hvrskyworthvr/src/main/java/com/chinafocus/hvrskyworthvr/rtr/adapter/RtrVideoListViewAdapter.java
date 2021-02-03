@@ -136,6 +136,15 @@ public class RtrVideoListViewAdapter extends RecyclerView.Adapter<BaseViewHolder
         mBgAndMenuVideoUrlCallback = bgAndMenuVideoUrlCallback;
     }
 
+    public int getPositionFromVideoId(int videoId) {
+        for (int i = 0; i < mVideoContentLists.size(); i++) {
+            if (mVideoContentLists.get(i).getId() == videoId) {
+                return i;
+            }
+        }
+        return 0;
+    }
+
     public interface BgAndMenuVideoUrlCallback {
         void postVideoBgAndMenuVideoUrl(String bg, String videoUrl);
     }
