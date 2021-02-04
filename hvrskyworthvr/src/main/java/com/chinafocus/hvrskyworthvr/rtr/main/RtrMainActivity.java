@@ -140,11 +140,17 @@ public class RtrMainActivity extends AppCompatActivity {
             closeTimer(null);
             // 2.展示控制画面
             showVrModeMainDialog();
-            // 3.
+            // 3.暂停播放视频
             mBgMediaPlayerViewGroup.onConnect(true);
         }
         Constants.ACTIVITY_TAG = Constants.ACTIVITY_MAIN;
 
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        mBgMediaPlayerViewGroup.onConnect(true);
     }
 
     /**
@@ -219,7 +225,6 @@ public class RtrMainActivity extends AppCompatActivity {
 
 
     private void showVrModeMainDialog() {
-
         if (vrModeMainDialog == null) {
             vrModeMainDialog = new RtrVrModeMainDialog(this);
         }
