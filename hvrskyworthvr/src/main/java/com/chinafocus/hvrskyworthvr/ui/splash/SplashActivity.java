@@ -35,7 +35,7 @@ public class SplashActivity extends AppCompatActivity {
                 PermissionConstants.LOCATION).callback(new PermissionUtils.SimpleCallback() {
             @Override
             public void onGranted() {
-//                delayStartLoginActivity();
+                delayStartLoginActivity();
             }
 
             @Override

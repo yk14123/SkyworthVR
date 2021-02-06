@@ -69,6 +69,8 @@ dependencies {
     implementation 'com.github.razerdp:BasePopup:2.2.3'
     // vLayout
     implementation 'com.alibaba.android:vlayout:1.3.0'
+    // 居中变大的recyclerView
+    implementation 'com.yarolegovich:discrete-scrollview:1.5.1'
     // MagicIndicator
     implementation 'com.github.hackware1993:MagicIndicator:1.7.0' // for androidx
     // glide

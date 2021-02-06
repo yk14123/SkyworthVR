@@ -25,15 +25,16 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <androidx.viewpager2.widget.ViewPager2
-        android:id="@+id/vp2_video_list_detail"
+    <com.yarolegovich.discretescrollview.DiscreteScrollView
+        android:id="@+id/rv_main_hot_cover"
         android:layout_width="0dp"
-        android:layout_height="wrap_content"
+        android:layout_height="270dp"
         android:layout_gravity="bottom"
         android:layout_marginBottom="50dp"
+        android:overScrollMode="never"
+        app:dsv_orientation="horizontal"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
-
 
 </androidx.constraintlayout.widget.ConstraintLayout>
