@@ -9,10 +9,10 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.AppCompatButton;
 
 import com.chinafocus.hvrskyworthvr.R;
+import com.chinafocus.hvrskyworthvr.rtr.show.ShowActivity;
 import com.chinafocus.hvrskyworthvr.service.AliasService;
 import com.chinafocus.hvrskyworthvr.service.BluetoothService;
 import com.chinafocus.hvrskyworthvr.service.WifiService;
-import com.chinafocus.hvrskyworthvr.rtr.main.RtrMainActivity;
 import com.chinafocus.hvrskyworthvr.ui.widget.DeviceInfoViewGroup;
 import com.chinafocus.hvrskyworthvr.ui.widget.SettingViewGroup;
 
@@ -161,7 +161,8 @@ public class SettingActivity extends AppCompatActivity {
 
     private void enterMainActivity(View v) {
 //        Intent intent = new Intent(this, MainActivity.class);
-        Intent intent = new Intent(this, RtrMainActivity.class);
+//        Intent intent = new Intent(this, RtrMainActivity.class);
+        Intent intent = new Intent(this, ShowActivity.class);
         startActivity(intent);
         finish();
     }

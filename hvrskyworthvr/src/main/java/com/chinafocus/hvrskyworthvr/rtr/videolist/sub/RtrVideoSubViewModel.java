@@ -17,13 +17,13 @@ import java.util.List;
 
 public class RtrVideoSubViewModel extends BaseViewModel {
 
-    MutableLiveData<List<VideoContentList>> videoDataMutableLiveData = new MutableLiveData<>();
+    public MutableLiveData<List<VideoContentList>> videoDataMutableLiveData = new MutableLiveData<>();
 
     public RtrVideoSubViewModel(@NonNull Application application) {
         super(application);
     }
 
-    void getVideoContentList() {
+    public void getVideoContentList() {
         addSubscribe(
                 ApiManager
                         .getService(ApiMultiService.class)

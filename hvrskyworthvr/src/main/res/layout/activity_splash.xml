@@ -4,52 +4,52 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/sky_worth_splash_bg"
+    android:background="@drawable/rtr_show_bg"
     tools:context=".ui.splash.SplashActivity">
 
-    <androidx.appcompat.widget.AppCompatImageView
-        android:id="@+id/appCompatImageView6"
-        android:layout_width="225dp"
-        android:layout_height="50dp"
-        android:scaleType="fitCenter"
-        android:src="@drawable/sky_worth_splash_welcome"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.4" />
+<!--    <androidx.appcompat.widget.AppCompatImageView-->
+<!--        android:id="@+id/appCompatImageView6"-->
+<!--        android:layout_width="225dp"-->
+<!--        android:layout_height="50dp"-->
+<!--        android:scaleType="fitCenter"-->
+<!--        android:src="@drawable/sky_worth_splash_welcome"-->
+<!--        app:layout_constraintBottom_toBottomOf="parent"-->
+<!--        app:layout_constraintEnd_toEndOf="parent"-->
+<!--        app:layout_constraintStart_toStartOf="parent"-->
+<!--        app:layout_constraintTop_toTopOf="parent"-->
+<!--        app:layout_constraintVertical_bias="0.4" />-->
 
-    <androidx.appcompat.widget.AppCompatImageView
-        android:layout_width="255dp"
-        android:layout_height="32dp"
-        android:layout_marginTop="15dp"
-        android:src="@drawable/sky_worth_splash_title"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/appCompatImageView6" />
+<!--    <androidx.appcompat.widget.AppCompatImageView-->
+<!--        android:layout_width="255dp"-->
+<!--        android:layout_height="32dp"-->
+<!--        android:layout_marginTop="15dp"-->
+<!--        android:src="@drawable/sky_worth_splash_title"-->
+<!--        app:layout_constraintEnd_toEndOf="parent"-->
+<!--        app:layout_constraintStart_toStartOf="parent"-->
+<!--        app:layout_constraintTop_toBottomOf="@+id/appCompatImageView6" />-->
 
-    <androidx.appcompat.widget.AppCompatImageView
-        android:layout_width="86dp"
-        android:layout_height="34dp"
-        android:layout_marginTop="180dp"
-        android:layout_marginBottom="28dp"
-        android:scaleType="fitCenter"
-        android:src="@drawable/sky_worth_splash_rtr"
-        app:layout_constraintBottom_toTopOf="@+id/appCompatTextView2"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
+<!--    <androidx.appcompat.widget.AppCompatImageView-->
+<!--        android:layout_width="86dp"-->
+<!--        android:layout_height="34dp"-->
+<!--        android:layout_marginTop="180dp"-->
+<!--        android:layout_marginBottom="28dp"-->
+<!--        android:scaleType="fitCenter"-->
+<!--        android:src="@drawable/sky_worth_splash_rtr"-->
+<!--        app:layout_constraintBottom_toTopOf="@+id/appCompatTextView2"-->
+<!--        app:layout_constraintEnd_toEndOf="parent"-->
+<!--        app:layout_constraintStart_toStartOf="parent" />-->
 
-    <androidx.appcompat.widget.AppCompatTextView
-        android:id="@+id/appCompatTextView2"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/splash_copyright"
-        android:textColor="@color/color_setting_status_gray"
-        android:textSize="11sp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.93" />
+<!--    <androidx.appcompat.widget.AppCompatTextView-->
+<!--        android:id="@+id/appCompatTextView2"-->
+<!--        android:layout_width="wrap_content"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        android:text="@string/splash_copyright"-->
+<!--        android:textColor="@color/color_setting_status_gray"-->
+<!--        android:textSize="11sp"-->
+<!--        app:layout_constraintBottom_toBottomOf="parent"-->
+<!--        app:layout_constraintEnd_toEndOf="parent"-->
+<!--        app:layout_constraintStart_toStartOf="parent"-->
+<!--        app:layout_constraintTop_toTopOf="parent"-->
+<!--        app:layout_constraintVertical_bias="0.93" />-->
 
 </androidx.constraintlayout.widget.ConstraintLayout>

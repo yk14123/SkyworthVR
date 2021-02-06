@@ -21,6 +21,10 @@
         android:usesCleartextTraffic="true"
         tools:targetApi="m">
         <activity
+            android:name=".rtr.show.ShowActivity"
+            android:screenOrientation="landscape"
+            android:theme="@style/AppTheme" />
+        <activity
             android:name=".rtr.mine.MineActivity"
             android:screenOrientation="landscape"
             android:theme="@style/AppTheme" />
