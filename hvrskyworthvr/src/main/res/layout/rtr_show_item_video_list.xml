@@ -20,11 +20,12 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent" />
 
-        <androidx.appcompat.widget.AppCompatImageView
+        <androidx.constraintlayout.utils.widget.ImageFilterView
             android:id="@+id/iv_video_list_bg"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:scaleType="centerCrop"
+            app:round="8dp"
             tools:src="#F00" />
 
     </androidx.cardview.widget.CardView>

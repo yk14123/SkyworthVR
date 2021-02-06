@@ -13,12 +13,8 @@ import com.chinafocus.hvrskyworthvr.R;
 import com.chinafocus.hvrskyworthvr.global.ConfigManager;
 import com.chinafocus.hvrskyworthvr.model.bean.VideoContentList;
 import com.chinafocus.hvrskyworthvr.net.ImageProcess;
-import com.chinafocus.hvrskyworthvr.service.event.VrCancelTimeTask;
-import com.chinafocus.hvrskyworthvr.service.event.VrSyncPlayInfo;
 import com.chinafocus.hvrskyworthvr.ui.adapter.BaseViewHolder;
-import com.chinafocus.hvrskyworthvr.util.ObjectAnimatorViewUtil;
-
-import org.greenrobot.eventbus.EventBus;
+import com.chinafocus.hvrskyworthvr.util.ViewClickUtil;
 
 import java.util.List;
 
@@ -26,7 +22,11 @@ public class ShowRtrVideoListViewAdapter extends RecyclerView.Adapter<BaseViewHo
 
     private final List<VideoContentList> mVideoContentLists;
 
-    private int currentPos = -1;
+    private Callback mCallback;
+
+    public void setCallback(Callback callback) {
+        mCallback = callback;
+    }
 
     public ShowRtrVideoListViewAdapter(List<VideoContentList> videoContentLists) {
         mVideoContentLists = videoContentLists;
@@ -38,51 +38,13 @@ public class ShowRtrVideoListViewAdapter extends RecyclerView.Adapter<BaseViewHo
         View inflate = LayoutInflater.from(parent.getContext()).inflate(R.layout.rtr_show_item_video_list, parent, false);
         BaseViewHolder baseViewHolder = new BaseViewHolder(inflate);
 
-        baseViewHolder.itemView.setOnClickListener(v -> {
-
-            if (ObjectAnimatorViewUtil.getInstance().isRunning()) {
-                return;
+        ViewClickUtil.click(baseViewHolder.itemView, () -> {
+            if (mCallback != null) {
+                mCallback.onClick(baseViewHolder.getAdapterPosition());
             }
-
-            int temp = baseViewHolder.getAdapterPosition();
-
-            if (temp != currentPos) {
-
-                VrSyncPlayInfo.obtain().restoreVideoInfo();
-                EventBus.getDefault().post(VrCancelTimeTask.obtain());
-
-                BaseViewHolder viewHolderForAdapterPositionOut = (BaseViewHolder) ((RecyclerView) parent).findViewHolderForAdapterPosition(currentPos);
-                if (viewHolderForAdapterPositionOut != null) {
-                    // 旧的View startOut
-                    ObjectAnimatorViewUtil.getInstance().startOut(viewHolderForAdapterPositionOut.itemView);
-                }
-                currentPos = temp;
-                // 新View startIn
-                ObjectAnimatorViewUtil.getInstance().startIn(v);
-                // 改变内容和背景图
-//                if (mVideoInfoCallback != null && mVideoContentLists != null) {
-//                    mVideoInfoCallback.postVideoContent(mVideoContentLists.get(currentPos), currentPos, mVideoContentLists.size());
-//                }
-                if (mVideoBackgroundUrlCallback != null && mVideoContentLists != null) {
-                    mVideoBackgroundUrlCallback.postVideoBackgroundUrl(
-                            ConfigManager.getInstance().getDefaultUrl() + mVideoContentLists.get(currentPos).getImgUrl() + ImageProcess.process(2560, 1600));
-                }
-            }
-
         });
 
         return baseViewHolder;
-    }
-
-    @Override
-    public void onViewAttachedToWindow(@NonNull BaseViewHolder holder) {
-        super.onViewAttachedToWindow(holder);
-        BaseViewHolder baseHolder = (BaseViewHolder) ((RecyclerView) holder.itemView.getParent()).findViewHolderForAdapterPosition(currentPos);
-        if (baseHolder == holder) {
-            ObjectAnimatorViewUtil.getInstance().showZoomInImmediately(holder.itemView);
-        } else {
-            ObjectAnimatorViewUtil.getInstance().showZoomOutImmediately(holder.itemView);
-        }
     }
 
     @Override
@@ -99,49 +61,8 @@ public class ShowRtrVideoListViewAdapter extends RecyclerView.Adapter<BaseViewHo
         return mVideoContentLists == null ? 0 : mVideoContentLists.size();
     }
 
-    public void selectedItem(int pos, BaseViewHolder holder) {
-        if (pos != currentPos) {
-            currentPos = pos;
-            if (pos >= 0) {
-                if (holder != null) {
-                    ObjectAnimatorViewUtil.getInstance().showZoomInImmediately(holder.itemView);
-//                    if (mVideoInfoCallback != null && mVideoContentLists != null) {
-//                        mVideoInfoCallback.postVideoContent(mVideoContentLists.get(currentPos), currentPos, mVideoContentLists.size());
-//
-//                    }
-
-//                    ConfigManager.getInstance().getDefaultUrl() + mVideoContentLists.get(currentPos).getMenuVideoUrl()
-
-                    if (mVideoBackgroundUrlCallback != null && mVideoContentLists != null) {
-                        mVideoBackgroundUrlCallback.postVideoBackgroundUrl(
-                                ConfigManager.getInstance().getDefaultUrl() + mVideoContentLists.get(currentPos).getImgUrl() + ImageProcess.process(2560, 1600));
-                    }
-                }
-            } else {
-                if (holder != null) {
-                    ObjectAnimatorViewUtil.getInstance().showZoomOutImmediately(holder.itemView);
-                }
-            }
-        }
-    }
-
-    private VideoBackgroundUrlCallback mVideoBackgroundUrlCallback;
-
-    public void setVideoBackgroundUrl(VideoBackgroundUrlCallback videoBackgroundUrlCallback) {
-        mVideoBackgroundUrlCallback = videoBackgroundUrlCallback;
-    }
-
-    public int getPositionFromVideoId(int videoId) {
-        for (int i = 0; i < mVideoContentLists.size(); i++) {
-            if (mVideoContentLists.get(i).getId() == videoId) {
-                return i;
-            }
-        }
-        return 0;
-    }
-
-    public interface VideoBackgroundUrlCallback {
-        void postVideoBackgroundUrl(String bg);
+    public interface Callback {
+        void onClick(int pos);
     }
 
 }

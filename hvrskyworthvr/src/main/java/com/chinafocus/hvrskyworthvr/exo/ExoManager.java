@@ -5,6 +5,7 @@ import android.net.Uri;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.SurfaceView;
+import android.view.TextureView;
 
 import androidx.annotation.NonNull;
 
@@ -57,6 +58,74 @@ public class ExoManager {
         return mExoManager;
     }
 
+    public void setTextureView(TextureView textureView) {
+        if (mSimpleExoPlayer != null) {
+            mSimpleExoPlayer.setVideoTextureView(textureView);
+        }
+    }
+
+    /**
+     * 初始化一个播放器
+     */
+    public void init(Context context, Callback callback) {
+        if (mSimpleExoPlayer != null) {
+            return;
+        }
+
+        mSimpleExoPlayer = new SimpleExoPlayer.Builder(context)
+                .setLoadControl(new DefaultLoadControl.Builder()
+                        .setBufferDurationsMs(DefaultLoadControl.DEFAULT_MIN_BUFFER_MS,
+                                DefaultLoadControl.DEFAULT_MAX_BUFFER_MS,
+                                DefaultLoadControl.DEFAULT_BUFFER_FOR_PLAYBACK_MS,
+                                DefaultLoadControl.DEFAULT_BUFFER_FOR_PLAYBACK_AFTER_REBUFFER_MS)
+                        .setPrioritizeTimeOverSizeThresholds(true)
+                        .createDefaultLoadControl())
+                .build();
+
+
+        // 预览视频静音
+        mSimpleExoPlayer.setVolume(0f);
+        this.mCallback = callback;
+
+        mSimpleExoPlayer.setRepeatMode(Player.REPEAT_MODE_ALL);
+        mSimpleExoPlayer.addListener(new Player.EventListener() {
+
+            @SuppressWarnings("all")
+            @Override
+            public void onPlayerError(@NonNull ExoPlaybackException error) {
+                if (error.type == ExoPlaybackException.TYPE_SOURCE) {
+                    IOException cause = error.getSourceException();
+                    if (cause instanceof HttpDataSource.HttpDataSourceException) {
+                        // An HTTP error occurred.
+                        HttpDataSource.HttpDataSourceException httpError = (HttpDataSource.HttpDataSourceException) cause;
+                        // This is the request for which the error occurred.
+                        DataSpec requestDataSpec = httpError.dataSpec;
+                        // It's possible to find out more about the error both by casting and by
+                        // querying the cause.
+                        if (httpError instanceof HttpDataSource.InvalidResponseCodeException) {
+                            // Cast to InvalidResponseCodeException and retrieve the response code,
+                            // message and headers.
+                        } else {
+                            // Try calling httpError.getCause() to retrieve the underlying cause,
+                            // although note that it may be null.
+                        }
+                        // 当前是网络错误，就一直无限轮询请求
+//                        simpleExoPlayer.retry();
+                    }
+                    mSimpleExoPlayer.retry();
+                }
+            }
+
+            @Override
+            public void onIsPlayingChanged(boolean isPlaying) {
+                if (mCallback != null) {
+                    mCallback.onIsPlayingChanged(isPlaying);
+                }
+            }
+
+        });
+    }
+
     /**
      * 初始化一个播放器
      */
@@ -76,6 +145,7 @@ public class ExoManager {
                 .build();
 
         mSimpleExoPlayer.setVideoSurfaceView(surfaceView);
+
         // 预览视频静音
         mSimpleExoPlayer.setVolume(0f);
         this.mCallback = callback;
