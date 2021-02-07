@@ -112,9 +112,9 @@ public class ShowActivity extends AppCompatActivity {
                     @Override
                     public void onScrollStart(@NonNull RecyclerView.ViewHolder currentItemHolder, int adapterPosition) {
                         // 视频暂停！
-                        ExoManager.getInstance().setPlayOrPause(false);
-                        // ImageView展示出来
-                        ((BaseViewHolder) currentItemHolder).getView(R.id.iv_video_list_bg).setVisibility(VISIBLE);
+                        ExoManager.getInstance().setPlayWhenReady(false);
+                        VrSyncPlayInfo.obtain().restoreVideoInfo();
+                        closeTimer(null);
                     }
                 });
 
@@ -125,7 +125,6 @@ public class ShowActivity extends AppCompatActivity {
                     }
 
                     int realPosition = scrollAdapter.getRealPosition(adapterPosition);
-                    Log.e("MyLog", " realPosition >>> " + realPosition);
 
                     postVideoBackgroundUrl(
                             ConfigManager.getInstance().getDefaultUrl()
@@ -135,22 +134,29 @@ public class ShowActivity extends AppCompatActivity {
                     if (viewHolder instanceof BaseViewHolder) {
                         mMyRunnable.setView(((BaseViewHolder) viewHolder).getView(R.id.iv_video_list_bg));
                         ExoManager.getInstance().init(getApplicationContext(), isPlaying -> {
-                            Log.d("MyLog", " onIsPlayingChanged isPlaying >>> " + isPlaying);
+                            Log.e("MyLog", " isPlaying >>> " + isPlaying);
+                            mBackgroundAnimationRelativeLayout.removeCallbacks(mMyRunnable);
                             if (isPlaying) {
                                 // 加载视频，开始播放3秒后，隐藏图片
-                                mBackgroundAnimationRelativeLayout.removeCallbacks(mMyRunnable);
                                 mBackgroundAnimationRelativeLayout.postDelayed(mMyRunnable, 3000);
+                            } else {
+                                View view = mMyRunnable.getView();
+                                if (view != null) {
+                                    view.setVisibility(VISIBLE);
+                                }
                             }
                         });
                         ExoManager.getInstance().setTextureView(((BaseViewHolder) viewHolder).getView(R.id.texture_view_item));
                         ExoManager.getInstance().prepareSource(getApplicationContext(),
                                 ConfigManager.getInstance().getDefaultUrl()
                                         + videoContentLists.get(realPosition).getMenuVideoUrl());
-                        ExoManager.getInstance().setPlayOrPause(true);
+                        ExoManager.getInstance().setPlayWhenReady(true);
                     }
                 });
 
-                mAdapter.setCallback(adapterPosition -> {
+                mAdapter.setOnClickCallback(adapterPosition -> {
+
+                    ExoManager.getInstance().setPlayWhenReady(false);
 
                     currentPos = adapterPosition;
 
@@ -269,6 +275,8 @@ public class ShowActivity extends AppCompatActivity {
     }
 
     private void startSyncMediaPlayActivity() {
+        ExoManager.getInstance().setPlayWhenReady(false);
+
         Intent intent = new Intent(this, RtrMediaPlayActivity.class);
         intent.putExtra(MediaPlayActivity.MEDIA_FROM_TAG, VrSyncPlayInfo.obtain().getTag());
         intent.putExtra(MediaPlayActivity.MEDIA_CATEGORY_TAG, VrSyncPlayInfo.obtain().getCategory());
@@ -334,6 +342,9 @@ public class ShowActivity extends AppCompatActivity {
             VrSyncPlayInfo.obtain().restoreVideoInfo();
             closeTimer(null);
         }
+
+        ExoManager.getInstance().setPlayWhenReady(true);
+
         super.onActivityResult(requestCode, resultCode, data);
     }
 
@@ -379,6 +390,10 @@ public class ShowActivity extends AppCompatActivity {
         private View mView;
 
         public MyRunnable() {
+        }
+
+        public View getView() {
+            return mView;
         }
 
         public void setView(View view) {

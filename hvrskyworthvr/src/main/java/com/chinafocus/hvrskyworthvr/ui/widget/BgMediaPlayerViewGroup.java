@@ -72,7 +72,7 @@ public class BgMediaPlayerViewGroup extends FrameLayout {
 
     public void onConnect(boolean isConnected) {
         this.mIsConnected = isConnected;
-        ExoManager.getInstance().setPlayOrPause(!isConnected);
+        ExoManager.getInstance().setPlayWhenReady(!isConnected);
     }
 
     private void handleMenuVideoUrl(String videoUrl) {
@@ -87,7 +87,7 @@ public class BgMediaPlayerViewGroup extends FrameLayout {
             }
         });
         ExoManager.getInstance().prepareSource(getContext(), videoUrl);
-        ExoManager.getInstance().setPlayOrPause(!mIsConnected);
+        ExoManager.getInstance().setPlayWhenReady(!mIsConnected);
     }
 
     private static class MyRunnable implements Runnable {

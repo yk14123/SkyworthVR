@@ -24,7 +24,7 @@ public class ShowRtrVideoListViewAdapter extends RecyclerView.Adapter<BaseViewHo
 
     private Callback mCallback;
 
-    public void setCallback(Callback callback) {
+    public void setOnClickCallback(Callback callback) {
         mCallback = callback;
     }
 

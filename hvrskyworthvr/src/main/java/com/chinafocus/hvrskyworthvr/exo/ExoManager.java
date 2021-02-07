@@ -207,7 +207,7 @@ public class ExoManager {
         }
     }
 
-    public void setPlayOrPause(boolean b) {
+    public void setPlayWhenReady(boolean b) {
         if (mSimpleExoPlayer != null) {
             mSimpleExoPlayer.setPlayWhenReady(b);
         }
