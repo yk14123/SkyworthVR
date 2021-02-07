@@ -24,6 +24,7 @@ import com.chinafocus.hvrskyworthvr.net.ImageProcess;
 import com.chinafocus.hvrskyworthvr.rtr.adapter.ShowRtrVideoListViewAdapter;
 import com.chinafocus.hvrskyworthvr.rtr.dialog.RtrVrModeMainDialog;
 import com.chinafocus.hvrskyworthvr.rtr.media.RtrMediaPlayActivity;
+import com.chinafocus.hvrskyworthvr.rtr.mine.MineActivity;
 import com.chinafocus.hvrskyworthvr.rtr.videolist.sub.RtrVideoSubViewModel;
 import com.chinafocus.hvrskyworthvr.service.BluetoothService;
 import com.chinafocus.hvrskyworthvr.service.event.VrCancelTimeTask;
@@ -36,6 +37,7 @@ import com.chinafocus.hvrskyworthvr.ui.main.media.MediaPlayActivity;
 import com.chinafocus.hvrskyworthvr.ui.widget.BackgroundAnimationRelativeLayout;
 import com.chinafocus.hvrskyworthvr.ui.widget.transformer.MyCenterScaleTransformer;
 import com.chinafocus.hvrskyworthvr.ui.widget.transformer.MyScrollStateChangeListener;
+import com.chinafocus.hvrskyworthvr.util.TimeOutClickUtil;
 import com.chinafocus.hvrskyworthvr.util.statusbar.StatusBarCompatFactory;
 import com.yarolegovich.discretescrollview.DSVOrientation;
 import com.yarolegovich.discretescrollview.DiscreteScrollView;
@@ -95,6 +97,8 @@ public class ShowActivity extends AppCompatActivity {
         mViewModel = new ViewModelProvider(this).get(RtrVideoSubViewModel.class);
         // TODO: Use the ViewModel
         mViewModel.getVideoContentList();
+
+        findViewById(R.id.iv_mine_about).setOnClickListener(v -> TimeOutClickUtil.getDefault().startTimeOutClick(() -> startActivity(new Intent(ShowActivity.this, MineActivity.class))));
 
         mDiscreteScrollView = findViewById(R.id.rv_main_hot_cover);
         mBackgroundAnimationRelativeLayout = findViewById(R.id.view_background_change_animation);
@@ -156,8 +160,6 @@ public class ShowActivity extends AppCompatActivity {
 
                 mAdapter.setOnClickCallback(adapterPosition -> {
 
-                    ExoManager.getInstance().setPlayWhenReady(false);
-
                     currentPos = adapterPosition;
 
                     int realPosition = scrollAdapter.getRealPosition(adapterPosition);
@@ -212,11 +214,13 @@ public class ShowActivity extends AppCompatActivity {
         }
         Constants.ACTIVITY_TAG = Constants.ACTIVITY_MAIN;
 
+        ExoManager.getInstance().setPlayWhenReady(true);
     }
 
     @Override
     protected void onPause() {
         super.onPause();
+        ExoManager.getInstance().setPlayWhenReady(false);
     }
 
     /**
@@ -275,8 +279,6 @@ public class ShowActivity extends AppCompatActivity {
     }
 
     private void startSyncMediaPlayActivity() {
-        ExoManager.getInstance().setPlayWhenReady(false);
-
         Intent intent = new Intent(this, RtrMediaPlayActivity.class);
         intent.putExtra(MediaPlayActivity.MEDIA_FROM_TAG, VrSyncPlayInfo.obtain().getTag());
         intent.putExtra(MediaPlayActivity.MEDIA_CATEGORY_TAG, VrSyncPlayInfo.obtain().getCategory());
@@ -342,9 +344,6 @@ public class ShowActivity extends AppCompatActivity {
             VrSyncPlayInfo.obtain().restoreVideoInfo();
             closeTimer(null);
         }
-
-        ExoManager.getInstance().setPlayWhenReady(true);
-
         super.onActivityResult(requestCode, resultCode, data);
     }
 

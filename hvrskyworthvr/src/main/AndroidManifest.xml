@@ -22,6 +22,7 @@
         tools:targetApi="m">
         <activity
             android:name=".rtr.show.ShowActivity"
+            android:launchMode="singleTask"
             android:screenOrientation="landscape"
             android:theme="@style/AppTheme" />
         <activity

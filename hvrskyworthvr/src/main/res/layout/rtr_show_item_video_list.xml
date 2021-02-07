@@ -3,11 +3,12 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="250dp"
-    android:layout_height="165dp">
+    android:layout_height="wrap_content">
 
     <androidx.cardview.widget.CardView
         android:layout_width="250dp"
         android:layout_height="140dp"
+        android:layout_marginBottom="8dp"
         app:cardCornerRadius="8dp"
         app:cardElevation="0dp"
         app:layout_constraintBottom_toTopOf="@+id/tv_video_list_title"
@@ -33,9 +34,10 @@
     <androidx.appcompat.widget.AppCompatTextView
         android:id="@+id/tv_video_list_title"
         android:layout_width="235dp"
-        android:layout_height="25dp"
+        android:layout_height="wrap_content"
         android:ellipsize="end"
-        android:gravity="center"
+        android:gravity="center_horizontal"
+        android:includeFontPadding="false"
         android:maxLines="1"
         android:textColor="@color/color_white"
         android:textSize="16sp"
