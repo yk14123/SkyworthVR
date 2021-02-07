@@ -55,8 +55,6 @@ import io.reactivex.disposables.Disposable;
 import io.reactivex.schedulers.Schedulers;
 import jp.wasabeef.glide.transformations.CropTransformation;
 
-import static android.view.View.INVISIBLE;
-import static android.view.View.VISIBLE;
 import static com.bumptech.glide.request.RequestOptions.bitmapTransform;
 import static com.chinafocus.hvrskyworthvr.global.Constants.REQUEST_CODE_PAD_MEDIA_ACTIVITY;
 import static com.chinafocus.hvrskyworthvr.global.Constants.REQUEST_CODE_VR_MEDIA_ACTIVITY;
@@ -141,12 +139,12 @@ public class ShowActivity extends AppCompatActivity {
                             Log.e("MyLog", " isPlaying >>> " + isPlaying);
                             mBackgroundAnimationRelativeLayout.removeCallbacks(mMyRunnable);
                             if (isPlaying) {
-                                // 加载视频，开始播放3秒后，隐藏图片
-                                mBackgroundAnimationRelativeLayout.postDelayed(mMyRunnable, 3000);
+                                // 加载视频，开始播放1.5秒后，隐藏图片
+                                mBackgroundAnimationRelativeLayout.postDelayed(mMyRunnable, 1500);
                             } else {
                                 View view = mMyRunnable.getView();
                                 if (view != null) {
-                                    view.setVisibility(VISIBLE);
+                                    view.animate().alpha(1.f).setDuration(300).start();
                                 }
                             }
                         });
@@ -401,7 +399,8 @@ public class ShowActivity extends AppCompatActivity {
 
         @Override
         public void run() {
-            mView.setVisibility(INVISIBLE);
+            // 加动画溶解
+            mView.animate().alpha(0.f).setDuration(300).start();
         }
     }
 
