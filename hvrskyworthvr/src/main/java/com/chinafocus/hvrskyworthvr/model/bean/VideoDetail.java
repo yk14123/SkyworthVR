@@ -36,6 +36,15 @@ public class VideoDetail {
     private String updateTime;
     private int id;
     private int nextId;
+    private int nextType;
+
+    public int getNextType() {
+        return nextType;
+    }
+
+    public void setNextType(int nextType) {
+        this.nextType = nextType;
+    }
 
     public String getImgUrl() {
         return imgUrl;

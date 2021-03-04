@@ -84,8 +84,6 @@ public class ShowActivity extends AppCompatActivity {
     private RtrVrModeMainDialog vrModeMainDialog;
     private DiscreteScrollView mDiscreteScrollView;
 
-    private int currentPos;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -157,8 +155,6 @@ public class ShowActivity extends AppCompatActivity {
                 });
 
                 mAdapter.setOnClickCallback(adapterPosition -> {
-
-                    currentPos = adapterPosition;
 
                     int realPosition = scrollAdapter.getRealPosition(adapterPosition);
 
@@ -337,11 +333,18 @@ public class ShowActivity extends AppCompatActivity {
             showVrModeMainDialog();
             closeTimer(null);
         } else if (resultCode == RESULT_CODE_SELF_INACTIVE_DIALOG) {
-            // 修复RecyclerView位置
-            mDiscreteScrollView.scrollToPosition(currentPos);
             VrSyncPlayInfo.obtain().restoreVideoInfo();
             closeTimer(null);
         }
+        // 修复RecyclerView位置
+        if (data != null) {
+            int currentVideoId = data.getIntExtra("currentVideoId", Integer.MAX_VALUE / 2);
+            if (mAdapter != null) {
+                int crease = mAdapter.calculatePositionFromVideoId(currentVideoId);
+                mDiscreteScrollView.scrollToPosition(Integer.MAX_VALUE / 2 + crease);
+            }
+        }
+
         super.onActivityResult(requestCode, resultCode, data);
     }
 

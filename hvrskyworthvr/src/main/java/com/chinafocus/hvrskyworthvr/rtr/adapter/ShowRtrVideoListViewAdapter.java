@@ -61,6 +61,23 @@ public class ShowRtrVideoListViewAdapter extends RecyclerView.Adapter<BaseViewHo
         return mVideoContentLists == null ? 0 : mVideoContentLists.size();
     }
 
+    /**
+     * 通过当前播放视频videoId，来返回videoId位置
+     *
+     * @param currentVideoId 退出播放页面后的videoId
+     * @return videoId在list中的位置
+     */
+    public int calculatePositionFromVideoId(int currentVideoId) {
+        if (mVideoContentLists != null) {
+            for (int i = 0; i < mVideoContentLists.size(); i++) {
+                if (mVideoContentLists.get(i).getId() == currentVideoId) {
+                    return i;
+                }
+            }
+        }
+        return 0;
+    }
+
     public interface Callback {
         void onClick(int pos);
     }
