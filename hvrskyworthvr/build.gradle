@@ -89,7 +89,7 @@ dependencies {
     // rxbinding
     implementation 'com.jakewharton.rxbinding2:rxbinding:2.1.1'
     // 腾讯x5游览器
-    implementation 'com.tencent.tbs.tbssdk:sdk:43697'
+    implementation 'com.tencent.tbs.tbssdk:sdk:43939'
     // 网络模块
     implementation project(path: ':lib_network')
     // 蓝牙通讯模块
