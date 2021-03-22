@@ -2,7 +2,9 @@ package com.chinafocus.hvrskyworthvr.ui.splash;
 
 import android.annotation.SuppressLint;
 import android.content.Intent;
+import android.location.LocationManager;
 import android.os.Bundle;
+import android.provider.Settings;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -29,21 +31,31 @@ public class SplashActivity extends AppCompatActivity {
         StatusBarCompatFactory.getInstance().setStatusBarImmerse(this, false);
         setContentView(R.layout.activity_splash);
 
-        PermissionUtils.permission(
-                PermissionConstants.STORAGE,
-                PermissionConstants.PHONE,
-                PermissionConstants.LOCATION).callback(new PermissionUtils.SimpleCallback() {
-            @Override
-            public void onGranted() {
-                delayStartLoginActivity();
-            }
+        LocationManager lm = (LocationManager) this.getSystemService(LOCATION_SERVICE);
+        boolean ok = lm.isProviderEnabled(LocationManager.GPS_PROVIDER);
+        if (!ok) {//开了定位服务
 
-            @Override
-            public void onDenied() {
-                finish();
-                Toast.makeText(SplashActivity.this, "权限请求失败", Toast.LENGTH_SHORT).show();
-            }
-        }).request();
+            Intent intent = new Intent();
+            intent.setAction(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
+            startActivityForResult(intent, 123);
+
+        } else {
+            PermissionUtils.permission(
+                    PermissionConstants.STORAGE,
+                    PermissionConstants.PHONE,
+                    PermissionConstants.LOCATION).callback(new PermissionUtils.SimpleCallback() {
+                @Override
+                public void onGranted() {
+                    delayStartLoginActivity();
+                }
+
+                @Override
+                public void onDenied() {
+                    finish();
+                    Toast.makeText(SplashActivity.this, "权限请求失败", Toast.LENGTH_SHORT).show();
+                }
+            }).request();
+        }
 
     }
 
