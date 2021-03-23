@@ -22,7 +22,7 @@ import com.chinafocus.hvrskyworthvr.service.event.VrMainDisConnect;
 import com.chinafocus.hvrskyworthvr.service.event.VrMainSyncMediaInfo;
 import com.chinafocus.hvrskyworthvr.service.event.VrSyncPlayInfo;
 import com.chinafocus.hvrskyworthvr.ui.widget.BgMediaPlayerViewGroup;
-import com.chinafocus.hvrskyworthvr.ui.widget.ScaleTransitionPagerTitleView;
+import com.chinafocus.hvrskyworthvr.ui.widget.GradientScaleStarPagerTitleView;
 import com.chinafocus.hvrskyworthvr.util.ViewClickUtil;
 import com.chinafocus.hvrskyworthvr.util.statusbar.StatusBarCompatFactory;
 import com.chinafocus.hvrskyworthvr.util.widget.BaseFragmentStateAdapter;
@@ -82,12 +82,12 @@ public class RtrMainActivity extends AppCompatActivity {
 
         mFragments = new ArrayList<>();
 
-//        String[] strings = {"全景出版", "全景视频"};
-        String[] strings = {};
-//        for (int i = 0; i < strings.length; i++) {
-        RtrVideoFragment videoListFragment = RtrVideoFragment.newInstance();
-        mFragments.add(videoListFragment);
-//        }
+        String[] strings = {"文学经典", "传统文化", "爱国教育", "自然博物"};
+//        String[] strings = {};
+        for (int i = 0; i < strings.length; i++) {
+            RtrVideoFragment videoListFragment = RtrVideoFragment.newInstance();
+            mFragments.add(videoListFragment);
+        }
 
         CommonNavigator commonNavigator = new CommonNavigator(this);
         commonNavigator.setAdjustMode(false);
@@ -100,14 +100,13 @@ public class RtrMainActivity extends AppCompatActivity {
 
             @Override
             public IPagerTitleView getTitleView(Context context, final int index) {
-                ScaleTransitionPagerTitleView scaleTitleView = new ScaleTransitionPagerTitleView(context);
+                GradientScaleStarPagerTitleView scaleTitleView = new GradientScaleStarPagerTitleView(context);
                 scaleTitleView.setTextSize(23);
                 scaleTitleView.setMinScale(0.7f);
-                scaleTitleView.setNormalColor(getResources().getColor(R.color.color_white_a60));
-                scaleTitleView.setSelectedColor(getResources().getColor(R.color.color_white));
                 scaleTitleView.setText(strings[index]);
                 scaleTitleView.setOnClickListener(view
                         -> viewPagerVideoList.setCurrentItem(index, false));
+
                 return scaleTitleView;
             }
 

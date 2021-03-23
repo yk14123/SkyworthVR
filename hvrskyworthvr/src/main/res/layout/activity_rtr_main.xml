@@ -27,21 +27,32 @@
     <net.lucode.hackware.magicindicator.MagicIndicator
         android:id="@+id/magic_Indicator"
         android:layout_width="0dp"
-        android:layout_height="54dp"
+        android:layout_height="wrap_content"
         android:layout_marginStart="38dp"
+        android:layout_marginEnd="54dp"
         app:layout_constraintBottom_toBottomOf="@+id/iv_mine_about"
-        app:layout_constraintEnd_toStartOf="@+id/iv_mine_about"
-        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/view_main_divider"
         app:layout_constraintTop_toTopOf="@+id/iv_mine_about" />
 
     <androidx.appcompat.widget.AppCompatImageView
         android:id="@+id/iv_mine_about"
-        android:layout_width="72dp"
-        android:layout_height="72dp"
-        android:layout_marginTop="10dp"
-        android:padding="20dp"
-        android:src="@drawable/sky_worth_main_logo_rtr"
-        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_width="92dp"
+        android:layout_height="26dp"
+        android:layout_marginStart="54dp"
+        android:layout_marginTop="42dp"
+        android:src="@drawable/rtr_main_logo"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
+
+    <View
+        android:id="@+id/view_main_divider"
+        android:layout_width="0.5dp"
+        android:layout_height="16dp"
+        android:layout_marginStart="24dp"
+        android:background="@color/color_white"
+        app:layout_constraintBottom_toBottomOf="@+id/iv_mine_about"
+        app:layout_constraintStart_toEndOf="@+id/iv_mine_about"
+        app:layout_constraintTop_toTopOf="@+id/iv_mine_about" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
