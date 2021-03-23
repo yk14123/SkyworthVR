@@ -15,8 +15,8 @@ import androidx.lifecycle.ViewModelProvider;
 import com.chinafocus.huaweimdm.MdmMainActivity;
 import com.chinafocus.hvrskyworthvr.R;
 import com.chinafocus.hvrskyworthvr.global.ConfigManager;
+import com.chinafocus.hvrskyworthvr.global.Constants;
 import com.chinafocus.hvrskyworthvr.model.DeviceInfoManager;
-import com.chinafocus.hvrskyworthvr.net.ApiMultiService;
 import com.chinafocus.hvrskyworthvr.ui.setting.SettingActivity;
 import com.chinafocus.hvrskyworthvr.util.TimeOutClickUtil;
 import com.chinafocus.hvrskyworthvr.util.ViewClickUtil;
@@ -52,7 +52,7 @@ public class AboutFragment extends Fragment {
                 () -> WebAboutActivity.startWebAboutActivity(
                         requireActivity(),
                         getString(R.string.about_user_protocol),
-                        ConfigManager.getInstance().getDefaultUrl() + ApiMultiService.ABOUT_USER_PROTOCOL)
+                        ConfigManager.getInstance().getDefaultUrl() + Constants.ABOUT_USER_PROTOCOL)
         );
 
         ViewClickUtil.click(
@@ -60,7 +60,7 @@ public class AboutFragment extends Fragment {
                 () -> WebAboutActivity.startWebAboutActivity(
                         requireActivity(),
                         getString(R.string.about_privacy_protocol),
-                        ConfigManager.getInstance().getDefaultUrl() + ApiMultiService.ABOUT_PRIVACY_PROTOCOL)
+                        ConfigManager.getInstance().getDefaultUrl() + Constants.ABOUT_PRIVACY_PROTOCOL)
         );
 
         ViewClickUtil.click(
@@ -68,7 +68,7 @@ public class AboutFragment extends Fragment {
                 () -> WebAboutActivity.startWebAboutActivity(
                         requireActivity(),
                         getString(R.string.about_us_protocol),
-                        ConfigManager.getInstance().getDefaultUrl() + ApiMultiService.ABOUT_US_PROTOCOL)
+                        ConfigManager.getInstance().getDefaultUrl() + Constants.ABOUT_US_PROTOCOL)
         );
 
     }

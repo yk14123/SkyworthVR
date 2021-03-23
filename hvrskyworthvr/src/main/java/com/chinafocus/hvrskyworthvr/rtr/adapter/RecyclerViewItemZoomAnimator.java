@@ -1,4 +1,4 @@
-package com.chinafocus.hvrskyworthvr.util;
+package com.chinafocus.hvrskyworthvr.rtr.adapter;
 
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
@@ -7,27 +7,14 @@ import android.animation.ValueAnimator;
 import android.view.View;
 import android.view.animation.LinearInterpolator;
 
-public class ObjectAnimatorViewUtil {
+public class RecyclerViewItemZoomAnimator implements OnRecyclerViewItemClickAnimator {
 
     private final ObjectAnimator mZoomInObjectAnimator;
     private final ObjectAnimator mZoomOutObjectAnimator;
     private final ZoomInAnimationListener mZoomInAnimationListener;
     private final ZoomOutAnimationListener mZoomOutAnimationListener;
 
-    private static ObjectAnimatorViewUtil instance;
-
-    public static ObjectAnimatorViewUtil getInstance() {
-        if (instance == null) {
-            synchronized (ObjectAnimatorViewUtil.class) {
-                if (instance == null) {
-                    instance = new ObjectAnimatorViewUtil();
-                }
-            }
-        }
-        return instance;
-    }
-
-    private ObjectAnimatorViewUtil() {
+    public RecyclerViewItemZoomAnimator() {
         mZoomInAnimationListener = new ZoomInAnimationListener();
         mZoomOutAnimationListener = new ZoomOutAnimationListener();
 
@@ -58,32 +45,36 @@ public class ObjectAnimatorViewUtil {
         });
     }
 
+    @Override
     public void startIn(View v) {
         mZoomInObjectAnimator.addUpdateListener(mZoomInAnimationListener);
         mZoomInAnimationListener.setView(v);
         mZoomInObjectAnimator.start();
     }
 
+    @Override
     public void startOut(View v) {
         mZoomOutObjectAnimator.addUpdateListener(mZoomOutAnimationListener);
         mZoomOutAnimationListener.setView(v);
         mZoomOutObjectAnimator.start();
     }
 
-    public void showZoomInImmediately(View view) {
+    @Override
+    public void showInImmediately(View view) {
         view.setScaleX(1.14f);
         view.setScaleY(1.14f);
         float v1 = view.getHeight() * 0.07f;
         view.setTranslationY(-v1);
     }
 
-    public void showZoomOutImmediately(View view) {
+    @Override
+    public void showOutImmediately(View view) {
         view.setScaleX(1.f);
         view.setScaleY(1.f);
         view.setTranslationY(0);
     }
 
-
+    @Override
     public boolean isRunning() {
         return mZoomInObjectAnimator.isRunning() || mZoomOutObjectAnimator.isRunning();
     }

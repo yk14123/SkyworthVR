@@ -16,7 +16,6 @@ import com.chinafocus.hvrskyworthvr.net.ImageProcess;
 import com.chinafocus.hvrskyworthvr.service.event.VrCancelTimeTask;
 import com.chinafocus.hvrskyworthvr.service.event.VrSyncPlayInfo;
 import com.chinafocus.hvrskyworthvr.ui.adapter.BaseViewHolder;
-import com.chinafocus.hvrskyworthvr.util.ObjectAnimatorViewUtil;
 import com.chinafocus.hvrskyworthvr.util.TimeUtil;
 
 import org.greenrobot.eventbus.EventBus;
@@ -33,6 +32,12 @@ public class RtrVideoListViewAdapter extends RecyclerView.Adapter<BaseViewHolder
         mVideoContentLists = videoContentLists;
     }
 
+    private OnRecyclerViewItemClickAnimator mOnRecyclerViewItemClickAnimator;
+
+    public void setOnRecyclerViewItemClickAnimator(OnRecyclerViewItemClickAnimator onRecyclerViewItemClickAnimator) {
+        mOnRecyclerViewItemClickAnimator = onRecyclerViewItemClickAnimator;
+    }
+
     @NonNull
     @Override
     public BaseViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
@@ -41,7 +46,7 @@ public class RtrVideoListViewAdapter extends RecyclerView.Adapter<BaseViewHolder
 
         baseViewHolder.itemView.setOnClickListener(v -> {
 
-            if (ObjectAnimatorViewUtil.getInstance().isRunning()) {
+            if (mOnRecyclerViewItemClickAnimator != null && mOnRecyclerViewItemClickAnimator.isRunning()) {
                 return;
             }
 
@@ -55,11 +60,17 @@ public class RtrVideoListViewAdapter extends RecyclerView.Adapter<BaseViewHolder
                 BaseViewHolder viewHolderForAdapterPositionOut = (BaseViewHolder) ((RecyclerView) parent).findViewHolderForAdapterPosition(currentPos);
                 if (viewHolderForAdapterPositionOut != null) {
                     // 旧的View startOut
-                    ObjectAnimatorViewUtil.getInstance().startOut(viewHolderForAdapterPositionOut.itemView);
+                    hidePreView(viewHolderForAdapterPositionOut.itemView);
+                    if (mOnRecyclerViewItemClickAnimator != null) {
+                        mOnRecyclerViewItemClickAnimator.startOut(viewHolderForAdapterPositionOut.itemView);
+                    }
                 }
                 currentPos = temp;
                 // 新View startIn
-                ObjectAnimatorViewUtil.getInstance().startIn(v);
+                if (mOnRecyclerViewItemClickAnimator != null) {
+                    mOnRecyclerViewItemClickAnimator.startIn(v);
+                }
+                showPreView(v);
                 // 改变内容和背景图
                 if (mVideoInfoCallback != null && mVideoContentLists != null) {
                     mVideoInfoCallback.postVideoContent(mVideoContentLists.get(currentPos), currentPos, mVideoContentLists.size());
@@ -81,10 +92,24 @@ public class RtrVideoListViewAdapter extends RecyclerView.Adapter<BaseViewHolder
         super.onViewAttachedToWindow(holder);
         BaseViewHolder baseHolder = (BaseViewHolder) ((RecyclerView) holder.itemView.getParent()).findViewHolderForAdapterPosition(currentPos);
         if (baseHolder == holder) {
-            ObjectAnimatorViewUtil.getInstance().showZoomInImmediately(holder.itemView);
+            if (mOnRecyclerViewItemClickAnimator != null) {
+                mOnRecyclerViewItemClickAnimator.showInImmediately(holder.itemView);
+            }
+            showPreView(holder.itemView);
         } else {
-            ObjectAnimatorViewUtil.getInstance().showZoomOutImmediately(holder.itemView);
+            if (mOnRecyclerViewItemClickAnimator != null) {
+                mOnRecyclerViewItemClickAnimator.showOutImmediately(holder.itemView);
+            }
+            hidePreView(holder.itemView);
         }
+    }
+
+    private void hidePreView(View view) {
+        view.findViewById(R.id.group_video_item_play).setVisibility(View.GONE);
+    }
+
+    private void showPreView(View view) {
+        view.findViewById(R.id.group_video_item_play).setVisibility(View.VISIBLE);
     }
 
     @Override
@@ -106,7 +131,10 @@ public class RtrVideoListViewAdapter extends RecyclerView.Adapter<BaseViewHolder
             currentPos = pos;
             if (pos >= 0) {
                 if (holder != null) {
-                    ObjectAnimatorViewUtil.getInstance().showZoomInImmediately(holder.itemView);
+                    if (mOnRecyclerViewItemClickAnimator != null) {
+                        mOnRecyclerViewItemClickAnimator.showInImmediately(holder.itemView);
+                    }
+                    showPreView(holder.itemView);
                     if (mVideoInfoCallback != null && mVideoContentLists != null) {
                         mVideoInfoCallback.postVideoContent(mVideoContentLists.get(currentPos), currentPos, mVideoContentLists.size());
 
@@ -119,7 +147,10 @@ public class RtrVideoListViewAdapter extends RecyclerView.Adapter<BaseViewHolder
                 }
             } else {
                 if (holder != null) {
-                    ObjectAnimatorViewUtil.getInstance().showZoomOutImmediately(holder.itemView);
+                    if (mOnRecyclerViewItemClickAnimator != null) {
+                        mOnRecyclerViewItemClickAnimator.showOutImmediately(holder.itemView);
+                    }
+                    hidePreView(holder.itemView);
                 }
             }
         }
@@ -152,6 +183,5 @@ public class RtrVideoListViewAdapter extends RecyclerView.Adapter<BaseViewHolder
     public interface VideoInfoCallback {
         void postVideoContent(VideoContentList contentList, int pos, int total);
     }
-
 
 }

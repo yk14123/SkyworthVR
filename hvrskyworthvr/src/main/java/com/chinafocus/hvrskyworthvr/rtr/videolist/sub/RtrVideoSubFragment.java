@@ -13,6 +13,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.chinafocus.hvrskyworthvr.R;
+import com.chinafocus.hvrskyworthvr.rtr.adapter.RecyclerViewItemUpAnimator;
 import com.chinafocus.hvrskyworthvr.rtr.adapter.RtrVideoListViewAdapter;
 import com.chinafocus.hvrskyworthvr.rtr.main.RtrMainActivity;
 import com.chinafocus.hvrskyworthvr.ui.adapter.BaseViewHolder;
@@ -28,8 +29,14 @@ public class RtrVideoSubFragment extends Fragment {
     private RtrVideoListViewAdapter mAdapter;
     private RecyclerView mRecyclerView;
 
-    public static RtrVideoSubFragment newInstance() {
-        return new RtrVideoSubFragment();
+    private static final String VIDEO_LIST_CATEGORY = "video_list_category";
+
+    public static RtrVideoSubFragment newInstance(String category) {
+        RtrVideoSubFragment rtrVideoSubFragment = new RtrVideoSubFragment();
+        Bundle bundle = new Bundle();
+        bundle.putString(VIDEO_LIST_CATEGORY, category);
+        rtrVideoSubFragment.setArguments(bundle);
+        return rtrVideoSubFragment;
     }
 
     @Override
@@ -41,31 +48,37 @@ public class RtrVideoSubFragment extends Fragment {
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        mViewModel = new ViewModelProvider(this).get(RtrVideoSubViewModel.class);
-        // TODO: Use the ViewModel
-        mViewModel.getVideoContentList();
 
-        VideoInfoViewGroup videoInfoViewGroup = requireView().findViewById(R.id.view_video_info);
+        Bundle arguments = getArguments();
+        if (arguments != null) {
+            String category = arguments.getString(VIDEO_LIST_CATEGORY);
 
-        mRecyclerView = requireView().findViewById(R.id.vp_video_list_detail);
-        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(requireContext(), HORIZONTAL, false);
-        // 当页面退出的时候 调用onViewDetachedFromWindow
+            mViewModel = new ViewModelProvider(this).get(RtrVideoSubViewModel.class);
+            mViewModel.getVideoContentList(category);
+
+            VideoInfoViewGroup videoInfoViewGroup = requireView().findViewById(R.id.view_video_info);
+
+            mRecyclerView = requireView().findViewById(R.id.vp_video_list_detail);
+            LinearLayoutManager linearLayoutManager = new LinearLayoutManager(requireContext(), HORIZONTAL, false);
+            // 当页面退出的时候 调用onViewDetachedFromWindow
 //        linearLayoutManager.setRecycleChildrenOnDetach(true);
-        mRecyclerView.setLayoutManager(linearLayoutManager);
-        mViewModel.videoDataMutableLiveData.observe(getViewLifecycleOwner(), videoContentLists -> {
-            if (mAdapter == null) {
-                mAdapter = new RtrVideoListViewAdapter(videoContentLists);
-                mAdapter.setVideoInfoCallback(videoInfoViewGroup::postVideoContentInfo);
-                mAdapter.setBgAndMenuVideoUrlCallback((bg, videoUrl) -> ((RtrMainActivity) Objects.requireNonNull(getActivity())).postVideoBgAndMenuVideoUrl(bg, videoUrl));
-                mRecyclerView.setAdapter(mAdapter);
-            }
-            mRecyclerView.post(() -> {
-                BaseViewHolder holder = (BaseViewHolder) mRecyclerView.findViewHolderForAdapterPosition(0);
-                mAdapter.selectedItem(0, holder);
+            mRecyclerView.setLayoutManager(linearLayoutManager);
+            mViewModel.videoDataMutableLiveData.observe(getViewLifecycleOwner(), videoContentLists -> {
+                if (mAdapter == null) {
+                    mAdapter = new RtrVideoListViewAdapter(videoContentLists);
+                    mAdapter.setOnRecyclerViewItemClickAnimator(new RecyclerViewItemUpAnimator());
+                    mAdapter.setVideoInfoCallback(videoInfoViewGroup::postVideoContentInfo);
+                    mAdapter.setBgAndMenuVideoUrlCallback((bg, videoUrl) -> ((RtrMainActivity) Objects.requireNonNull(getActivity())).postVideoBgAndMenuVideoUrl(bg, videoUrl));
+                    mRecyclerView.setAdapter(mAdapter);
+                }
+                mRecyclerView.post(() -> {
+                    BaseViewHolder holder = (BaseViewHolder) mRecyclerView.findViewHolderForAdapterPosition(0);
+                    mAdapter.selectedItem(0, holder);
+                });
+
             });
 
-        });
-
+        }
     }
 
     public void setItemPosition(int videoId) {

@@ -51,6 +51,7 @@
     <string name="vr_mode_linking">正在等待 VR 眼镜播放视频</string>
     <string name="mine_about">关于</string>
     <string name="mine_about_copyright_intro">中图云创 版权所有\nCopyright © 2021 ChinaFocus. All rights reserved.</string>
+    <string name="main_video_playing">正在预览</string>
 
 
 </resources>

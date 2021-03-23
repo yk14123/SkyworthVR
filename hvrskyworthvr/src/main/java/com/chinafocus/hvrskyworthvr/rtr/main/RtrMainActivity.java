@@ -7,14 +7,16 @@ import android.util.Log;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.viewpager2.widget.ViewPager2;
 
 import com.chinafocus.hvrskyworthvr.R;
 import com.chinafocus.hvrskyworthvr.global.Constants;
+import com.chinafocus.hvrskyworthvr.model.bean.VideoCategory;
 import com.chinafocus.hvrskyworthvr.rtr.dialog.RtrVrModeMainDialog;
 import com.chinafocus.hvrskyworthvr.rtr.media.RtrMediaPlayActivity;
 import com.chinafocus.hvrskyworthvr.rtr.mine.MineActivity;
-import com.chinafocus.hvrskyworthvr.rtr.videolist.RtrVideoFragment;
+import com.chinafocus.hvrskyworthvr.rtr.videolist.sub.RtrVideoSubFragment;
 import com.chinafocus.hvrskyworthvr.service.BluetoothService;
 import com.chinafocus.hvrskyworthvr.service.event.VrCancelTimeTask;
 import com.chinafocus.hvrskyworthvr.service.event.VrMainConnect;
@@ -66,7 +68,7 @@ public class RtrMainActivity extends AppCompatActivity {
 
     private Disposable mDisposable;
     private RtrVrModeMainDialog vrModeMainDialog;
-    private List<RtrVideoFragment> mFragments;
+    private List<RtrVideoSubFragment> mFragments;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -80,48 +82,52 @@ public class RtrMainActivity extends AppCompatActivity {
         ViewClickUtil.click(findViewById(R.id.iv_mine_about), () -> startActivity(new Intent(RtrMainActivity.this, MineActivity.class)));
         viewPagerVideoList.setUserInputEnabled(false);
 
-        mFragments = new ArrayList<>();
+        RtrMainViewModel mViewModel = new ViewModelProvider(this).get(RtrMainViewModel.class);
+        mViewModel.getVideoDetailData();
 
-        String[] strings = {"文学经典", "传统文化", "爱国教育", "自然博物"};
-//        String[] strings = {};
-        for (int i = 0; i < strings.length; i++) {
-            RtrVideoFragment videoListFragment = RtrVideoFragment.newInstance();
-            mFragments.add(videoListFragment);
-        }
+        mViewModel.videoDetailMutableLiveData.observe(this, videoCategories -> {
 
-        CommonNavigator commonNavigator = new CommonNavigator(this);
-        commonNavigator.setAdjustMode(false);
-        commonNavigator.setAdapter(new CommonNavigatorAdapter() {
+            CommonNavigator commonNavigator = new CommonNavigator(this);
+            commonNavigator.setAdjustMode(false);
+            commonNavigator.setAdapter(new CommonNavigatorAdapter() {
 
-            @Override
-            public int getCount() {
-                return strings.length;
+                @Override
+                public int getCount() {
+                    return videoCategories.size();
+                }
+
+                @Override
+                public IPagerTitleView getTitleView(Context context, int index) {
+                    GradientScaleStarPagerTitleView scaleTitleView = new GradientScaleStarPagerTitleView(context);
+                    scaleTitleView.setTextSize(23);
+                    scaleTitleView.setMinScale(0.7f);
+                    scaleTitleView.setText(videoCategories.get(index).getName());
+                    scaleTitleView.setOnClickListener(view
+                            -> viewPagerVideoList.setCurrentItem(index, false));
+
+                    return scaleTitleView;
+                }
+
+                @Override
+                public IPagerIndicator getIndicator(Context context) {
+                    return null;
+                }
+            });
+
+            magicIndicator.setNavigator(commonNavigator);
+
+            mFragments = new ArrayList<>();
+
+            for (VideoCategory videoCategory : videoCategories) {
+                RtrVideoSubFragment videoListFragment = RtrVideoSubFragment.newInstance(videoCategory.getId() + "");
+                mFragments.add(videoListFragment);
             }
 
-            @Override
-            public IPagerTitleView getTitleView(Context context, final int index) {
-                GradientScaleStarPagerTitleView scaleTitleView = new GradientScaleStarPagerTitleView(context);
-                scaleTitleView.setTextSize(23);
-                scaleTitleView.setMinScale(0.7f);
-                scaleTitleView.setText(strings[index]);
-                scaleTitleView.setOnClickListener(view
-                        -> viewPagerVideoList.setCurrentItem(index, false));
+            BaseFragmentStateAdapter<RtrVideoSubFragment> adapter = new BaseFragmentStateAdapter<>(this, mFragments);
+            viewPagerVideoList.setAdapter(adapter);
 
-                return scaleTitleView;
-            }
-
-            @Override
-            public IPagerIndicator getIndicator(Context context) {
-                return null;
-            }
+            ViewPager2Helper.bind(magicIndicator, viewPagerVideoList);
         });
-
-        magicIndicator.setNavigator(commonNavigator);
-
-        BaseFragmentStateAdapter<RtrVideoFragment> adapter = new BaseFragmentStateAdapter<>(this, mFragments);
-        viewPagerVideoList.setAdapter(adapter);
-
-        ViewPager2Helper.bind(magicIndicator, viewPagerVideoList);
 
     }
 
@@ -278,7 +284,7 @@ public class RtrMainActivity extends AppCompatActivity {
         } else if (resultCode == RESULT_CODE_SELF_INACTIVE_DIALOG) {
             // 修复RecyclerView位置
             mBgMediaPlayerViewGroup.onConnect(false);
-            ((RtrVideoFragment) mFragments.get(0)).setItemPosition(VrSyncPlayInfo.obtain().getVideoId());
+            ((RtrVideoSubFragment) mFragments.get(0)).setItemPosition(VrSyncPlayInfo.obtain().getVideoId());
             VrSyncPlayInfo.obtain().restoreVideoInfo();
             closeTimer(null);
         }

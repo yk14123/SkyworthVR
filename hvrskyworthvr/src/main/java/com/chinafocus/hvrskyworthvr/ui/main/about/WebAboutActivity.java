@@ -12,7 +12,6 @@ import androidx.appcompat.widget.AppCompatTextView;
 import com.chinafocus.hvrskyworthvr.R;
 import com.chinafocus.hvrskyworthvr.global.ConfigManager;
 import com.chinafocus.hvrskyworthvr.global.Constants;
-import com.chinafocus.hvrskyworthvr.net.ApiMultiService;
 import com.chinafocus.hvrskyworthvr.service.event.VrAboutConnect;
 import com.chinafocus.hvrskyworthvr.util.statusbar.StatusBarCompatFactory;
 import com.tencent.smtt.export.external.extension.interfaces.IX5WebViewExtension;
@@ -96,9 +95,9 @@ public class WebAboutActivity extends AppCompatActivity {
             @Override
             public boolean shouldOverrideUrlLoading(WebView webView, String url) {
                 Log.d("MyLog", "-----webView 跳转的url>>>" + url);
-                if (url.endsWith(ApiMultiService.ABOUT_PRIVACY_PROTOCOL)) {
+                if (url.endsWith(Constants.ABOUT_PRIVACY_PROTOCOL)) {
                     mTvTitle.setText(getString(R.string.about_privacy_protocol));
-                    webView.loadUrl(ConfigManager.getInstance().getDefaultUrl() + ApiMultiService.ABOUT_PRIVACY_PROTOCOL);
+                    webView.loadUrl(ConfigManager.getInstance().getDefaultUrl() + Constants.ABOUT_PRIVACY_PROTOCOL);
                 } else {
                     webView.loadUrl(url);
                 }

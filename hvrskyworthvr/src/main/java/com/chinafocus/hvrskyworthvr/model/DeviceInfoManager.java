@@ -3,8 +3,8 @@ package com.chinafocus.hvrskyworthvr.model;
 import android.content.Context;
 import android.text.TextUtils;
 
+import com.chinafocus.hvrskyworthvr.global.Constants;
 import com.chinafocus.hvrskyworthvr.model.bean.DeviceInfo;
-import com.chinafocus.hvrskyworthvr.net.ApiMultiService;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -26,7 +26,7 @@ public class DeviceInfoManager {
     private final DeviceInfo mDeviceInfo;
 
     public void initDeviceInfo(Context context) {
-        mDeviceInfo.setAppNo(ApiMultiService.APP_NO);
+        mDeviceInfo.setAppNo(Constants.APP_NO);
         mDeviceInfo.setAlias("");
         File file = new File(context.getExternalFilesDir(""), "userNo.txt");
         try (

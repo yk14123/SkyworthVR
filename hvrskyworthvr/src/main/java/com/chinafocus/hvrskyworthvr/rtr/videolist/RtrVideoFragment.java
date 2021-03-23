@@ -58,7 +58,7 @@ public class RtrVideoFragment extends Fragment {
 
         mFragments = new ArrayList<>();
 //        for (String temp : strings) {
-        RtrVideoSubFragment videoListFragment = RtrVideoSubFragment.newInstance();
+        RtrVideoSubFragment videoListFragment = RtrVideoSubFragment.newInstance("");
         mFragments.add(videoListFragment);
 //        }
 

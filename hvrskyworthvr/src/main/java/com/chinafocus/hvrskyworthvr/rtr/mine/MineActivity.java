@@ -14,7 +14,6 @@ import com.chinafocus.hvrskyworthvr.R;
 import com.chinafocus.hvrskyworthvr.global.ConfigManager;
 import com.chinafocus.hvrskyworthvr.global.Constants;
 import com.chinafocus.hvrskyworthvr.model.DeviceInfoManager;
-import com.chinafocus.hvrskyworthvr.net.ApiMultiService;
 import com.chinafocus.hvrskyworthvr.service.event.VrAboutConnect;
 import com.chinafocus.hvrskyworthvr.ui.main.about.WebAboutActivity;
 import com.chinafocus.hvrskyworthvr.ui.setting.SettingActivity;
@@ -55,7 +54,7 @@ public class MineActivity extends AppCompatActivity {
                 () -> WebAboutActivity.startWebAboutActivity(
                         this,
                         getString(R.string.about_user_protocol),
-                        ConfigManager.getInstance().getDefaultUrl() + ApiMultiService.ABOUT_USER_PROTOCOL)
+                        ConfigManager.getInstance().getDefaultUrl() + Constants.ABOUT_USER_PROTOCOL)
         );
 
         ViewClickUtil.click(
@@ -63,7 +62,7 @@ public class MineActivity extends AppCompatActivity {
                 () -> WebAboutActivity.startWebAboutActivity(
                         this,
                         getString(R.string.about_privacy_protocol),
-                        ConfigManager.getInstance().getDefaultUrl() + ApiMultiService.ABOUT_PRIVACY_PROTOCOL)
+                        ConfigManager.getInstance().getDefaultUrl() + Constants.ABOUT_PRIVACY_PROTOCOL)
         );
 
         ViewClickUtil.click(
@@ -71,7 +70,7 @@ public class MineActivity extends AppCompatActivity {
                 () -> WebAboutActivity.startWebAboutActivity(
                         this,
                         getString(R.string.about_us_protocol),
-                        ConfigManager.getInstance().getDefaultUrl() + ApiMultiService.ABOUT_US_PROTOCOL)
+                        ConfigManager.getInstance().getDefaultUrl() + Constants.ABOUT_US_PROTOCOL)
         );
 
     }

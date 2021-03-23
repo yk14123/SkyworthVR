@@ -1,11 +1,11 @@
-package com.chinafocus.hvrskyworthvr.rtr.videolist.sub;
+package com.chinafocus.hvrskyworthvr.rtr.main;
 
 import android.app.Application;
 
 import androidx.annotation.NonNull;
 import androidx.lifecycle.MutableLiveData;
 
-import com.chinafocus.hvrskyworthvr.model.bean.VideoContentList;
+import com.chinafocus.hvrskyworthvr.model.bean.VideoCategory;
 import com.chinafocus.hvrskyworthvr.net.RequestBodyManager;
 import com.chinafocus.hvrskyworthvr.net.edu.EduApiService;
 import com.chinafocus.lib_network.net.ApiManager;
@@ -15,23 +15,23 @@ import com.chinafocus.lib_network.net.observer.BaseObserver;
 
 import java.util.List;
 
-public class RtrVideoSubViewModel extends BaseViewModel {
+public class RtrMainViewModel extends BaseViewModel {
 
-    MutableLiveData<List<VideoContentList>> videoDataMutableLiveData = new MutableLiveData<>();
-
-    public RtrVideoSubViewModel(@NonNull Application application) {
+    public RtrMainViewModel(@NonNull Application application) {
         super(application);
     }
 
-    void getVideoContentList(String category) {
+    MutableLiveData<List<VideoCategory>> videoDetailMutableLiveData = new MutableLiveData<>();
+
+    void getVideoDetailData() {
         addSubscribe(
                 ApiManager
                         .getService(EduApiService.class)
-                        .getVideoListFromCategory(RequestBodyManager.getVideoListFromCategoryRequestBody(category)),
-                new BaseObserver<List<VideoContentList>>() {
+                        .getVideoListCategory(RequestBodyManager.getVideoListRequestBody(123)),
+                new BaseObserver<List<VideoCategory>>() {
                     @Override
-                    public void onSuccess(List<VideoContentList> videoListData) {
-                        videoDataMutableLiveData.postValue(videoListData);
+                    public void onSuccess(List<VideoCategory> videoDetail) {
+                        videoDetailMutableLiveData.postValue(videoDetail);
                     }
 
                     @Override

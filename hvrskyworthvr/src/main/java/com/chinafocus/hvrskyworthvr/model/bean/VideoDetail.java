@@ -18,6 +18,7 @@ public class VideoDetail {
      * updateTime : 2021-01-13T06:12:02.000+0000
      * id : 10106
      * nextId : 10107
+     * nextType: 1
      */
 
     private String imgUrl;
@@ -36,6 +37,15 @@ public class VideoDetail {
     private String updateTime;
     private int id;
     private int nextId;
+    private int nextType;
+
+    public int getNextType() {
+        return nextType;
+    }
+
+    public void setNextType(int nextType) {
+        this.nextType = nextType;
+    }
 
     public String getImgUrl() {
         return imgUrl;

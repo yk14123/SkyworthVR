@@ -1,5 +1,6 @@
 package com.chinafocus.hvrskyworthvr.net;
 
+import com.chinafocus.hvrskyworthvr.global.Constants;
 import com.chinafocus.hvrskyworthvr.model.DeviceInfoManager;
 
 import org.json.JSONException;
@@ -23,7 +24,7 @@ public class RequestBodyManager {
         JSONObject jsonObject = new JSONObject();
         try {
             jsonObject.put("alias", newName);
-            jsonObject.put("appNo", ApiMultiService.APP_NO);
+            jsonObject.put("appNo", Constants.APP_NO);
             jsonObject.put("uniqueId", DeviceInfoManager.getInstance().getDeviceUUID());
             jsonObject.put("userNo", DeviceInfoManager.getInstance().getDeviceAccountId());
         } catch (JSONException e) {
@@ -37,7 +38,7 @@ public class RequestBodyManager {
 
         JSONObject jsonObject = new JSONObject();
         try {
-            jsonObject.put("appNo", ApiMultiService.APP_NO);
+            jsonObject.put("appNo", Constants.APP_NO);
             jsonObject.put("id", id);
             jsonObject.put("type", tag);
             jsonObject.put("uniqueId", DeviceInfoManager.getInstance().getDeviceUUID());
@@ -53,9 +54,24 @@ public class RequestBodyManager {
 
         JSONObject jsonObject = new JSONObject();
         try {
-            jsonObject.put("appNo", ApiMultiService.APP_NO);
+            jsonObject.put("appNo", Constants.APP_NO);
             jsonObject.put("uniqueId", DeviceInfoManager.getInstance().getDeviceUUID());
             jsonObject.put("userNo", DeviceInfoManager.getInstance().getDeviceAccountId());
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        return createRequestBody(jsonObject);
+    }
+
+    public static RequestBody getVideoListFromCategoryRequestBody(String category) {
+
+        JSONObject jsonObject = new JSONObject();
+        try {
+            jsonObject.put("appNo", Constants.APP_NO);
+            jsonObject.put("uniqueId", DeviceInfoManager.getInstance().getDeviceUUID());
+            jsonObject.put("userNo", DeviceInfoManager.getInstance().getDeviceAccountId());
+            jsonObject.put("classify", category);
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -67,7 +83,7 @@ public class RequestBodyManager {
 
         JSONObject jsonObject = new JSONObject();
         try {
-            jsonObject.put("appNo", ApiMultiService.APP_NO);
+            jsonObject.put("appNo", Constants.APP_NO);
             jsonObject.put("contentType", 1);
             jsonObject.put("uniqueId", DeviceInfoManager.getInstance().getDeviceUUID());
             jsonObject.put("userNo", DeviceInfoManager.getInstance().getDeviceAccountId());
@@ -83,7 +99,7 @@ public class RequestBodyManager {
         JSONObject jsonObject = new JSONObject();
         try {
             jsonObject.put("alias", DeviceInfoManager.getInstance().getDeviceAlias());
-            jsonObject.put("appNo", ApiMultiService.APP_NO);
+            jsonObject.put("appNo", Constants.APP_NO);
             jsonObject.put("uniqueId", DeviceInfoManager.getInstance().getDeviceUUID());
             jsonObject.put("userNo", DeviceInfoManager.getInstance().getDeviceAccountId());
         } catch (JSONException e) {

@@ -2,18 +2,18 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="308dp"
-    android:layout_height="178dp"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
     android:clipChildren="false"
     android:clipToPadding="false"
-    android:paddingStart="16dp"
-    android:paddingTop="26dp"
-    android:paddingEnd="16dp">
+    android:paddingStart="8dp"
+    android:paddingTop="16dp"
+    android:paddingEnd="8dp">
 
     <androidx.constraintlayout.utils.widget.ImageFilterView
         android:id="@+id/iv_video_list_bg"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_width="220dp"
+        android:layout_height="120dp"
         android:scaleType="centerCrop"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -37,5 +37,47 @@
         app:layout_constraintBottom_toBottomOf="@+id/iv_video_list_bg"
         app:layout_constraintStart_toStartOf="@+id/iv_video_list_bg"
         tools:text="35:45" />
+
+    <androidx.constraintlayout.utils.widget.ImageFilterView
+        android:id="@+id/imageFilterView"
+        android:layout_width="88dp"
+        android:layout_height="30dp"
+        android:background="@color/color_black_a40"
+        app:layout_constraintBottom_toBottomOf="@+id/iv_video_list_bg"
+        app:layout_constraintEnd_toEndOf="@+id/iv_video_list_bg"
+        app:layout_constraintStart_toStartOf="@+id/iv_video_list_bg"
+        app:layout_constraintTop_toTopOf="@+id/iv_video_list_bg"
+        app:round="40dp" />
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/appCompatTextView6"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="10dp"
+        android:text="@string/main_video_playing"
+        android:textColor="@color/color_white"
+        android:textSize="13sp"
+        app:layout_constraintBottom_toBottomOf="@+id/imageFilterView"
+        app:layout_constraintStart_toStartOf="@+id/imageFilterView"
+        app:layout_constraintTop_toTopOf="@+id/imageFilterView" />
+
+    <com.airbnb.lottie.LottieAnimationView
+        android:id="@+id/animation_view"
+        android:layout_width="12dp"
+        android:layout_height="12dp"
+        android:layout_marginStart="4dp"
+        app:layout_constraintBottom_toBottomOf="@+id/appCompatTextView6"
+        app:layout_constraintStart_toEndOf="@+id/appCompatTextView6"
+        app:layout_constraintTop_toTopOf="@+id/appCompatTextView6"
+        app:lottie_autoPlay="true"
+        app:lottie_fileName="anim_linking_vr_mode.json"
+        app:lottie_loop="true" />
+
+    <androidx.constraintlayout.widget.Group
+        android:id="@+id/group_video_item_play"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:visibility="visible"
+        app:constraint_referenced_ids="animation_view,imageFilterView,appCompatTextView6" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
