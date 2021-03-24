@@ -14,18 +14,6 @@ import retrofit2.http.POST;
 
 public interface EduApiService {
 
-//    @POST("farm360/sysCloud/defaultCloudUrl")
-//    Observable<BaseResponse<DefaultCloudUrl>> getDefaultCloudUrl(@Body RequestBody body);
-//
-//    @POST("farm360/cstmHwAlias/hwAlias")
-//    Observable<BaseResponse<Object>> initDeviceInfo(@Body RequestBody body);
-//
-//    @POST("farm360/cstmHwAlias/getHwAlias")
-//    Observable<BaseResponse<DeviceInfo>> getDeviceInfoName(@Body RequestBody body);
-//
-//    @POST("farm360/cstmHwAlias/editHwAlias")
-//    Observable<BaseResponse<Object>> postSetDeviceAlias(@Body RequestBody body);
-
     @POST("farm360/edu/cstmClass")
     Observable<BaseResponse<List<VideoCategory>>> getVideoListCategory(@Body RequestBody body);
 

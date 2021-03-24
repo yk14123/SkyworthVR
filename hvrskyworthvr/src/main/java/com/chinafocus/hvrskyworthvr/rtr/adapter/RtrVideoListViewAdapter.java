@@ -24,12 +24,17 @@ import java.util.List;
 
 public class RtrVideoListViewAdapter extends RecyclerView.Adapter<BaseViewHolder> {
 
-    private final List<VideoContentList> mVideoContentLists;
+    private List<VideoContentList> mVideoContentLists;
 
     private int currentPos = -1;
 
-    public RtrVideoListViewAdapter(List<VideoContentList> videoContentLists) {
-        mVideoContentLists = videoContentLists;
+    public void setVideoContentLists(List<VideoContentList> videoContentLists) {
+        if (mVideoContentLists != null && mVideoContentLists.size() > 0) {
+            mVideoContentLists.clear();
+            mVideoContentLists.addAll(videoContentLists);
+        } else {
+            mVideoContentLists = videoContentLists;
+        }
     }
 
     private OnRecyclerViewItemClickAnimator mOnRecyclerViewItemClickAnimator;
@@ -66,6 +71,10 @@ public class RtrVideoListViewAdapter extends RecyclerView.Adapter<BaseViewHolder
                     }
                 }
                 currentPos = temp;
+                if (mPostCurrentPosListener != null) {
+                    mPostCurrentPosListener.postCurrentPos(currentPos);
+                }
+
                 // 新View startIn
                 if (mOnRecyclerViewItemClickAnimator != null) {
                     mOnRecyclerViewItemClickAnimator.startIn(v);
@@ -127,30 +136,20 @@ public class RtrVideoListViewAdapter extends RecyclerView.Adapter<BaseViewHolder
     }
 
     public void selectedItem(int pos, BaseViewHolder holder) {
-        if (pos != currentPos) {
-            currentPos = pos;
-            if (pos >= 0) {
-                if (holder != null) {
-                    if (mOnRecyclerViewItemClickAnimator != null) {
-                        mOnRecyclerViewItemClickAnimator.showInImmediately(holder.itemView);
-                    }
-                    showPreView(holder.itemView);
-                    if (mVideoInfoCallback != null && mVideoContentLists != null) {
-                        mVideoInfoCallback.postVideoContent(mVideoContentLists.get(currentPos), currentPos, mVideoContentLists.size());
-
-                    }
-                    if (mBgAndMenuVideoUrlCallback != null && mVideoContentLists != null) {
-                        mBgAndMenuVideoUrlCallback.postVideoBgAndMenuVideoUrl(
-                                ConfigManager.getInstance().getDefaultUrl() + mVideoContentLists.get(currentPos).getImgUrl() + ImageProcess.process(2560, 1600),
-                                ConfigManager.getInstance().getDefaultUrl() + mVideoContentLists.get(currentPos).getMenuVideoUrl());
-                    }
+        currentPos = pos;
+        if (pos >= 0) {
+            if (holder != null) {
+                if (mOnRecyclerViewItemClickAnimator != null) {
+                    mOnRecyclerViewItemClickAnimator.startIn(holder.itemView);
                 }
-            } else {
-                if (holder != null) {
-                    if (mOnRecyclerViewItemClickAnimator != null) {
-                        mOnRecyclerViewItemClickAnimator.showOutImmediately(holder.itemView);
-                    }
-                    hidePreView(holder.itemView);
+                showPreView(holder.itemView);
+                if (mVideoInfoCallback != null && mVideoContentLists != null) {
+                    mVideoInfoCallback.postVideoContent(mVideoContentLists.get(currentPos), currentPos, mVideoContentLists.size());
+                }
+                if (mBgAndMenuVideoUrlCallback != null && mVideoContentLists != null) {
+                    mBgAndMenuVideoUrlCallback.postVideoBgAndMenuVideoUrl(
+                            ConfigManager.getInstance().getDefaultUrl() + mVideoContentLists.get(currentPos).getImgUrl() + ImageProcess.process(2560, 1600),
+                            ConfigManager.getInstance().getDefaultUrl() + mVideoContentLists.get(currentPos).getMenuVideoUrl());
                 }
             }
         }
@@ -158,6 +157,11 @@ public class RtrVideoListViewAdapter extends RecyclerView.Adapter<BaseViewHolder
 
     private VideoInfoCallback mVideoInfoCallback;
     private BgAndMenuVideoUrlCallback mBgAndMenuVideoUrlCallback;
+    private PostCurrentPosListener mPostCurrentPosListener;
+
+    public void setPostCurrentPosListener(PostCurrentPosListener postCurrentPosListener) {
+        mPostCurrentPosListener = postCurrentPosListener;
+    }
 
     public void setVideoInfoCallback(VideoInfoCallback videoInfoCallback) {
         mVideoInfoCallback = videoInfoCallback;
@@ -178,6 +182,10 @@ public class RtrVideoListViewAdapter extends RecyclerView.Adapter<BaseViewHolder
 
     public interface BgAndMenuVideoUrlCallback {
         void postVideoBgAndMenuVideoUrl(String bg, String videoUrl);
+    }
+
+    public interface PostCurrentPosListener {
+        void postCurrentPos(int index);
     }
 
     public interface VideoInfoCallback {

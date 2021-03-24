@@ -122,7 +122,6 @@ public class BgMediaPlayerViewGroup extends FrameLayout {
                                 int blue = Color.blue(vibrantColor);
 
                                 int cct = ColorUtil.calculateColorTemperature(red, green, blue);
-                                Log.e("MyLog", " cct >>> " + cct);
                                 if (cct > 5000) {
                                     // 冷色
                                     mCoverBg.setBackground(ResourcesCompat.getDrawable(getResources(), R.drawable.shape_color_cold_bg, null));

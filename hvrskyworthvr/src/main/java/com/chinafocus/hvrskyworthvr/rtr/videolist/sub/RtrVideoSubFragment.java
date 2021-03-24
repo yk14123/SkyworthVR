@@ -30,6 +30,7 @@ public class RtrVideoSubFragment extends Fragment {
     private RecyclerView mRecyclerView;
 
     private static final String VIDEO_LIST_CATEGORY = "video_list_category";
+    private String mCategory;
 
     public static RtrVideoSubFragment newInstance(String category) {
         RtrVideoSubFragment rtrVideoSubFragment = new RtrVideoSubFragment();
@@ -51,10 +52,9 @@ public class RtrVideoSubFragment extends Fragment {
 
         Bundle arguments = getArguments();
         if (arguments != null) {
-            String category = arguments.getString(VIDEO_LIST_CATEGORY);
+            mCategory = arguments.getString(VIDEO_LIST_CATEGORY);
 
             mViewModel = new ViewModelProvider(this).get(RtrVideoSubViewModel.class);
-            mViewModel.getVideoContentList(category);
 
             VideoInfoViewGroup videoInfoViewGroup = requireView().findViewById(R.id.view_video_info);
 
@@ -65,28 +65,43 @@ public class RtrVideoSubFragment extends Fragment {
             mRecyclerView.setLayoutManager(linearLayoutManager);
             mViewModel.videoDataMutableLiveData.observe(getViewLifecycleOwner(), videoContentLists -> {
                 if (mAdapter == null) {
-                    mAdapter = new RtrVideoListViewAdapter(videoContentLists);
+                    mAdapter = new RtrVideoListViewAdapter();
                     mAdapter.setOnRecyclerViewItemClickAnimator(new RecyclerViewItemUpAnimator());
-                    mAdapter.setVideoInfoCallback(videoInfoViewGroup::postVideoContentInfo);
+                    mAdapter.setPostCurrentPosListener(this::setIndex);
                     mAdapter.setBgAndMenuVideoUrlCallback((bg, videoUrl) -> ((RtrMainActivity) Objects.requireNonNull(getActivity())).postVideoBgAndMenuVideoUrl(bg, videoUrl));
-                    mRecyclerView.setAdapter(mAdapter);
                 }
+                mAdapter.setVideoInfoCallback(videoInfoViewGroup::postVideoContentInfo);
+                mAdapter.setVideoContentLists(videoContentLists);
+                mRecyclerView.setAdapter(mAdapter);
+
                 mRecyclerView.post(() -> {
-                    BaseViewHolder holder = (BaseViewHolder) mRecyclerView.findViewHolderForAdapterPosition(0);
-                    mAdapter.selectedItem(0, holder);
+                    mRecyclerView.scrollToPosition(mIndex);
+                    BaseViewHolder holder = (BaseViewHolder) mRecyclerView.findViewHolderForAdapterPosition(mIndex);
+                    mAdapter.selectedItem(mIndex, holder);
                 });
 
             });
-
         }
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        mViewModel.getVideoContentList(mCategory);
+    }
+
+    private int mIndex;
+
+    public void setIndex(int index) {
+        mIndex = index;
     }
 
     public void setItemPosition(int videoId) {
         if (mAdapter != null) {
-            int index = mAdapter.getPositionFromVideoId(videoId);
-            mRecyclerView.scrollToPosition(index);
+            mIndex = mAdapter.getPositionFromVideoId(videoId);
+            mRecyclerView.scrollToPosition(mIndex);
             LinearLayoutManager mLayoutManager = (LinearLayoutManager) mRecyclerView.getLayoutManager();
-            Objects.requireNonNull(mLayoutManager).scrollToPositionWithOffset(index, 0);
+            Objects.requireNonNull(mLayoutManager).scrollToPositionWithOffset(mIndex, 0);
         }
     }
 
