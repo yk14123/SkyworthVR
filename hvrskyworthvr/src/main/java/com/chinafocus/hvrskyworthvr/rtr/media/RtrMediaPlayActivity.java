@@ -16,6 +16,7 @@ import com.blankj.utilcode.util.BarUtils;
 import com.chinafocus.hvrskyworthvr.R;
 import com.chinafocus.hvrskyworthvr.exo.tools.ExoMediaHelper;
 import com.chinafocus.hvrskyworthvr.exo.tools.ViewBindHelper;
+import com.chinafocus.hvrskyworthvr.exo.ui.PlayerControlView;
 import com.chinafocus.hvrskyworthvr.exo.ui.PlayerView;
 import com.chinafocus.hvrskyworthvr.exo.ui.spherical.SphericalGLSurfaceView;
 import com.chinafocus.hvrskyworthvr.global.ConfigManager;
@@ -43,14 +44,15 @@ import java.util.Objects;
 
 import static com.chinafocus.hvrskyworthvr.global.Constants.RESULT_CODE_ACTIVE_DIALOG;
 import static com.chinafocus.hvrskyworthvr.global.Constants.RESULT_CODE_INACTIVE_DIALOG;
+import static com.chinafocus.hvrskyworthvr.global.Constants.RESULT_CODE_SELF_INACTIVE_DIALOG;
 import static com.google.android.exoplayer2.Player.STATE_ENDED;
 
-public class RtrMediaPlayActivity extends AppCompatActivity implements ViewBindHelper.PlayVideoListener {
+public class RtrMediaPlayActivity extends AppCompatActivity implements ViewBindHelper.PlayVideoListener, PlayerControlView.VisibilityListener {
 
     public static final String MEDIA_ID = "media_id";
-    public static final String MEDIA_FROM_TAG = "media_from_tag";
+    public static final String MEDIA_TYPE = "media_from_tag";
     public static final String MEDIA_SEEK = "media_seek";
-    public static final String MEDIA_CATEGORY_TAG = "media_category_tag";
+    public static final String MEDIA_CATEGORY = "media_category_tag";
     public static final String MEDIA_LINK_VR = "media_link_vr";
 
     private boolean linkingVr;
@@ -62,6 +64,7 @@ public class RtrMediaPlayActivity extends AppCompatActivity implements ViewBindH
     private MediaViewModel mediaViewModel;
 
     private int nextVideoId;
+    private int nextVideoType;
     private int currentVideoId;
 
     @Override
@@ -109,7 +112,9 @@ public class RtrMediaPlayActivity extends AppCompatActivity implements ViewBindH
                 videoUrl = file.getAbsolutePath();
             }
 
+            currentVideoId = videoDetail.getId();
             nextVideoId = videoDetail.getNextId();
+            nextVideoType = videoDetail.getNextType();
 
             Log.d("MyLog", "-----当前视频播放地址是 videoUrl >>> " + videoUrl);
 
@@ -168,8 +173,8 @@ public class RtrMediaPlayActivity extends AppCompatActivity implements ViewBindH
     private void handleIntent() {
         Intent intent = getIntent();
 
-        int video_tag = intent.getIntExtra(MEDIA_FROM_TAG, -1);
-        int category = intent.getIntExtra(MEDIA_CATEGORY_TAG, -1);
+        int video_tag = intent.getIntExtra(MEDIA_TYPE, -1);
+        int category = intent.getIntExtra(MEDIA_CATEGORY, -1);
         currentVideoId = intent.getIntExtra(MEDIA_ID, -1);
         long seek = intent.getLongExtra(MEDIA_SEEK, 0L);
         linkingVr = intent.getBooleanExtra(MEDIA_LINK_VR, false);
@@ -195,6 +200,8 @@ public class RtrMediaPlayActivity extends AppCompatActivity implements ViewBindH
                 , BarUtils.getStatusBarHeight()
                 , BarUtils.getStatusBarHeight()
                 , BarUtils.getStatusBarHeight());
+
+        mLandPlayerView.setControllerVisibilityListener(this);
 
         ((SphericalGLSurfaceView) Objects.requireNonNull(mLandPlayerView.getVideoSurfaceView())).resetScale();
 
@@ -240,7 +247,12 @@ public class RtrMediaPlayActivity extends AppCompatActivity implements ViewBindH
         }
 
         if (player.getPlaybackState() == STATE_ENDED) {
-            setResult(RESULT_CODE_ACTIVE_DIALOG);
+            setResult(RESULT_CODE_ACTIVE_DIALOG,
+                    new Intent()
+                            .putExtra(MEDIA_ID, VrSyncPlayInfo.obtain().getVideoId())
+                            .putExtra(MEDIA_TYPE, VrSyncPlayInfo.obtain().getTag() == 1 ? 2 : 1)
+                            .putExtra(MEDIA_CATEGORY, VrSyncPlayInfo.obtain().getCategory())
+            );
             finish();
         } else {
             VrSyncPlayInfo.obtain().setSeekTime(player.getCurrentPosition());
@@ -274,7 +286,12 @@ public class RtrMediaPlayActivity extends AppCompatActivity implements ViewBindH
         linkingVr = false;
         // 2.保存当前页面播放时长
         VrSyncPlayInfo.obtain().setSeekTime(mExoMediaHelper.getPlayer().getCurrentPosition());
-        setResult(RESULT_CODE_INACTIVE_DIALOG);
+        setResult(RESULT_CODE_INACTIVE_DIALOG,
+                new Intent()
+                        .putExtra(MEDIA_ID, VrSyncPlayInfo.obtain().getVideoId())
+                        .putExtra(MEDIA_TYPE, VrSyncPlayInfo.obtain().getTag() == 1 ? 2 : 1)
+                        .putExtra(MEDIA_CATEGORY, VrSyncPlayInfo.obtain().getCategory())
+        );
         finish();
         // 3.立即切换当前Activity为Main
         Constants.ACTIVITY_TAG = Constants.ACTIVITY_MAIN;
@@ -298,7 +315,12 @@ public class RtrMediaPlayActivity extends AppCompatActivity implements ViewBindH
         closeAllDialog();
         // 2.恢复视频保存信息
         VrSyncPlayInfo.obtain().restoreVideoInfo();
-        setResult(RESULT_CODE_ACTIVE_DIALOG);
+        setResult(RESULT_CODE_ACTIVE_DIALOG,
+                new Intent()
+                        .putExtra(MEDIA_ID, VrSyncPlayInfo.obtain().getVideoId())
+                        .putExtra(MEDIA_TYPE, VrSyncPlayInfo.obtain().getTag() == 1 ? 2 : 1)
+                        .putExtra(MEDIA_CATEGORY, VrSyncPlayInfo.obtain().getCategory())
+        );
         finish();
         // 3.立即切换当前Activity为Main
         Constants.ACTIVITY_TAG = Constants.ACTIVITY_MAIN;
@@ -357,7 +379,7 @@ public class RtrMediaPlayActivity extends AppCompatActivity implements ViewBindH
             temp = 1;
         }
         // 2.加载视频
-        mediaViewModel.getVideoDetailData(temp, videoId);
+        mediaViewModel.getVideoDetailData(temp, videoId, VrSyncPlayInfo.obtain().getCategory() + "");
     }
 
     /**
@@ -418,13 +440,25 @@ public class RtrMediaPlayActivity extends AppCompatActivity implements ViewBindH
     }
 
     @Override
+    public void onGoBackActivity() {
+        setResult(RESULT_CODE_SELF_INACTIVE_DIALOG,
+                new Intent()
+                        .putExtra(MEDIA_ID, VrSyncPlayInfo.obtain().getVideoId())
+                        .putExtra(MEDIA_TYPE, VrSyncPlayInfo.obtain().getTag() == 1 ? 2 : 1)
+                        .putExtra(MEDIA_CATEGORY, VrSyncPlayInfo.obtain().getCategory())
+        );
+        finish();
+        // 3.立即切换当前Activity为Main
+        Constants.ACTIVITY_TAG = Constants.ACTIVITY_MAIN;
+    }
+
+    @Override
     public void onPlayNextVideo() {
-        Log.d("MyLog", " nextId >>> " + nextVideoId);
         if (nextVideoId != 0) {
             VrSyncPlayInfo.obtain().clearVideoTime();
             VrSyncPlayInfo.obtain().setVideoId(nextVideoId);
-            loadNetData(nextVideoId);
-            currentVideoId = nextVideoId;
+            VrSyncPlayInfo.obtain().setTag(nextVideoType == 1 ? 2 : 1);
+            mediaViewModel.getVideoDetailData(nextVideoType, nextVideoId, VrSyncPlayInfo.obtain().getCategory() + "");
         } else {
             Toast.makeText(this, "暂无下一个影片", Toast.LENGTH_SHORT).show();
         }
@@ -461,5 +495,14 @@ public class RtrMediaPlayActivity extends AppCompatActivity implements ViewBindH
     public void onNewIntent(Intent intent) {
         super.onNewIntent(intent);
         mExoMediaHelper.onNewIntent();
+    }
+
+    @Override
+    public void onVisibilityChange(int visibility) {
+        if (visibility != View.VISIBLE) {
+            if (mMediaVRLinkPopupWindow != null && mMediaVRLinkPopupWindow.isShowing()) {
+                mMediaVRLinkPopupWindow.dismiss();
+            }
+        }
     }
 }

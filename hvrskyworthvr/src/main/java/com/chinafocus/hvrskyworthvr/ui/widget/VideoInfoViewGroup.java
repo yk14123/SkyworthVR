@@ -19,8 +19,8 @@ import com.chinafocus.hvrskyworthvr.service.event.VrSyncPlayInfo;
 import com.chinafocus.hvrskyworthvr.util.ViewClickUtil;
 
 import static com.chinafocus.hvrskyworthvr.global.Constants.REQUEST_CODE_PAD_MEDIA_ACTIVITY;
-import static com.chinafocus.hvrskyworthvr.rtr.media.RtrMediaPlayActivity.MEDIA_CATEGORY_TAG;
-import static com.chinafocus.hvrskyworthvr.rtr.media.RtrMediaPlayActivity.MEDIA_FROM_TAG;
+import static com.chinafocus.hvrskyworthvr.rtr.media.RtrMediaPlayActivity.MEDIA_CATEGORY;
+import static com.chinafocus.hvrskyworthvr.rtr.media.RtrMediaPlayActivity.MEDIA_TYPE;
 import static com.chinafocus.hvrskyworthvr.rtr.media.RtrMediaPlayActivity.MEDIA_ID;
 
 public class VideoInfoViewGroup extends FrameLayout {
@@ -59,8 +59,8 @@ public class VideoInfoViewGroup extends FrameLayout {
 
         ViewClickUtil.click(findViewById(R.id.tv_video_play), () -> {
             Intent intent = new Intent(context, RtrMediaPlayActivity.class);
-            intent.putExtra(MEDIA_FROM_TAG, mVideoType);
-            intent.putExtra(MEDIA_CATEGORY_TAG, mVideoClassify);
+            intent.putExtra(MEDIA_TYPE, mVideoType);
+            intent.putExtra(MEDIA_CATEGORY, mVideoClassify);
             intent.putExtra(MEDIA_ID, mVideoId);
             ((Activity) context).startActivityForResult(intent, REQUEST_CODE_PAD_MEDIA_ACTIVITY);
         });
@@ -78,11 +78,10 @@ public class VideoInfoViewGroup extends FrameLayout {
 
         mVideoId = videoContentInfo.getId();
 
-        if (videoContentInfo.getType().equals("2")) {
+        if (videoContentInfo.getType() == 2) {
             // 全景出版
             mVideoType = 1;
-//            mVideoClassify = -1;
-        } else if (videoContentInfo.getType().equals("1")) {
+        } else if (videoContentInfo.getType() == 1) {
             // 全景视频
             mVideoType = 2;
         }

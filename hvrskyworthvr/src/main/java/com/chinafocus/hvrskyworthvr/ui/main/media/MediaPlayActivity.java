@@ -419,6 +419,11 @@ public class MediaPlayActivity extends AppCompatActivity implements ViewBindHelp
     }
 
     @Override
+    public void onGoBackActivity() {
+
+    }
+
+    @Override
     public void onPlayNextVideo() {
         Log.d("MyLog", " nextId >>> " + nextVideoId);
         if (nextVideoId != 0) {

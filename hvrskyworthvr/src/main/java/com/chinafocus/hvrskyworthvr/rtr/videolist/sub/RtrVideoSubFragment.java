@@ -32,6 +32,10 @@ public class RtrVideoSubFragment extends Fragment {
     private static final String VIDEO_LIST_CATEGORY = "video_list_category";
     private String mCategory;
 
+    public int getCategory() {
+        return Integer.parseInt(mCategory);
+    }
+
     public static RtrVideoSubFragment newInstance(String category) {
         RtrVideoSubFragment rtrVideoSubFragment = new RtrVideoSubFragment();
         Bundle bundle = new Bundle();
@@ -96,9 +100,9 @@ public class RtrVideoSubFragment extends Fragment {
         mIndex = index;
     }
 
-    public void setItemPosition(int videoId) {
+    public void selectedItem(int videoId, int videoType) {
         if (mAdapter != null) {
-            mIndex = mAdapter.getPositionFromVideoId(videoId);
+            mIndex = mAdapter.getPositionFromVideoIdAndType(videoId, videoType);
             mRecyclerView.scrollToPosition(mIndex);
             LinearLayoutManager mLayoutManager = (LinearLayoutManager) mRecyclerView.getLayoutManager();
             Objects.requireNonNull(mLayoutManager).scrollToPositionWithOffset(mIndex, 0);

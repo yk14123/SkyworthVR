@@ -105,7 +105,7 @@ public class RtrVideoFragment extends Fragment {
     }
 
     public void setItemPosition(int videoId) {
-        ((RtrVideoSubFragment) mFragments.get(0)).setItemPosition(videoId);
+//        ((RtrVideoSubFragment) mFragments.get(0)).setItemPosition(videoId);
     }
 
 }

@@ -8,6 +8,7 @@ import androidx.lifecycle.MutableLiveData;
 import com.chinafocus.hvrskyworthvr.model.bean.VideoDetail;
 import com.chinafocus.hvrskyworthvr.net.ApiMultiService;
 import com.chinafocus.hvrskyworthvr.net.RequestBodyManager;
+import com.chinafocus.hvrskyworthvr.net.edu.EduApiService;
 import com.chinafocus.lib_network.net.ApiManager;
 import com.chinafocus.lib_network.net.base.BaseViewModel;
 import com.chinafocus.lib_network.net.errorhandler.ExceptionHandle;
@@ -26,6 +27,25 @@ public class MediaViewModel extends BaseViewModel {
                 ApiManager
                         .getService(ApiMultiService.class)
                         .getVideoDetailData(RequestBodyManager.getVideoDetailDataRequestBody(tag, id)),
+                new BaseObserver<VideoDetail>() {
+                    @Override
+                    public void onSuccess(VideoDetail videoDetail) {
+                        videoDetailMutableLiveData.postValue(videoDetail);
+                    }
+
+                    @Override
+                    public void onFailure(ExceptionHandle.ResponseThrowable e) {
+
+                    }
+                }
+        );
+    }
+
+    public void getVideoDetailData(int tag, int id, String classify) {
+        addSubscribe(
+                ApiManager
+                        .getService(EduApiService.class)
+                        .getVideoDetailData(RequestBodyManager.getVideoDetailDataRequestBody(tag, id, classify)),
                 new BaseObserver<VideoDetail>() {
                     @Override
                     public void onSuccess(VideoDetail videoDetail) {

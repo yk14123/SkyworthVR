@@ -50,6 +50,23 @@ public class RequestBodyManager {
         return createRequestBody(jsonObject);
     }
 
+    public static RequestBody getVideoDetailDataRequestBody(int tag, int id, String classify) {
+
+        JSONObject jsonObject = new JSONObject();
+        try {
+            jsonObject.put("appNo", Constants.APP_NO);
+            jsonObject.put("id", id);
+            jsonObject.put("type", tag);
+            jsonObject.put("uniqueId", DeviceInfoManager.getInstance().getDeviceUUID());
+            jsonObject.put("userNo", DeviceInfoManager.getInstance().getDeviceAccountId());
+            jsonObject.put("classify", classify);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        return createRequestBody(jsonObject);
+    }
+
     public static RequestBody getVideoListRequestBody(int category) {
 
         JSONObject jsonObject = new JSONObject();

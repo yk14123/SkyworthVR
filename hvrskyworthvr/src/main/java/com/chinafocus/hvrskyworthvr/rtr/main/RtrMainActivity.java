@@ -53,14 +53,15 @@ import static com.chinafocus.hvrskyworthvr.global.Constants.REQUEST_CODE_VR_MEDI
 import static com.chinafocus.hvrskyworthvr.global.Constants.RESULT_CODE_ACTIVE_DIALOG;
 import static com.chinafocus.hvrskyworthvr.global.Constants.RESULT_CODE_INACTIVE_DIALOG;
 import static com.chinafocus.hvrskyworthvr.global.Constants.RESULT_CODE_SELF_INACTIVE_DIALOG;
+import static com.chinafocus.hvrskyworthvr.rtr.media.RtrMediaPlayActivity.MEDIA_CATEGORY;
+import static com.chinafocus.hvrskyworthvr.rtr.media.RtrMediaPlayActivity.MEDIA_ID;
+import static com.chinafocus.hvrskyworthvr.rtr.media.RtrMediaPlayActivity.MEDIA_LINK_VR;
+import static com.chinafocus.hvrskyworthvr.rtr.media.RtrMediaPlayActivity.MEDIA_SEEK;
+import static com.chinafocus.hvrskyworthvr.rtr.media.RtrMediaPlayActivity.MEDIA_TYPE;
 import static com.chinafocus.hvrskyworthvr.service.BluetoothService.CURRENT_VR_ONLINE_STATUS;
 import static com.chinafocus.hvrskyworthvr.service.BluetoothService.VR_STATUS_OFFLINE;
 import static com.chinafocus.hvrskyworthvr.service.BluetoothService.VR_STATUS_ONLINE;
-import static com.chinafocus.hvrskyworthvr.ui.main.media.MediaPlayActivity.MEDIA_CATEGORY_TAG;
-import static com.chinafocus.hvrskyworthvr.ui.main.media.MediaPlayActivity.MEDIA_FROM_TAG;
-import static com.chinafocus.hvrskyworthvr.ui.main.media.MediaPlayActivity.MEDIA_ID;
-import static com.chinafocus.hvrskyworthvr.ui.main.media.MediaPlayActivity.MEDIA_LINK_VR;
-import static com.chinafocus.hvrskyworthvr.ui.main.media.MediaPlayActivity.MEDIA_SEEK;
+
 
 public class RtrMainActivity extends AppCompatActivity {
 
@@ -69,6 +70,7 @@ public class RtrMainActivity extends AppCompatActivity {
     private Disposable mDisposable;
     private RtrVrModeMainDialog vrModeMainDialog;
     private List<RtrVideoSubFragment> mFragments;
+    private ViewPager2 mViewPager2;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -77,10 +79,10 @@ public class RtrMainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_rtr_main);
 
         MagicIndicator magicIndicator = findViewById(R.id.magic_Indicator);
-        ViewPager2 viewPagerVideoList = findViewById(R.id.vp_video_list);
+        mViewPager2 = findViewById(R.id.vp_video_list);
         mBgMediaPlayerViewGroup = findViewById(R.id.view_bg_media_player);
         ViewClickUtil.click(findViewById(R.id.iv_mine_about), () -> startActivity(new Intent(RtrMainActivity.this, MineActivity.class)));
-        viewPagerVideoList.setUserInputEnabled(false);
+        mViewPager2.setUserInputEnabled(false);
 
         RtrMainViewModel mViewModel = new ViewModelProvider(this).get(RtrMainViewModel.class);
         mViewModel.getVideoDetailData();
@@ -103,7 +105,7 @@ public class RtrMainActivity extends AppCompatActivity {
                     scaleTitleView.setMinScale(0.7f);
                     scaleTitleView.setText(videoCategories.get(index).getName());
                     scaleTitleView.setOnClickListener(view
-                            -> viewPagerVideoList.setCurrentItem(index, false));
+                            -> mViewPager2.setCurrentItem(index, false));
 
                     return scaleTitleView;
                 }
@@ -124,9 +126,9 @@ public class RtrMainActivity extends AppCompatActivity {
             }
 
             BaseFragmentStateAdapter<RtrVideoSubFragment> adapter = new BaseFragmentStateAdapter<>(this, mFragments);
-            viewPagerVideoList.setAdapter(adapter);
+            mViewPager2.setAdapter(adapter);
 
-            ViewPager2Helper.bind(magicIndicator, viewPagerVideoList);
+            ViewPager2Helper.bind(magicIndicator, mViewPager2);
         });
 
     }
@@ -170,7 +172,6 @@ public class RtrMainActivity extends AppCompatActivity {
 
         mBgMediaPlayerViewGroup.onConnect(true);
 
-//        ivAboutBg.post(() -> {
         // 1.关闭定时器
         closeTimer(null);
         // 2.展示控制画面
@@ -187,7 +188,6 @@ public class RtrMainActivity extends AppCompatActivity {
         if (VrSyncPlayInfo.obtain().getVideoId() != -1) {
             startSyncMediaPlayActivity();
         }
-//        });
 
     }
 
@@ -220,8 +220,8 @@ public class RtrMainActivity extends AppCompatActivity {
 
     private void startSyncMediaPlayActivity() {
         Intent intent = new Intent(this, RtrMediaPlayActivity.class);
-        intent.putExtra(MEDIA_FROM_TAG, VrSyncPlayInfo.obtain().getTag());
-        intent.putExtra(MEDIA_CATEGORY_TAG, VrSyncPlayInfo.obtain().getCategory());
+        intent.putExtra(MEDIA_TYPE, VrSyncPlayInfo.obtain().getTag());
+        intent.putExtra(MEDIA_CATEGORY, VrSyncPlayInfo.obtain().getCategory());
         intent.putExtra(MEDIA_ID, VrSyncPlayInfo.obtain().getVideoId());
         intent.putExtra(MEDIA_SEEK, VrSyncPlayInfo.obtain().getSeekTime());
         intent.putExtra(MEDIA_LINK_VR, true);
@@ -283,11 +283,27 @@ public class RtrMainActivity extends AppCompatActivity {
             closeTimer(null);
         } else if (resultCode == RESULT_CODE_SELF_INACTIVE_DIALOG) {
             // 修复RecyclerView位置
+//            ((RtrVideoSubFragment) mFragments.get(0)).setItemPosition(VrSyncPlayInfo.obtain().getVideoId());
             mBgMediaPlayerViewGroup.onConnect(false);
-            ((RtrVideoSubFragment) mFragments.get(0)).setItemPosition(VrSyncPlayInfo.obtain().getVideoId());
             VrSyncPlayInfo.obtain().restoreVideoInfo();
             closeTimer(null);
         }
+
+        if (data != null) {
+            int videoId = data.getIntExtra(MEDIA_ID, -1);
+            int videoType = data.getIntExtra(MEDIA_TYPE, -1);
+            int category = data.getIntExtra(MEDIA_CATEGORY, -1);
+
+            for (int i = 0; i < mFragments.size(); i++) {
+                RtrVideoSubFragment temp = mFragments.get(i);
+                if (temp.getCategory() == category) {
+                    temp.selectedItem(videoId, videoType);
+                    mViewPager2.setCurrentItem(i, false);
+                    break;
+                }
+            }
+        }
+
         super.onActivityResult(requestCode, resultCode, data);
     }
 
@@ -302,7 +318,6 @@ public class RtrMainActivity extends AppCompatActivity {
             mDisposable.dispose();
         }
     }
-
 
     private void closeMainDialog() {
         if (vrModeMainDialog != null && vrModeMainDialog.isShowing()) {
