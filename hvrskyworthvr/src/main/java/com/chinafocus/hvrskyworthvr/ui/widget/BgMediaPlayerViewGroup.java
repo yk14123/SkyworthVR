@@ -1,9 +1,6 @@
 package com.chinafocus.hvrskyworthvr.ui.widget;
 
 import android.content.Context;
-import android.graphics.Bitmap;
-import android.graphics.Color;
-import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.util.AttributeSet;
 import android.util.Log;
@@ -14,16 +11,12 @@ import android.widget.FrameLayout;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.appcompat.widget.AppCompatImageView;
-import androidx.core.content.res.ResourcesCompat;
-import androidx.palette.graphics.Palette;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.target.CustomTarget;
 import com.bumptech.glide.request.transition.Transition;
 import com.chinafocus.hvrskyworthvr.R;
 import com.chinafocus.hvrskyworthvr.exo.ExoManager;
-import com.chinafocus.hvrskyworthvr.util.ColorUtil;
 
 import jp.wasabeef.glide.transformations.CropTransformation;
 
@@ -33,7 +26,7 @@ public class BgMediaPlayerViewGroup extends FrameLayout {
 
     private SurfaceView mSurfaceView;
     private BackgroundAnimationRelativeLayout mBackgroundAnimationRelativeLayout;
-    private AppCompatImageView mCoverBg;
+//    private AppCompatImageView mCoverBg;
 
     private CropTransformation mContentBgTransformation;
     private MyRunnable mMyRunnable;
@@ -57,7 +50,7 @@ public class BgMediaPlayerViewGroup extends FrameLayout {
         LayoutInflater.from(context).inflate(R.layout.include_rtr_video_media_player_view, this);
         mSurfaceView = findViewById(R.id.player_surface_view);
         mBackgroundAnimationRelativeLayout = findViewById(R.id.view_background_change_animation);
-        mCoverBg = findViewById(R.id.iv_main_video_cover);
+//        mCoverBg = findViewById(R.id.iv_main_video_cover);
 
         mContentBgTransformation = new CropTransformation(2560, 1600);
 
@@ -111,26 +104,26 @@ public class BgMediaPlayerViewGroup extends FrameLayout {
                 .into(new CustomTarget<Drawable>() {
                     @Override
                     public void onResourceReady(@NonNull Drawable resource, @Nullable Transition<? super Drawable> transition) {
-                        Bitmap bitmap = ((BitmapDrawable) resource).getBitmap();
-                        Palette.from(bitmap).generate(new Palette.PaletteAsyncListener() {
-                            @Override
-                            public void onGenerated(Palette palette) {
-                                int vibrantColor = palette.getVibrantColor(Color.WHITE);
-
-                                int red = Color.red(vibrantColor);
-                                int green = Color.green(vibrantColor);
-                                int blue = Color.blue(vibrantColor);
-
-                                int cct = ColorUtil.calculateColorTemperature(red, green, blue);
-                                if (cct > 5000) {
-                                    // 冷色
-                                    mCoverBg.setBackground(ResourcesCompat.getDrawable(getResources(), R.drawable.shape_color_cold_bg, null));
-                                } else {
-                                    // 暖色
-                                    mCoverBg.setBackground(ResourcesCompat.getDrawable(getResources(), R.drawable.shape_color_warm_bg, null));
-                                }
-                            }
-                        });
+//                        Bitmap bitmap = ((BitmapDrawable) resource).getBitmap();
+//                        Palette.from(bitmap).generate(new Palette.PaletteAsyncListener() {
+//                            @Override
+//                            public void onGenerated(Palette palette) {
+//                                int vibrantColor = palette.getVibrantColor(Color.WHITE);
+//
+//                                int red = Color.red(vibrantColor);
+//                                int green = Color.green(vibrantColor);
+//                                int blue = Color.blue(vibrantColor);
+//
+//                                int cct = ColorUtil.calculateColorTemperature(red, green, blue);
+//                                if (cct > 5000) {
+//                                    // 冷色
+//                                    mCoverBg.setBackground(ResourcesCompat.getDrawable(getResources(), R.drawable.shape_color_cold_bg, null));
+//                                } else {
+//                                    // 暖色
+//                                    mCoverBg.setBackground(ResourcesCompat.getDrawable(getResources(), R.drawable.shape_color_warm_bg, null));
+//                                }
+//                            }
+//                        });
 
                         mBackgroundAnimationRelativeLayout.setForeground(resource);
                     }

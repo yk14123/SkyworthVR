@@ -19,7 +19,7 @@
 
     <androidx.appcompat.widget.AppCompatTextView
         android:id="@+id/tv_video_intro"
-        android:layout_width="632dp"
+        android:layout_width="458dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="54dp"
         android:layout_marginTop="311dp"

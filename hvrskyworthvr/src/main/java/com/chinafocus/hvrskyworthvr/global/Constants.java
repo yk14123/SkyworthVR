@@ -14,7 +14,7 @@ public class Constants {
     public static int RESULT_CODE_ACTIVE_DIALOG = 10005;
     public static int RESULT_CODE_MINE_FINISH = 10006;
 
-    public static final String APP_NO = "007";
+    public static final String APP_NO = "009";
     public static final String ABOUT_USER_PROTOCOL = "farm360/farmhouse360/user-agreement.html";
     public static final String ABOUT_PRIVACY_PROTOCOL = "farm360/farmhouse360/privacy-agreement.html";
     public static final String ABOUT_US_PROTOCOL = "farm360/farmhouse360/about-us.html";
