@@ -32,10 +32,6 @@ public class RtrVideoSubFragment extends Fragment {
     private static final String VIDEO_LIST_CATEGORY = "video_list_category";
     private String mCategory;
 
-    public int getCategory() {
-        return Integer.parseInt(mCategory);
-    }
-
     public static RtrVideoSubFragment newInstance(String category) {
         RtrVideoSubFragment rtrVideoSubFragment = new RtrVideoSubFragment();
         Bundle bundle = new Bundle();
@@ -79,6 +75,11 @@ public class RtrVideoSubFragment extends Fragment {
                 mRecyclerView.setAdapter(mAdapter);
 
                 mRecyclerView.post(() -> {
+                    if (cacheVideoId > 0) {
+                        mIndex = mAdapter.getPositionFromVideoIdAndType(cacheVideoId, cacheVideoType);
+                        cacheVideoId = -1;
+                        cacheVideoType = -1;
+                    }
                     mRecyclerView.scrollToPosition(mIndex);
                     BaseViewHolder holder = (BaseViewHolder) mRecyclerView.findViewHolderForAdapterPosition(mIndex);
                     mAdapter.selectedItem(mIndex, holder);
@@ -95,6 +96,8 @@ public class RtrVideoSubFragment extends Fragment {
     }
 
     private int mIndex;
+    private int cacheVideoId;
+    private int cacheVideoType;
 
     public void setIndex(int index) {
         mIndex = index;
@@ -103,9 +106,16 @@ public class RtrVideoSubFragment extends Fragment {
     public void selectedItem(int videoId, int videoType) {
         if (mAdapter != null) {
             mIndex = mAdapter.getPositionFromVideoIdAndType(videoId, videoType);
+            cacheVideoId = -1;
+            cacheVideoType = -1;
+
             mRecyclerView.scrollToPosition(mIndex);
             LinearLayoutManager mLayoutManager = (LinearLayoutManager) mRecyclerView.getLayoutManager();
             Objects.requireNonNull(mLayoutManager).scrollToPositionWithOffset(mIndex, 0);
+        } else {
+            // 表示网络还未加载，
+            cacheVideoId = videoId;
+            cacheVideoType = videoType;
         }
     }
 

@@ -70,6 +70,7 @@ public class RtrMainActivity extends AppCompatActivity {
     private Disposable mDisposable;
     private RtrVrModeMainDialog vrModeMainDialog;
     private List<RtrVideoSubFragment> mFragments;
+    private List<Integer> mCategories;
     private ViewPager2 mViewPager2;
 
     @Override
@@ -105,7 +106,11 @@ public class RtrMainActivity extends AppCompatActivity {
                     scaleTitleView.setMinScale(0.7f);
                     scaleTitleView.setText(videoCategories.get(index).getName());
                     scaleTitleView.setOnClickListener(view
-                            -> mViewPager2.setCurrentItem(index, false));
+                            -> {
+                        closeTimer(null);
+                        VrSyncPlayInfo.obtain().restoreVideoInfo();
+                        mViewPager2.setCurrentItem(index, false);
+                    });
 
                     return scaleTitleView;
                 }
@@ -119,10 +124,12 @@ public class RtrMainActivity extends AppCompatActivity {
             magicIndicator.setNavigator(commonNavigator);
 
             mFragments = new ArrayList<>();
+            mCategories = new ArrayList<>();
 
             for (VideoCategory videoCategory : videoCategories) {
                 RtrVideoSubFragment videoListFragment = RtrVideoSubFragment.newInstance(videoCategory.getId() + "");
                 mFragments.add(videoListFragment);
+                mCategories.add(videoCategory.getId());
             }
 
             BaseFragmentStateAdapter<RtrVideoSubFragment> adapter = new BaseFragmentStateAdapter<>(this, mFragments);
@@ -294,12 +301,14 @@ public class RtrMainActivity extends AppCompatActivity {
             int videoType = data.getIntExtra(MEDIA_TYPE, -1);
             int category = data.getIntExtra(MEDIA_CATEGORY, -1);
 
-            for (int i = 0; i < mFragments.size(); i++) {
-                RtrVideoSubFragment temp = mFragments.get(i);
-                if (temp.getCategory() == category) {
-                    temp.selectedItem(videoId, videoType);
-                    mViewPager2.setCurrentItem(i, false);
-                    break;
+            if (mCategories != null && mCategories.size() > 0) {
+                for (int i = 0; i < mCategories.size(); i++) {
+                    if (mCategories.get(i).equals(category)) {
+                        RtrVideoSubFragment temp = mFragments.get(i);
+                        temp.selectedItem(videoId, videoType);
+                        mViewPager2.setCurrentItem(i, false);
+                        return;
+                    }
                 }
             }
         }

@@ -23,6 +23,7 @@ public class GradientScaleStarPagerTitleView extends FrameLayout implements IPag
     private float mMinScale = 0.85f;
     private AppCompatTextView mTvPageTitle;
     private AppCompatImageView mIvStar;
+    private LinearGradient mLinearGradient;
 
     public GradientScaleStarPagerTitleView(Context context) {
         super(context);
@@ -64,11 +65,14 @@ public class GradientScaleStarPagerTitleView extends FrameLayout implements IPag
 
     @Override
     public void onSelected(int index, int totalCount) {
-        LinearGradient linearGradient = new LinearGradient(0, 0, getMeasuredWidth(), 0,
-                Color.parseColor("#FFFFDC8E"),
-                Color.parseColor("#FFFBCB61"),
-                Shader.TileMode.CLAMP);
-        mTvPageTitle.getPaint().setShader(linearGradient);
+        if (mLinearGradient == null) {
+            mLinearGradient = new LinearGradient(0, 0, getMeasuredWidth(), 0,
+                    Color.parseColor("#FFFFDC8E"),
+                    Color.parseColor("#FFFBCB61"),
+                    Shader.TileMode.CLAMP);
+        }
+        mTvPageTitle.getPaint().setShader(mLinearGradient);
+        mTvPageTitle.setTextColor(ContextCompat.getColor(getContext(), R.color.color_white));
         mTvPageTitle.invalidate();
 
         mIvStar.setVisibility(VISIBLE);

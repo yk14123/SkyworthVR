@@ -78,7 +78,7 @@ public class RtrMediaPlayActivity extends AppCompatActivity implements ViewBindH
 
         mediaViewModel = new ViewModelProvider(this).get(MediaViewModel.class);
 
-        loadNetData(VrSyncPlayInfo.obtain().getVideoId());
+        loadNetData(currentVideoId);
         observerNetData();
     }
 
@@ -249,7 +249,7 @@ public class RtrMediaPlayActivity extends AppCompatActivity implements ViewBindH
         if (player.getPlaybackState() == STATE_ENDED) {
             setResult(RESULT_CODE_ACTIVE_DIALOG,
                     new Intent()
-                            .putExtra(MEDIA_ID, VrSyncPlayInfo.obtain().getVideoId())
+                            .putExtra(MEDIA_ID, currentVideoId)
                             .putExtra(MEDIA_TYPE, VrSyncPlayInfo.obtain().getTag() == 1 ? 2 : 1)
                             .putExtra(MEDIA_CATEGORY, VrSyncPlayInfo.obtain().getCategory())
             );
@@ -288,7 +288,7 @@ public class RtrMediaPlayActivity extends AppCompatActivity implements ViewBindH
         VrSyncPlayInfo.obtain().setSeekTime(mExoMediaHelper.getPlayer().getCurrentPosition());
         setResult(RESULT_CODE_INACTIVE_DIALOG,
                 new Intent()
-                        .putExtra(MEDIA_ID, VrSyncPlayInfo.obtain().getVideoId())
+                        .putExtra(MEDIA_ID, currentVideoId)
                         .putExtra(MEDIA_TYPE, VrSyncPlayInfo.obtain().getTag() == 1 ? 2 : 1)
                         .putExtra(MEDIA_CATEGORY, VrSyncPlayInfo.obtain().getCategory())
         );
@@ -317,7 +317,7 @@ public class RtrMediaPlayActivity extends AppCompatActivity implements ViewBindH
         VrSyncPlayInfo.obtain().restoreVideoInfo();
         setResult(RESULT_CODE_ACTIVE_DIALOG,
                 new Intent()
-                        .putExtra(MEDIA_ID, VrSyncPlayInfo.obtain().getVideoId())
+                        .putExtra(MEDIA_ID, currentVideoId)
                         .putExtra(MEDIA_TYPE, VrSyncPlayInfo.obtain().getTag() == 1 ? 2 : 1)
                         .putExtra(MEDIA_CATEGORY, VrSyncPlayInfo.obtain().getCategory())
         );
@@ -443,7 +443,7 @@ public class RtrMediaPlayActivity extends AppCompatActivity implements ViewBindH
     public void onGoBackActivity() {
         setResult(RESULT_CODE_SELF_INACTIVE_DIALOG,
                 new Intent()
-                        .putExtra(MEDIA_ID, VrSyncPlayInfo.obtain().getVideoId())
+                        .putExtra(MEDIA_ID, currentVideoId)
                         .putExtra(MEDIA_TYPE, VrSyncPlayInfo.obtain().getTag() == 1 ? 2 : 1)
                         .putExtra(MEDIA_CATEGORY, VrSyncPlayInfo.obtain().getCategory())
         );
