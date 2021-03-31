@@ -15,13 +15,22 @@ public class VideoContentList {
      */
 
     private String classify;
+    private String className;
     private String imgUrl;
     private int duration;
     private String title;
     private String intro;
     private int id;
     private String menuVideoUrl;
-    private String type;
+    private int type;
+
+    public String getClassName() {
+        return className;
+    }
+
+    public void setClassName(String className) {
+        this.className = className;
+    }
 
     public String getClassify() {
         return classify;
@@ -79,11 +88,11 @@ public class VideoContentList {
         this.menuVideoUrl = menuVideoUrl;
     }
 
-    public String getType() {
+    public int getType() {
         return type;
     }
 
-    public void setType(String type) {
+    public void setType(int type) {
         this.type = type;
     }
 }

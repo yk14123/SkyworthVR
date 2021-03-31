@@ -17,7 +17,7 @@ import retrofit2.http.POST;
 
 public interface ApiMultiService {
 
-    String APP_NO = "003";
+    String APP_NO = "007";
     String ABOUT_USER_PROTOCOL = "farm360/farmhouse360/user-agreement.html";
     String ABOUT_PRIVACY_PROTOCOL = "farm360/farmhouse360/privacy-agreement.html";
     String ABOUT_US_PROTOCOL = "farm360/farmhouse360/about-us.html";
@@ -54,4 +54,7 @@ public interface ApiMultiService {
 
     @POST("farm360/content/contentList")
     Observable<BaseResponse<List<VideoContentList>>> getVideoContentList(@Body RequestBody body);
+
+    @POST("farm360/edu/contentList")
+    Observable<BaseResponse<List<VideoContentList>>> getEduVideoContentList(@Body RequestBody body);
 }

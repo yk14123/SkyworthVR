@@ -27,7 +27,7 @@ public class RtrVideoSubViewModel extends BaseViewModel {
         addSubscribe(
                 ApiManager
                         .getService(ApiMultiService.class)
-                        .getVideoContentList(RequestBodyManager.getVideoListRequestBody(1)),
+                        .getEduVideoContentList(RequestBodyManager.getVideoListRequestBody(1)),
                 new BaseObserver<List<VideoContentList>>() {
                     @Override
                     public void onSuccess(List<VideoContentList> videoListData) {

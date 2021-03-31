@@ -1,6 +1,7 @@
 package com.chinafocus.hvrskyworthvr.rtr.show;
 
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.util.Log;
@@ -13,6 +14,7 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.MultiTransformation;
 import com.bumptech.glide.request.target.CustomTarget;
 import com.bumptech.glide.request.transition.Transition;
 import com.chinafocus.hvrskyworthvr.R;
@@ -53,6 +55,7 @@ import io.reactivex.Observer;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.schedulers.Schedulers;
+import jp.wasabeef.glide.transformations.BlurTransformation;
 import jp.wasabeef.glide.transformations.CropTransformation;
 
 import static com.bumptech.glide.request.RequestOptions.bitmapTransform;
@@ -76,13 +79,12 @@ public class ShowActivity extends AppCompatActivity {
     private ShowRtrVideoListViewAdapter mAdapter;
     private BackgroundAnimationRelativeLayout mBackgroundAnimationRelativeLayout;
 
-    private CropTransformation mContentBgTransformation;
-
     private MyRunnable mMyRunnable;
 
     private Disposable mDisposable;
     private RtrVrModeMainDialog vrModeMainDialog;
     private DiscreteScrollView mDiscreteScrollView;
+    private MultiTransformation<Bitmap> mMultiTransformation;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -115,6 +117,8 @@ public class ShowActivity extends AppCompatActivity {
                         ExoManager.getInstance().setPlayWhenReady(false);
                         VrSyncPlayInfo.obtain().restoreVideoInfo();
                         closeTimer(null);
+
+                        ((BaseViewHolder) currentItemHolder).getView(R.id.lottie_center_media).setVisibility(View.GONE);
                     }
                 });
 
@@ -132,6 +136,9 @@ public class ShowActivity extends AppCompatActivity {
                                     + ImageProcess.process(2560, 1600));
 
                     if (viewHolder instanceof BaseViewHolder) {
+
+                        ((BaseViewHolder) viewHolder).getView(R.id.lottie_center_media).setVisibility(View.VISIBLE);
+
                         mMyRunnable.setView(((BaseViewHolder) viewHolder).getView(R.id.iv_video_list_bg));
                         ExoManager.getInstance().init(getApplicationContext(), isPlaying -> {
                             Log.e("MyLog", " isPlaying >>> " + isPlaying);
@@ -163,12 +170,12 @@ public class ShowActivity extends AppCompatActivity {
                     int videoType = -1;
                     int videoClassify = -1;
 
-                    if (videoContentInfo.getType().equals("2")) {
+                    if (videoContentInfo.getType() == 2) {
                         // 全景出版
                         videoType = 1;
                         videoClassify = -1;
 
-                    } else if (videoContentInfo.getType().equals("1")) {
+                    } else if (videoContentInfo.getType() == 1) {
                         // 全景视频
                         videoType = 2;
                         videoClassify = Integer.parseInt(videoContentInfo.getClassify());
@@ -408,13 +415,15 @@ public class ShowActivity extends AppCompatActivity {
     }
 
     private void postVideoBackgroundUrl(String backgroundUrl) {
-        if (mContentBgTransformation == null) {
-            mContentBgTransformation = new CropTransformation(2560, 1600);
+        if (mMultiTransformation == null) {
+            CropTransformation cropTransformation = new CropTransformation(2560, 1600);
+            BlurTransformation blurTransformation = new BlurTransformation(40);
+            mMultiTransformation = new MultiTransformation<>(cropTransformation, blurTransformation);
         }
 
         Glide.with(this)
                 .load(backgroundUrl)
-                .apply(bitmapTransform(mContentBgTransformation))
+                .apply(bitmapTransform(mMultiTransformation))
                 .into(new CustomTarget<Drawable>() {
                     @Override
                     public void onResourceReady(@NonNull Drawable resource, @Nullable Transition<? super Drawable> transition) {

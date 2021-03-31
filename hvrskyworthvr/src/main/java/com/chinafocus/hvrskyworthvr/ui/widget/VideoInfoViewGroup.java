@@ -78,12 +78,12 @@ public class VideoInfoViewGroup extends FrameLayout {
 
         mVideoId = videoContentInfo.getId();
 
-        if (videoContentInfo.getType().equals("2")) {
+        if (videoContentInfo.getType() == 2) {
             // 全景出版
             mVideoType = 1;
             mVideoClassify = -1;
 
-        } else if (videoContentInfo.getType().equals("1")) {
+        } else if (videoContentInfo.getType() == 1) {
             // 全景视频
             mVideoType = 2;
             mVideoClassify = Integer.parseInt(videoContentInfo.getClassify());

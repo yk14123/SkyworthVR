@@ -1,5 +1,7 @@
 package com.chinafocus.hvrskyworthvr.rtr.adapter;
 
+import android.graphics.Color;
+import android.graphics.drawable.GradientDrawable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,6 +16,7 @@ import com.chinafocus.hvrskyworthvr.global.ConfigManager;
 import com.chinafocus.hvrskyworthvr.model.bean.VideoContentList;
 import com.chinafocus.hvrskyworthvr.net.ImageProcess;
 import com.chinafocus.hvrskyworthvr.ui.adapter.BaseViewHolder;
+import com.chinafocus.hvrskyworthvr.util.TimeUtil;
 import com.chinafocus.hvrskyworthvr.util.ViewClickUtil;
 
 import java.util.List;
@@ -23,6 +26,7 @@ public class ShowRtrVideoListViewAdapter extends RecyclerView.Adapter<BaseViewHo
     private final List<VideoContentList> mVideoContentLists;
 
     private Callback mCallback;
+    private final GradientDrawable mGradientDrawable;
 
     public void setOnClickCallback(Callback callback) {
         mCallback = callback;
@@ -30,6 +34,10 @@ public class ShowRtrVideoListViewAdapter extends RecyclerView.Adapter<BaseViewHo
 
     public ShowRtrVideoListViewAdapter(List<VideoContentList> videoContentLists) {
         mVideoContentLists = videoContentLists;
+
+        mGradientDrawable = new GradientDrawable();
+        mGradientDrawable.setCornerRadii(new float[]{0.f, 0.f, 0.f, 0.f, 20.f, 20.f, 0.f, 0.f});
+        mGradientDrawable.setColor(Color.parseColor("#ff0000"));
     }
 
     @NonNull
@@ -54,6 +62,10 @@ public class ShowRtrVideoListViewAdapter extends RecyclerView.Adapter<BaseViewHo
                 .into((AppCompatImageView) holder.getView(R.id.iv_video_list_bg));
 
         holder.setText(R.id.tv_video_list_title, mVideoContentLists.get(position).getTitle());
+        holder.setText(R.id.tv_video_classify, mVideoContentLists.get(position).getClassName());
+        holder.setText(R.id.tv_video_list_duration, TimeUtil.timeParse(mVideoContentLists.get(position).getDuration()));
+
+        holder.getView(R.id.tv_video_classify).setBackground(mGradientDrawable);
     }
 
     @Override
