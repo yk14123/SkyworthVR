@@ -19,14 +19,16 @@ import com.chinafocus.hvrskyworthvr.ui.adapter.BaseViewHolder;
 import com.chinafocus.hvrskyworthvr.util.TimeUtil;
 import com.chinafocus.hvrskyworthvr.util.ViewClickUtil;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class ShowRtrVideoListViewAdapter extends RecyclerView.Adapter<BaseViewHolder> {
 
     private final List<VideoContentList> mVideoContentLists;
 
     private Callback mCallback;
-    private final GradientDrawable mGradientDrawable;
+    private final Map<String, GradientDrawable> mGradientDrawableMap;
 
     public void setOnClickCallback(Callback callback) {
         mCallback = callback;
@@ -34,10 +36,7 @@ public class ShowRtrVideoListViewAdapter extends RecyclerView.Adapter<BaseViewHo
 
     public ShowRtrVideoListViewAdapter(List<VideoContentList> videoContentLists) {
         mVideoContentLists = videoContentLists;
-
-        mGradientDrawable = new GradientDrawable();
-        mGradientDrawable.setCornerRadii(new float[]{0.f, 0.f, 0.f, 0.f, 20.f, 20.f, 0.f, 0.f});
-        mGradientDrawable.setColor(Color.parseColor("#ff0000"));
+        mGradientDrawableMap = new HashMap<>();
     }
 
     @NonNull
@@ -65,7 +64,26 @@ public class ShowRtrVideoListViewAdapter extends RecyclerView.Adapter<BaseViewHo
         holder.setText(R.id.tv_video_classify, mVideoContentLists.get(position).getClassName());
         holder.setText(R.id.tv_video_list_duration, TimeUtil.timeParse(mVideoContentLists.get(position).getDuration()));
 
-        holder.getView(R.id.tv_video_classify).setBackground(mGradientDrawable);
+        handleGradientDrawable(holder, position);
+    }
+
+    private String[] mColors = {"#597EF7", "#36CFC9", "#40A9FF", "#ff0000"};
+    private int mColorIndex;
+
+    private void handleGradientDrawable(BaseViewHolder holder, int position) {
+
+        String classify = mVideoContentLists.get(position).getClassify();
+
+        GradientDrawable temp = mGradientDrawableMap.get(classify);
+        if (temp == null) {
+            GradientDrawable gradientDrawable = new GradientDrawable();
+            gradientDrawable.setCornerRadii(new float[]{0.f, 0.f, 0.f, 0.f, 20.f, 20.f, 0.f, 0.f});
+            gradientDrawable.setColor(Color.parseColor(mColors[mColorIndex++]));
+            mGradientDrawableMap.put(classify, gradientDrawable);
+            temp = gradientDrawable;
+        }
+
+        holder.getView(R.id.tv_video_classify).setBackground(temp);
     }
 
     @Override

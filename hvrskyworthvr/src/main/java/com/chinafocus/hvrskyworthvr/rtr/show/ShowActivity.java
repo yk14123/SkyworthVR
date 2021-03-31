@@ -10,6 +10,7 @@ import android.view.View;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.AppCompatTextView;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -85,6 +86,8 @@ public class ShowActivity extends AppCompatActivity {
     private RtrVrModeMainDialog vrModeMainDialog;
     private DiscreteScrollView mDiscreteScrollView;
     private MultiTransformation<Bitmap> mMultiTransformation;
+    private AppCompatTextView mVideoTitle;
+    private AppCompatTextView mVideoDes;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -100,6 +103,8 @@ public class ShowActivity extends AppCompatActivity {
 
         mDiscreteScrollView = findViewById(R.id.rv_main_hot_cover);
         mBackgroundAnimationRelativeLayout = findViewById(R.id.view_background_change_animation);
+        mVideoTitle = findViewById(R.id.tv_media_title);
+        mVideoDes = findViewById(R.id.tv_media_des);
         mDiscreteScrollView.setOrientation(DSVOrientation.HORIZONTAL);
         mDiscreteScrollView.setSlideOnFling(true);
 
@@ -129,6 +134,9 @@ public class ShowActivity extends AppCompatActivity {
                     }
 
                     int realPosition = scrollAdapter.getRealPosition(adapterPosition);
+
+                    mVideoTitle.setText(videoContentLists.get(realPosition).getTitle());
+                    mVideoDes.setText(videoContentLists.get(realPosition).getIntro());
 
                     postVideoBackgroundUrl(
                             ConfigManager.getInstance().getDefaultUrl()

@@ -29,12 +29,51 @@
         android:layout_width="0dp"
         android:layout_height="270dp"
         android:layout_gravity="bottom"
-        android:layout_marginBottom="50dp"
+        android:layout_marginBottom="28dp"
         android:overScrollMode="never"
         app:dsv_orientation="horizontal"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
+
+    <androidx.appcompat.widget.AppCompatImageView
+        android:layout_width="92dp"
+        android:layout_height="26dp"
+        android:layout_marginStart="53dp"
+        android:layout_marginTop="32dp"
+        android:src="@drawable/rtr_main_logo"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/tv_media_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textColor="@color/color_white"
+        android:textSize="30sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.256"
+        tools:text="皆山园图卷" />
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/tv_media_des"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="118dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="118dp"
+        android:ellipsize="end"
+        android:lineSpacingExtra="5dp"
+        android:maxLines="2"
+        android:textColor="@color/color_white"
+        android:textSize="16sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/tv_media_title"
+        tools:text="《皆山园图卷》由清代著名画家王原祁、王敬铭所作。青山蔼蔼，碧水粼粼，飞瀑直泄，鸟儿欢鸣，行人穿梭其中，悠然自得，仿若世外桃源。全景版《皆山园图卷》由荣宝斋...版社与中图云创联合打造，运用5G+VR技术，让观者穿越时空，在虚拟实境中，置身“可行、可望、可游、可居”的中国山水画作，感受“有声、有色、有全景”的超高清沉浸式视听体验。" />
 
     <View
         android:id="@+id/iv_mine_about"
