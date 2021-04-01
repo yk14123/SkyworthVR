@@ -11,7 +11,7 @@ public class ViewClickUtil {
     @SuppressWarnings("all")
     public static void click(View view, Runnable runnable) {
         RxView.clicks(view)
-                .throttleFirst(2, TimeUnit.SECONDS)
+                .throttleFirst(1, TimeUnit.SECONDS)
                 .subscribe(unit -> {
                     if (runnable != null) {
                         runnable.run();

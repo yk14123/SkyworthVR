@@ -670,14 +670,27 @@ public class PlayerControlView extends FrameLayout {
                 ((ViewManager) playButton.getParent()).removeView((View) playButton);
             }
             playButton = null;
+
             if (pauseButton != null) {
                 ((ViewManager) pauseButton.getParent()).removeView((View) pauseButton);
             }
             pauseButton = null;
+
             if (timeBar != null) {
                 ((ViewManager) ((DefaultTimeBar) timeBar).getParent()).removeView((View) timeBar);
             }
             timeBar = null;
+
+            if (mVideoReplay != null) {
+                ((ViewManager) mVideoReplay.getParent()).removeView((View) mVideoReplay);
+            }
+            mVideoReplay = null;
+
+            if (mVideoNext != null) {
+                ((ViewManager) mVideoNext.getParent()).removeView((View) mVideoNext);
+            }
+            mVideoNext = null;
+
         } else {
             groupConnect.setVisibility(GONE);
             groupDisconnect.setVisibility(VISIBLE);

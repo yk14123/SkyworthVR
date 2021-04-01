@@ -126,29 +126,18 @@ public class RtrMediaPlayActivity extends AppCompatActivity implements ViewBindH
             mExoMediaHelper.getPlayer().addListener(new Player.EventListener() {
 
                 @Override
-                public void onPlayerStateChanged(boolean playWhenReady, int state) {
-                    if (linkingVr && state == STATE_ENDED) {
-                        // 3. Pad 位于播放结束界面时，如果此时 VR 被激活则 VR 端直接进入一级视频列表界面，Pad 回到视频列表界面的「不可选片状态」
-                        // 不用接受命令。
-                        // 当链接状态，播放结束后
-                        waitSelectedFromVR(null);
-                    } else if (!linkingVr && state == STATE_ENDED) {
+                public void onPlaybackStateChanged(int state) {
+//                    if (linkingVr && state == STATE_ENDED) {
+                    // 3. Pad 位于播放结束界面时，如果此时 VR 被激活则 VR 端直接进入一级视频列表界面，Pad 回到视频列表界面的「不可选片状态」
+                    // 不用接受命令。
+                    // 当链接状态，播放结束后
+//                        waitSelectedFromVR(null);
+//                    } else
+                    if (!linkingVr && state == STATE_ENDED) {
                         VrSyncPlayInfo.obtain().restoreVideoInfo();
                         Log.e("MyLog", "当前播放完了:" + VrSyncPlayInfo.obtain());
                     }
                 }
-//                @Override
-//                public void onPlaybackStateChanged(int state) {
-//                    if (linkingVr && state == STATE_ENDED) {
-//                        // 3. Pad 位于播放结束界面时，如果此时 VR 被激活则 VR 端直接进入一级视频列表界面，Pad 回到视频列表界面的「不可选片状态」
-//                        // 不用接受命令。
-//                        // 当链接状态，播放结束后
-//                        waitSelectedFromVR(null);
-//                    } else if (!linkingVr && state == STATE_ENDED) {
-//                        VrSyncPlayInfo.obtain().restoreVideoInfo();
-//                        Log.e("MyLog", "当前播放完了:" + VrSyncPlayInfo.obtain());
-//                    }
-//                }
             });
 
             if (linkingVr) {
@@ -213,12 +202,6 @@ public class RtrMediaPlayActivity extends AppCompatActivity implements ViewBindH
 
         mLandPlayerView.syncSkyWorthMediaStatus(linkingVr);
 
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-        Constants.ACTIVITY_TAG = Constants.ACTIVITY_MEDIA;
     }
 
     /**
@@ -296,11 +279,11 @@ public class RtrMediaPlayActivity extends AppCompatActivity implements ViewBindH
     @Subscribe()
     @SuppressWarnings("unused")
     public void waitSelectedFromVR(VrMediaWaitSelected vrMediaWaitSelected) {
-        if (vrMediaWaitSelected == null) {
-            Log.d("MyLog", "-----VR端还在播放，Pad端提前播放完了-----");
-        } else {
-            Log.d("MyLog", "-----VR端回到了列表页面，正在选择菜单-----");
-        }
+//        if (vrMediaWaitSelected == null) {
+//            Log.d("MyLog", "-----VR端还在播放，Pad端提前播放完了-----");
+//        } else {
+        Log.d("MyLog", "-----VR端回到了列表页面，正在选择菜单-----");
+//        }
         // 1.关闭当前dialog
         closeAllDialog();
         // 2.恢复视频保存信息
@@ -400,15 +383,21 @@ public class RtrMediaPlayActivity extends AppCompatActivity implements ViewBindH
     }
 
     @Override
+    protected void onResume() {
+        super.onResume();
+        Constants.ACTIVITY_TAG = Constants.ACTIVITY_MEDIA;
+        mExoMediaHelper.onPlay();
+    }
+
+    @Override
     protected void onPause() {
         super.onPause();
-        mExoMediaHelper.onStop();
+        mExoMediaHelper.onPause();
     }
 
     @Override
     public void onStop() {
         super.onStop();
-        mExoMediaHelper.onStop();
         EventBus.getDefault().unregister(this);
     }
 
