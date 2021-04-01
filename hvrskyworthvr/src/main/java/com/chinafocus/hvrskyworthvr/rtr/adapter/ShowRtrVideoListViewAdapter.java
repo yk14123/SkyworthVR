@@ -67,9 +67,6 @@ public class ShowRtrVideoListViewAdapter extends RecyclerView.Adapter<BaseViewHo
         handleGradientDrawable(holder, position);
     }
 
-    private String[] mColors = {"#597EF7", "#36CFC9", "#40A9FF", "#ff0000"};
-    private int mColorIndex;
-
     private void handleGradientDrawable(BaseViewHolder holder, int position) {
 
         String classify = mVideoContentLists.get(position).getClassify();
@@ -78,7 +75,9 @@ public class ShowRtrVideoListViewAdapter extends RecyclerView.Adapter<BaseViewHo
         if (temp == null) {
             GradientDrawable gradientDrawable = new GradientDrawable();
             gradientDrawable.setCornerRadii(new float[]{0.f, 0.f, 0.f, 0.f, 20.f, 20.f, 0.f, 0.f});
-            gradientDrawable.setColor(Color.parseColor(mColors[mColorIndex++]));
+
+            String classStyleColor = mVideoContentLists.get(position).getClassStyleColor();
+            gradientDrawable.setColor(Color.parseColor(classStyleColor));
             mGradientDrawableMap.put(classify, gradientDrawable);
             temp = gradientDrawable;
         }

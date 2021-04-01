@@ -49,7 +49,7 @@ public interface ApiMultiService {
     @POST("farm360/content/videoList")
     Observable<BaseResponse<List<VideoDataInfo>>> getVideoListData(@Body RequestBody body);
 
-    @POST("farm360/content/videoDtl")
+    @POST("farm360/edu/videoDtl")
     Observable<BaseResponse<VideoDetail>> getVideoDetailData(@Body RequestBody body);
 
     @POST("farm360/content/contentList")

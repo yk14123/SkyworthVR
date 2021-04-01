@@ -43,12 +43,14 @@ import com.chinafocus.hvrskyworthvr.ui.widget.transformer.MyScrollStateChangeLis
 import com.chinafocus.hvrskyworthvr.util.TimeOutClickUtil;
 import com.chinafocus.hvrskyworthvr.util.statusbar.StatusBarCompatFactory;
 import com.yarolegovich.discretescrollview.DSVOrientation;
+import com.yarolegovich.discretescrollview.DiscreteScrollLayoutManager;
 import com.yarolegovich.discretescrollview.DiscreteScrollView;
 import com.yarolegovich.discretescrollview.InfiniteScrollAdapter;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 
+import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 
 import io.reactivex.Observable;
@@ -172,6 +174,20 @@ public class ShowActivity extends AppCompatActivity {
                 mAdapter.setOnClickCallback(adapterPosition -> {
 
                     int realPosition = scrollAdapter.getRealPosition(adapterPosition);
+                    int realCurrentPosition = scrollAdapter.getRealCurrentPosition();
+
+                    if (realCurrentPosition != realPosition) {
+                        // 视频暂停！
+                        ExoManager.getInstance().setPlayWhenReady(false);
+                        VrSyncPlayInfo.obtain().restoreVideoInfo();
+                        closeTimer(null);
+                        DiscreteScrollLayoutManager layoutManager = (DiscreteScrollLayoutManager) mDiscreteScrollView.getLayoutManager();
+                        BaseViewHolder centerHolder = (BaseViewHolder) mDiscreteScrollView.getViewHolder(Objects.requireNonNull(layoutManager).getCurrentPosition());
+                        Objects.requireNonNull(centerHolder).getView(R.id.lottie_center_media).setVisibility(View.GONE);
+
+                        mDiscreteScrollView.scrollToPosition(Integer.MAX_VALUE / 2 + realPosition);
+                        return;
+                    }
 
                     VideoContentList videoContentInfo = videoContentLists.get(realPosition);
 

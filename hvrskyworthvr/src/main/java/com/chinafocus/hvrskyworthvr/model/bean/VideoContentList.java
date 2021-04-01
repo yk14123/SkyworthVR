@@ -16,6 +16,7 @@ public class VideoContentList {
 
     private String classify;
     private String className;
+    private String classStyleColor;
     private String imgUrl;
     private int duration;
     private String title;
@@ -23,6 +24,14 @@ public class VideoContentList {
     private int id;
     private String menuVideoUrl;
     private int type;
+
+    public String getClassStyleColor() {
+        return classStyleColor;
+    }
+
+    public void setClassStyleColor(String classStyleColor) {
+        this.classStyleColor = classStyleColor;
+    }
 
     public String getClassName() {
         return className;
