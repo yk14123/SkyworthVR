@@ -98,7 +98,7 @@ public class ShowActivity extends AppCompatActivity {
         setContentView(R.layout.activity_show);
 
         mViewModel = new ViewModelProvider(this).get(RtrVideoSubViewModel.class);
-        
+
         mViewModel.getVideoContentList();
 
         findViewById(R.id.iv_mine_about).setOnClickListener(v -> TimeOutClickUtil.getDefault().startTimeOutClick(() -> startActivity(new Intent(ShowActivity.this, MineActivity.class))));
@@ -137,8 +137,13 @@ public class ShowActivity extends AppCompatActivity {
 
                     int realPosition = scrollAdapter.getRealPosition(adapterPosition);
 
-                    mVideoTitle.setText(videoContentLists.get(realPosition).getTitle());
-                    mVideoDes.setText(videoContentLists.get(realPosition).getIntro());
+                    String title = videoContentLists.get(realPosition).getTitle();
+                    String intro = videoContentLists.get(realPosition).getIntro();
+
+                    mVideoTitle.post(() -> {
+                        mVideoTitle.setText(title);
+                        mVideoDes.setText(intro);
+                    });
 
                     postVideoBackgroundUrl(
                             ConfigManager.getInstance().getDefaultUrl()
@@ -419,6 +424,8 @@ public class ShowActivity extends AppCompatActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
+        Log.e("MyLog", " ShowActivity onDestroy ");
+        ExoManager.getInstance().onDestroy();
         BluetoothService.getInstance().releaseAll(this);
     }
 

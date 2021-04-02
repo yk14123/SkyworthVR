@@ -195,12 +195,12 @@ public class ExoManager {
     /**
      * 释放全部ExoPlayer
      */
-    @SuppressWarnings("unused")
     public void onDestroy() {
         if (mSimpleExoPlayer != null) {
             mSimpleExoPlayer.setPlayWhenReady(false);
             mSimpleExoPlayer.stop(true);
             mSimpleExoPlayer.release();
+            mSimpleExoPlayer = null;
         }
     }
 
