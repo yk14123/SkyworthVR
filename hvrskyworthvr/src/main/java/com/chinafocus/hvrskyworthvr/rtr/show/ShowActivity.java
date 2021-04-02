@@ -98,7 +98,7 @@ public class ShowActivity extends AppCompatActivity {
         setContentView(R.layout.activity_show);
 
         mViewModel = new ViewModelProvider(this).get(RtrVideoSubViewModel.class);
-        // TODO: Use the ViewModel
+        
         mViewModel.getVideoContentList();
 
         findViewById(R.id.iv_mine_about).setOnClickListener(v -> TimeOutClickUtil.getDefault().startTimeOutClick(() -> startActivity(new Intent(ShowActivity.this, MineActivity.class))));
@@ -147,7 +147,16 @@ public class ShowActivity extends AppCompatActivity {
 
                     if (viewHolder instanceof BaseViewHolder) {
 
-                        ((BaseViewHolder) viewHolder).getView(R.id.lottie_center_media).setVisibility(View.VISIBLE);
+                        DiscreteScrollLayoutManager discreteScrollLayoutManager = (DiscreteScrollLayoutManager) mDiscreteScrollView.getLayoutManager();
+                        for (int i = 0; i < Objects.requireNonNull(discreteScrollLayoutManager).getChildCount(); i++) {
+                            View view = discreteScrollLayoutManager.getChildAt(i);
+                            BaseViewHolder childViewHolder = (BaseViewHolder) mDiscreteScrollView.getChildViewHolder(Objects.requireNonNull(view));
+                            if (childViewHolder == viewHolder) {
+                                childViewHolder.getView(R.id.lottie_center_media).setVisibility(View.VISIBLE);
+                            } else {
+                                childViewHolder.getView(R.id.lottie_center_media).setVisibility(View.GONE);
+                            }
+                        }
 
                         mMyRunnable.setView(((BaseViewHolder) viewHolder).getView(R.id.iv_video_list_bg));
                         ExoManager.getInstance().init(getApplicationContext(), isPlaying -> {
@@ -181,10 +190,6 @@ public class ShowActivity extends AppCompatActivity {
                         ExoManager.getInstance().setPlayWhenReady(false);
                         VrSyncPlayInfo.obtain().restoreVideoInfo();
                         closeTimer(null);
-                        DiscreteScrollLayoutManager layoutManager = (DiscreteScrollLayoutManager) mDiscreteScrollView.getLayoutManager();
-                        BaseViewHolder centerHolder = (BaseViewHolder) mDiscreteScrollView.getViewHolder(Objects.requireNonNull(layoutManager).getCurrentPosition());
-                        Objects.requireNonNull(centerHolder).getView(R.id.lottie_center_media).setVisibility(View.GONE);
-
                         mDiscreteScrollView.scrollToPosition(Integer.MAX_VALUE / 2 + realPosition);
                         return;
                     }

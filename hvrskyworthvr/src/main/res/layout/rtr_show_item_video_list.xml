@@ -30,6 +30,11 @@
             android:scaleType="centerCrop"
             tools:src="#F00" />
 
+        <View
+            android:background="@drawable/shape_media_item_bg"
+            android:layout_width="match_parent"
+            android:layout_height="40dp"/>
+
         <com.airbnb.lottie.LottieAnimationView
             android:id="@+id/lottie_center_media"
             android:layout_width="36dp"
