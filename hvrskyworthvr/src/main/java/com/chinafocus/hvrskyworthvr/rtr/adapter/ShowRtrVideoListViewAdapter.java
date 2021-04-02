@@ -16,6 +16,7 @@ import com.chinafocus.hvrskyworthvr.global.ConfigManager;
 import com.chinafocus.hvrskyworthvr.model.bean.VideoContentList;
 import com.chinafocus.hvrskyworthvr.net.ImageProcess;
 import com.chinafocus.hvrskyworthvr.ui.adapter.BaseViewHolder;
+import com.chinafocus.hvrskyworthvr.util.TextureVideoViewOutlineProvider;
 import com.chinafocus.hvrskyworthvr.util.TimeUtil;
 import com.chinafocus.hvrskyworthvr.util.ViewClickUtil;
 
@@ -29,6 +30,7 @@ public class ShowRtrVideoListViewAdapter extends RecyclerView.Adapter<BaseViewHo
 
     private Callback mCallback;
     private final Map<String, GradientDrawable> mGradientDrawableMap;
+    private final TextureVideoViewOutlineProvider mTextureVideoViewOutlineProvider;
 
     public void setOnClickCallback(Callback callback) {
         mCallback = callback;
@@ -37,6 +39,7 @@ public class ShowRtrVideoListViewAdapter extends RecyclerView.Adapter<BaseViewHo
     public ShowRtrVideoListViewAdapter(List<VideoContentList> videoContentLists) {
         mVideoContentLists = videoContentLists;
         mGradientDrawableMap = new HashMap<>();
+        mTextureVideoViewOutlineProvider = new TextureVideoViewOutlineProvider(20.f);
     }
 
     @NonNull
@@ -64,6 +67,9 @@ public class ShowRtrVideoListViewAdapter extends RecyclerView.Adapter<BaseViewHo
         holder.setText(R.id.tv_video_classify, mVideoContentLists.get(position).getClassName());
         holder.setText(R.id.tv_video_list_duration, TimeUtil.timeParse(mVideoContentLists.get(position).getDuration()));
 
+        holder.getView(R.id.texture_view_item).setOutlineProvider(mTextureVideoViewOutlineProvider);
+        holder.getView(R.id.texture_view_item).setClipToOutline(true);
+
         handleGradientDrawable(holder, position);
     }
 
@@ -74,7 +80,7 @@ public class ShowRtrVideoListViewAdapter extends RecyclerView.Adapter<BaseViewHo
         GradientDrawable temp = mGradientDrawableMap.get(classify);
         if (temp == null) {
             GradientDrawable gradientDrawable = new GradientDrawable();
-            gradientDrawable.setCornerRadii(new float[]{0.f, 0.f, 0.f, 0.f, 20.f, 20.f, 0.f, 0.f});
+            gradientDrawable.setCornerRadii(new float[]{20.f, 20.f, 0.f, 0.f, 20.f, 20.f, 0.f, 0.f});
 
             String classStyleColor = mVideoContentLists.get(position).getClassStyleColor();
             gradientDrawable.setColor(Color.parseColor(classStyleColor));

@@ -5,85 +5,88 @@
     android:layout_width="wrap_content"
     android:layout_height="wrap_content">
 
-    <androidx.cardview.widget.CardView
+    <TextureView
+        android:id="@+id/texture_view_item"
         android:layout_width="250dp"
         android:layout_height="140dp"
-        android:layout_marginBottom="8dp"
-        app:cardCornerRadius="8dp"
-        app:cardElevation="0dp"
-        app:cardPreventCornerOverlap="false"
-        app:cardUseCompatPadding="true"
-        app:layout_constraintBottom_toTopOf="@+id/tv_video_list_title"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
+        app:layout_constraintTop_toTopOf="parent" />
 
-        <TextureView
-            android:id="@+id/texture_view_item"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent" />
+    <androidx.constraintlayout.utils.widget.ImageFilterView
+        android:id="@+id/iv_video_list_bg"
+        android:layout_width="0dp"
+        android:layout_height="140dp"
+        android:scaleType="centerCrop"
+        android:background="@color/color_white_a20"
+        app:layout_constraintBottom_toBottomOf="@+id/texture_view_item"
+        app:layout_constraintEnd_toEndOf="@+id/texture_view_item"
+        app:layout_constraintStart_toStartOf="@+id/texture_view_item"
+        app:layout_constraintTop_toTopOf="@+id/texture_view_item"
+        app:round="8dp"
+        tools:src="#F00" />
 
-        <androidx.appcompat.widget.AppCompatImageView
-            android:id="@+id/iv_video_list_bg"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:scaleType="centerCrop"
-            tools:src="#F00" />
+    <View
+        android:layout_width="0dp"
+        android:layout_height="40dp"
+        android:background="@drawable/shape_media_item_bg"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
-        <View
-            android:background="@drawable/shape_media_item_bg"
-            android:layout_width="match_parent"
-            android:layout_height="40dp"/>
+    <com.airbnb.lottie.LottieAnimationView
+        android:id="@+id/lottie_center_media"
+        android:layout_width="36dp"
+        android:layout_height="34dp"
+        android:layout_gravity="end"
+        android:visibility="visible"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:lottie_autoPlay="true"
+        app:lottie_fileName="rotate_media_play.json"
+        app:lottie_loop="true" />
 
-        <com.airbnb.lottie.LottieAnimationView
-            android:id="@+id/lottie_center_media"
-            android:layout_width="36dp"
-            android:layout_height="34dp"
-            android:layout_gravity="end"
-            android:visibility="gone"
-            app:lottie_autoPlay="true"
-            app:lottie_fileName="rotate_media_play.json"
-            app:lottie_loop="true" />
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/tv_video_list_duration"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="5dp"
+        android:layout_marginBottom="5dp"
+        android:textColor="@color/color_white_a60"
+        android:textSize="12sp"
+        app:layout_constraintBottom_toBottomOf="@+id/texture_view_item"
+        app:layout_constraintEnd_toEndOf="@+id/texture_view_item"
+        tools:text="35:45" />
 
-        <androidx.appcompat.widget.AppCompatTextView
-            android:id="@+id/tv_video_list_duration"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="end|bottom"
-            android:layout_marginEnd="8dp"
-            android:layout_marginBottom="8dp"
-            android:textColor="@color/color_white_a60"
-            android:textSize="12sp"
-            tools:text="35:45" />
-
-        <androidx.appcompat.widget.AppCompatTextView
-            android:id="@+id/tv_video_classify"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:includeFontPadding="false"
-            android:paddingStart="8dp"
-            android:paddingTop="4dp"
-            android:paddingEnd="8dp"
-            android:paddingBottom="4dp"
-            android:textColor="@color/color_white"
-            android:textSize="12sp"
-            tools:text="人文经典" />
-
-    </androidx.cardview.widget.CardView>
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/tv_video_classify"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:includeFontPadding="false"
+        android:paddingStart="8dp"
+        android:paddingTop="4dp"
+        android:paddingEnd="8dp"
+        android:paddingBottom="4dp"
+        android:textColor="@color/color_white"
+        android:textSize="12sp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:text="人文经典" />
 
     <androidx.appcompat.widget.AppCompatTextView
         android:id="@+id/tv_video_list_title"
         android:layout_width="235dp"
         android:layout_height="wrap_content"
+        android:layout_marginTop="5dp"
         android:ellipsize="end"
         android:gravity="center_horizontal"
         android:includeFontPadding="false"
         android:maxLines="1"
         android:textColor="@color/color_white"
         android:textSize="16sp"
-        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/texture_view_item"
         tools:text="有一种童话，叫贝加尔湖的冬天" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
