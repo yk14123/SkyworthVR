@@ -17,8 +17,8 @@
         android:id="@+id/iv_video_list_bg"
         android:layout_width="0dp"
         android:layout_height="140dp"
-        android:scaleType="centerCrop"
         android:background="@color/color_white_a20"
+        android:scaleType="centerCrop"
         app:layout_constraintBottom_toBottomOf="@+id/texture_view_item"
         app:layout_constraintEnd_toEndOf="@+id/texture_view_item"
         app:layout_constraintStart_toStartOf="@+id/texture_view_item"
@@ -28,11 +28,12 @@
 
     <View
         android:layout_width="0dp"
-        android:layout_height="40dp"
+        android:layout_height="0dp"
         android:background="@drawable/shape_media_item_bg"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintBottom_toBottomOf="@+id/texture_view_item"
+        app:layout_constraintEnd_toEndOf="@+id/texture_view_item"
+        app:layout_constraintStart_toStartOf="@+id/texture_view_item"
+        app:layout_constraintTop_toTopOf="@+id/texture_view_item" />
 
     <com.airbnb.lottie.LottieAnimationView
         android:id="@+id/lottie_center_media"
@@ -62,7 +63,7 @@
         android:id="@+id/tv_video_list_title"
         android:layout_width="235dp"
         android:layout_height="wrap_content"
-        android:layout_marginTop="5dp"
+        android:layout_marginTop="8dp"
         android:ellipsize="end"
         android:gravity="center_horizontal"
         android:includeFontPadding="false"

@@ -227,8 +227,8 @@ public class ShowActivity extends AppCompatActivity {
                 mDiscreteScrollView.setAdapter(scrollAdapter);
                 mDiscreteScrollView.setItemTransitionTimeMillis(300);
                 mDiscreteScrollView.setItemTransformer(new MyCenterScaleTransformer.Builder()
-                        .setMinScale(0.94f)
-                        .setMaxScale(1.54f)
+                        .setMinScale(0.9377f)
+                        .setMaxScale(1.8115f)
                         .build());
             }
         });
