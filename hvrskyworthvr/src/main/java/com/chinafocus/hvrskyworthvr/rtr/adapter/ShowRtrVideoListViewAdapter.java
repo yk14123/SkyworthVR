@@ -1,7 +1,5 @@
 package com.chinafocus.hvrskyworthvr.rtr.adapter;
 
-import android.graphics.Color;
-import android.graphics.drawable.GradientDrawable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -20,16 +18,13 @@ import com.chinafocus.hvrskyworthvr.util.TextureVideoViewOutlineProvider;
 import com.chinafocus.hvrskyworthvr.util.TimeUtil;
 import com.chinafocus.hvrskyworthvr.util.ViewClickUtil;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 public class ShowRtrVideoListViewAdapter extends RecyclerView.Adapter<BaseViewHolder> {
 
     private final List<VideoContentList> mVideoContentLists;
 
     private Callback mCallback;
-    private final Map<String, GradientDrawable> mGradientDrawableMap;
     private final TextureVideoViewOutlineProvider mTextureVideoViewOutlineProvider;
 
     public void setOnClickCallback(Callback callback) {
@@ -38,7 +33,6 @@ public class ShowRtrVideoListViewAdapter extends RecyclerView.Adapter<BaseViewHo
 
     public ShowRtrVideoListViewAdapter(List<VideoContentList> videoContentLists) {
         mVideoContentLists = videoContentLists;
-        mGradientDrawableMap = new HashMap<>();
         mTextureVideoViewOutlineProvider = new TextureVideoViewOutlineProvider(20.f);
     }
 
@@ -64,31 +58,11 @@ public class ShowRtrVideoListViewAdapter extends RecyclerView.Adapter<BaseViewHo
                 .into((AppCompatImageView) holder.getView(R.id.iv_video_list_bg));
 
         holder.setText(R.id.tv_video_list_title, mVideoContentLists.get(position).getTitle());
-        holder.setText(R.id.tv_video_classify, mVideoContentLists.get(position).getClassName());
         holder.setText(R.id.tv_video_list_duration, TimeUtil.timeParse(mVideoContentLists.get(position).getDuration()));
 
         holder.getView(R.id.texture_view_item).setOutlineProvider(mTextureVideoViewOutlineProvider);
         holder.getView(R.id.texture_view_item).setClipToOutline(true);
 
-        handleGradientDrawable(holder, position);
-    }
-
-    private void handleGradientDrawable(BaseViewHolder holder, int position) {
-
-        String classify = mVideoContentLists.get(position).getClassify();
-
-        GradientDrawable temp = mGradientDrawableMap.get(classify);
-        if (temp == null) {
-            GradientDrawable gradientDrawable = new GradientDrawable();
-            gradientDrawable.setCornerRadii(new float[]{20.f, 20.f, 0.f, 0.f, 20.f, 20.f, 0.f, 0.f});
-
-            String classStyleColor = mVideoContentLists.get(position).getClassStyleColor();
-            gradientDrawable.setColor(Color.parseColor(classStyleColor));
-            mGradientDrawableMap.put(classify, gradientDrawable);
-            temp = gradientDrawable;
-        }
-
-        holder.getView(R.id.tv_video_classify).setBackground(temp);
     }
 
     @Override

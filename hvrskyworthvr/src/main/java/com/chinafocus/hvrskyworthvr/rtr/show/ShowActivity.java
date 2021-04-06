@@ -10,7 +10,6 @@ import android.view.View;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.AppCompatTextView;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -42,6 +41,7 @@ import com.chinafocus.hvrskyworthvr.ui.widget.transformer.MyCenterScaleTransform
 import com.chinafocus.hvrskyworthvr.ui.widget.transformer.MyScrollStateChangeListener;
 import com.chinafocus.hvrskyworthvr.util.TimeOutClickUtil;
 import com.chinafocus.hvrskyworthvr.util.statusbar.StatusBarCompatFactory;
+import com.chinafocus.hvrskyworthvr.util.widget.TagTextView;
 import com.yarolegovich.discretescrollview.DSVOrientation;
 import com.yarolegovich.discretescrollview.DiscreteScrollLayoutManager;
 import com.yarolegovich.discretescrollview.DiscreteScrollView;
@@ -50,6 +50,7 @@ import com.yarolegovich.discretescrollview.InfiniteScrollAdapter;
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 
+import java.util.Collections;
 import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 
@@ -88,8 +89,7 @@ public class ShowActivity extends AppCompatActivity {
     private RtrVrModeMainDialog vrModeMainDialog;
     private DiscreteScrollView mDiscreteScrollView;
     private MultiTransformation<Bitmap> mMultiTransformation;
-    private AppCompatTextView mVideoTitle;
-    private AppCompatTextView mVideoDes;
+    private TagTextView mVideoDes;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -105,7 +105,6 @@ public class ShowActivity extends AppCompatActivity {
 
         mDiscreteScrollView = findViewById(R.id.rv_main_hot_cover);
         mBackgroundAnimationRelativeLayout = findViewById(R.id.view_background_change_animation);
-        mVideoTitle = findViewById(R.id.tv_media_title);
         mVideoDes = findViewById(R.id.tv_media_des);
         mDiscreteScrollView.setOrientation(DSVOrientation.HORIZONTAL);
         mDiscreteScrollView.setSlideOnFling(true);
@@ -137,12 +136,11 @@ public class ShowActivity extends AppCompatActivity {
 
                     int realPosition = scrollAdapter.getRealPosition(adapterPosition);
 
-                    String title = videoContentLists.get(realPosition).getTitle();
                     String intro = videoContentLists.get(realPosition).getIntro();
-
-                    mVideoTitle.post(() -> {
-                        mVideoTitle.setText(title);
-                        mVideoDes.setText(intro);
+                    String color = videoContentLists.get(realPosition).getClassStyleColor();
+                    String classify = videoContentLists.get(realPosition).getClassName();
+                    mVideoDes.post(() -> {
+                        mVideoDes.setContentAndTag("  " + intro, Collections.singletonList(classify), color);
                     });
 
                     postVideoBackgroundUrl(

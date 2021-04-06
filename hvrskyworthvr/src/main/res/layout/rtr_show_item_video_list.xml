@@ -59,21 +59,6 @@
         tools:text="35:45" />
 
     <androidx.appcompat.widget.AppCompatTextView
-        android:id="@+id/tv_video_classify"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:includeFontPadding="false"
-        android:paddingStart="8dp"
-        android:paddingTop="4dp"
-        android:paddingEnd="8dp"
-        android:paddingBottom="4dp"
-        android:textColor="@color/color_white"
-        android:textSize="12sp"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        tools:text="人文经典" />
-
-    <androidx.appcompat.widget.AppCompatTextView
         android:id="@+id/tv_video_list_title"
         android:layout_width="235dp"
         android:layout_height="wrap_content"

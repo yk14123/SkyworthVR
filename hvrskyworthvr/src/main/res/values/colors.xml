@@ -12,6 +12,7 @@
     <color name="color_72F3">#B8F3F3F3</color>
     <color name="color_white">#FFFFFF</color>
     <color name="color_white_a20">#33FFFFFF</color>
+    <color name="color_white_a30">#4DFFFFFF</color>
     <color name="color_white_a40">#66FFFFFF</color>
     <color name="color_white_a60">#99FFFFFF</color>
     <color name="color_white_a80">#CCFFFFFF</color>
@@ -19,6 +20,7 @@
     <color name="color_F6">#F6F6F6</color>
 
     <color name="color_black_a20">#33000000</color>
+    <color name="color_black_a30">#4D000000</color>
     <color name="color_black_a40">#66000000</color>
     <color name="color_black_a50">#80000000</color>
     <color name="color_black_a60">#99000000</color>
