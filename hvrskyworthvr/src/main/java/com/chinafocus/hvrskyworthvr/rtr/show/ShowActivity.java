@@ -124,6 +124,7 @@ public class ShowActivity extends AppCompatActivity {
                         ExoManager.getInstance().setPlayWhenReady(false);
                         VrSyncPlayInfo.obtain().restoreVideoInfo();
                         closeTimer(null);
+                        mBackgroundAnimationRelativeLayout.removeCallbacks(mMyPostBackGroundRunnable);
 
                         ((BaseViewHolder) currentItemHolder).getView(R.id.lottie_center_media).setVisibility(View.GONE);
                     }
@@ -136,50 +137,18 @@ public class ShowActivity extends AppCompatActivity {
                     VideoContentList videoContentList = videoContentLists.get(realPosition);
 
                     setTagViewContent(videoContentList);
-
                     postDelayShowBackground(videoContentList);
 
                     if (viewHolder instanceof BaseViewHolder) {
-
-                        DiscreteScrollLayoutManager discreteScrollLayoutManager = (DiscreteScrollLayoutManager) mDiscreteScrollView.getLayoutManager();
-                        for (int i = 0; i < Objects.requireNonNull(discreteScrollLayoutManager).getChildCount(); i++) {
-                            View view = discreteScrollLayoutManager.getChildAt(i);
-                            BaseViewHolder childViewHolder = (BaseViewHolder) mDiscreteScrollView.getChildViewHolder(Objects.requireNonNull(view));
-                            if (childViewHolder == viewHolder) {
-                                childViewHolder.getView(R.id.lottie_center_media).setVisibility(View.VISIBLE);
-                            } else {
-                                childViewHolder.getView(R.id.lottie_center_media).setVisibility(View.GONE);
-                            }
-                        }
-
-                        if (mMyRunnable == null) {
-                            mMyRunnable = new MyRunnable();
-                        }
-                        mMyRunnable.setView(((BaseViewHolder) viewHolder).getView(R.id.iv_video_list_bg));
-                        ExoManager.getInstance().init(getApplicationContext(), isPlaying -> {
-                            Log.e("MyLog", " isPlaying >>> " + isPlaying);
-                            mBackgroundAnimationRelativeLayout.removeCallbacks(mMyRunnable);
-                            if (isPlaying) {
-                                // 加载视频，开始播放1.5秒后，隐藏图片
-                                mBackgroundAnimationRelativeLayout.postDelayed(mMyRunnable, 1500);
-                            } else {
-                                View view = mMyRunnable.getView();
-                                if (view != null) {
-                                    view.animate().alpha(1.f).setDuration(300).start();
-                                }
-                            }
-                        });
-                        ExoManager.getInstance().setTextureView(((BaseViewHolder) viewHolder).getView(R.id.texture_view_item));
-                        ExoManager.getInstance().prepareSource(getApplicationContext(),
-                                ConfigManager.getInstance().getDefaultUrl()
-                                        + videoContentList.getMenuVideoUrl());
-                        ExoManager.getInstance().setPlayWhenReady(true);
+                        showLottieAnim(viewHolder);
+                        startMenuMediaPlayer((BaseViewHolder) viewHolder, videoContentList);
                     }
                 });
 
                 mAdapter.setOnClickCallback(adapterPosition -> {
-
+                    // realPosition：在list中，响应点击的实际item位置，0~list.size-1
                     int realPosition = scrollAdapter.getRealPosition(adapterPosition);
+                    // realCurrentPosition：在list中,当前中心点的实际item位置，0~list.size-1
                     int realCurrentPosition = scrollAdapter.getRealCurrentPosition();
 
                     if (realCurrentPosition != realPosition) {
@@ -187,7 +156,8 @@ public class ShowActivity extends AppCompatActivity {
                         ExoManager.getInstance().setPlayWhenReady(false);
                         VrSyncPlayInfo.obtain().restoreVideoInfo();
                         closeTimer(null);
-                        mDiscreteScrollView.scrollToPosition(Integer.MAX_VALUE / 2 + realPosition);
+                        // adapterPosition：无线轮播中，recyclerView中的位置，其中Integer.Max/2为起始位置
+                        mDiscreteScrollView.smoothScrollToPosition(adapterPosition);
                         return;
                     }
 
@@ -219,25 +189,61 @@ public class ShowActivity extends AppCompatActivity {
                 });
 
                 mDiscreteScrollView.setAdapter(scrollAdapter);
-                mDiscreteScrollView.setItemTransitionTimeMillis(300);
+                mDiscreteScrollView.setItemTransitionTimeMillis(220);
                 mDiscreteScrollView.setItemTransformer(new MyCenterScaleTransformer.Builder()
                         .setMinScale(0.9377f)
                         .setMaxScale(1.8115f)
                         .build());
+
             }
         });
+    }
+
+    private void showLottieAnim(RecyclerView.ViewHolder viewHolder) {
+        DiscreteScrollLayoutManager discreteScrollLayoutManager = (DiscreteScrollLayoutManager) mDiscreteScrollView.getLayoutManager();
+        for (int i = 0; i < Objects.requireNonNull(discreteScrollLayoutManager).getChildCount(); i++) {
+            View view = discreteScrollLayoutManager.getChildAt(i);
+            BaseViewHolder childViewHolder = (BaseViewHolder) mDiscreteScrollView.getChildViewHolder(Objects.requireNonNull(view));
+            if (childViewHolder == viewHolder) {
+                childViewHolder.getView(R.id.lottie_center_media).setVisibility(View.VISIBLE);
+            } else {
+                childViewHolder.getView(R.id.lottie_center_media).setVisibility(View.GONE);
+            }
+        }
+    }
+
+    private void startMenuMediaPlayer(BaseViewHolder viewHolder, VideoContentList videoContentList) {
+        if (mMyRunnable == null) {
+            mMyRunnable = new MyRunnable();
+        }
+        mMyRunnable.setView(viewHolder.getView(R.id.iv_video_list_bg));
+        ExoManager.getInstance().init(getApplicationContext(), isPlaying -> {
+            mBackgroundAnimationRelativeLayout.removeCallbacks(mMyRunnable);
+            if (isPlaying) {
+                // 加载视频，开始播放1.5秒后，隐藏图片
+                mBackgroundAnimationRelativeLayout.postDelayed(mMyRunnable, 1500);
+            } else {
+                View view = mMyRunnable.getView();
+                if (view != null) {
+                    view.animate().alpha(1.f).setDuration(300).start();
+                }
+            }
+        });
+        ExoManager.getInstance().setTextureView(viewHolder.getView(R.id.texture_view_item));
+        ExoManager.getInstance().prepareSource(getApplicationContext(),
+                ConfigManager.getInstance().getDefaultUrl()
+                        + videoContentList.getMenuVideoUrl());
+        ExoManager.getInstance().setPlayWhenReady(true);
     }
 
     private void postDelayShowBackground(VideoContentList videoContentList) {
         if (mMyPostBackGroundRunnable == null) {
             mMyPostBackGroundRunnable = new MyPostBackGroundRunnable();
         }
-
-        mBackgroundAnimationRelativeLayout.removeCallbacks(mMyPostBackGroundRunnable);
         mMyPostBackGroundRunnable.setUrl(ConfigManager.getInstance().getDefaultUrl()
                 + videoContentList.getImgUrl()
                 + ImageProcess.process(2560, 1600));
-        mBackgroundAnimationRelativeLayout.postDelayed(mMyPostBackGroundRunnable, 300);
+        mBackgroundAnimationRelativeLayout.postDelayed(mMyPostBackGroundRunnable, 500);
     }
 
     private void setTagViewContent(VideoContentList videoContentList) {
@@ -478,7 +484,7 @@ public class ShowActivity extends AppCompatActivity {
     private void postVideoBackgroundUrl(String backgroundUrl) {
         if (mMultiTransformation == null) {
             CropTransformation cropTransformation = new CropTransformation(2560, 1600);
-            BlurTransformation blurTransformation = new BlurTransformation(40);
+            BlurTransformation blurTransformation = new BlurTransformation(80);
             mMultiTransformation = new MultiTransformation<>(cropTransformation, blurTransformation);
         }
 
