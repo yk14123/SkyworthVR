@@ -90,6 +90,7 @@ public class ShowActivity extends AppCompatActivity {
     private DiscreteScrollView mDiscreteScrollView;
     private MultiTransformation<Bitmap> mMultiTransformation;
     private TagTextView mVideoDes;
+    private MyPostBackGroundRunnable mMyPostBackGroundRunnable;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -130,23 +131,13 @@ public class ShowActivity extends AppCompatActivity {
 
                 mDiscreteScrollView.addOnItemChangedListener((viewHolder, adapterPosition) -> {
 
-                    if (mMyRunnable == null) {
-                        mMyRunnable = new MyRunnable();
-                    }
-
                     int realPosition = scrollAdapter.getRealPosition(adapterPosition);
 
-                    String intro = videoContentLists.get(realPosition).getIntro();
-                    String color = videoContentLists.get(realPosition).getClassStyleColor();
-                    String classify = videoContentLists.get(realPosition).getClassName();
-                    mVideoDes.post(() -> {
-                        mVideoDes.setContentAndTag("  " + intro, Collections.singletonList(classify), color);
-                    });
+                    VideoContentList videoContentList = videoContentLists.get(realPosition);
 
-                    postVideoBackgroundUrl(
-                            ConfigManager.getInstance().getDefaultUrl()
-                                    + videoContentLists.get(realPosition).getImgUrl()
-                                    + ImageProcess.process(2560, 1600));
+                    setTagViewContent(videoContentList);
+
+                    postDelayShowBackground(videoContentList);
 
                     if (viewHolder instanceof BaseViewHolder) {
 
@@ -161,6 +152,9 @@ public class ShowActivity extends AppCompatActivity {
                             }
                         }
 
+                        if (mMyRunnable == null) {
+                            mMyRunnable = new MyRunnable();
+                        }
                         mMyRunnable.setView(((BaseViewHolder) viewHolder).getView(R.id.iv_video_list_bg));
                         ExoManager.getInstance().init(getApplicationContext(), isPlaying -> {
                             Log.e("MyLog", " isPlaying >>> " + isPlaying);
@@ -178,7 +172,7 @@ public class ShowActivity extends AppCompatActivity {
                         ExoManager.getInstance().setTextureView(((BaseViewHolder) viewHolder).getView(R.id.texture_view_item));
                         ExoManager.getInstance().prepareSource(getApplicationContext(),
                                 ConfigManager.getInstance().getDefaultUrl()
-                                        + videoContentLists.get(realPosition).getMenuVideoUrl());
+                                        + videoContentList.getMenuVideoUrl());
                         ExoManager.getInstance().setPlayWhenReady(true);
                     }
                 });
@@ -232,6 +226,25 @@ public class ShowActivity extends AppCompatActivity {
                         .build());
             }
         });
+    }
+
+    private void postDelayShowBackground(VideoContentList videoContentList) {
+        if (mMyPostBackGroundRunnable == null) {
+            mMyPostBackGroundRunnable = new MyPostBackGroundRunnable();
+        }
+
+        mBackgroundAnimationRelativeLayout.removeCallbacks(mMyPostBackGroundRunnable);
+        mMyPostBackGroundRunnable.setUrl(ConfigManager.getInstance().getDefaultUrl()
+                + videoContentList.getImgUrl()
+                + ImageProcess.process(2560, 1600));
+        mBackgroundAnimationRelativeLayout.postDelayed(mMyPostBackGroundRunnable, 300);
+    }
+
+    private void setTagViewContent(VideoContentList videoContentList) {
+        String intro = videoContentList.getIntro();
+        String color = videoContentList.getClassStyleColor();
+        String classify = videoContentList.getClassName();
+        mVideoDes.post(() -> mVideoDes.setContentAndTag("  " + intro, Collections.singletonList(classify), color));
     }
 
     @Override
@@ -422,7 +435,8 @@ public class ShowActivity extends AppCompatActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        Log.e("MyLog", " ShowActivity onDestroy ");
+        mBackgroundAnimationRelativeLayout.removeCallbacks(mMyPostBackGroundRunnable);
+        mMyPostBackGroundRunnable = null;
         ExoManager.getInstance().onDestroy();
         BluetoothService.getInstance().releaseAll(this);
     }
@@ -445,6 +459,19 @@ public class ShowActivity extends AppCompatActivity {
         public void run() {
             // 加动画溶解
             mView.animate().alpha(0.f).setDuration(300).start();
+        }
+    }
+
+    private class MyPostBackGroundRunnable implements Runnable {
+        private String url;
+
+        public void setUrl(String url) {
+            this.url = url;
+        }
+
+        @Override
+        public void run() {
+            postVideoBackgroundUrl(url);
         }
     }
 
