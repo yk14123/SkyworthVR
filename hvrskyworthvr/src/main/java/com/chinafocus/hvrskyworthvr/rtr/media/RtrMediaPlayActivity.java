@@ -415,10 +415,12 @@ public class RtrMediaPlayActivity extends AppCompatActivity implements ViewBindH
 
     @Override
     public void onGoBackActivity() {
-        setResult(RESULT_CODE_SELF_INACTIVE_DIALOG, new Intent().putExtra("currentVideoId", currentVideoId));
-        finish();
-        // 3.立即切换当前Activity为Main
-        Constants.ACTIVITY_TAG = Constants.ACTIVITY_MAIN;
+        if (!linkingVr) {
+            setResult(RESULT_CODE_SELF_INACTIVE_DIALOG, new Intent().putExtra("currentVideoId", currentVideoId));
+            finish();
+            // 3.立即切换当前Activity为Main
+            Constants.ACTIVITY_TAG = Constants.ACTIVITY_MAIN;
+        }
     }
 
     @Override

@@ -256,7 +256,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:visibility="visible"
-        app:constraint_referenced_ids="exo_back,rg_media_video,view_pos_holder" />
+        app:constraint_referenced_ids="rg_media_video,view_pos_holder" />
 
     <androidx.constraintlayout.widget.Group
         android:id="@+id/group_connect"

@@ -46,7 +46,7 @@
     <string name="media_video_adjust">视角回正</string>
     <string name="media_video_vr">VR观看</string>
     <string name="media_video_intro_big">视频简介</string>
-    <string name="media_video_vr_sync">正在同步展示VR眼镜中的视频</string>
+    <string name="media_video_vr_sync">正在同步展示 VR 眼镜中的视频，已禁用返回及拖动进度功能</string>
     <string name="media_video_vr_link_des">戴上 VR 眼镜，立即开始同步观看</string>
     <string name="vr_mode_linking">正在等待 VR 眼镜播放视频</string>
     <string name="mine_about">关于</string>
