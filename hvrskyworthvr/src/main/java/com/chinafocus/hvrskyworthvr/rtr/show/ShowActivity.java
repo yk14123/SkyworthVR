@@ -1,14 +1,17 @@
 package com.chinafocus.hvrskyworthvr.rtr.show;
 
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.drawable.Drawable;
+import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.RecyclerView;
@@ -21,6 +24,7 @@ import com.chinafocus.hvrskyworthvr.R;
 import com.chinafocus.hvrskyworthvr.exo.ExoManager;
 import com.chinafocus.hvrskyworthvr.global.ConfigManager;
 import com.chinafocus.hvrskyworthvr.global.Constants;
+import com.chinafocus.hvrskyworthvr.model.bean.TagHolder;
 import com.chinafocus.hvrskyworthvr.model.bean.VideoContentList;
 import com.chinafocus.hvrskyworthvr.net.ImageProcess;
 import com.chinafocus.hvrskyworthvr.rtr.adapter.ShowRtrVideoListViewAdapter;
@@ -37,6 +41,7 @@ import com.chinafocus.hvrskyworthvr.service.event.VrSyncPlayInfo;
 import com.chinafocus.hvrskyworthvr.ui.adapter.BaseViewHolder;
 import com.chinafocus.hvrskyworthvr.ui.main.media.MediaPlayActivity;
 import com.chinafocus.hvrskyworthvr.ui.widget.BackgroundAnimationRelativeLayout;
+import com.chinafocus.hvrskyworthvr.ui.widget.ScaleTransitionPagerTitleView;
 import com.chinafocus.hvrskyworthvr.ui.widget.transformer.MyCenterScaleTransformer;
 import com.chinafocus.hvrskyworthvr.ui.widget.transformer.MyScrollStateChangeListener;
 import com.chinafocus.hvrskyworthvr.util.TimeOutClickUtil;
@@ -47,10 +52,18 @@ import com.yarolegovich.discretescrollview.DiscreteScrollLayoutManager;
 import com.yarolegovich.discretescrollview.DiscreteScrollView;
 import com.yarolegovich.discretescrollview.InfiniteScrollAdapter;
 
+import net.lucode.hackware.magicindicator.MagicIndicator;
+import net.lucode.hackware.magicindicator.buildins.commonnavigator.CommonNavigator;
+import net.lucode.hackware.magicindicator.buildins.commonnavigator.abs.CommonNavigatorAdapter;
+import net.lucode.hackware.magicindicator.buildins.commonnavigator.abs.IPagerIndicator;
+import net.lucode.hackware.magicindicator.buildins.commonnavigator.abs.IPagerTitleView;
+
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 
+import java.util.ArrayList;
 import java.util.Collections;
+import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 
@@ -79,7 +92,6 @@ import static com.chinafocus.hvrskyworthvr.ui.main.media.MediaPlayActivity.MEDIA
 
 public class ShowActivity extends AppCompatActivity {
 
-    private RtrVideoSubViewModel mViewModel;
     private ShowRtrVideoListViewAdapter mAdapter;
     private BackgroundAnimationRelativeLayout mBackgroundAnimationRelativeLayout;
 
@@ -91,18 +103,23 @@ public class ShowActivity extends AppCompatActivity {
     private MultiTransformation<Bitmap> mMultiTransformation;
     private TagTextView mVideoDes;
     private MyPostBackGroundRunnable mMyPostBackGroundRunnable;
+    private MagicIndicator mMagicIndicator;
+    private InfiniteScrollAdapter<BaseViewHolder> mScrollAdapter;
 
+    @RequiresApi(api = Build.VERSION_CODES.N)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         StatusBarCompatFactory.getInstance().setStatusBarImmerse(this, false);
         setContentView(R.layout.activity_show);
 
-        mViewModel = new ViewModelProvider(this).get(RtrVideoSubViewModel.class);
+        RtrVideoSubViewModel mViewModel = new ViewModelProvider(this).get(RtrVideoSubViewModel.class);
 
         mViewModel.getVideoContentList();
 
         findViewById(R.id.iv_mine_about).setOnClickListener(v -> TimeOutClickUtil.getDefault().startTimeOutClick(() -> startActivity(new Intent(ShowActivity.this, MineActivity.class))));
+
+        mMagicIndicator = findViewById(R.id.magic_Indicator_main_tag);
 
         mDiscreteScrollView = findViewById(R.id.rv_main_hot_cover);
         mBackgroundAnimationRelativeLayout = findViewById(R.id.view_background_change_animation);
@@ -114,8 +131,7 @@ public class ShowActivity extends AppCompatActivity {
             if (mAdapter == null) {
                 mAdapter = new ShowRtrVideoListViewAdapter(videoContentLists);
 
-                InfiniteScrollAdapter<BaseViewHolder> scrollAdapter
-                        = InfiniteScrollAdapter.wrap(mAdapter);
+                mScrollAdapter = InfiniteScrollAdapter.wrap(mAdapter);
 
                 mDiscreteScrollView.addScrollStateChangeListener(new MyScrollStateChangeListener() {
                     @Override
@@ -130,26 +146,12 @@ public class ShowActivity extends AppCompatActivity {
                     }
                 });
 
-                mDiscreteScrollView.addOnItemChangedListener((viewHolder, adapterPosition) -> {
-
-                    int realPosition = scrollAdapter.getRealPosition(adapterPosition);
-
-                    VideoContentList videoContentList = videoContentLists.get(realPosition);
-
-                    setTagViewContent(videoContentList);
-                    postDelayShowBackground(videoContentList);
-
-                    if (viewHolder instanceof BaseViewHolder) {
-                        showLottieAnim(viewHolder);
-                        startMenuMediaPlayer((BaseViewHolder) viewHolder, videoContentList);
-                    }
-                });
 
                 mAdapter.setOnClickCallback(adapterPosition -> {
                     // realPosition：在list中，响应点击的实际item位置，0~list.size-1
-                    int realPosition = scrollAdapter.getRealPosition(adapterPosition);
+                    int realPosition = mScrollAdapter.getRealPosition(adapterPosition);
                     // realCurrentPosition：在list中,当前中心点的实际item位置，0~list.size-1
-                    int realCurrentPosition = scrollAdapter.getRealCurrentPosition();
+                    int realCurrentPosition = mScrollAdapter.getRealCurrentPosition();
 
                     if (realCurrentPosition != realPosition) {
                         // 视频暂停！
@@ -188,12 +190,83 @@ public class ShowActivity extends AppCompatActivity {
 
                 });
 
-                mDiscreteScrollView.setAdapter(scrollAdapter);
+                mDiscreteScrollView.setAdapter(mScrollAdapter);
                 mDiscreteScrollView.setItemTransitionTimeMillis(220);
                 mDiscreteScrollView.setItemTransformer(new MyCenterScaleTransformer.Builder()
                         .setMinScale(0.9377f)
                         .setMaxScale(1.8115f)
                         .build());
+
+                List<TagHolder> tagHolders = new ArrayList<>();
+
+                for (int i = 0; i < videoContentLists.size(); i++) {
+                    String className = videoContentLists.get(i).getClassName();
+                    TagHolder tagHolder = new TagHolder(className, i);
+                    if (!tagHolders.contains(tagHolder)) {
+                        tagHolders.add(tagHolder);
+                    }
+                }
+
+                CommonNavigator commonNavigator = new CommonNavigator(this);
+                commonNavigator.setAdjustMode(false);
+                commonNavigator.setAdapter(new CommonNavigatorAdapter() {
+
+                    @Override
+                    public int getCount() {
+                        return tagHolders.size();
+                    }
+
+                    @Override
+                    public IPagerTitleView getTitleView(Context context, final int index) {
+                        ScaleTransitionPagerTitleView scaleTitleView = new ScaleTransitionPagerTitleView(context);
+                        scaleTitleView.setTextSize(23);
+                        scaleTitleView.setMinScale(0.7f);
+                        scaleTitleView.setNormalColor(getResources().getColor(R.color.color_white_a60));
+                        scaleTitleView.setSelectedColor(getResources().getColor(R.color.color_white));
+                        scaleTitleView.setText(tagHolders.get(index).getClassName());
+                        scaleTitleView.setOnClickListener(view
+                                -> {
+                            mBackgroundAnimationRelativeLayout.removeCallbacks(mMyPostBackGroundRunnable);
+                            mDiscreteScrollView.scrollToPosition(Integer.MAX_VALUE / 2 + tagHolders.get(index).getStartIndex());
+                            mScrollAdapter.notifyDataSetChanged();
+                            mMagicIndicator.onPageSelected(index);
+                            mMagicIndicator.onPageScrolled(index, 0.0F, 0);
+                        });
+
+                        return scaleTitleView;
+                    }
+
+                    @Override
+                    public IPagerIndicator getIndicator(Context context) {
+                        return null;
+                    }
+                });
+
+                mMagicIndicator.setNavigator(commonNavigator);
+
+                mDiscreteScrollView.addOnItemChangedListener((viewHolder, adapterPosition) -> {
+
+                    int realPosition = mScrollAdapter.getRealPosition(adapterPosition);
+
+                    VideoContentList videoContentList = videoContentLists.get(realPosition);
+
+                    String className = videoContentList.getClassName();
+                    for (int i = 0; i < tagHolders.size(); i++) {
+                        if (className.equals(tagHolders.get(i).getClassName())) {
+                            mMagicIndicator.onPageSelected(i);
+                            mMagicIndicator.onPageScrolled(i, 0.0F, 0);
+                            break;
+                        }
+                    }
+
+                    setTagViewContent(videoContentList);
+                    postDelayShowBackground(videoContentList);
+
+                    if (viewHolder instanceof BaseViewHolder) {
+                        showLottieAnim(viewHolder);
+                        startMenuMediaPlayer((BaseViewHolder) viewHolder, videoContentList);
+                    }
+                });
 
             }
         });
@@ -243,7 +316,7 @@ public class ShowActivity extends AppCompatActivity {
         mMyPostBackGroundRunnable.setUrl(ConfigManager.getInstance().getDefaultUrl()
                 + videoContentList.getImgUrl()
                 + ImageProcess.process(2560, 1600));
-        mBackgroundAnimationRelativeLayout.postDelayed(mMyPostBackGroundRunnable, 500);
+        mBackgroundAnimationRelativeLayout.postDelayed(mMyPostBackGroundRunnable, 600);
     }
 
     private void setTagViewContent(VideoContentList videoContentList) {
@@ -400,6 +473,9 @@ public class ShowActivity extends AppCompatActivity {
             if (mAdapter != null) {
                 int crease = mAdapter.calculatePositionFromVideoId(currentVideoId);
                 mDiscreteScrollView.scrollToPosition(Integer.MAX_VALUE / 2 + crease);
+                if (mScrollAdapter != null) {
+                    mScrollAdapter.notifyDataSetChanged();
+                }
             }
         }
 

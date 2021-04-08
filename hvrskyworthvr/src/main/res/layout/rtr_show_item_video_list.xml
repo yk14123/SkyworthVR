@@ -19,12 +19,12 @@
         android:layout_height="140dp"
         android:background="@color/color_white_a20"
         android:scaleType="centerCrop"
+        android:src="@drawable/media_item_cover_bg"
         app:layout_constraintBottom_toBottomOf="@+id/texture_view_item"
         app:layout_constraintEnd_toEndOf="@+id/texture_view_item"
         app:layout_constraintStart_toStartOf="@+id/texture_view_item"
         app:layout_constraintTop_toTopOf="@+id/texture_view_item"
-        app:round="8dp"
-        tools:src="#F00" />
+        app:round="8dp" />
 
     <View
         android:layout_width="0dp"

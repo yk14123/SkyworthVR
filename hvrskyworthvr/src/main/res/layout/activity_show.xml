@@ -37,6 +37,7 @@
         app:layout_constraintVertical_bias="0.455" />
 
     <androidx.appcompat.widget.AppCompatImageView
+        android:id="@+id/iv_main_logo"
         android:layout_width="92dp"
         android:layout_height="26dp"
         android:layout_marginStart="53dp"
@@ -44,6 +45,29 @@
         android:src="@drawable/rtr_main_logo"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
+
+    <View
+        android:id="@+id/view_divider_line"
+        android:layout_width="1dp"
+        android:layout_height="16dp"
+        android:layout_marginStart="35dp"
+        android:background="@color/color_white"
+        app:layout_constraintBottom_toBottomOf="@+id/iv_main_logo"
+        app:layout_constraintStart_toEndOf="@+id/iv_main_logo"
+        app:layout_constraintTop_toTopOf="@+id/iv_main_logo" />
+
+    <net.lucode.hackware.magicindicator.MagicIndicator
+        android:id="@+id/magic_Indicator_main_tag"
+        android:layout_width="wrap_content"
+        android:layout_height="54dp"
+        android:layout_marginStart="38dp"
+        android:layout_marginBottom="4dp"
+        app:layout_constraintBottom_toBottomOf="@+id/view_divider_line"
+        app:layout_constraintEnd_toStartOf="@+id/iv_mine_about"
+        app:layout_constraintHorizontal_bias="0"
+        app:layout_constraintStart_toEndOf="@+id/view_divider_line"
+        app:layout_constraintTop_toTopOf="@+id/view_divider_line"
+        app:layout_constraintWidth_max="wrap" />
 
     <com.chinafocus.hvrskyworthvr.util.widget.TagTextView
         android:id="@+id/tv_media_des"
