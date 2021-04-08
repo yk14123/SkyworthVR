@@ -3,6 +3,7 @@ package com.chinafocus.hvrskyworthvr.rtr.show;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.os.Bundle;
@@ -57,6 +58,7 @@ import net.lucode.hackware.magicindicator.buildins.commonnavigator.CommonNavigat
 import net.lucode.hackware.magicindicator.buildins.commonnavigator.abs.CommonNavigatorAdapter;
 import net.lucode.hackware.magicindicator.buildins.commonnavigator.abs.IPagerIndicator;
 import net.lucode.hackware.magicindicator.buildins.commonnavigator.abs.IPagerTitleView;
+import net.lucode.hackware.magicindicator.buildins.commonnavigator.indicators.LinePagerIndicator;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -89,6 +91,7 @@ import static com.chinafocus.hvrskyworthvr.service.BluetoothService.VR_STATUS_OF
 import static com.chinafocus.hvrskyworthvr.service.BluetoothService.VR_STATUS_ONLINE;
 import static com.chinafocus.hvrskyworthvr.ui.main.media.MediaPlayActivity.MEDIA_LINK_VR;
 import static com.chinafocus.hvrskyworthvr.ui.main.media.MediaPlayActivity.MEDIA_SEEK;
+import static net.lucode.hackware.magicindicator.buildins.commonnavigator.indicators.LinePagerIndicator.MODE_EXACTLY;
 
 public class ShowActivity extends AppCompatActivity {
 
@@ -219,8 +222,8 @@ public class ShowActivity extends AppCompatActivity {
                     @Override
                     public IPagerTitleView getTitleView(Context context, final int index) {
                         ScaleTransitionPagerTitleView scaleTitleView = new ScaleTransitionPagerTitleView(context);
-                        scaleTitleView.setTextSize(23);
-                        scaleTitleView.setMinScale(0.7f);
+                        scaleTitleView.setTextSize(20);
+                        scaleTitleView.setMinScale(0.833f);
                         scaleTitleView.setNormalColor(getResources().getColor(R.color.color_white_a60));
                         scaleTitleView.setSelectedColor(getResources().getColor(R.color.color_white));
                         scaleTitleView.setText(tagHolders.get(index).getClassName());
@@ -238,7 +241,13 @@ public class ShowActivity extends AppCompatActivity {
 
                     @Override
                     public IPagerIndicator getIndicator(Context context) {
-                        return null;
+                        LinePagerIndicator linePagerIndicator = new LinePagerIndicator(context);
+                        linePagerIndicator.setColors(Color.WHITE);
+                        linePagerIndicator.setLineWidth(62.f);
+                        linePagerIndicator.setLineHeight(12.f);
+                        linePagerIndicator.setMode(MODE_EXACTLY);
+                        linePagerIndicator.setRoundRadius(44);
+                        return linePagerIndicator;
                     }
                 });
 
