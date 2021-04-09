@@ -42,7 +42,7 @@ public class BackgroundAnimationRelativeLayout extends RelativeLayout {
         layerDrawable = new LayerDrawable(drawables);
     //监听动画的执行
         objectAnimator = ObjectAnimator.ofFloat(this, "number", 0f, 1.0f);
-        objectAnimator.setDuration(500);
+        objectAnimator.setDuration(100);
         objectAnimator.setInterpolator(new AccelerateInterpolator());
         objectAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
             @Override

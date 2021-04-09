@@ -108,6 +108,7 @@ public class ShowActivity extends AppCompatActivity {
     private MyPostBackGroundRunnable mMyPostBackGroundRunnable;
     private MagicIndicator mMagicIndicator;
     private InfiniteScrollAdapter<BaseViewHolder> mScrollAdapter;
+    private List<TagHolder> mTagHolders;
 
     @RequiresApi(api = Build.VERSION_CODES.N)
     @Override
@@ -144,7 +145,6 @@ public class ShowActivity extends AppCompatActivity {
                         VrSyncPlayInfo.obtain().restoreVideoInfo();
                         closeTimer(null);
                         mBackgroundAnimationRelativeLayout.removeCallbacks(mMyPostBackGroundRunnable);
-
                         ((BaseViewHolder) currentItemHolder).getView(R.id.lottie_center_media).setVisibility(View.GONE);
                     }
                 });
@@ -200,58 +200,7 @@ public class ShowActivity extends AppCompatActivity {
                         .setMaxScale(1.8115f)
                         .build());
 
-                List<TagHolder> tagHolders = new ArrayList<>();
-
-                for (int i = 0; i < videoContentLists.size(); i++) {
-                    String className = videoContentLists.get(i).getClassName();
-                    TagHolder tagHolder = new TagHolder(className, i);
-                    if (!tagHolders.contains(tagHolder)) {
-                        tagHolders.add(tagHolder);
-                    }
-                }
-
-                CommonNavigator commonNavigator = new CommonNavigator(this);
-                commonNavigator.setAdjustMode(false);
-                commonNavigator.setAdapter(new CommonNavigatorAdapter() {
-
-                    @Override
-                    public int getCount() {
-                        return tagHolders.size();
-                    }
-
-                    @Override
-                    public IPagerTitleView getTitleView(Context context, final int index) {
-                        ScaleTransitionPagerTitleView scaleTitleView = new ScaleTransitionPagerTitleView(context);
-                        scaleTitleView.setTextSize(20);
-                        scaleTitleView.setMinScale(0.833f);
-                        scaleTitleView.setNormalColor(getResources().getColor(R.color.color_white_a60));
-                        scaleTitleView.setSelectedColor(getResources().getColor(R.color.color_white));
-                        scaleTitleView.setText(tagHolders.get(index).getClassName());
-                        scaleTitleView.setOnClickListener(view
-                                -> {
-                            mBackgroundAnimationRelativeLayout.removeCallbacks(mMyPostBackGroundRunnable);
-                            mDiscreteScrollView.scrollToPosition(Integer.MAX_VALUE / 2 + tagHolders.get(index).getStartIndex());
-                            mScrollAdapter.notifyDataSetChanged();
-                            mMagicIndicator.onPageSelected(index);
-                            mMagicIndicator.onPageScrolled(index, 0.0F, 0);
-                        });
-
-                        return scaleTitleView;
-                    }
-
-                    @Override
-                    public IPagerIndicator getIndicator(Context context) {
-                        LinePagerIndicator linePagerIndicator = new LinePagerIndicator(context);
-                        linePagerIndicator.setColors(Color.WHITE);
-                        linePagerIndicator.setLineWidth(62.f);
-                        linePagerIndicator.setLineHeight(12.f);
-                        linePagerIndicator.setMode(MODE_EXACTLY);
-                        linePagerIndicator.setRoundRadius(44);
-                        return linePagerIndicator;
-                    }
-                });
-
-                mMagicIndicator.setNavigator(commonNavigator);
+                setIndicatorContent(videoContentLists);
 
                 mDiscreteScrollView.addOnItemChangedListener((viewHolder, adapterPosition) -> {
 
@@ -259,15 +208,7 @@ public class ShowActivity extends AppCompatActivity {
 
                     VideoContentList videoContentList = videoContentLists.get(realPosition);
 
-                    String className = videoContentList.getClassName();
-                    for (int i = 0; i < tagHolders.size(); i++) {
-                        if (className.equals(tagHolders.get(i).getClassName())) {
-                            mMagicIndicator.onPageSelected(i);
-                            mMagicIndicator.onPageScrolled(i, 0.0F, 0);
-                            break;
-                        }
-                    }
-
+                    bindItemToIndicator(videoContentList);
                     setTagViewContent(videoContentList);
                     postDelayShowBackground(videoContentList);
 
@@ -279,6 +220,78 @@ public class ShowActivity extends AppCompatActivity {
 
             }
         });
+    }
+
+    private void setIndicatorContent(List<VideoContentList> videoContentLists) {
+        mTagHolders = new ArrayList<>();
+
+        for (int i = 0; i < videoContentLists.size(); i++) {
+            String className = videoContentLists.get(i).getClassName();
+            TagHolder tagHolder = new TagHolder(className, i);
+            if (!mTagHolders.contains(tagHolder)) {
+                mTagHolders.add(tagHolder);
+            }
+        }
+
+        CommonNavigator commonNavigator = new CommonNavigator(this);
+        commonNavigator.setAdjustMode(false);
+        commonNavigator.setAdapter(new CommonNavigatorAdapter() {
+
+            @Override
+            public int getCount() {
+                return mTagHolders.size();
+            }
+
+            @Override
+            public IPagerTitleView getTitleView(Context context, final int index) {
+                ScaleTransitionPagerTitleView scaleTitleView = new ScaleTransitionPagerTitleView(context);
+                scaleTitleView.setTextSize(20);
+                scaleTitleView.setMinScale(0.833f);
+                scaleTitleView.setNormalColor(getResources().getColor(R.color.color_white_a60));
+                scaleTitleView.setSelectedColor(getResources().getColor(R.color.color_white));
+                scaleTitleView.setText(mTagHolders.get(index).getClassName());
+                scaleTitleView.setOnClickListener(view
+                        -> {
+                    mBackgroundAnimationRelativeLayout.removeCallbacks(mMyPostBackGroundRunnable);
+                    bindIndicatorToItem(index);
+                });
+
+                return scaleTitleView;
+            }
+
+            @Override
+            public IPagerIndicator getIndicator(Context context) {
+                LinePagerIndicator linePagerIndicator = new LinePagerIndicator(context);
+                linePagerIndicator.setColors(Color.WHITE);
+                linePagerIndicator.setLineWidth(62.f);
+                linePagerIndicator.setLineHeight(12.f);
+                linePagerIndicator.setMode(MODE_EXACTLY);
+                linePagerIndicator.setRoundRadius(44);
+                return linePagerIndicator;
+            }
+        });
+
+        mMagicIndicator.setNavigator(commonNavigator);
+    }
+
+    private void bindItemToIndicator(VideoContentList videoContentList) {
+        String className = videoContentList.getClassName();
+        for (int i = 0; i < mTagHolders.size(); i++) {
+            if (className.equals(mTagHolders.get(i).getClassName())) {
+                mMagicIndicator.onPageSelected(i);
+                mMagicIndicator.onPageScrolled(i, 0.0F, 0);
+                break;
+            }
+        }
+    }
+
+    private void bindIndicatorToItem(int index) {
+        int centerIndex = Integer.MAX_VALUE / 2 + mTagHolders.get(index).getStartIndex();
+        mDiscreteScrollView.scrollToPosition(centerIndex);
+        mScrollAdapter.notifyDataSetChanged();
+
+        mMagicIndicator.onPageSelected(index);
+        mMagicIndicator.onPageScrolled(index, 0.0F, 0);
     }
 
     private void showLottieAnim(RecyclerView.ViewHolder viewHolder) {
@@ -302,8 +315,8 @@ public class ShowActivity extends AppCompatActivity {
         ExoManager.getInstance().init(getApplicationContext(), isPlaying -> {
             mBackgroundAnimationRelativeLayout.removeCallbacks(mMyRunnable);
             if (isPlaying) {
-                // 加载视频，开始播放1.5秒后，隐藏图片
-                mBackgroundAnimationRelativeLayout.postDelayed(mMyRunnable, 1500);
+                // 加载视频，开始播放1.0秒后，隐藏图片
+                mBackgroundAnimationRelativeLayout.postDelayed(mMyRunnable, 1000);
             } else {
                 View view = mMyRunnable.getView();
                 if (view != null) {
@@ -322,10 +335,11 @@ public class ShowActivity extends AppCompatActivity {
         if (mMyPostBackGroundRunnable == null) {
             mMyPostBackGroundRunnable = new MyPostBackGroundRunnable();
         }
+        mBackgroundAnimationRelativeLayout.removeCallbacks(mMyPostBackGroundRunnable);
         mMyPostBackGroundRunnable.setUrl(ConfigManager.getInstance().getDefaultUrl()
                 + videoContentList.getImgUrl()
                 + ImageProcess.process(2560, 1600));
-        mBackgroundAnimationRelativeLayout.postDelayed(mMyPostBackGroundRunnable, 600);
+        mBackgroundAnimationRelativeLayout.postDelayed(mMyPostBackGroundRunnable, 300);
     }
 
     private void setTagViewContent(VideoContentList videoContentList) {
@@ -568,8 +582,8 @@ public class ShowActivity extends AppCompatActivity {
 
     private void postVideoBackgroundUrl(String backgroundUrl) {
         if (mMultiTransformation == null) {
-            CropTransformation cropTransformation = new CropTransformation(2560, 1600);
-            BlurTransformation blurTransformation = new BlurTransformation(80);
+            CropTransformation cropTransformation = new CropTransformation(640, 400);
+            BlurTransformation blurTransformation = new BlurTransformation(40);
             mMultiTransformation = new MultiTransformation<>(cropTransformation, blurTransformation);
         }
 
