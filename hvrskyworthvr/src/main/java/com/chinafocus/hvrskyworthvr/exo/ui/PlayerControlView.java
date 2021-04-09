@@ -42,6 +42,7 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.widget.AppCompatRadioButton;
 import androidx.appcompat.widget.AppCompatTextView;
 import androidx.constraintlayout.widget.Group;
+import androidx.core.content.res.ResourcesCompat;
 
 import com.chinafocus.hvrskyworthvr.R;
 import com.google.android.exoplayer2.C;
@@ -514,6 +515,7 @@ public class PlayerControlView extends FrameLayout {
         // 画面回正
         AppCompatRadioButton resetContent = findViewById(R.id.rtr_exo_reset_content);
         if (resetContent != null) {
+            adaptTextViewDrawableBound(R.drawable.rtr_icon_video_adjust, resetContent);
             resetContent.setOnClickListener(v -> mInterAction.onVideoContentReset());
         }
         // 进入屏保画面
@@ -527,6 +529,7 @@ public class PlayerControlView extends FrameLayout {
         // 连接VR眼镜
         mLinkVr = findViewById(R.id.rtr_exo_link_vr);
         if (mLinkVr != null) {
+            adaptTextViewDrawableBound(R.drawable.rtr_icon_video_vr, mLinkVr);
             mLinkVr.setOnClickListener(v -> mInterAction.onLinkVR(v));
         }
 //        // 分辨率
@@ -588,6 +591,7 @@ public class PlayerControlView extends FrameLayout {
         // 更多投诉功能
         mSetting = findViewById(R.id.rtr_exo_setting);
         if (mSetting != null) {
+            adaptTextViewDrawableBound(R.drawable.icon_video_intro_big, mSetting);
             mSetting.setOnClickListener(v -> mInterAction.onVideoSetting());
         }
 
@@ -667,6 +671,12 @@ public class PlayerControlView extends FrameLayout {
     private ProgressBar noTouchTimeBar;
 
     private boolean shouldHideVideoNextButton;
+
+    private void adaptTextViewDrawableBound(int drawableId, TextView view) {
+        Drawable drawable = ResourcesCompat.getDrawable(getResources(), drawableId, null);
+        drawable.setBounds(0, 0, 80, 80);
+        view.setCompoundDrawables(null, drawable, null, null);
+    }
 
     public void syncSkyWorthMediaStatus(boolean sync) {
         if (sync) {

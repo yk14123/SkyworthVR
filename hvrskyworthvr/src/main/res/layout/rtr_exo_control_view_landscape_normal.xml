@@ -58,7 +58,6 @@
         android:id="@+id/rg_media_video"
         android:layout_width="76dp"
         android:layout_height="wrap_content"
-        android:background="@drawable/shape_media_video_extra_bg"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent">
@@ -69,30 +68,30 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="15dp"
             android:button="@null"
-            android:drawableTop="@drawable/rtr_icon_video_adjust"
-            android:drawablePadding="6dp"
+            android:drawablePadding="2dp"
             android:gravity="center"
             android:paddingStart="10dp"
             android:paddingTop="15dp"
             android:paddingEnd="10dp"
             android:paddingBottom="15dp"
             android:text="@string/media_video_adjust"
-            android:textColor="@color/color_white" />
+            android:textColor="@color/color_white"
+            android:textSize="13sp" />
 
         <androidx.appcompat.widget.AppCompatRadioButton
             android:id="@+id/rtr_exo_link_vr"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:button="@null"
-            android:drawableTop="@drawable/rtr_icon_video_vr"
-            android:drawablePadding="6dp"
+            android:drawablePadding="2dp"
             android:gravity="center"
             android:paddingStart="10dp"
             android:paddingTop="15dp"
             android:paddingEnd="10dp"
             android:paddingBottom="15dp"
             android:text="@string/media_video_vr"
-            android:textColor="@color/color_white" />
+            android:textColor="@color/color_white"
+            android:textSize="13sp" />
 
         <androidx.appcompat.widget.AppCompatRadioButton
             android:id="@+id/rtr_exo_setting"
@@ -100,15 +99,15 @@
             android:layout_height="wrap_content"
             android:layout_marginBottom="15dp"
             android:button="@null"
-            android:drawableTop="@drawable/icon_video_intro_big"
-            android:drawablePadding="6dp"
+            android:drawablePadding="2dp"
             android:gravity="center"
             android:paddingStart="10dp"
             android:paddingTop="15dp"
             android:paddingEnd="10dp"
             android:paddingBottom="15dp"
             android:text="@string/media_video_intro_big"
-            android:textColor="@color/color_white" />
+            android:textColor="@color/color_white"
+            android:textSize="13sp" />
 
     </RadioGroup>
 
@@ -123,7 +122,7 @@
         android:visibility="gone"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.443"
+        app:layout_constraintHorizontal_bias="0.43"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         tools:ignore="ContentDescription" />
@@ -139,7 +138,7 @@
         android:visibility="gone"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.557"
+        app:layout_constraintHorizontal_bias="0.57"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         tools:ignore="ContentDescription" />
@@ -231,7 +230,7 @@
         android:paddingBottom="13dp"
         android:text="@string/media_video_vr_sync"
         android:textColor="@color/color_white"
-        android:textSize="23sp"
+        android:textSize="16sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
