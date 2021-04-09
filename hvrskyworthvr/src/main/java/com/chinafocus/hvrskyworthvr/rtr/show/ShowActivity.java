@@ -132,11 +132,13 @@ public class ShowActivity extends AppCompatActivity {
         mDiscreteScrollView.setSlideOnFling(true);
 
         mViewModel.videoDataMutableLiveData.observe(this, videoContentLists -> {
+
             if (mAdapter == null) {
+
+                preLoadImage(videoContentLists);
+
                 mAdapter = new ShowRtrVideoListViewAdapter(videoContentLists);
-
                 mScrollAdapter = InfiniteScrollAdapter.wrap(mAdapter);
-
                 mDiscreteScrollView.addScrollStateChangeListener(new MyScrollStateChangeListener() {
                     @Override
                     public void onScrollStart(@NonNull RecyclerView.ViewHolder currentItemHolder, int adapterPosition) {
@@ -148,7 +150,6 @@ public class ShowActivity extends AppCompatActivity {
                         ((BaseViewHolder) currentItemHolder).getView(R.id.lottie_center_media).setVisibility(View.GONE);
                     }
                 });
-
 
                 mAdapter.setOnClickCallback(adapterPosition -> {
                     // realPosition：在list中，响应点击的实际item位置，0~list.size-1
@@ -220,6 +221,14 @@ public class ShowActivity extends AppCompatActivity {
 
             }
         });
+    }
+
+    private void preLoadImage(List<VideoContentList> videoContentLists) {
+        for (VideoContentList temp : videoContentLists) {
+            Glide.with(this)
+                    .load(ConfigManager.getInstance().getDefaultUrl() + temp.getImgUrl() + ImageProcess.process(600, 400))
+                    .preload();
+        }
     }
 
     private void setIndicatorContent(List<VideoContentList> videoContentLists) {
@@ -338,7 +347,7 @@ public class ShowActivity extends AppCompatActivity {
         mBackgroundAnimationRelativeLayout.removeCallbacks(mMyPostBackGroundRunnable);
         mMyPostBackGroundRunnable.setUrl(ConfigManager.getInstance().getDefaultUrl()
                 + videoContentList.getImgUrl()
-                + ImageProcess.process(2560, 1600));
+                + ImageProcess.process(600, 400));
         mBackgroundAnimationRelativeLayout.postDelayed(mMyPostBackGroundRunnable, 300);
     }
 

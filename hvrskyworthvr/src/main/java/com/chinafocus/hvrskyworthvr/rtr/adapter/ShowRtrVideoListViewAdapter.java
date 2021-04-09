@@ -54,7 +54,7 @@ public class ShowRtrVideoListViewAdapter extends RecyclerView.Adapter<BaseViewHo
     @Override
     public void onBindViewHolder(@NonNull BaseViewHolder holder, int position) {
         Glide.with(holder.itemView.getContext())
-                .load(ConfigManager.getInstance().getDefaultUrl() + mVideoContentLists.get(position).getImgUrl() + ImageProcess.process(584, 335))
+                .load(ConfigManager.getInstance().getDefaultUrl() + mVideoContentLists.get(position).getImgUrl() + ImageProcess.process(600, 400))
                 .placeholder(R.drawable.media_item_cover_bg)
                 .error(R.drawable.media_item_cover_bg)
                 .into((AppCompatImageView) holder.getView(R.id.iv_video_list_bg));
