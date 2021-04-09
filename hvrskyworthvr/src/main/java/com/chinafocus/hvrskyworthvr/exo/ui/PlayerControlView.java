@@ -35,6 +35,7 @@ import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
+import android.widget.RadioGroup;
 import android.widget.TextView;
 
 import androidx.annotation.Nullable;
@@ -205,6 +206,8 @@ public class PlayerControlView extends FrameLayout {
     static {
         ExoPlayerLibraryInfo.registerModule("goog.exo.ui");
     }
+
+    private RadioGroup mMediaInfoOperation;
 
     /**
      * Listener to be notified about changes of the visibility of the UI control.
@@ -518,6 +521,9 @@ public class PlayerControlView extends FrameLayout {
         if (enterScreen != null) {
             enterScreen.setOnClickListener(v -> mInterAction.onEnterScreen());
         }
+
+        mMediaInfoOperation = findViewById(R.id.rg_media_video);
+
         // 连接VR眼镜
         mLinkVr = findViewById(R.id.rtr_exo_link_vr);
         if (mLinkVr != null) {
@@ -1189,6 +1195,22 @@ public class PlayerControlView extends FrameLayout {
         }
         if (mVideoReplay != null) {
             mVideoReplay.setVisibility(shouldShowReplayNextButton ? VISIBLE : GONE);
+        }
+
+        if (mMediaInfoOperation != null) {
+            mMediaInfoOperation.setVisibility(!shouldShowReplayNextButton ? VISIBLE : GONE);
+        }
+
+        if (timeBar != null) {
+            ((View) timeBar).setVisibility(!shouldShowReplayNextButton ? VISIBLE : GONE);
+        }
+
+        if (durationView != null) {
+            durationView.setVisibility(!shouldShowReplayNextButton ? VISIBLE : GONE);
+        }
+
+        if (positionView != null) {
+            positionView.setVisibility(!shouldShowReplayNextButton ? VISIBLE : GONE);
         }
 
     }
