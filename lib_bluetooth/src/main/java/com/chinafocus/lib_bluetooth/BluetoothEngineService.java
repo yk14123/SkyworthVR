@@ -488,7 +488,7 @@ public class BluetoothEngineService {
 
         public void run() {
             Log.d(TAG, "------蓝牙引擎>>> [Socket] >>> InputStream start reading----------");
-            byte[] buffer = new byte[2048];
+            byte[] buffer = new byte[5 * 1024 * 1024];
             int bytes;
 
             // Keep listening to the InputStream while connected
@@ -502,7 +502,7 @@ public class BluetoothEngineService {
                     // Send the obtained bytes to the UI Activity
 //                    mHandler.obtainMessage(Constants.MESSAGE_READ, bytes, -1, buffer)
 //                            .sendToTarget();
-                } catch (IOException e) {
+                } catch (Exception e) {
                     Log.e(TAG, "------蓝牙引擎>>> [Socket] >>> InputStream read disconnected----------", e);
                     connectionLost();
                     break;

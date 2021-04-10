@@ -9,7 +9,7 @@ android {
         minSdkVersion 22
         targetSdkVersion 30
         versionCode 2
-        versionName "2.1.0"
+        versionName "2.0.3"
 
         testInstrumentationRunner "androidx.sky_worth_login_logo.runner.AndroidJUnitRunner"
 
@@ -96,4 +96,7 @@ dependencies {
     implementation project(path: ':lib_bluetooth')
     // 华为MDM模块
     implementation project(path: ':huaweimdm')
+
+
+    implementation 'com.github.yangkun19921001:YKCrash:1.0.2'
 }

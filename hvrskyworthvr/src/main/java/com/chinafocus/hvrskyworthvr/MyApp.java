@@ -6,14 +6,17 @@ import com.blankj.utilcode.util.LogUtils;
 import com.chinafocus.hvrskyworthvr.model.DeviceInfoManager;
 import com.chinafocus.hvrskyworthvr.net.NetworkRequestInfo;
 import com.chinafocus.lib_network.net.ApiManager;
+import com.devyk.crash_module.Crash;
+import com.devyk.crash_module.inter.JavaCrashUtils;
 import com.tencent.smtt.export.external.TbsCoreSettings;
 import com.tencent.smtt.sdk.QbSdk;
 
 import org.greenrobot.eventbus.EventBus;
 
+import java.io.File;
 import java.util.HashMap;
 
-public class MyApp extends Application {
+public class MyApp extends Application implements JavaCrashUtils.OnCrashListener {
     @Override
     public void onCreate() {
         super.onCreate();
@@ -47,5 +50,23 @@ public class MyApp extends Application {
         map.put(TbsCoreSettings.TBS_SETTINGS_USE_SPEEDY_CLASSLOADER, true);
         map.put(TbsCoreSettings.TBS_SETTINGS_USE_DEXLOADER_SERVICE, true);
         QbSdk.initTbsSettings(map);
+
+        collectCrashInfo();
+    }
+
+    private void collectCrashInfo() {
+        File externalFilesDir = getExternalFilesDir("");
+        File dir = new File(externalFilesDir, "crash");
+        if (!dir.exists()) {
+            dir.mkdir();
+        }
+
+        new Crash.CrashBuild(getApplicationContext())
+                .javaCrashPath(dir.getAbsolutePath(), this)
+                .build();
+    }
+
+    @Override
+    public void onCrash(String crashInfo, Throwable e) {
     }
 }

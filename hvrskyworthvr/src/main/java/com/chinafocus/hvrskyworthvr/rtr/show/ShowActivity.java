@@ -152,6 +152,9 @@ public class ShowActivity extends AppCompatActivity {
                 });
 
                 mAdapter.setOnClickCallback(adapterPosition -> {
+
+                    closeTimer(null);
+
                     // realPosition：在list中，响应点击的实际item位置，0~list.size-1
                     int realPosition = mScrollAdapter.getRealPosition(adapterPosition);
                     // realCurrentPosition：在list中,当前中心点的实际item位置，0~list.size-1
@@ -161,7 +164,6 @@ public class ShowActivity extends AppCompatActivity {
                         // 视频暂停！
                         ExoManager.getInstance().setPlayWhenReady(false);
                         VrSyncPlayInfo.obtain().restoreVideoInfo();
-                        closeTimer(null);
                         // adapterPosition：无线轮播中，recyclerView中的位置，其中Integer.Max/2为起始位置
                         mDiscreteScrollView.smoothScrollToPosition(adapterPosition);
                         return;

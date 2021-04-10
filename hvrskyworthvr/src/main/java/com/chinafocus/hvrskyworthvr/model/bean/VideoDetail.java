@@ -20,20 +20,20 @@ public class VideoDetail {
      * nextId : 10107
      */
 
-    private String imgUrl;
-    private int duration;
+//    private String imgUrl;
+//    private int duration;
     private String title;
     private String description;
-    private String copyright;
+//    private String copyright;
     private String videoUrl;
     private Object audioUrl;
     private String subtitle;
-    private Object saleStartTime;
-    private Object saleEndTime;
-    private String startTime;
-    private String endTime;
-    private String createTime;
-    private String updateTime;
+//    private Object saleStartTime;
+//    private Object saleEndTime;
+//    private String startTime;
+//    private String endTime;
+//    private String createTime;
+//    private String updateTime;
     private int id;
     private int nextId;
     private int nextType;
@@ -44,22 +44,6 @@ public class VideoDetail {
 
     public void setNextType(int nextType) {
         this.nextType = nextType;
-    }
-
-    public String getImgUrl() {
-        return imgUrl;
-    }
-
-    public void setImgUrl(String imgUrl) {
-        this.imgUrl = imgUrl;
-    }
-
-    public int getDuration() {
-        return duration;
-    }
-
-    public void setDuration(int duration) {
-        this.duration = duration;
     }
 
     public String getTitle() {
@@ -76,14 +60,6 @@ public class VideoDetail {
 
     public void setDescription(String description) {
         this.description = description;
-    }
-
-    public String getCopyright() {
-        return copyright;
-    }
-
-    public void setCopyright(String copyright) {
-        this.copyright = copyright;
     }
 
     public String getVideoUrl() {
@@ -108,54 +84,6 @@ public class VideoDetail {
 
     public void setSubtitle(String subtitle) {
         this.subtitle = subtitle;
-    }
-
-    public Object getSaleStartTime() {
-        return saleStartTime;
-    }
-
-    public void setSaleStartTime(Object saleStartTime) {
-        this.saleStartTime = saleStartTime;
-    }
-
-    public Object getSaleEndTime() {
-        return saleEndTime;
-    }
-
-    public void setSaleEndTime(Object saleEndTime) {
-        this.saleEndTime = saleEndTime;
-    }
-
-    public String getStartTime() {
-        return startTime;
-    }
-
-    public void setStartTime(String startTime) {
-        this.startTime = startTime;
-    }
-
-    public String getEndTime() {
-        return endTime;
-    }
-
-    public void setEndTime(String endTime) {
-        this.endTime = endTime;
-    }
-
-    public String getCreateTime() {
-        return createTime;
-    }
-
-    public void setCreateTime(String createTime) {
-        this.createTime = createTime;
-    }
-
-    public String getUpdateTime() {
-        return updateTime;
-    }
-
-    public void setUpdateTime(String updateTime) {
-        this.updateTime = updateTime;
     }
 
     public int getId() {

@@ -439,9 +439,9 @@ public class ExoMediaHelper {
                         // Try calling httpError.getCause() to retrieve the underlying cause,
                         // although note that it may be null.
                     }
-                    // 当前是网络错误，就一直无限轮询请求
-                    player.prepare();
                 }
+                // 当前是网络错误，就一直无限轮询请求
+                player.prepare();
             }
         }
     }
