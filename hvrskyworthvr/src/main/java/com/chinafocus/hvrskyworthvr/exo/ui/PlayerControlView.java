@@ -597,6 +597,9 @@ public class PlayerControlView extends FrameLayout {
 
         AppCompatTextView appCompatTextView = findViewById(R.id.tv_media_video_intro_small);
         if (appCompatTextView != null) {
+            Drawable drawable = ResourcesCompat.getDrawable(getResources(), R.drawable.icon_video_intro_small, null);
+            drawable.setBounds(0, 0, 48, 48);
+            appCompatTextView.setCompoundDrawables(drawable, null, null, null);
             appCompatTextView.setOnClickListener(v -> mInterAction.onVideoSetting());
         }
 
@@ -678,7 +681,10 @@ public class PlayerControlView extends FrameLayout {
         view.setCompoundDrawables(null, drawable, null, null);
     }
 
+    private boolean isSync;
+
     public void syncSkyWorthMediaStatus(boolean sync) {
+        isSync = sync;
         if (sync) {
             groupConnect.setVisibility(VISIBLE);
             groupDisconnect.setVisibility(GONE);
@@ -1207,7 +1213,7 @@ public class PlayerControlView extends FrameLayout {
             mVideoReplay.setVisibility(shouldShowReplayNextButton ? VISIBLE : GONE);
         }
 
-        if (mMediaInfoOperation != null) {
+        if (mMediaInfoOperation != null && !isSync) {
             mMediaInfoOperation.setVisibility(!shouldShowReplayNextButton ? VISIBLE : GONE);
         }
 
