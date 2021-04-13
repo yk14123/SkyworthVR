@@ -51,7 +51,7 @@ public class BluetoothEngineHelper {
                 case Constants.MESSAGE_READ:
                     byte[] readBuf = (byte[]) msg.obj;
                     // construct a string from the valid bytes in the buffer
-                    // TODO 收到byte数据
+                    // 收到byte数据
                     String readMessage = new String(readBuf, 0, msg.arg1);
                     Log.e(TAG, " readMessage :" + readMessage);
                     break;

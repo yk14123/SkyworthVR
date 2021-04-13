@@ -118,13 +118,13 @@ public class SettingViewGroup extends FrameLayout {
                 break;
             case CONNECT_ERROR:
                 if (isWifiType()) {
-                    // TODO PAD端 WIFI没有连接失败
+                    //  PAD端 WIFI没有连接失败
                     setWifiError();
                 } else if (isBluetoothType()) {
                     setBluetoothError();
                 }
 //                else if (isAlias()) {
-                // TODO 当网络不好的时候，设置名称失败
+                //  当网络不好的时候，设置名称失败
 //                }
                 break;
             case CONNECT_CHECK_AGAIN:

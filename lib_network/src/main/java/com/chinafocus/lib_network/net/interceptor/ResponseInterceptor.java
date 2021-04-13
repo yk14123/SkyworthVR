@@ -24,7 +24,7 @@ public class ResponseInterceptor implements Interceptor {
     @NonNull
     public Response intercept(Chain chain) throws IOException {
         Response response = chain.proceed(chain.request());
-        // TODO 如果是我们内部自定义错误，则单独抛异常，不走GSON转换
+        // 如果是我们内部自定义错误，则单独抛异常，不走GSON转换
         ResponseBody body = response.body();
         MediaType mediaType = null;
         String readString = "";

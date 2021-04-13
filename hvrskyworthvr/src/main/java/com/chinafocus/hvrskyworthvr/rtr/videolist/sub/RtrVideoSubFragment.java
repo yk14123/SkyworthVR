@@ -42,7 +42,7 @@ public class RtrVideoSubFragment extends Fragment {
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         mViewModel = new ViewModelProvider(this).get(RtrVideoSubViewModel.class);
-        // TODO: Use the ViewModel
+        // : Use the ViewModel
         mViewModel.getVideoContentList();
 
         VideoInfoViewGroup videoInfoViewGroup = requireView().findViewById(R.id.view_video_info);

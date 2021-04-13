@@ -21,6 +21,8 @@ import java.nio.charset.StandardCharsets;
 import java.util.Set;
 
 import static com.chinafocus.skyworthvr.bluetooth.BluetoothEngineService.ERROR_TAG;
+import static com.chinafocus.skyworthvr.bluetooth.BluetoothEngineService.ERROR_TAG_CONNECTION_LOST;
+import static com.chinafocus.skyworthvr.bluetooth.BluetoothEngineService.ERROR_TAG_UNABLE_TO_CONNECT;
 
 public class BluetoothEngineHelper {
 
@@ -83,23 +85,42 @@ public class BluetoothEngineHelper {
                     UnityPlayer.UnitySendMessage(UNITY_NAME, "ReadDeviceName", msg.getData().getString(Constants.DEVICE_NAME));
                     break;
                 case Constants.MESSAGE_TOAST:
-                    if (isStartBooted && retryCount < 3) {
-                        Bundle data = msg.getData();
-                        String string = data.getString(ERROR_TAG);
-                        // 链接后，发现以[客户端]身份连不上，则重试3次
-                        if (string != null && string.equals("connectionFailed")) {
-                            Message message = mHandler.obtainMessage(Constants.MESSAGE_RETRY_CONNECTED);
-                            mHandler.sendMessageDelayed(message, retryCount * 2000);
-                            retryCount++;
-                        }
+
+                    Bundle data = msg.getData();
+                    String string = data.getString(ERROR_TAG);
+
+                    if (ERROR_TAG_UNABLE_TO_CONNECT.equals(string)) {
+                        // 首次链接失败
+                        Log.d(TAG, "------ MESSAGE_TOAST >>> " + ERROR_TAG_UNABLE_TO_CONNECT);
+                        UnityPlayer.UnitySendMessage(UNITY_NAME, "ReadState", 6 + "");
+                        Message message = mHandler.obtainMessage(Constants.MESSAGE_RETRY_CONNECTED);
+                        mHandler.sendMessageDelayed(message, 1000);
+
+                    } else if (ERROR_TAG_CONNECTION_LOST.equals(string)) {
+                        // 链接成功后，中途再次出现断开链接
+                        Log.d(TAG, "------ MESSAGE_TOAST >>> " + ERROR_TAG_CONNECTION_LOST);
+                        UnityPlayer.UnitySendMessage(UNITY_NAME, "ReadState", 7 + "");
                     }
+
+//                    if (isStartBooted && retryCount < 3) {
+//                    if (isStartBooted && retryCount < 3) {
+//                        Bundle data = msg.getData();
+//                        String string = data.getString(ERROR_TAG);
+//                        // 链接后，发现以[客户端]身份连不上，则重试3次
+//                        if (string != null && string.equals("connectionFailed")) {
+//                            Message message = mHandler.obtainMessage(Constants.MESSAGE_RETRY_CONNECTED);
+//                            mHandler.sendMessageDelayed(message, retryCount * 2000);
+////                            retryCount++;
+//                        }
+//                    }
                     // 如果开机，发现以[客户端]身份连不上，则直接进入[服务端]等待
-                    isStartBooted = true;
+//                    isStartBooted = true;
                     // 出现错误断开链接
-                    UnityPlayer.UnitySendMessage(UNITY_NAME, "ReadState", 4 + "");
+
                     break;
                 case Constants.MESSAGE_RETRY_CONNECTED:
-                    Log.d(TAG, "------发现以[客户端]身份连不上，则开始重试 >>> " + retryCount);
+//                    Log.d(TAG, "------发现以[客户端]身份连不上，则开始重试 >>> " + retryCount);
+                    Log.d(TAG, "------发现以[客户端]身份连不上，则开始重试 >>> ");
                     tryConnectBondedDevices();
                     break;
             }

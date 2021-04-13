@@ -30,8 +30,8 @@ public class MyRollHandler extends Handler {
             final int action = event.getAction();
             final int actionMasked = action & MotionEvent.ACTION_MASK;
             switch (actionMasked) {
-                // TODO 因为return false！所以DOWN事件是无法捕获的！只有MOVE和UP事件
-                // TODO 这里如果return true的话，ViewPager会无法滑动！！
+                // 因为return false！所以DOWN事件是无法捕获的！只有MOVE和UP事件
+                // 这里如果return true的话，ViewPager会无法滑动！！
                 case MotionEvent.ACTION_DOWN:
                 case MotionEvent.ACTION_MOVE:
                     //移除所有的消息，不再自动轮播

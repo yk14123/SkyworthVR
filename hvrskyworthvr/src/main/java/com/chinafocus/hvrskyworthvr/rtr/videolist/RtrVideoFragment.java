@@ -47,7 +47,7 @@ public class RtrVideoFragment extends Fragment {
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         mViewModel = ViewModelProviders.of(this).get(RtrVideoViewModel.class);
-        // TODO: Use the ViewModel
+        // : Use the ViewModel
 
         MagicIndicator magicIndicator = requireView().findViewById(R.id.magic_Indicator_sub_list);
         ViewPager2 viewPagerVideoList = requireView().findViewById(R.id.vp_video_sub_list);

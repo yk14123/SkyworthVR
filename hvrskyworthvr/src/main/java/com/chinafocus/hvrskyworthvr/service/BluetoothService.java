@@ -2,6 +2,7 @@ package com.chinafocus.hvrskyworthvr.service;
 
 import android.app.Activity;
 import android.content.Context;
+import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
@@ -34,6 +35,9 @@ import java.util.UUID;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
+import static com.chinafocus.lib_bluetooth.BluetoothEngineService.ERROR_TAG;
+import static com.chinafocus.lib_bluetooth.BluetoothEngineService.ERROR_TAG_CONNECTION_LOST;
+import static com.chinafocus.lib_bluetooth.BluetoothEngineService.ERROR_TAG_UNABLE_TO_CONNECT;
 import static com.chinafocus.lib_bluetooth.Constants.MESSAGE_DEVICE_NAME;
 import static com.chinafocus.lib_bluetooth.Constants.MESSAGE_RETRY;
 import static com.chinafocus.lib_bluetooth.Constants.MESSAGE_STATE_CHANGE;
@@ -47,6 +51,8 @@ public class BluetoothService implements BluetoothEngineService.AsyncThreadReadB
     public static int CURRENT_VR_ONLINE_STATUS = VR_STATUS_OFFLINE;
 
     private static final String DEVICE_UUID = "device_uuid";
+
+    private static final String TAG = "BluetoothEngineService";
 
     private static final int CONNECT = 1;
     private static final int DISCONNECT = 2;
@@ -231,7 +237,8 @@ public class BluetoothService implements BluetoothEngineService.AsyncThreadReadB
                                 isStartSyncUUIDOnce = true;
                                 BluetoothService.getInstance().startSynchronizedUUID();
                             }
-                            // 链接成功
+                            // TODO 链接成功,取消延迟任务
+                            Log.d(TAG, "------ Pad 链接蓝牙成功 >>> 取消延迟任务 ");
                             break;
                         case BluetoothEngineService.STATE_CONNECTING:
                             // 链接中
@@ -272,6 +279,16 @@ public class BluetoothService implements BluetoothEngineService.AsyncThreadReadB
                     break;
                 case MESSAGE_TOAST:
                     // 链接错误
+                    Bundle data = msg.getData();
+                    String string = data.getString(ERROR_TAG);
+                    if (ERROR_TAG_UNABLE_TO_CONNECT.equals(string)) {
+                        // 首次链接失败
+                        Log.d(TAG, "------ Pad 首次链接设备失败 >>> " + ERROR_TAG_UNABLE_TO_CONNECT);
+                    } else if (ERROR_TAG_CONNECTION_LOST.equals(string)) {
+                        // TODO 链接成功后，中途再次出现断开链接
+                        Log.d(TAG, "------ Pad 发送延迟任务 >>> " + ERROR_TAG_CONNECTION_LOST);
+                    }
+
                     break;
                 case MESSAGE_CONNECT:
                     postConnect();
@@ -289,7 +306,9 @@ public class BluetoothService implements BluetoothEngineService.AsyncThreadReadB
                     postPlayStatus();
                     break;
                 case MESSAGE_SYNC_DEVICE_UUID:
-                    postSyncDeviceUUID((String) msg.obj);
+                    if (!isDeviceUuidExist) {
+                        postSyncDeviceUUID((String) msg.obj);
+                    }
                     break;
             }
         }
@@ -380,12 +399,17 @@ public class BluetoothService implements BluetoothEngineService.AsyncThreadReadB
         String string = SPUtils.getInstance().getString(DEVICE_UUID);
         if (TextUtils.isEmpty(string)) {
             // pad无
+            isDeviceUuidExist = false;
             sendUUIDMessage(-1, "NoUUID");
         } else {
             // pad有
+            isDeviceUuidExist = true;
             sendUUIDMessage(1, string);
+            postSyncDeviceUUID(string);
         }
     }
+
+    private boolean isDeviceUuidExist;
 
     // int:totalBody长度 int:tag类型 int:category类型 short:messageBody长度 int:是否有UUID int:uuid长度 string：uuid值
     private void handSyncUUID(byte[] bytes, int tagHead) {

@@ -64,7 +64,7 @@ public final class SphericalGLSurfaceView extends GLSurfaceView {
     private static final float Z_NEAR = 0.1f;
     private static final float Z_FAR = 100;
 
-    // TODO Calculate this depending on surface size and field of view.
+    // Calculate this depending on surface size and field of view.
     private static final float PX_PER_DEGREES = 25;
 
     /* package */ static final float UPRIGHT_ROLL = (float) Math.PI;

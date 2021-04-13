@@ -208,7 +208,7 @@ public class ExoMediaHelper {
     }
 
 
-    // TODO onDestroy生命周期
+    //  onDestroy生命周期
     public void onDestroy() {
         releasePlayer();
         if (player != null) {
@@ -262,10 +262,10 @@ public class ExoMediaHelper {
         prepareSource(videoUrl, null, null);
     }
 
-    // TODO setPlayWhenReady可用于开始和暂停播放
-    // TODO 各种seekTo方法可用于在媒体内搜索
-    // TODO setRepeatMode可用于控制媒体是否以及如何循环播放
-    // TODO 并且setPlaybackParameters可用于调整播放速度和音调。
+    //  setPlayWhenReady可用于开始和暂停播放
+    //  各种seekTo方法可用于在媒体内搜索
+    //  setRepeatMode可用于控制媒体是否以及如何循环播放
+    //  并且setPlaybackParameters可用于调整播放速度和音调。
 
     /**
      * 设置播放地址来源 String fileName = "https://v360.oss-cn-beijing.aliyuncs.com/video/v360/cn/test_001/bszg.m3u8";

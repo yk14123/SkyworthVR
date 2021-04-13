@@ -58,6 +58,10 @@ public class BluetoothEngineService {
     private int mState;
     private int mNewState;
 
+    public final static String ERROR_TAG = "error_tag";
+    public final static String ERROR_TAG_UNABLE_TO_CONNECT = "UnableToConnectDevice";
+    public final static String ERROR_TAG_CONNECTION_LOST = "DeviceConnectionWasLost";
+
     private boolean isBluetoothDeviceOnceConnected;
 
     private boolean isStopBluetoothEngine;
@@ -265,6 +269,7 @@ public class BluetoothEngineService {
         Message msg = mHandler.obtainMessage(Constants.MESSAGE_TOAST);
         Bundle bundle = new Bundle();
         bundle.putString(Constants.TOAST, "Unable to connect device");
+        bundle.putString(ERROR_TAG, ERROR_TAG_UNABLE_TO_CONNECT);
         msg.setData(bundle);
         mHandler.sendMessage(msg);
 
@@ -286,6 +291,7 @@ public class BluetoothEngineService {
         Message msg = mHandler.obtainMessage(Constants.MESSAGE_TOAST);
         Bundle bundle = new Bundle();
         bundle.putString(Constants.TOAST, "Device connection was lost");
+        bundle.putString(ERROR_TAG, ERROR_TAG_CONNECTION_LOST);
         msg.setData(bundle);
         mHandler.sendMessage(msg);
 

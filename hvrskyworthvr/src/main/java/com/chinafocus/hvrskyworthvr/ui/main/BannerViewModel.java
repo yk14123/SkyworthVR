@@ -17,7 +17,7 @@ import java.util.List;
 
 
 public class BannerViewModel extends BaseViewModel {
-    // TODO: Implement the ViewModel
+    // : Implement the ViewModel
     public MutableLiveData<List<VideoDataInfo>> publishBannerMutableLiveData = new MutableLiveData<>();
     public MutableLiveData<List<VideoDataInfo>> videoBannerMutableLiveData = new MutableLiveData<>();
 

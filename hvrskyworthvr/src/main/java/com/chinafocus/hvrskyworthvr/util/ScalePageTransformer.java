@@ -43,9 +43,9 @@ public class ScalePageTransformer implements ViewPager2.PageTransformer {
      * @return
      */
     private float transformPosition(float position) {
-        // TODO srcPos 为 position 在 MIN-MAX 段中的距离比值
+        // srcPos 为 position 在 MIN-MAX 段中的距离比值
         float fraction = (position - MIN) / (MAX - MIN);
-        // TODO 返回在，MIN = -1 MAX = 1 段中的具体pos
+        // 返回在，MIN = -1 MAX = 1 段中的具体pos
 //        return (1 - (-1)) * fraction + (-1);
         return (2 - (-2)) * fraction + (-2);
 //        return ((position - MIN) / (MAX - MIN)) * 2 - 1;
@@ -59,7 +59,7 @@ public class ScalePageTransformer implements ViewPager2.PageTransformer {
 
 //        int tag = (int) view.getTag();
 //        Log.i("tag", "tag" + tag + "===============" + "position" + position);
-        // TODO 完美补偿了在 -2 到 -1 之间的图片追加位置
+        // 完美补偿了在 -2 到 -1 之间的图片追加位置
         float v = view.getMeasuredWidth() * (1f - MIN_SCALE) / 2;
 
         //setScaleY只支持api11以上

@@ -39,7 +39,7 @@ public class AboutFragment extends Fragment {
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         mViewModel = new ViewModelProvider(this).get(AboutViewModel.class);
-        // TODO: Use the ViewModel
+        // : Use the ViewModel
 
         AppCompatTextView textView = requireView().findViewById(R.id.tv_back_door);
         textView.setText(DeviceInfoManager.getInstance().getDeviceAccountName());
