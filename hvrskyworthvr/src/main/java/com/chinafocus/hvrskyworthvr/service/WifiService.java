@@ -114,8 +114,8 @@ public class WifiService {
             if (mWifiStatusListener != null) {
                 mWifiStatusListener.wifiConnectedSuccess(mWifiConnectedName);
             }
-            initDeviceInfo();
         }
+        initDeviceInfo();
     }
 
     private void postDeviceInfoName() {

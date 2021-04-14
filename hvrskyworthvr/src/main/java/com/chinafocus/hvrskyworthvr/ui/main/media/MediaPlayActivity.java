@@ -357,7 +357,7 @@ public class MediaPlayActivity extends AppCompatActivity implements ViewBindHelp
             temp = 1;
         }
         // 2.加载视频
-        mediaViewModel.getVideoDetailData(temp, videoId);
+        mediaViewModel.getVideoDetailDataFromLocal(temp, videoId);
     }
 
     /**

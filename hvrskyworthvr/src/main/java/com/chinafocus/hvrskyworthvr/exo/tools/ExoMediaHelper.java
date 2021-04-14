@@ -5,8 +5,8 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Log;
+import android.widget.Toast;
 
-import com.chinafocus.hvrskyworthvr.exo.VideoCache;
 import com.chinafocus.hvrskyworthvr.exo.ui.PlayerView;
 import com.google.android.exoplayer2.C;
 import com.google.android.exoplayer2.DefaultLoadControl;
@@ -27,9 +27,6 @@ import com.google.android.exoplayer2.upstream.DefaultBandwidthMeter;
 import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory;
 import com.google.android.exoplayer2.upstream.DefaultHttpDataSource;
 import com.google.android.exoplayer2.upstream.HttpDataSource;
-import com.google.android.exoplayer2.upstream.cache.CacheDataSink;
-import com.google.android.exoplayer2.upstream.cache.CacheDataSource;
-import com.google.android.exoplayer2.upstream.cache.SimpleCache;
 import com.google.android.exoplayer2.util.MimeTypes;
 import com.google.android.exoplayer2.util.Util;
 
@@ -243,18 +240,20 @@ public class ExoMediaHelper {
         DefaultDataSourceFactory upstreamFactory =
                 new DefaultDataSourceFactory(context, BANDWIDTH_METER, httpDataFactory);
 
-        // 创建SimpleCache
-        SimpleCache simpleCache = VideoCache.getInstance(context);
+        return upstreamFactory;
 
-        //把缓存对象cache和负责缓存数据读取、写入的工厂类CacheDataSinkFactory 相关联
-        CacheDataSink.Factory cacheDataSinkFactory = new CacheDataSink.Factory()
-                .setCache(simpleCache);
-
-        return new CacheDataSource.Factory()
-                .setCache(simpleCache)
-                .setUpstreamDataSourceFactory(upstreamFactory)
-                .setCacheWriteDataSinkFactory(cacheDataSinkFactory)
-                .setFlags(CacheDataSource.FLAG_BLOCK_ON_CACHE);
+//        // 创建SimpleCache
+//        SimpleCache simpleCache = VideoCache.getInstance(context);
+//
+//        //把缓存对象cache和负责缓存数据读取、写入的工厂类CacheDataSinkFactory 相关联
+//        CacheDataSink.Factory cacheDataSinkFactory = new CacheDataSink.Factory()
+//                .setCache(simpleCache);
+//
+//        return new CacheDataSource.Factory()
+//                .setCache(simpleCache)
+//                .setUpstreamDataSourceFactory(upstreamFactory)
+//                .setCacheWriteDataSinkFactory(cacheDataSinkFactory)
+//                .setFlags(CacheDataSource.FLAG_BLOCK_ON_CACHE);
     }
 
     @SuppressWarnings("unused")
@@ -422,7 +421,7 @@ public class ExoMediaHelper {
         @SuppressWarnings("all")
         @Override
         public void onPlayerError(ExoPlaybackException error) {
-            Log.e("MyLog", "ExoPlaybackException >>> " + error.getMessage());
+            Log.e("MyLog", "ExoPlaybackException >>> " + error.getMessage() + "  error.type >>> " + error.type);
             if (error.type == ExoPlaybackException.TYPE_SOURCE) {
                 IOException cause = error.getSourceException();
                 if (cause instanceof HttpDataSource.HttpDataSourceException) {
@@ -439,12 +438,28 @@ public class ExoMediaHelper {
                         // Try calling httpError.getCause() to retrieve the underlying cause,
                         // although note that it may be null.
                     }
+                    httpErrorIndex++;
+                    if (httpErrorIndex % 4 == 0) {
+                        Toast.makeText(mContext, "网络错误，请检查网络设置", Toast.LENGTH_SHORT).show();
+                    }
                 }
                 // 当前是网络错误，就一直无限轮询请求
                 player.prepare();
+            } else if (error.type == ExoPlaybackException.TYPE_UNEXPECTED) {
+                Toast.makeText(mContext, "操作频繁，请重新打开", Toast.LENGTH_SHORT).show();
+//                player.prepare();
+            }
+        }
+
+        @Override
+        public void onIsPlayingChanged(boolean isPlaying) {
+            if (isPlaying) {
+                httpErrorIndex = 0;
             }
         }
     }
+
+    private int httpErrorIndex;
 
     @SuppressWarnings("unused")
     private static boolean isBehindLiveWindow(ExoPlaybackException e) {

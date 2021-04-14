@@ -21,11 +21,15 @@ import com.chinafocus.hvrskyworthvr.exo.ui.PlayerView;
 import com.chinafocus.hvrskyworthvr.exo.ui.spherical.SphericalGLSurfaceView;
 import com.chinafocus.hvrskyworthvr.global.ConfigManager;
 import com.chinafocus.hvrskyworthvr.global.Constants;
+import com.chinafocus.hvrskyworthvr.rtr.dialog.RtrBluetoothConnectedDialog;
+import com.chinafocus.hvrskyworthvr.rtr.dialog.RtrBluetoothLostDialog;
 import com.chinafocus.hvrskyworthvr.rtr.dialog.RtrVideoDetailDialog;
 import com.chinafocus.hvrskyworthvr.rtr.popup.MediaVRLinkPopupWindow;
 import com.chinafocus.hvrskyworthvr.service.BluetoothService;
+import com.chinafocus.hvrskyworthvr.service.event.VrMediaCancelBluetoothLostDelayTask;
 import com.chinafocus.hvrskyworthvr.service.event.VrMediaConnect;
 import com.chinafocus.hvrskyworthvr.service.event.VrMediaDisConnect;
+import com.chinafocus.hvrskyworthvr.service.event.VrMediaStartBluetoothLostDelayTask;
 import com.chinafocus.hvrskyworthvr.service.event.VrMediaSyncMediaInfo;
 import com.chinafocus.hvrskyworthvr.service.event.VrMediaWaitSelected;
 import com.chinafocus.hvrskyworthvr.service.event.VrRotation;
@@ -42,6 +46,8 @@ import org.greenrobot.eventbus.Subscribe;
 import java.io.File;
 import java.util.Objects;
 
+import static com.chinafocus.hvrskyworthvr.global.Constants.RESULT_CODE_ACTIVE_BLUETOOTH_CONNECTED;
+import static com.chinafocus.hvrskyworthvr.global.Constants.RESULT_CODE_ACTIVE_BLUETOOTH_LOST;
 import static com.chinafocus.hvrskyworthvr.global.Constants.RESULT_CODE_ACTIVE_DIALOG;
 import static com.chinafocus.hvrskyworthvr.global.Constants.RESULT_CODE_INACTIVE_DIALOG;
 import static com.chinafocus.hvrskyworthvr.global.Constants.RESULT_CODE_SELF_INACTIVE_DIALOG;
@@ -66,6 +72,7 @@ public class RtrMediaPlayActivity extends AppCompatActivity implements ViewBindH
     private int nextVideoId;
     private int nextVideoType;
     private int currentVideoId;
+    private MyBluetoothLostDelayTaskRunnable mMyBluetoothLostDelayTaskRunnable;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -230,6 +237,8 @@ public class RtrMediaPlayActivity extends AppCompatActivity implements ViewBindH
         }
 
         if (player.getPlaybackState() == STATE_ENDED) {
+            hideBluetoothConnectDialog();
+            hideBluetoothLostDialog();
             setResult(RESULT_CODE_ACTIVE_DIALOG, new Intent().putExtra("currentVideoId", currentVideoId));
             finish();
         } else {
@@ -262,6 +271,9 @@ public class RtrMediaPlayActivity extends AppCompatActivity implements ViewBindH
         closeAllDialog();
         Log.d("MyLog", "-----当前在播放页面的时候，取下VR眼镜-----");
         linkingVr = false;
+
+        hideBluetoothLostDialog();
+        hideBluetoothConnectDialog();
         // 2.保存当前页面播放时长
         VrSyncPlayInfo.obtain().setSeekTime(mExoMediaHelper.getPlayer().getCurrentPosition());
         setResult(RESULT_CODE_INACTIVE_DIALOG, new Intent().putExtra("currentVideoId", currentVideoId));
@@ -288,6 +300,9 @@ public class RtrMediaPlayActivity extends AppCompatActivity implements ViewBindH
         closeAllDialog();
         // 2.恢复视频保存信息
         VrSyncPlayInfo.obtain().restoreVideoInfo();
+
+        hideBluetoothLostDialog();
+        hideBluetoothConnectDialog();
         setResult(RESULT_CODE_ACTIVE_DIALOG, new Intent().putExtra("currentVideoId", currentVideoId));
         finish();
         // 3.立即切换当前Activity为Main
@@ -347,7 +362,100 @@ public class RtrMediaPlayActivity extends AppCompatActivity implements ViewBindH
             temp = 1;
         }
         // 2.加载视频
-        mediaViewModel.getVideoDetailData(temp, videoId);
+        mediaViewModel.getVideoDetailDataFromLocal(temp, videoId);
+    }
+
+    @Override
+    public void onBackPressed() {
+//        super.onBackPressed();
+    }
+
+    /**
+     * 在首页取下VR眼镜
+     *
+     * @param event 取下VR眼镜事件
+     */
+    @Subscribe()
+    @SuppressWarnings("unused")
+    public void startBluetoothLostDelayTask(VrMediaStartBluetoothLostDelayTask event) {
+        if (mMyBluetoothLostDelayTaskRunnable == null) {
+            mMyBluetoothLostDelayTaskRunnable = new MyBluetoothLostDelayTaskRunnable();
+        }
+        mLandPlayerView.removeCallbacks(mMyBluetoothLostDelayTaskRunnable);
+        mLandPlayerView.postDelayed(mMyBluetoothLostDelayTaskRunnable, 2000);
+    }
+
+    private RtrBluetoothLostDialog mRtrBluetoothLostDialog;
+
+    private void showBluetoothLostDialog() {
+        if (mRtrBluetoothLostDialog == null) {
+            mRtrBluetoothLostDialog = new RtrBluetoothLostDialog(this);
+        }
+
+        if (!mRtrBluetoothLostDialog.isShowing()) {
+            mRtrBluetoothLostDialog.show();
+        }
+    }
+
+    private void hideBluetoothLostDialog() {
+        if (mRtrBluetoothLostDialog != null && mRtrBluetoothLostDialog.isShowing()) {
+            mRtrBluetoothLostDialog.dismiss();
+        }
+    }
+
+    private class MyBluetoothLostDelayTaskRunnable implements Runnable {
+
+        @Override
+        public void run() {
+            hideBluetoothConnectDialog();
+            BluetoothService.getInstance().setBluetoothLostYet(true);
+            if (linkingVr) {
+                hideBluetoothLostDialog();
+                setResult(RESULT_CODE_ACTIVE_BLUETOOTH_LOST, new Intent().putExtra("currentVideoId", 123));
+                finish();
+                Constants.ACTIVITY_TAG = Constants.ACTIVITY_MAIN;
+            } else {
+                showBluetoothLostDialog();
+            }
+        }
+    }
+
+    /**
+     * 在首页取下VR眼镜
+     *
+     * @param event 取下VR眼镜事件
+     */
+    @Subscribe()
+    @SuppressWarnings("unused")
+    public void cancelBluetoothLostDelayTask(VrMediaCancelBluetoothLostDelayTask event) {
+        mLandPlayerView.removeCallbacks(mMyBluetoothLostDelayTaskRunnable);
+        if (BluetoothService.getInstance().isBluetoothLostYet()) {
+            Log.d("MyLog", "-----在首页展示蓝牙恢复页面-----");
+            BluetoothService.getInstance().setBluetoothLostYet(false);
+            hideBluetoothConnectDialog();
+            hideBluetoothLostDialog();
+            setResult(RESULT_CODE_ACTIVE_BLUETOOTH_CONNECTED, new Intent().putExtra("currentVideoId", 123));
+            finish();
+            Constants.ACTIVITY_TAG = Constants.ACTIVITY_MAIN;
+        }
+    }
+
+    private RtrBluetoothConnectedDialog mRtrBluetoothConnectedDialog;
+
+    private void showBluetoothConnectDialog() {
+        if (mRtrBluetoothConnectedDialog == null) {
+            mRtrBluetoothConnectedDialog = new RtrBluetoothConnectedDialog(this);
+        }
+
+        if (!mRtrBluetoothConnectedDialog.isShowing()) {
+            mRtrBluetoothConnectedDialog.show();
+        }
+    }
+
+    private void hideBluetoothConnectDialog() {
+        if (mRtrBluetoothConnectedDialog != null && mRtrBluetoothConnectedDialog.isShowing()) {
+            mRtrBluetoothConnectedDialog.dismiss();
+        }
     }
 
     /**
@@ -405,6 +513,7 @@ public class RtrMediaPlayActivity extends AppCompatActivity implements ViewBindH
     public void onDestroy() {
         super.onDestroy();
         mExoMediaHelper.onDestroy();
+        mMyBluetoothLostDelayTaskRunnable = null;
     }
 
     @Override
@@ -416,6 +525,8 @@ public class RtrMediaPlayActivity extends AppCompatActivity implements ViewBindH
     @Override
     public void onGoBackActivity() {
         if (!linkingVr) {
+            hideBluetoothConnectDialog();
+            hideBluetoothLostDialog();
             setResult(RESULT_CODE_SELF_INACTIVE_DIALOG, new Intent().putExtra("currentVideoId", currentVideoId));
             finish();
             // 3.立即切换当前Activity为Main
@@ -429,7 +540,7 @@ public class RtrMediaPlayActivity extends AppCompatActivity implements ViewBindH
             VrSyncPlayInfo.obtain().clearVideoTime();
             VrSyncPlayInfo.obtain().setVideoId(nextVideoId);
             VrSyncPlayInfo.obtain().setTag(nextVideoType == 1 ? 2 : 1);
-            mediaViewModel.getVideoDetailData(nextVideoType, nextVideoId);
+            mediaViewModel.getVideoDetailDataFromLocal(nextVideoType, nextVideoId);
         } else {
             Toast.makeText(this, "暂无下一个影片", Toast.LENGTH_SHORT).show();
         }

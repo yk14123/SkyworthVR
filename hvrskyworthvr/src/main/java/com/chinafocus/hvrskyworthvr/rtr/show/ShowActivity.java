@@ -29,18 +29,23 @@ import com.chinafocus.hvrskyworthvr.model.bean.TagHolder;
 import com.chinafocus.hvrskyworthvr.model.bean.VideoContentList;
 import com.chinafocus.hvrskyworthvr.net.ImageProcess;
 import com.chinafocus.hvrskyworthvr.rtr.adapter.ShowRtrVideoListViewAdapter;
+import com.chinafocus.hvrskyworthvr.rtr.dialog.RtrBluetoothConnectedDialog;
+import com.chinafocus.hvrskyworthvr.rtr.dialog.RtrBluetoothLostDialog;
 import com.chinafocus.hvrskyworthvr.rtr.dialog.RtrVrModeMainDialog;
 import com.chinafocus.hvrskyworthvr.rtr.media.RtrMediaPlayActivity;
 import com.chinafocus.hvrskyworthvr.rtr.mine.MineActivity;
 import com.chinafocus.hvrskyworthvr.rtr.videolist.sub.RtrVideoSubViewModel;
 import com.chinafocus.hvrskyworthvr.service.BluetoothService;
 import com.chinafocus.hvrskyworthvr.service.event.VrCancelTimeTask;
+import com.chinafocus.hvrskyworthvr.service.event.VrMainCancelBluetoothLostDelayTask;
 import com.chinafocus.hvrskyworthvr.service.event.VrMainConnect;
 import com.chinafocus.hvrskyworthvr.service.event.VrMainDisConnect;
+import com.chinafocus.hvrskyworthvr.service.event.VrMainStartBluetoothLostDelayTask;
 import com.chinafocus.hvrskyworthvr.service.event.VrMainSyncMediaInfo;
 import com.chinafocus.hvrskyworthvr.service.event.VrSyncPlayInfo;
 import com.chinafocus.hvrskyworthvr.ui.adapter.BaseViewHolder;
 import com.chinafocus.hvrskyworthvr.ui.main.media.MediaPlayActivity;
+import com.chinafocus.hvrskyworthvr.ui.main.media.MediaViewModel;
 import com.chinafocus.hvrskyworthvr.ui.widget.BackgroundAnimationRelativeLayout;
 import com.chinafocus.hvrskyworthvr.ui.widget.ScaleTransitionPagerTitleView;
 import com.chinafocus.hvrskyworthvr.ui.widget.transformer.MyCenterScaleTransformer;
@@ -80,6 +85,8 @@ import jp.wasabeef.glide.transformations.CropTransformation;
 import static com.bumptech.glide.request.RequestOptions.bitmapTransform;
 import static com.chinafocus.hvrskyworthvr.global.Constants.REQUEST_CODE_PAD_MEDIA_ACTIVITY;
 import static com.chinafocus.hvrskyworthvr.global.Constants.REQUEST_CODE_VR_MEDIA_ACTIVITY;
+import static com.chinafocus.hvrskyworthvr.global.Constants.RESULT_CODE_ACTIVE_BLUETOOTH_CONNECTED;
+import static com.chinafocus.hvrskyworthvr.global.Constants.RESULT_CODE_ACTIVE_BLUETOOTH_LOST;
 import static com.chinafocus.hvrskyworthvr.global.Constants.RESULT_CODE_ACTIVE_DIALOG;
 import static com.chinafocus.hvrskyworthvr.global.Constants.RESULT_CODE_INACTIVE_DIALOG;
 import static com.chinafocus.hvrskyworthvr.global.Constants.RESULT_CODE_SELF_INACTIVE_DIALOG;
@@ -109,6 +116,10 @@ public class ShowActivity extends AppCompatActivity {
     private MagicIndicator mMagicIndicator;
     private InfiniteScrollAdapter<BaseViewHolder> mScrollAdapter;
     private List<TagHolder> mTagHolders;
+    private MediaViewModel mMediaViewModel;
+    private MyBluetoothLostDelayTaskRunnable mBluetoothLostDelayTaskRunnable;
+    private RtrBluetoothLostDialog mRtrBluetoothLostDialog;
+    private RtrBluetoothConnectedDialog mRtrBluetoothConnectedDialog;
 
     @RequiresApi(api = Build.VERSION_CODES.N)
     @Override
@@ -118,6 +129,7 @@ public class ShowActivity extends AppCompatActivity {
         setContentView(R.layout.activity_show);
 
         RtrVideoSubViewModel mViewModel = new ViewModelProvider(this).get(RtrVideoSubViewModel.class);
+        mMediaViewModel = new ViewModelProvider(this).get(MediaViewModel.class);
 
         mViewModel.getVideoContentList();
 
@@ -136,6 +148,7 @@ public class ShowActivity extends AppCompatActivity {
             if (mAdapter == null) {
 
                 preLoadImage(videoContentLists);
+                preLoadAllVideoDetail(videoContentLists);
 
                 mAdapter = new ShowRtrVideoListViewAdapter(videoContentLists);
                 mScrollAdapter = InfiniteScrollAdapter.wrap(mAdapter);
@@ -223,6 +236,17 @@ public class ShowActivity extends AppCompatActivity {
 
             }
         });
+    }
+
+    @Override
+    public void onBackPressed() {
+//        super.onBackPressed();
+    }
+
+    private void preLoadAllVideoDetail(List<VideoContentList> videoContentLists) {
+        for (VideoContentList temp : videoContentLists) {
+            mMediaViewModel.saveVideoDetailDataFromNet(temp.getType(), temp.getId());
+        }
     }
 
     private void preLoadImage(List<VideoContentList> videoContentLists) {
@@ -382,6 +406,49 @@ public class ShowActivity extends AppCompatActivity {
         ExoManager.getInstance().setPlayWhenReady(false);
     }
 
+
+    /**
+     * 当蓝牙断开链接的时候，处理一个延迟任务，如果超过2秒，就确定断开
+     * 如果2秒钟之内恢复了链接，就取消延迟任务
+     *
+     * @param event 蓝牙断开事件
+     */
+    @Subscribe()
+    @SuppressWarnings("unused")
+    public void startBluetoothLostDelayTask(VrMainStartBluetoothLostDelayTask event) {
+        if (mBluetoothLostDelayTaskRunnable == null) {
+            mBluetoothLostDelayTaskRunnable = new MyBluetoothLostDelayTaskRunnable();
+        }
+        mBackgroundAnimationRelativeLayout.removeCallbacks(mBluetoothLostDelayTaskRunnable);
+        mBackgroundAnimationRelativeLayout.postDelayed(mBluetoothLostDelayTaskRunnable, 2000);
+    }
+
+    private void startBluetoothLostTaskImmediately() {
+        if (mBluetoothLostDelayTaskRunnable == null) {
+            mBluetoothLostDelayTaskRunnable = new MyBluetoothLostDelayTaskRunnable();
+        }
+        mBackgroundAnimationRelativeLayout.removeCallbacks(mBluetoothLostDelayTaskRunnable);
+        mBackgroundAnimationRelativeLayout.post(mBluetoothLostDelayTaskRunnable);
+    }
+
+    /**
+     * 当蓝牙恢复的时候，考虑是否展示蓝牙恢复页面
+     *
+     * @param event 取下VR眼镜事件
+     */
+    @Subscribe()
+    @SuppressWarnings("unused")
+    public void cancelBluetoothLostDelayTask(VrMainCancelBluetoothLostDelayTask event) {
+        mBackgroundAnimationRelativeLayout.removeCallbacks(mBluetoothLostDelayTaskRunnable);
+        if (BluetoothService.getInstance().isBluetoothLostYet()) {
+            Log.d("MyLog", "-----在首页展示蓝牙恢复页面-----");
+            BluetoothService.getInstance().setBluetoothLostYet(false);
+            hideBluetoothLostDialog();
+            showBluetoothConnectDialog();
+        }
+    }
+
+
     /**
      * 在首页戴上VR眼镜
      *
@@ -457,6 +524,38 @@ public class ShowActivity extends AppCompatActivity {
         }
     }
 
+    private void showBluetoothLostDialog() {
+        if (mRtrBluetoothLostDialog == null) {
+            mRtrBluetoothLostDialog = new RtrBluetoothLostDialog(this);
+        }
+
+        if (!mRtrBluetoothLostDialog.isShowing()) {
+            mRtrBluetoothLostDialog.show();
+        }
+    }
+
+    private void hideBluetoothLostDialog() {
+        if (mRtrBluetoothLostDialog != null && mRtrBluetoothLostDialog.isShowing()) {
+            mRtrBluetoothLostDialog.dismiss();
+        }
+    }
+
+    private void hideBluetoothConnectDialog() {
+        if (mRtrBluetoothConnectedDialog != null && mRtrBluetoothConnectedDialog.isShowing()) {
+            mRtrBluetoothConnectedDialog.dismiss();
+        }
+    }
+
+    private void showBluetoothConnectDialog() {
+        if (mRtrBluetoothConnectedDialog == null) {
+            mRtrBluetoothConnectedDialog = new RtrBluetoothConnectedDialog(this);
+        }
+
+        if (!mRtrBluetoothConnectedDialog.isShowing()) {
+            mRtrBluetoothConnectedDialog.show();
+        }
+    }
+
     /**
      * 2分钟之后，视频重新选择
      */
@@ -500,6 +599,14 @@ public class ShowActivity extends AppCompatActivity {
         } else if (resultCode == RESULT_CODE_SELF_INACTIVE_DIALOG) {
             VrSyncPlayInfo.obtain().restoreVideoInfo();
             closeTimer(null);
+        } else if (resultCode == RESULT_CODE_ACTIVE_BLUETOOTH_LOST) {
+            VrSyncPlayInfo.obtain().restoreVideoInfo();
+            closeTimer(null);
+            startBluetoothLostTaskImmediately();
+        } else if (resultCode == RESULT_CODE_ACTIVE_BLUETOOTH_CONNECTED) {
+            VrSyncPlayInfo.obtain().restoreVideoInfo();
+            closeTimer(null);
+            showBluetoothConnectDialog();
         }
         // 修复RecyclerView位置
         if (data != null) {
@@ -553,6 +660,7 @@ public class ShowActivity extends AppCompatActivity {
         super.onDestroy();
         mBackgroundAnimationRelativeLayout.removeCallbacks(mMyPostBackGroundRunnable);
         mMyPostBackGroundRunnable = null;
+        mBluetoothLostDelayTaskRunnable = null;
         ExoManager.getInstance().onDestroy();
         BluetoothService.getInstance().releaseAll(this);
     }
@@ -588,6 +696,16 @@ public class ShowActivity extends AppCompatActivity {
         @Override
         public void run() {
             postVideoBackgroundUrl(url);
+        }
+    }
+
+    private class MyBluetoothLostDelayTaskRunnable implements Runnable {
+        @Override
+        public void run() {
+            BluetoothService.getInstance().setBluetoothLostYet(true);
+            closeMainDialog();
+            hideBluetoothConnectDialog();
+            showBluetoothLostDialog();
         }
     }
 

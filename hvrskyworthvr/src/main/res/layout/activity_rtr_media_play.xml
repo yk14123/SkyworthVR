@@ -10,7 +10,7 @@
         android:id="@+id/player_view_land"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        app:bar_height="2dp"
+        app:bar_height="3dp"
         app:buffered_color="@color/color_video_buffered"
         app:controller_layout_id="@layout/rtr_exo_control_view_landscape_normal"
         app:layout_constraintBottom_toBottomOf="parent"

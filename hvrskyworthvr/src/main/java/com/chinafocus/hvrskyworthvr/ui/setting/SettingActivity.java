@@ -7,9 +7,11 @@ import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.AppCompatButton;
+import androidx.lifecycle.ViewModelProvider;
 
 import com.chinafocus.hvrskyworthvr.R;
 import com.chinafocus.hvrskyworthvr.rtr.show.ShowActivity;
+import com.chinafocus.hvrskyworthvr.rtr.videolist.sub.RtrVideoSubViewModel;
 import com.chinafocus.hvrskyworthvr.service.AliasService;
 import com.chinafocus.hvrskyworthvr.service.BluetoothService;
 import com.chinafocus.hvrskyworthvr.service.WifiService;
@@ -33,6 +35,7 @@ public class SettingActivity extends AppCompatActivity {
 
 
     private DeviceInfoViewGroup mDeviceInfoViewGroup;
+    private RtrVideoSubViewModel mViewModel;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -51,6 +54,8 @@ public class SettingActivity extends AppCompatActivity {
         handleWifi();
         handleBluetooth();
         handleAlias();
+
+        mViewModel = new ViewModelProvider(this).get(RtrVideoSubViewModel.class);
     }
 
     private void handleAlias() {
@@ -103,6 +108,8 @@ public class SettingActivity extends AppCompatActivity {
             public void loadAccountNameAndAlias(String accountName, String alias) {
                 mDeviceInfoViewGroup.postAccountName(accountName);
                 mSettingAliasView.postStatusMessage(CONNECT_SUCCESS, alias);
+
+                mViewModel.refreshVideoContentList();
             }
         });
     }

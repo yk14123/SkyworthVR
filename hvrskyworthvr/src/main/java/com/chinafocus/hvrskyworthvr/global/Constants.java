@@ -13,4 +13,6 @@ public class Constants {
     public static int RESULT_CODE_SELF_INACTIVE_DIALOG = 10004;
     public static int RESULT_CODE_ACTIVE_DIALOG = 10005;
     public static int RESULT_CODE_MINE_FINISH = 10006;
+    public static int RESULT_CODE_ACTIVE_BLUETOOTH_LOST = 10007;
+    public static int RESULT_CODE_ACTIVE_BLUETOOTH_CONNECTED = 10008;
 }

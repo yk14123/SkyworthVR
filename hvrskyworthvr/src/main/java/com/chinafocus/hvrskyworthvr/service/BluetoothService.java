@@ -15,11 +15,15 @@ import com.blankj.utilcode.util.SPUtils;
 import com.chinafocus.hvrskyworthvr.global.Constants;
 import com.chinafocus.hvrskyworthvr.model.DeviceInfoManager;
 import com.chinafocus.hvrskyworthvr.service.event.VrAboutConnect;
+import com.chinafocus.hvrskyworthvr.service.event.VrMainCancelBluetoothLostDelayTask;
 import com.chinafocus.hvrskyworthvr.service.event.VrMainConnect;
 import com.chinafocus.hvrskyworthvr.service.event.VrMainDisConnect;
+import com.chinafocus.hvrskyworthvr.service.event.VrMainStartBluetoothLostDelayTask;
 import com.chinafocus.hvrskyworthvr.service.event.VrMainSyncMediaInfo;
+import com.chinafocus.hvrskyworthvr.service.event.VrMediaCancelBluetoothLostDelayTask;
 import com.chinafocus.hvrskyworthvr.service.event.VrMediaConnect;
 import com.chinafocus.hvrskyworthvr.service.event.VrMediaDisConnect;
+import com.chinafocus.hvrskyworthvr.service.event.VrMediaStartBluetoothLostDelayTask;
 import com.chinafocus.hvrskyworthvr.service.event.VrMediaSyncMediaInfo;
 import com.chinafocus.hvrskyworthvr.service.event.VrMediaWaitSelected;
 import com.chinafocus.hvrskyworthvr.service.event.VrRotation;
@@ -82,7 +86,7 @@ public class BluetoothService implements BluetoothEngineService.AsyncThreadReadB
         executor = Executors.newSingleThreadExecutor();
     }
 
-    private static BluetoothService instance;
+    private static volatile BluetoothService instance;
 
     public static BluetoothService getInstance() {
         if (instance == null) {
@@ -93,6 +97,16 @@ public class BluetoothService implements BluetoothEngineService.AsyncThreadReadB
             }
         }
         return instance;
+    }
+
+    private boolean isBluetoothLostYet;
+
+    public boolean isBluetoothLostYet() {
+        return isBluetoothLostYet;
+    }
+
+    public void setBluetoothLostYet(boolean bluetoothLostYet) {
+        isBluetoothLostYet = bluetoothLostYet;
     }
 
     public void onStart(Activity activity) {
@@ -238,7 +252,7 @@ public class BluetoothService implements BluetoothEngineService.AsyncThreadReadB
                                 BluetoothService.getInstance().startSynchronizedUUID();
                             }
                             // TODO 链接成功,取消延迟任务
-                            Log.d(TAG, "------ Pad 链接蓝牙成功 >>> 取消延迟任务 ");
+                            cancelBluetoothLost();
                             break;
                         case BluetoothEngineService.STATE_CONNECTING:
                             // 链接中
@@ -287,6 +301,7 @@ public class BluetoothService implements BluetoothEngineService.AsyncThreadReadB
                     } else if (ERROR_TAG_CONNECTION_LOST.equals(string)) {
                         // TODO 链接成功后，中途再次出现断开链接
                         Log.d(TAG, "------ Pad 发送延迟任务 >>> " + ERROR_TAG_CONNECTION_LOST);
+                        startBluetoothLostDelayTask();
                     }
 
                     break;
@@ -314,6 +329,22 @@ public class BluetoothService implements BluetoothEngineService.AsyncThreadReadB
         }
 
     };
+
+    private void cancelBluetoothLost() {
+        if (Constants.ACTIVITY_TAG == Constants.ACTIVITY_MAIN) {
+            EventBus.getDefault().post(VrMainCancelBluetoothLostDelayTask.obtain());
+        } else if (Constants.ACTIVITY_TAG == Constants.ACTIVITY_MEDIA) {
+            EventBus.getDefault().post(VrMediaCancelBluetoothLostDelayTask.obtain());
+        }
+    }
+
+    private void startBluetoothLostDelayTask() {
+        if (Constants.ACTIVITY_TAG == Constants.ACTIVITY_MAIN) {
+            EventBus.getDefault().post(VrMainStartBluetoothLostDelayTask.obtain());
+        } else if (Constants.ACTIVITY_TAG == Constants.ACTIVITY_MEDIA) {
+            EventBus.getDefault().post(VrMediaStartBluetoothLostDelayTask.obtain());
+        }
+    }
 
     private void postSyncDeviceUUID(String uuid) {
         if (mBluetoothStatusListener != null) {
