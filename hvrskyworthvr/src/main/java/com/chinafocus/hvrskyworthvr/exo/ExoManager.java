@@ -26,9 +26,6 @@ import com.google.android.exoplayer2.upstream.DefaultBandwidthMeter;
 import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory;
 import com.google.android.exoplayer2.upstream.DefaultHttpDataSource;
 import com.google.android.exoplayer2.upstream.HttpDataSource;
-import com.google.android.exoplayer2.upstream.cache.CacheDataSink;
-import com.google.android.exoplayer2.upstream.cache.CacheDataSource;
-import com.google.android.exoplayer2.upstream.cache.SimpleCache;
 import com.google.android.exoplayer2.util.MimeTypes;
 import com.google.android.exoplayer2.util.Util;
 
@@ -224,18 +221,20 @@ public class ExoManager {
         DefaultDataSourceFactory upstreamFactory =
                 new DefaultDataSourceFactory(context, BANDWIDTH_METER, httpDataFactory);
 
+        return upstreamFactory;
+
         // 创建SimpleCache
-        SimpleCache simpleCache = VideoCache.getInstance(context);
+//        SimpleCache simpleCache = VideoCache.getInstance(context);
 
         //把缓存对象cache和负责缓存数据读取、写入的工厂类CacheDataSinkFactory 相关联
-        CacheDataSink.Factory cacheDataSinkFactory = new CacheDataSink.Factory()
-                .setCache(simpleCache);
+//        CacheDataSink.Factory cacheDataSinkFactory = new CacheDataSink.Factory()
+//                .setCache(simpleCache);
 
-        return new CacheDataSource.Factory()
-                .setCache(simpleCache)
-                .setUpstreamDataSourceFactory(upstreamFactory)
-                .setCacheWriteDataSinkFactory(cacheDataSinkFactory)
-                .setFlags(CacheDataSource.FLAG_BLOCK_ON_CACHE);
+//        return new CacheDataSource.Factory()
+//                .setCache(simpleCache)
+//                .setUpstreamDataSourceFactory(upstreamFactory)
+//                .setCacheWriteDataSinkFactory(cacheDataSinkFactory)
+//                .setFlags(CacheDataSource.FLAG_BLOCK_ON_CACHE);
     }
 
     public void prepareSource(Context context, String videoUrl) {

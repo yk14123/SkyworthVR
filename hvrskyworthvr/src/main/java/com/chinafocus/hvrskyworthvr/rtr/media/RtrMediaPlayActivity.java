@@ -113,17 +113,24 @@ public class RtrMediaPlayActivity extends AppCompatActivity implements ViewBindH
                 subtitle = ConfigManager.getInstance().getDefaultUrl() + temp;
             }
 
-            String[] split = videoUrl.split("/");
-            File file = new File(getExternalFilesDir(""), split[split.length - 1]);
-            if (file.exists()) {
-                videoUrl = file.getAbsolutePath();
+            String[] splitVideoUrl = videoUrl.split("/");
+            File fileVideoUrl = new File(getExternalFilesDir(""), splitVideoUrl[splitVideoUrl.length - 1]);
+            if (fileVideoUrl.exists()) {
+                videoUrl = fileVideoUrl.getAbsolutePath();
+            }
+
+            String[] splitSubtitle = subtitle.split("/");
+            File fileSubtitle = new File(getExternalFilesDir("subtitle"), splitSubtitle[splitSubtitle.length - 1]);
+            if (fileSubtitle.exists()) {
+                subtitle = fileSubtitle.getAbsolutePath();
             }
 
             currentVideoId = videoDetail.getId();
             nextVideoId = videoDetail.getNextId();
             nextVideoType = videoDetail.getNextType();
 
-            Log.d("MyLog", "-----当前视频播放地址是 videoUrl >>> " + videoUrl);
+            Log.d("MyLog", "-----当前[视频]播放地址是 videoUrl >>> " + videoUrl);
+            Log.d("MyLog", "-----当前[字幕]播放地址是 subtitle >>> " + subtitle);
 
             mExoMediaHelper.onStart();
             mExoMediaHelper.prepareSource(videoUrl, null, subtitle);

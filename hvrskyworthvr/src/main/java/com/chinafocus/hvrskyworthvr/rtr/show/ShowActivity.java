@@ -68,6 +68,7 @@ import net.lucode.hackware.magicindicator.buildins.commonnavigator.indicators.Li
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -360,9 +361,17 @@ public class ShowActivity extends AppCompatActivity {
             }
         });
         ExoManager.getInstance().setTextureView(viewHolder.getView(R.id.texture_view_item));
-        ExoManager.getInstance().prepareSource(getApplicationContext(),
-                ConfigManager.getInstance().getDefaultUrl()
-                        + videoContentList.getMenuVideoUrl());
+
+        String previewVideoUrl = ConfigManager.getInstance().getDefaultUrl() + videoContentList.getMenuVideoUrl();
+        String[] splitVideoUrl = previewVideoUrl.split("/");
+        File file = new File(getExternalFilesDir("preview"), splitVideoUrl[splitVideoUrl.length - 1]);
+        if (file.exists()) {
+            previewVideoUrl = file.getAbsolutePath();
+        }
+
+        Log.d("MyLog", "-----当前[预览视频]播放地址是 videoUrl >>> " + previewVideoUrl);
+
+        ExoManager.getInstance().prepareSource(getApplicationContext(), previewVideoUrl);
         ExoManager.getInstance().setPlayWhenReady(true);
     }
 

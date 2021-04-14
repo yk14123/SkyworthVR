@@ -96,7 +96,9 @@ dependencies {
     implementation project(path: ':lib_bluetooth')
     // 华为MDM模块
     implementation project(path: ':huaweimdm')
-
-
+    // Crash捕获
     implementation 'com.github.yangkun19921001:YKCrash:1.0.2'
+    // 文件下载
+    implementation 'com.arialyy.aria:core:3.8.15'
+    annotationProcessor 'com.arialyy.aria:compiler:3.8.15'
 }

@@ -2,6 +2,7 @@ package com.chinafocus.hvrskyworthvr;
 
 import android.app.Application;
 
+import com.arialyy.aria.core.Aria;
 import com.blankj.utilcode.util.LogUtils;
 import com.chinafocus.hvrskyworthvr.model.DeviceInfoManager;
 import com.chinafocus.hvrskyworthvr.net.NetworkRequestInfo;
@@ -52,6 +53,8 @@ public class MyApp extends Application implements JavaCrashUtils.OnCrashListener
         QbSdk.initTbsSettings(map);
 
         collectCrashInfo();
+
+        Aria.init(this);
     }
 
     private void collectCrashInfo() {
