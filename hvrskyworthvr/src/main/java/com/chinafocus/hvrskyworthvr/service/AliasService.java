@@ -43,7 +43,7 @@ public class AliasService {
                 .getService(ApiMultiService.class)
                 .postSetDeviceAlias(RequestBodyManager.getRequestAliasBody(newName))
                 .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread(), true)
+                .observeOn(AndroidSchedulers.mainThread())
                 .onErrorResumeNext(new HttpErrorHandler<>())
                 .subscribe(new BaseObserver<Object>() {
                     @Override

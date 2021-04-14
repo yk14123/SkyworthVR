@@ -7,6 +7,7 @@ import android.net.wifi.WifiManager;
 import android.text.TextUtils;
 import android.util.Log;
 
+import com.blankj.utilcode.util.SPUtils;
 import com.chinafocus.hvrskyworthvr.global.ConfigManager;
 import com.chinafocus.hvrskyworthvr.model.DeviceInfoManager;
 import com.chinafocus.hvrskyworthvr.model.bean.DefaultCloudUrl;
@@ -99,8 +100,14 @@ public class WifiService {
     }
 
     public void initDeviceInfo() {
-        if (DeviceInfoManager.getInstance().isDeviceUUIDExist() && !TextUtils.isEmpty(mWifiConnectedName)) {
+//        if (DeviceInfoManager.getInstance().isDeviceUUIDExist() && !TextUtils.isEmpty(mWifiConnectedName)) {
+//            registerDeviceInfo();
+//        }
+
+        if (DeviceInfoManager.getInstance().isDeviceUUIDExist()) {
             registerDeviceInfo();
+            postDeviceInfoName();
+            postResourcesBaseUrl();
         }
     }
 
@@ -118,16 +125,37 @@ public class WifiService {
         initDeviceInfo();
     }
 
+    private static final String DEVICE_INFO_CUSTOMER_NAME = "device_info_customer_name";
+    private static final String DEVICE_INFO_ALIAS = "device_info_alias";
+
     private void postDeviceInfoName() {
+        String customerName = SPUtils.getInstance().getString(DEVICE_INFO_CUSTOMER_NAME);
+        String alias = SPUtils.getInstance().getString(DEVICE_INFO_ALIAS);
+        if (!TextUtils.isEmpty(customerName)) {
+
+            DeviceInfoManager.getInstance().postDeviceAccountName(customerName);
+            DeviceInfoManager.getInstance().postDeviceAlias(alias);
+            if (mWifiStatusListener != null) {
+                mWifiStatusListener.loadAccountNameAndAlias(
+                        customerName,
+                        alias);
+            }
+
+        }
+
         ApiManager
                 .getService(ApiMultiService.class)
                 .getDeviceInfoName(RequestBodyManager.getDefaultRequestBody())
                 .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread(), true)
+                .observeOn(AndroidSchedulers.mainThread())
                 .onErrorResumeNext(new HttpErrorHandler<>())
                 .subscribe(new BaseObserver<DeviceInfo>() {
                     @Override
                     public void onSuccess(DeviceInfo deviceInfo) {
+
+                        SPUtils.getInstance().put(DEVICE_INFO_CUSTOMER_NAME, deviceInfo.getCustomerName());
+                        SPUtils.getInstance().put(DEVICE_INFO_ALIAS, deviceInfo.getAlias());
+
                         DeviceInfoManager.getInstance().postDeviceAccountName(deviceInfo.getCustomerName());
                         DeviceInfoManager.getInstance().postDeviceAlias(deviceInfo.getAlias());
                         if (mWifiStatusListener != null) {
@@ -135,7 +163,7 @@ public class WifiService {
                                     deviceInfo.getCustomerName(),
                                     deviceInfo.getAlias());
                         }
-                        postResourcesBaseUrl();
+
                     }
 
                     @Override
@@ -146,18 +174,39 @@ public class WifiService {
                         }
                     }
                 });
+
     }
 
+    private static final String DEFAULT_CLOUD_URL = "default_cloud_url";
+    private static final String CLOUD_NO = "cloud_no";
+
     private void postResourcesBaseUrl() {
+
+        String defaultCloudUrl = SPUtils.getInstance().getString(DEFAULT_CLOUD_URL);
+        String cloudNo = SPUtils.getInstance().getString(CLOUD_NO);
+        if (!TextUtils.isEmpty(defaultCloudUrl)) {
+
+            ConfigManager.getInstance().setDefaultUrl(defaultCloudUrl);
+            ConfigManager.getInstance().setCloudNo(cloudNo);
+            Log.d("MyLog", "-----本地SpUtil >>> DEFAULT_URL >>>" + defaultCloudUrl);
+            // 如果WIFI链接，但是路由器没有网络
+            if (mWifiStatusListener != null) {
+                mWifiStatusListener.checkedNetWorkConnectedSuccess();
+            }
+        }
         ApiManager
                 .getService(ApiMultiService.class)
                 .getDefaultCloudUrl(RequestBodyManager.getDefaultRequestBody())
                 .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread(), true)
+                .observeOn(AndroidSchedulers.mainThread())
                 .onErrorResumeNext(new HttpErrorHandler<>())
                 .subscribe(new BaseObserver<DefaultCloudUrl>() {
                     @Override
                     public void onSuccess(DefaultCloudUrl defaultCloudUrl) {
+
+                        SPUtils.getInstance().put(DEFAULT_CLOUD_URL, defaultCloudUrl.getCloudUrl());
+                        SPUtils.getInstance().put(CLOUD_NO, defaultCloudUrl.getCloudNo());
+
                         ConfigManager.getInstance().setDefaultUrl(defaultCloudUrl.getCloudUrl());
                         ConfigManager.getInstance().setCloudNo(defaultCloudUrl.getCloudNo());
                         Log.d("MyLog", "-----DEFAULT_URL >>>" + defaultCloudUrl.getCloudUrl());
@@ -175,6 +224,8 @@ public class WifiService {
                         }
                     }
                 });
+
+
     }
 
     private void registerDeviceInfo() {
@@ -182,12 +233,12 @@ public class WifiService {
                 .getService(ApiMultiService.class)
                 .initDeviceInfo(RequestBodyManager.getDefaultRequestBody())
                 .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread(), true)
+                .observeOn(AndroidSchedulers.mainThread())
                 .onErrorResumeNext(new HttpErrorHandler<>())
                 .subscribe(new BaseObserver<Object>() {
                     @Override
                     public void onSuccess(Object o) {
-                        postDeviceInfoName();
+//                        postDeviceInfoName();
                     }
 
                     @Override
@@ -201,7 +252,7 @@ public class WifiService {
                     @Override
                     protected void onServiceMessage(String errMsg) {
                         super.onServiceMessage(errMsg);
-                        postDeviceInfoName();
+//                        postDeviceInfoName();
                     }
                 });
     }

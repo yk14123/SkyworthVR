@@ -1,6 +1,7 @@
 package com.chinafocus.hvrskyworthvr;
 
 import android.app.Application;
+import android.util.Log;
 
 import com.arialyy.aria.core.Aria;
 import com.blankj.utilcode.util.LogUtils;
@@ -16,6 +17,9 @@ import org.greenrobot.eventbus.EventBus;
 
 import java.io.File;
 import java.util.HashMap;
+
+import io.reactivex.functions.Consumer;
+import io.reactivex.plugins.RxJavaPlugins;
 
 public class MyApp extends Application implements JavaCrashUtils.OnCrashListener {
     @Override
@@ -55,6 +59,13 @@ public class MyApp extends Application implements JavaCrashUtils.OnCrashListener
         collectCrashInfo();
 
         Aria.init(this);
+
+        RxJavaPlugins.setErrorHandler(new Consumer<Throwable>() {
+            @Override
+            public void accept(Throwable throwable) throws Exception {
+                Log.e("MyLog", " RxJavaPlugins 捕获 throwable >>> " + throwable.getMessage());
+            }
+        });
     }
 
     private void collectCrashInfo() {

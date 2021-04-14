@@ -110,6 +110,12 @@ public class BluetoothService implements BluetoothEngineService.AsyncThreadReadB
     }
 
     public void onStart(Activity activity) {
+        setStartSyncUUID();
+        if (!isStartSyncUUID && bluetoothCurrentStatus == BluetoothEngineService.STATE_CONNECTED) {
+            isStartSyncUUID = true;
+            BluetoothService.getInstance().startSynchronizedUUID();
+        }
+
         if (bluetoothCurrentStatus == BluetoothEngineService.STATE_CONNECTED) {
             if (mBluetoothStatusListener != null) {
                 mBluetoothStatusListener.connectedDeviceName(currentBluetoothDeviceName);
@@ -120,6 +126,7 @@ public class BluetoothService implements BluetoothEngineService.AsyncThreadReadB
             }
             BluetoothService.getInstance().startBluetoothEngine(activity);
         }
+
     }
 
     public void unBondDevice(Context activity) {
@@ -142,7 +149,7 @@ public class BluetoothService implements BluetoothEngineService.AsyncThreadReadB
      * 蓝牙重连
      */
     private void sendBluetoothRetryConnect() {
-        Log.d("MyLog", "-----发送给VR端的uuid " + " >>> 蓝牙重连 ");
+//        Log.d("MyLog", "-----发送给VR端的uuid " + " >>> 蓝牙重连 ");
         sendUUIDMessage(1, "bluetoothRetryConnect", BLUETOOTH_RETRY_CONNECT);
     }
 
@@ -160,7 +167,7 @@ public class BluetoothService implements BluetoothEngineService.AsyncThreadReadB
      */
     private void sendUUIDMessage(int tag, @NonNull String uuid, int messageTag) {
 
-        Log.d("MyLog", "-----发送给VR端的uuid" +
+        Log.d("BluetoothEngineService", "-----发送给VR端的uuid" +
                 " >>> pad是否存在uuid值（-1不存在，1存在） : " + tag
                 + " >>> uuid : " + uuid);
 
@@ -234,7 +241,11 @@ public class BluetoothService implements BluetoothEngineService.AsyncThreadReadB
     /**
      * 第一次联通蓝牙会同步UUID。
      */
-    private boolean isStartSyncUUIDOnce;
+    private boolean isStartSyncUUID;
+
+    private void setStartSyncUUID() {
+        isStartSyncUUID = false;
+    }
 
     private final Handler mHandler = new Handler(Looper.getMainLooper()) {
         @Override
@@ -247,8 +258,8 @@ public class BluetoothService implements BluetoothEngineService.AsyncThreadReadB
 //                            if (mBluetoothStatusListener != null) {
 //                                mBluetoothStatusListener.connectedSuccess();
 //                            }
-                            if (!isStartSyncUUIDOnce) {
-                                isStartSyncUUIDOnce = true;
+                            if (!isStartSyncUUID) {
+                                isStartSyncUUID = true;
                                 BluetoothService.getInstance().startSynchronizedUUID();
                             }
                             // TODO 链接成功,取消延迟任务
@@ -321,9 +332,9 @@ public class BluetoothService implements BluetoothEngineService.AsyncThreadReadB
                     postPlayStatus();
                     break;
                 case MESSAGE_SYNC_DEVICE_UUID:
-                    if (!isDeviceUuidExist) {
-                        postSyncDeviceUUID((String) msg.obj);
-                    }
+//                    if (!isDeviceUuidExist) {
+//                        postSyncDeviceUUID((String) msg.obj);
+//                    }
                     break;
             }
         }
@@ -415,7 +426,7 @@ public class BluetoothService implements BluetoothEngineService.AsyncThreadReadB
                     mHandler.obtainMessage(MESSAGE_SYNC_WAIT_PLAY_STATUS).sendToTarget();
                     break;
                 case SYNC_DEVICE_UUID:
-                    handSyncUUID(bytes, cursor + 14);
+//                    handSyncUUID(bytes, cursor + 14);
                     break;
             }
 
@@ -430,17 +441,23 @@ public class BluetoothService implements BluetoothEngineService.AsyncThreadReadB
         String string = SPUtils.getInstance().getString(DEVICE_UUID);
         if (TextUtils.isEmpty(string)) {
             // pad无
-            isDeviceUuidExist = false;
-            sendUUIDMessage(-1, "NoUUID");
-        } else {
-            // pad有
-            isDeviceUuidExist = true;
-            sendUUIDMessage(1, string);
-            postSyncDeviceUUID(string);
+//            isDeviceUuidExist = false;
+//            sendUUIDMessage(-1, "NoUUID");
+            // 创建UUID
+            string = UUID.randomUUID().toString().replace("-", "");
+            SPUtils.getInstance().put(DEVICE_UUID, string);
+
         }
+//        else {
+        // pad有
+//            isDeviceUuidExist = true;
+//            sendUUIDMessage(1, string);
+//        }
+        sendUUIDMessage(1, string);
+        postSyncDeviceUUID(string);
     }
 
-    private boolean isDeviceUuidExist;
+//    private boolean isDeviceUuidExist;
 
     // int:totalBody长度 int:tag类型 int:category类型 short:messageBody长度 int:是否有UUID int:uuid长度 string：uuid值
     private void handSyncUUID(byte[] bytes, int tagHead) {

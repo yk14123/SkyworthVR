@@ -31,7 +31,7 @@ public class BaseViewModel extends AndroidViewModel {
         }
         mCompositeDisposable.add(
                 observable.subscribeOn(Schedulers.io())
-                        .observeOn(AndroidSchedulers.mainThread(), true)
+                        .observeOn(AndroidSchedulers.mainThread())
                         .onErrorResumeNext(new HttpErrorHandler<>())
                         .subscribeWith(observer));
     }

@@ -152,7 +152,13 @@ public class SettingActivity extends AppCompatActivity {
     }
 
     private void checkedEnterMainActivityEnable() {
-        if (isBluetoothConnected && isWifiConnected) {
+//        if (isBluetoothConnected && isWifiConnected) {
+//            mBtAllReadyDone.setEnabled(true);
+//        } else {
+//            mBtAllReadyDone.setEnabled(false);
+//        }
+
+        if (isBluetoothConnected) {
             mBtAllReadyDone.setEnabled(true);
         } else {
             mBtAllReadyDone.setEnabled(false);
