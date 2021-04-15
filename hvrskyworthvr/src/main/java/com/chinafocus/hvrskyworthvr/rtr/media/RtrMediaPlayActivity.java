@@ -385,11 +385,12 @@ public class RtrMediaPlayActivity extends AppCompatActivity implements ViewBindH
     @Subscribe()
     @SuppressWarnings("unused")
     public void startBluetoothLostDelayTask(VrMediaStartBluetoothLostDelayTask event) {
-        if (mMyBluetoothLostDelayTaskRunnable == null) {
-            mMyBluetoothLostDelayTaskRunnable = new MyBluetoothLostDelayTaskRunnable();
-        }
-        mLandPlayerView.removeCallbacks(mMyBluetoothLostDelayTaskRunnable);
-        mLandPlayerView.postDelayed(mMyBluetoothLostDelayTaskRunnable, 2000);
+//        if (mMyBluetoothLostDelayTaskRunnable == null) {
+//            mMyBluetoothLostDelayTaskRunnable = new MyBluetoothLostDelayTaskRunnable();
+//        }
+//        mLandPlayerView.removeCallbacks(mMyBluetoothLostDelayTaskRunnable);
+//        Log.e("BluetoothEngineService"," !!!!!!!!!!!! 播放页面 >>> [开启]2秒延迟任务 ");
+//        mLandPlayerView.postDelayed(mMyBluetoothLostDelayTaskRunnable, 6000);
     }
 
     private RtrBluetoothLostDialog mRtrBluetoothLostDialog;
@@ -415,6 +416,7 @@ public class RtrMediaPlayActivity extends AppCompatActivity implements ViewBindH
         @Override
         public void run() {
             hideBluetoothConnectDialog();
+            Log.e("BluetoothEngineService"," ++++++++++在【播放页面】 执行了蓝牙断开");
             BluetoothService.getInstance().setBluetoothLostYet(true);
             if (linkingVr) {
                 hideBluetoothLostDialog();
@@ -435,9 +437,10 @@ public class RtrMediaPlayActivity extends AppCompatActivity implements ViewBindH
     @Subscribe()
     @SuppressWarnings("unused")
     public void cancelBluetoothLostDelayTask(VrMediaCancelBluetoothLostDelayTask event) {
+        Log.e("BluetoothEngineService"," !!!!!!!!!!!!!!!!! 播放页面 >>> [移除]延迟任务 ");
         mLandPlayerView.removeCallbacks(mMyBluetoothLostDelayTaskRunnable);
         if (BluetoothService.getInstance().isBluetoothLostYet()) {
-            Log.d("MyLog", "-----在首页展示蓝牙恢复页面-----");
+            Log.e("BluetoothEngineService", "-----在【播放页面】 收到了蓝牙恢复，需要回到【首页】展示【蓝牙恢复页面】-----");
             BluetoothService.getInstance().setBluetoothLostYet(false);
             hideBluetoothConnectDialog();
             hideBluetoothLostDialog();
@@ -445,6 +448,7 @@ public class RtrMediaPlayActivity extends AppCompatActivity implements ViewBindH
             finish();
             Constants.ACTIVITY_TAG = Constants.ACTIVITY_MAIN;
         }
+        BluetoothService.getInstance().setBluetoothLostYet(false);
     }
 
     private RtrBluetoothConnectedDialog mRtrBluetoothConnectedDialog;

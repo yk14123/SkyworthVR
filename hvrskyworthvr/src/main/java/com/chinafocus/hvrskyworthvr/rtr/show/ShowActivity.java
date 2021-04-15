@@ -7,6 +7,7 @@ import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
 
@@ -121,6 +122,7 @@ public class ShowActivity extends AppCompatActivity {
     private MyBluetoothLostDelayTaskRunnable mBluetoothLostDelayTaskRunnable;
     private RtrBluetoothLostDialog mRtrBluetoothLostDialog;
     private RtrBluetoothConnectedDialog mRtrBluetoothConnectedDialog;
+    private View mDividerLine;
 
     @RequiresApi(api = Build.VERSION_CODES.N)
     @Override
@@ -137,6 +139,7 @@ public class ShowActivity extends AppCompatActivity {
         findViewById(R.id.iv_mine_about).setOnClickListener(v -> TimeOutClickUtil.getDefault().startTimeOutClick(() -> startActivity(new Intent(ShowActivity.this, MineActivity.class))));
 
         mMagicIndicator = findViewById(R.id.magic_Indicator_main_tag);
+        mDividerLine = findViewById(R.id.view_divider_line);
 
         mDiscreteScrollView = findViewById(R.id.rv_main_hot_cover);
         mBackgroundAnimationRelativeLayout = findViewById(R.id.view_background_change_animation);
@@ -263,51 +266,60 @@ public class ShowActivity extends AppCompatActivity {
 
         for (int i = 0; i < videoContentLists.size(); i++) {
             String className = videoContentLists.get(i).getClassName();
-            TagHolder tagHolder = new TagHolder(className, i);
-            if (!mTagHolders.contains(tagHolder)) {
-                mTagHolders.add(tagHolder);
+            if (!TextUtils.isEmpty(className)) {
+                TagHolder tagHolder = new TagHolder(className, i);
+                if (!mTagHolders.contains(tagHolder)) {
+                    mTagHolders.add(tagHolder);
+                }
             }
         }
 
-        CommonNavigator commonNavigator = new CommonNavigator(this);
-        commonNavigator.setAdjustMode(false);
-        commonNavigator.setAdapter(new CommonNavigatorAdapter() {
+        if (mTagHolders.size() > 0) {
+            CommonNavigatorAdapter commonNavigatorAdapter = new CommonNavigatorAdapter() {
 
-            @Override
-            public int getCount() {
-                return mTagHolders.size();
-            }
+                @Override
+                public int getCount() {
+                    return mTagHolders.size();
+                }
 
-            @Override
-            public IPagerTitleView getTitleView(Context context, final int index) {
-                ScaleTransitionPagerTitleView scaleTitleView = new ScaleTransitionPagerTitleView(context);
-                scaleTitleView.setTextSize(20);
-                scaleTitleView.setMinScale(0.833f);
-                scaleTitleView.setNormalColor(getResources().getColor(R.color.color_white_a60));
-                scaleTitleView.setSelectedColor(getResources().getColor(R.color.color_white));
-                scaleTitleView.setText(mTagHolders.get(index).getClassName());
-                scaleTitleView.setOnClickListener(view
-                        -> {
-                    mBackgroundAnimationRelativeLayout.removeCallbacks(mMyPostBackGroundRunnable);
-                    bindIndicatorToItem(index);
-                });
+                @Override
+                public IPagerTitleView getTitleView(Context context, final int index) {
+                    ScaleTransitionPagerTitleView scaleTitleView = new ScaleTransitionPagerTitleView(context);
+                    scaleTitleView.setTextSize(20);
+                    scaleTitleView.setMinScale(0.833f);
+                    scaleTitleView.setNormalColor(getResources().getColor(R.color.color_white_a60));
+                    scaleTitleView.setSelectedColor(getResources().getColor(R.color.color_white));
+                    scaleTitleView.setText(mTagHolders.get(index).getClassName());
+                    scaleTitleView.setOnClickListener(view
+                            -> {
+                        mBackgroundAnimationRelativeLayout.removeCallbacks(mMyPostBackGroundRunnable);
+                        bindIndicatorToItem(index);
+                    });
 
-                return scaleTitleView;
-            }
+                    return scaleTitleView;
+                }
 
-            @Override
-            public IPagerIndicator getIndicator(Context context) {
-                LinePagerIndicator linePagerIndicator = new LinePagerIndicator(context);
-                linePagerIndicator.setColors(Color.WHITE);
-                linePagerIndicator.setLineWidth(62.f);
-                linePagerIndicator.setLineHeight(12.f);
-                linePagerIndicator.setMode(MODE_EXACTLY);
-                linePagerIndicator.setRoundRadius(44);
-                return linePagerIndicator;
-            }
-        });
+                @Override
+                public IPagerIndicator getIndicator(Context context) {
+                    LinePagerIndicator linePagerIndicator = new LinePagerIndicator(context);
+                    linePagerIndicator.setColors(Color.WHITE);
+                    linePagerIndicator.setLineWidth(62.f);
+                    linePagerIndicator.setLineHeight(12.f);
+                    linePagerIndicator.setMode(MODE_EXACTLY);
+                    linePagerIndicator.setRoundRadius(44);
+                    return linePagerIndicator;
+                }
+            };
+            CommonNavigator commonNavigator = new CommonNavigator(this);
+            commonNavigator.setAdjustMode(false);
+            commonNavigator.setAdapter(commonNavigatorAdapter);
+            mMagicIndicator.setNavigator(commonNavigator);
 
-        mMagicIndicator.setNavigator(commonNavigator);
+            mDividerLine.setVisibility(View.VISIBLE);
+        } else {
+            mDividerLine.setVisibility(View.INVISIBLE);
+        }
+
     }
 
     private void bindItemToIndicator(VideoContentList videoContentList) {
@@ -425,19 +437,19 @@ public class ShowActivity extends AppCompatActivity {
     @Subscribe()
     @SuppressWarnings("unused")
     public void startBluetoothLostDelayTask(VrMainStartBluetoothLostDelayTask event) {
-        if (mBluetoothLostDelayTaskRunnable == null) {
-            mBluetoothLostDelayTaskRunnable = new MyBluetoothLostDelayTaskRunnable();
-        }
-        mBackgroundAnimationRelativeLayout.removeCallbacks(mBluetoothLostDelayTaskRunnable);
-        mBackgroundAnimationRelativeLayout.postDelayed(mBluetoothLostDelayTaskRunnable, 2000);
+//        if (mBluetoothLostDelayTaskRunnable == null) {
+//            mBluetoothLostDelayTaskRunnable = new MyBluetoothLostDelayTaskRunnable();
+//        }
+//        mBackgroundAnimationRelativeLayout.removeCallbacks(mBluetoothLostDelayTaskRunnable);
+//        mBackgroundAnimationRelativeLayout.postDelayed(mBluetoothLostDelayTaskRunnable, 6000);
     }
 
     private void startBluetoothLostTaskImmediately() {
-        if (mBluetoothLostDelayTaskRunnable == null) {
-            mBluetoothLostDelayTaskRunnable = new MyBluetoothLostDelayTaskRunnable();
-        }
-        mBackgroundAnimationRelativeLayout.removeCallbacks(mBluetoothLostDelayTaskRunnable);
-        mBackgroundAnimationRelativeLayout.post(mBluetoothLostDelayTaskRunnable);
+//        if (mBluetoothLostDelayTaskRunnable == null) {
+//            mBluetoothLostDelayTaskRunnable = new MyBluetoothLostDelayTaskRunnable();
+//        }
+//        mBackgroundAnimationRelativeLayout.removeCallbacks(mBluetoothLostDelayTaskRunnable);
+//        mBackgroundAnimationRelativeLayout.post(mBluetoothLostDelayTaskRunnable);
     }
 
     /**
@@ -450,11 +462,12 @@ public class ShowActivity extends AppCompatActivity {
     public void cancelBluetoothLostDelayTask(VrMainCancelBluetoothLostDelayTask event) {
         mBackgroundAnimationRelativeLayout.removeCallbacks(mBluetoothLostDelayTaskRunnable);
         if (BluetoothService.getInstance().isBluetoothLostYet()) {
-            Log.d("MyLog", "-----在首页展示蓝牙恢复页面-----");
+            Log.e("BluetoothEngineService", "-----在【首页】 收到了蓝牙恢复，需要在【首页】展示【蓝牙恢复页面】-----");
             BluetoothService.getInstance().setBluetoothLostYet(false);
             hideBluetoothLostDialog();
             showBluetoothConnectDialog();
         }
+        BluetoothService.getInstance().setBluetoothLostYet(false);
     }
 
 
@@ -534,6 +547,7 @@ public class ShowActivity extends AppCompatActivity {
     }
 
     private void showBluetoothLostDialog() {
+        Log.e("BluetoothEngineService", " ！！！！！！！！！主页面 show 蓝牙断开dialog ");
         if (mRtrBluetoothLostDialog == null) {
             mRtrBluetoothLostDialog = new RtrBluetoothLostDialog(this);
         }
@@ -545,6 +559,7 @@ public class ShowActivity extends AppCompatActivity {
 
     private void hideBluetoothLostDialog() {
         if (mRtrBluetoothLostDialog != null && mRtrBluetoothLostDialog.isShowing()) {
+            Log.e("BluetoothEngineService", " ！！！！！！！！！主页面 hide  蓝牙断开dialog ");
             mRtrBluetoothLostDialog.dismiss();
         }
     }
@@ -599,13 +614,22 @@ public class ShowActivity extends AppCompatActivity {
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+
+        Log.e("BluetoothEngineService", " resultCode >>> " + resultCode);
+
         if (resultCode == RESULT_CODE_INACTIVE_DIALOG) {
+            hideBluetoothLostDialog();
+            hideBluetoothConnectDialog();
             closeMainDialog();
             startTimeTask();
         } else if (resultCode == RESULT_CODE_ACTIVE_DIALOG) {
+            hideBluetoothLostDialog();
+            hideBluetoothConnectDialog();
             showVrModeMainDialog();
             closeTimer(null);
         } else if (resultCode == RESULT_CODE_SELF_INACTIVE_DIALOG) {
+            hideBluetoothLostDialog();
+            hideBluetoothConnectDialog();
             VrSyncPlayInfo.obtain().restoreVideoInfo();
             closeTimer(null);
         } else if (resultCode == RESULT_CODE_ACTIVE_BLUETOOTH_LOST) {
@@ -615,6 +639,7 @@ public class ShowActivity extends AppCompatActivity {
         } else if (resultCode == RESULT_CODE_ACTIVE_BLUETOOTH_CONNECTED) {
             VrSyncPlayInfo.obtain().restoreVideoInfo();
             closeTimer(null);
+            hideBluetoothLostDialog();
             showBluetoothConnectDialog();
         }
         // 修复RecyclerView位置
@@ -667,7 +692,6 @@ public class ShowActivity extends AppCompatActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        mBackgroundAnimationRelativeLayout.removeCallbacks(mMyPostBackGroundRunnable);
         mMyPostBackGroundRunnable = null;
         mBluetoothLostDelayTaskRunnable = null;
         ExoManager.getInstance().onDestroy();
@@ -711,6 +735,7 @@ public class ShowActivity extends AppCompatActivity {
     private class MyBluetoothLostDelayTaskRunnable implements Runnable {
         @Override
         public void run() {
+            Log.e("BluetoothEngineService", " ++++++++++在【主页面】 执行了蓝牙断开");
             BluetoothService.getInstance().setBluetoothLostYet(true);
             closeMainDialog();
             hideBluetoothConnectDialog();
