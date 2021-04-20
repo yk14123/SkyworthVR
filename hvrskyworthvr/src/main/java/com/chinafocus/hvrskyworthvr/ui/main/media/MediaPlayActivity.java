@@ -198,7 +198,9 @@ public class MediaPlayActivity extends AppCompatActivity implements ViewBindHelp
 
         ((SphericalGLSurfaceView) Objects.requireNonNull(mLandPlayerView.getVideoSurfaceView())).resetScale();
 
-        mExoMediaHelper = new ExoMediaHelper(this, mLandPlayerView);
+//        mExoMediaHelper = new ExoMediaHelper(this, mLandPlayerView);
+        mExoMediaHelper = ExoMediaHelper.getInstance();
+        mExoMediaHelper.buildDataSourceFactory(mLandPlayerView);
         mExoMediaHelper.restoreSavedInstanceState(savedInstanceState);
         ViewBindHelper mViewBindHelper = new ViewBindHelper(mLandPlayerView);
         mViewBindHelper.bindPlayerView();

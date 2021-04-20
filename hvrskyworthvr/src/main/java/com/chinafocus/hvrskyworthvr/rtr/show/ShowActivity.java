@@ -24,6 +24,7 @@ import com.bumptech.glide.request.target.CustomTarget;
 import com.bumptech.glide.request.transition.Transition;
 import com.chinafocus.hvrskyworthvr.R;
 import com.chinafocus.hvrskyworthvr.exo.ExoManager;
+import com.chinafocus.hvrskyworthvr.exo.tools.ExoMediaHelper;
 import com.chinafocus.hvrskyworthvr.global.ConfigManager;
 import com.chinafocus.hvrskyworthvr.global.Constants;
 import com.chinafocus.hvrskyworthvr.model.bean.TagHolder;
@@ -695,6 +696,7 @@ public class ShowActivity extends AppCompatActivity {
         mMyPostBackGroundRunnable = null;
         mBluetoothLostDelayTaskRunnable = null;
         ExoManager.getInstance().onDestroy();
+        ExoMediaHelper.getInstance().onDestroy();
         BluetoothService.getInstance().releaseAll(this);
     }
 

@@ -388,13 +388,13 @@ public class BluetoothService implements BluetoothEngineService.AsyncThreadReadB
             int eventTag = ByteBuffer.wrap(bytes).getInt(cursor + 4);
 //            int category = ByteBuffer.wrap(bytes).getInt(cursor + 8);
 
-            if (len > 200 && eventTag == SYNC_ROTATION) {
-                Log.i("MyLog", "socketInputStream.read"
-                        + " >>> 消息类型是 : " + eventTag
-                        + " >>> 消息总长度是 : " + len
-                        + " >>> cursor : " + cursor
-                );
-            }
+//            if (len > 200 && eventTag == SYNC_ROTATION) {
+//                Log.i("MyLog", "socketInputStream.read"
+//                        + " >>> 消息类型是 : " + eventTag
+//                        + " >>> 消息总长度是 : " + len
+//                        + " >>> cursor : " + cursor
+//                );
+//            }
 //            else if (eventTag != SYNC_ROTATION) {
 //                Log.i("MyLog", "socketInputStream.read"
 //                        + " >>> 消息类型是 : " + eventTag

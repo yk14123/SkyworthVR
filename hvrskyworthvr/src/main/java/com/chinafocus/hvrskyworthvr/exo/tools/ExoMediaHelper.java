@@ -1,5 +1,6 @@
 package com.chinafocus.hvrskyworthvr.exo.tools;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
@@ -56,10 +57,29 @@ public class ExoMediaHelper {
     private boolean startAutoPlay;
     private PlayerView mLandscapePlayerView;
 
-    public ExoMediaHelper(Context activity, PlayerView playerView) {
-        mContext = activity.getApplicationContext();
+    @SuppressLint("StaticFieldLeak")
+    private static volatile ExoMediaHelper mExoManager;
+
+    private ExoMediaHelper() {
+    }
+
+    public static ExoMediaHelper getInstance() {
+        if (mExoManager == null) {
+            synchronized (ExoMediaHelper.class) {
+                if (mExoManager == null) {
+                    mExoManager = new ExoMediaHelper();
+                }
+            }
+        }
+        return mExoManager;
+    }
+
+    public void buildDataSourceFactory(PlayerView playerView) {
+        mContext = playerView.getContext().getApplicationContext();
         // 初始化加载数据工厂
-        mMediaDataSourceFactory = buildDataSourceFactory(mContext);
+        if (mMediaDataSourceFactory == null) {
+            mMediaDataSourceFactory = buildDataSourceFactory(mContext);
+        }
         mLandscapePlayerView = playerView;
     }
 
@@ -220,6 +240,20 @@ public class ExoMediaHelper {
         }
     }
 
+    public void onClear() {
+        if (mContext != null) {
+            mContext = null;
+        }
+        if (mediaSource != null) {
+            mediaSource = null;
+        }
+        if (player != null) {
+            player.setPlayWhenReady(false);
+            player.stop(true);
+            player.seekTo(0);
+        }
+    }
+
     /**
      * 创建默认的数据工厂
      *
@@ -232,13 +266,13 @@ public class ExoMediaHelper {
         // UA
         String userAgent = Util.getUserAgent(context, "AppNameYang");
 
-        DefaultHttpDataSource.Factory httpDataFactory = new DefaultHttpDataSource.Factory()
-                .setUserAgent(userAgent)
-                .setTransferListener(BANDWIDTH_METER);
+        DefaultHttpDataSource.Factory httpDataFactory = new DefaultHttpDataSource.Factory();
+//                .setUserAgent(userAgent)
+//                .setTransferListener(BANDWIDTH_METER);
 
         // 创建加载数据的工厂
         DefaultDataSourceFactory upstreamFactory =
-                new DefaultDataSourceFactory(context, BANDWIDTH_METER, httpDataFactory);
+                new DefaultDataSourceFactory(context, null, httpDataFactory);
 
         return upstreamFactory;
 
@@ -416,6 +450,16 @@ public class ExoMediaHelper {
         outState.putLong(KEY_POSITION, startPosition);
     }
 
+    public interface UnexpectedRuntimeError {
+        void onUnexpectedRuntimeError();
+    }
+
+    private UnexpectedRuntimeError mUnexpectedRuntimeError;
+
+    public void setUnexpectedRuntimeError(UnexpectedRuntimeError unexpectedRuntimeError) {
+        mUnexpectedRuntimeError = unexpectedRuntimeError;
+    }
+
     public class PlayerEventListener implements Player.EventListener {
 
         @SuppressWarnings("all")
@@ -447,7 +491,9 @@ public class ExoMediaHelper {
                 player.prepare();
             } else if (error.type == ExoPlaybackException.TYPE_UNEXPECTED) {
                 Toast.makeText(mContext, "操作频繁，请重新打开", Toast.LENGTH_SHORT).show();
-//                player.prepare();
+                if (mUnexpectedRuntimeError != null) {
+                    mUnexpectedRuntimeError.onUnexpectedRuntimeError();
+                }
             }
         }
 

@@ -129,8 +129,8 @@ public class RtrMediaPlayActivity extends AppCompatActivity implements ViewBindH
             nextVideoId = videoDetail.getNextId();
             nextVideoType = videoDetail.getNextType();
 
-            Log.d("MyLog", "-----当前[视频]播放地址是 videoUrl >>> " + videoUrl);
-            Log.d("MyLog", "-----当前[字幕]播放地址是 subtitle >>> " + subtitle);
+//            Log.d("MyLog", "-----当前[视频]播放地址是 videoUrl >>> " + videoUrl);
+//            Log.d("MyLog", "-----当前[字幕]播放地址是 subtitle >>> " + subtitle);
 
             mExoMediaHelper.onStart();
             mExoMediaHelper.prepareSource(videoUrl, null, subtitle);
@@ -208,7 +208,10 @@ public class RtrMediaPlayActivity extends AppCompatActivity implements ViewBindH
 
         ((SphericalGLSurfaceView) Objects.requireNonNull(mLandPlayerView.getVideoSurfaceView())).resetScale();
 
-        mExoMediaHelper = new ExoMediaHelper(this, mLandPlayerView);
+//        mExoMediaHelper = new ExoMediaHelper(this, mLandPlayerView);
+        mExoMediaHelper = ExoMediaHelper.getInstance();
+        mExoMediaHelper.setUnexpectedRuntimeError(this::recreate);
+        mExoMediaHelper.buildDataSourceFactory(mLandPlayerView);
         mExoMediaHelper.restoreSavedInstanceState(savedInstanceState);
         ViewBindHelper mViewBindHelper = new ViewBindHelper(mLandPlayerView);
         mViewBindHelper.bindPlayerView();
@@ -416,7 +419,7 @@ public class RtrMediaPlayActivity extends AppCompatActivity implements ViewBindH
         @Override
         public void run() {
             hideBluetoothConnectDialog();
-            Log.e("BluetoothEngineService"," ++++++++++在【播放页面】 执行了蓝牙断开");
+            Log.e("BluetoothEngineService", " ++++++++++在【播放页面】 执行了蓝牙断开");
             BluetoothService.getInstance().setBluetoothLostYet(true);
             if (linkingVr) {
                 hideBluetoothLostDialog();
@@ -437,7 +440,7 @@ public class RtrMediaPlayActivity extends AppCompatActivity implements ViewBindH
     @Subscribe()
     @SuppressWarnings("unused")
     public void cancelBluetoothLostDelayTask(VrMediaCancelBluetoothLostDelayTask event) {
-        Log.e("BluetoothEngineService"," !!!!!!!!!!!!!!!!! 播放页面 >>> [移除]延迟任务 ");
+        Log.e("BluetoothEngineService", " !!!!!!!!!!!!!!!!! 播放页面 >>> [移除]延迟任务 ");
         mLandPlayerView.removeCallbacks(mMyBluetoothLostDelayTaskRunnable);
         if (BluetoothService.getInstance().isBluetoothLostYet()) {
             Log.e("BluetoothEngineService", "-----在【播放页面】 收到了蓝牙恢复，需要回到【首页】展示【蓝牙恢复页面】-----");
@@ -518,12 +521,13 @@ public class RtrMediaPlayActivity extends AppCompatActivity implements ViewBindH
     public void onStop() {
         super.onStop();
         EventBus.getDefault().unregister(this);
+        mExoMediaHelper.onClear();
     }
 
     @Override
     public void onDestroy() {
         super.onDestroy();
-        mExoMediaHelper.onDestroy();
+//        mExoMediaHelper.onDestroy();
         mMyBluetoothLostDelayTaskRunnable = null;
     }
 
