@@ -26,6 +26,8 @@ public class MyApp extends Application implements JavaCrashUtils.OnCrashListener
     public void onCreate() {
         super.onCreate();
 
+        initFileDirectory();
+
         ApiManager.init(new NetworkRequestInfo(this));
 
         DeviceInfoManager.getInstance().initDeviceInfo(this);
@@ -68,15 +70,16 @@ public class MyApp extends Application implements JavaCrashUtils.OnCrashListener
         });
     }
 
-    private void collectCrashInfo() {
-        File externalFilesDir = getExternalFilesDir("");
-        File dir = new File(externalFilesDir, "crash");
-        if (!dir.exists()) {
-            dir.mkdir();
-        }
+    private void initFileDirectory() {
+        getExternalFilesDir("Config");
+        getExternalFilesDir("Videos");
+        getExternalFilesDir("preview");
+    }
 
+    private void collectCrashInfo() {
+        File crash = getExternalFilesDir("crash");
         new Crash.CrashBuild(getApplicationContext())
-                .javaCrashPath(dir.getAbsolutePath(), this)
+                .javaCrashPath(crash.getAbsolutePath(), this)
                 .build();
     }
 

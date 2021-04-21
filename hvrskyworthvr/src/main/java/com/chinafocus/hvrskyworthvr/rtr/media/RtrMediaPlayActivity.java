@@ -73,6 +73,7 @@ public class RtrMediaPlayActivity extends AppCompatActivity implements ViewBindH
     private int nextVideoType;
     private int currentVideoId;
     private MyBluetoothLostDelayTaskRunnable mMyBluetoothLostDelayTaskRunnable;
+    private MyPlayerEventListener mMyPlayerEventListener;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -95,9 +96,9 @@ public class RtrMediaPlayActivity extends AppCompatActivity implements ViewBindH
     @SuppressLint("NewApi")
     private void observerNetData() {
         mediaViewModel.videoDetailMutableLiveData.observe(this, videoDetail -> {
-            Log.d("MyLog", "-----当前播放视频的标题是 >>> " + videoDetail.getTitle());
+//            Log.d("MyLog", "-----当前播放视频的标题是 >>> " + videoDetail.getTitle());
 
-            String videoUrl;
+            String videoUrl = "";
             String subtitle = "";
 
             String videoTempUrl = videoDetail.getVideoUrl();
@@ -111,53 +112,43 @@ public class RtrMediaPlayActivity extends AppCompatActivity implements ViewBindH
             String temp = videoDetail.getSubtitle();
             if (!TextUtils.isEmpty(temp)) {
                 subtitle = ConfigManager.getInstance().getDefaultUrl() + temp;
+
+                String[] splitSubtitle = subtitle.split("/");
+                File fileSubtitle = new File(getExternalFilesDir("subtitle"), splitSubtitle[splitSubtitle.length - 1]);
+                if (fileSubtitle.exists()) {
+                    subtitle = fileSubtitle.getAbsolutePath();
+                }
             }
 
             String[] splitVideoUrl = videoUrl.split("/");
-            File fileVideoUrl = new File(getExternalFilesDir(""), splitVideoUrl[splitVideoUrl.length - 1]);
+            File fileVideoUrl = new File(getExternalFilesDir("Videos"), splitVideoUrl[splitVideoUrl.length - 1]);
             if (fileVideoUrl.exists()) {
                 videoUrl = fileVideoUrl.getAbsolutePath();
-            }
-
-            String[] splitSubtitle = subtitle.split("/");
-            File fileSubtitle = new File(getExternalFilesDir("subtitle"), splitSubtitle[splitSubtitle.length - 1]);
-            if (fileSubtitle.exists()) {
-                subtitle = fileSubtitle.getAbsolutePath();
             }
 
             currentVideoId = videoDetail.getId();
             nextVideoId = videoDetail.getNextId();
             nextVideoType = videoDetail.getNextType();
 
-//            Log.d("MyLog", "-----当前[视频]播放地址是 videoUrl >>> " + videoUrl);
-//            Log.d("MyLog", "-----当前[字幕]播放地址是 subtitle >>> " + subtitle);
+            Log.d("MyLog", "-----当前[视频]播放地址是 videoUrl >>> " + videoUrl);
+            Log.d("MyLog", "-----当前[字幕]播放地址是 subtitle >>> " + subtitle);
 
             mExoMediaHelper.onStart();
             mExoMediaHelper.prepareSource(videoUrl, null, subtitle);
             mExoMediaHelper.onResume();
             mExoMediaHelper.seekTo(VrSyncPlayInfo.obtain().getSeekTime());
 
-            mExoMediaHelper.getPlayer().addListener(new Player.EventListener() {
-
-                @Override
-                public void onPlaybackStateChanged(int state) {
-//                    if (linkingVr && state == STATE_ENDED) {
-                    // 3. Pad 位于播放结束界面时，如果此时 VR 被激活则 VR 端直接进入一级视频列表界面，Pad 回到视频列表界面的「不可选片状态」
-                    // 不用接受命令。
-                    // 当链接状态，播放结束后
-//                        waitSelectedFromVR(null);
-//                    } else
-                    if (!linkingVr && state == STATE_ENDED) {
-                        VrSyncPlayInfo.obtain().restoreVideoInfo();
-                        Log.e("MyLog", "当前播放完了:" + VrSyncPlayInfo.obtain());
-                    }
-                }
-            });
+            if (mMyPlayerEventListener == null) {
+                mMyPlayerEventListener = new MyPlayerEventListener();
+                mExoMediaHelper.getPlayer().addListener(mMyPlayerEventListener);
+            }
 
             if (linkingVr) {
                 mExoMediaHelper.getPlayer().setVolume(0f);
                 mLandPlayerView.showController();
                 ((SphericalGLSurfaceView) Objects.requireNonNull(mLandPlayerView.getVideoSurfaceView())).syncTouchVR();
+            } else {
+                mExoMediaHelper.getPlayer().setVolume(1f);
             }
 
             mLandPlayerView.setVideoTitle(videoDetail.getTitle());
@@ -171,6 +162,23 @@ public class RtrMediaPlayActivity extends AppCompatActivity implements ViewBindH
             videoDetailDialog.setMessage(videoDetail.getDescription());
 
         });
+    }
+
+    private class MyPlayerEventListener implements Player.EventListener {
+
+        @Override
+        public void onPlaybackStateChanged(int state) {
+//                    if (linkingVr && state == STATE_ENDED) {
+            // 3. Pad 位于播放结束界面时，如果此时 VR 被激活则 VR 端直接进入一级视频列表界面，Pad 回到视频列表界面的「不可选片状态」
+            // 不用接受命令。
+            // 当链接状态，播放结束后
+//                        waitSelectedFromVR(null);
+//                    } else
+            if (!linkingVr && state == STATE_ENDED) {
+                VrSyncPlayInfo.obtain().restoreVideoInfo();
+                Log.e("MyLog", "当前播放完了:" + VrSyncPlayInfo.obtain());
+            }
+        }
     }
 
     private void handleIntent() {
@@ -430,6 +438,7 @@ public class RtrMediaPlayActivity extends AppCompatActivity implements ViewBindH
                 showBluetoothLostDialog();
             }
         }
+
     }
 
     /**
@@ -522,6 +531,10 @@ public class RtrMediaPlayActivity extends AppCompatActivity implements ViewBindH
         super.onStop();
         EventBus.getDefault().unregister(this);
         mExoMediaHelper.onClear();
+        if (mExoMediaHelper.getPlayer() != null) {
+            mExoMediaHelper.getPlayer().removeListener(mMyPlayerEventListener);
+            mMyPlayerEventListener = null;
+        }
     }
 
     @Override

@@ -592,13 +592,13 @@ public class ShowActivity extends AppCompatActivity {
                     @Override
                     public void onSubscribe(Disposable d) {
                         closeTimer(null);
-                        Log.d("MyLog", "-----开启2分钟定时器-----");
+//                        Log.d("MyLog", "-----开启2分钟定时器-----");
                         mDisposable = d;
                     }
 
                     @Override
                     public void onNext(Long value) {
-                        Log.d("MyLog", "-----定时器时间finish，执行任务成功！-----");
+//                        Log.d("MyLog", "-----定时器时间finish，执行任务成功！-----");
                         VrSyncPlayInfo.obtain().restoreVideoInfo();
                     }
 
@@ -665,7 +665,7 @@ public class ShowActivity extends AppCompatActivity {
     @SuppressWarnings("unused")
     public void closeTimer(VrCancelTimeTask vrCancelTimeTask) {
         if (mDisposable != null && !mDisposable.isDisposed()) {
-            Log.d("MyLog", "-----关闭2分钟定时器-----");
+//            Log.d("MyLog", "-----关闭2分钟定时器-----");
             mDisposable.dispose();
         }
     }

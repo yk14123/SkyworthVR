@@ -4,7 +4,6 @@ import android.content.Context;
 import android.text.TextUtils;
 
 import com.chinafocus.hvrskyworthvr.model.bean.DeviceInfo;
-import com.chinafocus.hvrskyworthvr.net.ApiMultiService;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -26,15 +25,22 @@ public class DeviceInfoManager {
     private final DeviceInfo mDeviceInfo;
 
     public void initDeviceInfo(Context context) {
-        mDeviceInfo.setAppNo(ApiMultiService.APP_NO);
+
         mDeviceInfo.setAlias("");
-        File file = new File(context.getExternalFilesDir(""), "userNo.txt");
+
+        File file = new File(context.getExternalFilesDir("Config"), "Account_Id.txt");
+        File appNo = new File(context.getExternalFilesDir("Config"), "App_No.txt");
         try (
                 FileReader fis = new FileReader(file);
-                BufferedReader bis = new BufferedReader(fis)
+                FileReader fis2 = new FileReader(appNo);
+                BufferedReader bis = new BufferedReader(fis);
+                BufferedReader bis2 = new BufferedReader(fis2)
         ) {
             String s = bis.readLine();
             mDeviceInfo.setUserNo(s);
+
+            String appNoString = bis2.readLine();
+            mDeviceInfo.setAppNo(appNoString);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -74,6 +80,10 @@ public class DeviceInfoManager {
 
     public String getDeviceAccountId() {
         return mDeviceInfo.getUserNo();
+    }
+
+    public String getAppNo() {
+        return mDeviceInfo.getAppNo();
     }
 
 }

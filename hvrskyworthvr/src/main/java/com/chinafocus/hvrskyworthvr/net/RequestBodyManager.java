@@ -23,7 +23,7 @@ public class RequestBodyManager {
         JSONObject jsonObject = new JSONObject();
         try {
             jsonObject.put("alias", newName);
-            jsonObject.put("appNo", ApiMultiService.APP_NO);
+            jsonObject.put("appNo", DeviceInfoManager.getInstance().getAppNo());
             jsonObject.put("uniqueId", DeviceInfoManager.getInstance().getDeviceUUID());
             jsonObject.put("userNo", DeviceInfoManager.getInstance().getDeviceAccountId());
         } catch (JSONException e) {
@@ -37,7 +37,7 @@ public class RequestBodyManager {
 
         JSONObject jsonObject = new JSONObject();
         try {
-            jsonObject.put("appNo", ApiMultiService.APP_NO);
+            jsonObject.put("appNo", DeviceInfoManager.getInstance().getAppNo());
             jsonObject.put("id", id);
             jsonObject.put("type", tag);
             jsonObject.put("uniqueId", DeviceInfoManager.getInstance().getDeviceUUID());
@@ -53,7 +53,7 @@ public class RequestBodyManager {
 
         JSONObject jsonObject = new JSONObject();
         try {
-            jsonObject.put("appNo", ApiMultiService.APP_NO);
+            jsonObject.put("appNo", DeviceInfoManager.getInstance().getAppNo());
             jsonObject.put("uniqueId", DeviceInfoManager.getInstance().getDeviceUUID());
             jsonObject.put("userNo", DeviceInfoManager.getInstance().getDeviceAccountId());
         } catch (JSONException e) {
@@ -67,7 +67,7 @@ public class RequestBodyManager {
 
         JSONObject jsonObject = new JSONObject();
         try {
-            jsonObject.put("appNo", ApiMultiService.APP_NO);
+            jsonObject.put("appNo", DeviceInfoManager.getInstance().getAppNo());
             jsonObject.put("contentType", 1);
             jsonObject.put("uniqueId", DeviceInfoManager.getInstance().getDeviceUUID());
             jsonObject.put("userNo", DeviceInfoManager.getInstance().getDeviceAccountId());
@@ -83,7 +83,7 @@ public class RequestBodyManager {
         JSONObject jsonObject = new JSONObject();
         try {
             jsonObject.put("alias", DeviceInfoManager.getInstance().getDeviceAlias());
-            jsonObject.put("appNo", ApiMultiService.APP_NO);
+            jsonObject.put("appNo", DeviceInfoManager.getInstance().getAppNo());
             jsonObject.put("uniqueId", DeviceInfoManager.getInstance().getDeviceUUID());
             jsonObject.put("userNo", DeviceInfoManager.getInstance().getDeviceAccountId());
         } catch (JSONException e) {
