@@ -33,7 +33,7 @@ public class VrSyncMediaStatus {
     @Override
     public String toString() {
         return "VrSyncMediaStatus{" +
-                "playStatusTag=" + playStatusTag +
+                "playStatusTag=" + (playStatusTag == 1 ? "VR端控制Pad播放" : "VR端控制Pad暂停") +
                 ", mSeek=" + mSeek +
                 '}';
     }

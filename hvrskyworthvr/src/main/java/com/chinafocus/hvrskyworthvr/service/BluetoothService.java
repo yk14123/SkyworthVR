@@ -542,7 +542,7 @@ public class BluetoothService implements BluetoothEngineService.AsyncThreadReadB
 
         VrSyncMediaStatus obtain = VrSyncMediaStatus.obtain();
         obtain.saveAllState(tag, seek);
-        Log.d("MyLog", "-----收到VR端同步过来的Media状态 obtain >> " + obtain);
+        Log.e("MyLog", "-----收到VR端同步过来的Media状态 obtain >> " + obtain);
     }
 
     /**

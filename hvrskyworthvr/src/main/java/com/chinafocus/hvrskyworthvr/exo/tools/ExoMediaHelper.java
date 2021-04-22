@@ -490,7 +490,7 @@ public class ExoMediaHelper {
                 // 当前是网络错误，就一直无限轮询请求
                 player.prepare();
             } else if (error.type == ExoPlaybackException.TYPE_UNEXPECTED) {
-                Toast.makeText(mContext, "操作频繁，请重新打开", Toast.LENGTH_SHORT).show();
+//                Toast.makeText(mContext, "操作频繁，请重新打开", Toast.LENGTH_SHORT).show();
                 if (mUnexpectedRuntimeError != null) {
                     mUnexpectedRuntimeError.onUnexpectedRuntimeError();
                 }

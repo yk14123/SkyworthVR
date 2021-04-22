@@ -96,7 +96,7 @@ public class RtrMediaPlayActivity extends AppCompatActivity implements ViewBindH
     @SuppressLint("NewApi")
     private void observerNetData() {
         mediaViewModel.videoDetailMutableLiveData.observe(this, videoDetail -> {
-//            Log.d("MyLog", "-----当前播放视频的标题是 >>> " + videoDetail.getTitle());
+            Log.d("MyLog", "-----当前播放视频的标题是 >>> " + videoDetail.getTitle());
 
             String videoUrl = "";
             String subtitle = "";
@@ -130,8 +130,8 @@ public class RtrMediaPlayActivity extends AppCompatActivity implements ViewBindH
             nextVideoId = videoDetail.getNextId();
             nextVideoType = videoDetail.getNextType();
 
-            Log.d("MyLog", "-----当前[视频]播放地址是 videoUrl >>> " + videoUrl);
-            Log.d("MyLog", "-----当前[字幕]播放地址是 subtitle >>> " + subtitle);
+//            Log.d("MyLog", "-----当前[视频]播放地址是 videoUrl >>> " + videoUrl);
+//            Log.d("MyLog", "-----当前[字幕]播放地址是 subtitle >>> " + subtitle);
 
             mExoMediaHelper.onStart();
             mExoMediaHelper.prepareSource(videoUrl, null, subtitle);
@@ -238,7 +238,7 @@ public class RtrMediaPlayActivity extends AppCompatActivity implements ViewBindH
     @Subscribe()
     @SuppressWarnings("unused")
     public void syncMediaInfoToVRConnect(VrMediaConnect event) {
-        Log.d("MyLog", "-----当前在播放页面的时候，戴上VR眼镜-----");
+        Log.d("MyLog", "-----当前在[播放页面]的时候，戴上VR眼镜-----");
         // 1.关闭当前dialog
         closeAllDialog();
 
@@ -255,6 +255,16 @@ public class RtrMediaPlayActivity extends AppCompatActivity implements ViewBindH
         }
 
         if (player.getPlaybackState() == STATE_ENDED) {
+
+            // 3.给VR同步视频信息
+            BluetoothService.getInstance()
+                    .sendMessage(
+                            VrSyncPlayInfo.obtain().getTag(),
+                            VrSyncPlayInfo.obtain().getCategory(),
+                            VrSyncPlayInfo.obtain().getVideoId(),
+                            VrSyncPlayInfo.obtain().getSeekTime()
+                    );
+
             hideBluetoothConnectDialog();
             hideBluetoothLostDialog();
             setResult(RESULT_CODE_ACTIVE_DIALOG, new Intent().putExtra("currentVideoId", currentVideoId));
@@ -264,16 +274,16 @@ public class RtrMediaPlayActivity extends AppCompatActivity implements ViewBindH
             // 4.pad端静音且暂停
             player.setVolume(0f);
             player.setPlayWhenReady(false);
-        }
 
-        // 3.给VR同步视频信息
-        BluetoothService.getInstance()
-                .sendMessage(
-                        VrSyncPlayInfo.obtain().getTag(),
-                        VrSyncPlayInfo.obtain().getCategory(),
-                        VrSyncPlayInfo.obtain().getVideoId(),
-                        VrSyncPlayInfo.obtain().getSeekTime()
-                );
+            // 3.给VR同步视频信息
+            BluetoothService.getInstance()
+                    .sendMessage(
+                            VrSyncPlayInfo.obtain().getTag(),
+                            VrSyncPlayInfo.obtain().getCategory(),
+                            VrSyncPlayInfo.obtain().getVideoId(),
+                            VrSyncPlayInfo.obtain().getSeekTime()
+                    );
+        }
     }
 
     /**
@@ -287,7 +297,7 @@ public class RtrMediaPlayActivity extends AppCompatActivity implements ViewBindH
     public void disConnectFromVR(VrMediaDisConnect event) {
         // 1.关闭当前dialog
         closeAllDialog();
-        Log.d("MyLog", "-----当前在播放页面的时候，取下VR眼镜-----");
+        Log.d("MyLog", "-----当前在[播放页面]的时候，取下VR眼镜-----");
         linkingVr = false;
 
         hideBluetoothLostDialog();
@@ -312,7 +322,7 @@ public class RtrMediaPlayActivity extends AppCompatActivity implements ViewBindH
 //        if (vrMediaWaitSelected == null) {
 //            Log.d("MyLog", "-----VR端还在播放，Pad端提前播放完了-----");
 //        } else {
-        Log.d("MyLog", "-----VR端回到了列表页面，正在选择菜单-----");
+        Log.d("MyLog", "-----VR端回到了[列表页面]，正在选择菜单-----");
 //        }
         // 1.关闭当前dialog
         closeAllDialog();

@@ -162,7 +162,10 @@ public class ShowActivity extends AppCompatActivity {
                     public void onScrollStart(@NonNull RecyclerView.ViewHolder currentItemHolder, int adapterPosition) {
                         // 视频暂停！
                         ExoManager.getInstance().setPlayWhenReady(false);
-                        VrSyncPlayInfo.obtain().restoreVideoInfo();
+                        if (!isStartMediaPlayActivity) {
+                            Log.d("MyLog", " ---------Pad在【主页面】中，列表开始滑动了，把videoId设置为-1-----");
+                            VrSyncPlayInfo.obtain().restoreVideoInfo();
+                        }
                         closeTimer(null);
                         mBackgroundAnimationRelativeLayout.removeCallbacks(mMyPostBackGroundRunnable);
                         ((BaseViewHolder) currentItemHolder).getView(R.id.lottie_center_media).setVisibility(View.GONE);
@@ -171,6 +174,10 @@ public class ShowActivity extends AppCompatActivity {
 
                 mAdapter.setOnClickCallback(adapterPosition -> {
 
+                    if (isStartMediaPlayActivity) {
+                        return;
+                    }
+
                     closeTimer(null);
 
                     // realPosition：在list中，响应点击的实际item位置，0~list.size-1
@@ -178,30 +185,30 @@ public class ShowActivity extends AppCompatActivity {
                     // realCurrentPosition：在list中,当前中心点的实际item位置，0~list.size-1
                     int realCurrentPosition = mScrollAdapter.getRealCurrentPosition();
 
-                    if (realCurrentPosition != realPosition) {
+                    if (realCurrentPosition != realPosition && !isStartMediaPlayActivity) {
                         // 视频暂停！
                         ExoManager.getInstance().setPlayWhenReady(false);
+                        Log.d("MyLog", " ---------Pad在【主页面】中，非中心的item被点击了，把videoId设置为-1-----");
                         VrSyncPlayInfo.obtain().restoreVideoInfo();
                         // adapterPosition：无线轮播中，recyclerView中的位置，其中Integer.Max/2为起始位置
                         mDiscreteScrollView.smoothScrollToPosition(adapterPosition);
                         return;
                     }
 
+                    isStartMediaPlayActivity = true;
+
                     VideoContentList videoContentInfo = videoContentLists.get(realPosition);
 
                     int videoType = -1;
-                    int videoClassify = -1;
 
                     if (videoContentInfo.getType() == 2) {
                         // 全景出版
                         videoType = 1;
-                        videoClassify = -1;
-
                     } else if (videoContentInfo.getType() == 1) {
                         // 全景视频
                         videoType = 2;
-                        videoClassify = Integer.parseInt(videoContentInfo.getClassify());
                     }
+                    int videoClassify = Integer.parseInt(videoContentInfo.getClassify());
                     VrSyncPlayInfo.obtain().setCategory(videoClassify);
                     VrSyncPlayInfo.obtain().setTag(videoType);
                     int videoId = videoContentInfo.getId();
@@ -242,6 +249,8 @@ public class ShowActivity extends AppCompatActivity {
             }
         });
     }
+
+    private boolean isStartMediaPlayActivity;
 
     @Override
     public void onBackPressed() {
@@ -382,7 +391,7 @@ public class ShowActivity extends AppCompatActivity {
             previewVideoUrl = file.getAbsolutePath();
         }
 
-        Log.d("MyLog", "-----当前[预览视频]播放地址是 videoUrl >>> " + previewVideoUrl);
+//        Log.d("MyLog", "-----当前[预览视频]播放地址是 videoUrl >>> " + previewVideoUrl);
 
         ExoManager.getInstance().prepareSource(getApplicationContext(), previewVideoUrl);
         ExoManager.getInstance().setPlayWhenReady(true);
@@ -420,6 +429,8 @@ public class ShowActivity extends AppCompatActivity {
         Constants.ACTIVITY_TAG = Constants.ACTIVITY_MAIN;
 
         ExoManager.getInstance().setPlayWhenReady(true);
+
+        isStartMediaPlayActivity = false;
     }
 
     @Override
@@ -480,7 +491,7 @@ public class ShowActivity extends AppCompatActivity {
     @Subscribe()
     @SuppressWarnings("unused")
     public void connectToVR(VrMainConnect event) {
-        Log.d("MyLog", "-----在首页戴上VR眼镜-----");
+//        Log.d("MyLog", "-----在首页戴上VR眼镜-----");
 
         // 1.关闭定时器
         closeTimer(null);
@@ -509,7 +520,7 @@ public class ShowActivity extends AppCompatActivity {
     @Subscribe()
     @SuppressWarnings("unused")
     public void disConnectFromVR(VrMainDisConnect event) {
-        Log.d("MyLog", "-----在首页取下VR眼镜-----");
+//        Log.d("MyLog", "-----在首页取下VR眼镜-----");
         closeMainDialog();
         startTimeTask();
     }
@@ -598,7 +609,7 @@ public class ShowActivity extends AppCompatActivity {
 
                     @Override
                     public void onNext(Long value) {
-//                        Log.d("MyLog", "-----定时器时间finish，执行任务成功！-----");
+                        Log.d("MyLog", " ---------Pad在【主页面】中，定时器任务执行完毕，把videoId设置为-1-----");
                         VrSyncPlayInfo.obtain().restoreVideoInfo();
                     }
 
@@ -673,7 +684,7 @@ public class ShowActivity extends AppCompatActivity {
 
     private void closeMainDialog() {
         if (vrModeMainDialog != null && vrModeMainDialog.isShowing()) {
-            Log.d("MyLog", "-----关闭MainActivity的控制dialog-----");
+//            Log.d("MyLog", "-----关闭MainActivity的控制dialog-----");
             vrModeMainDialog.dismiss();
         }
     }

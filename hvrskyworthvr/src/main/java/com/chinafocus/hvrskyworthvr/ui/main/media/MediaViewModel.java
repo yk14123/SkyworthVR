@@ -32,7 +32,9 @@ public class MediaViewModel extends BaseViewModel {
 
     public void getVideoDetailDataFromLocal(int tag, int id) {
         String obj = SPUtils.getInstance().getString(tag + ";" + id);
-        videoDetailMutableLiveData.postValue(new Gson().fromJson(obj, VideoDetail.class));
+        if (!TextUtils.isEmpty(obj)) {
+            videoDetailMutableLiveData.postValue(new Gson().fromJson(obj, VideoDetail.class));
+        }
     }
 
     public void saveVideoDetailDataFromNet(int tag, int id) {
