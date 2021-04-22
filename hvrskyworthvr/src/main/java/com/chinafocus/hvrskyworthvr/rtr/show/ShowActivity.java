@@ -155,6 +155,8 @@ public class ShowActivity extends AppCompatActivity {
                 preLoadImage(videoContentLists);
                 preLoadAllVideoDetail(videoContentLists);
 
+                setVrSyncPlayInfoTagAndCategory(videoContentLists.get(0));
+
                 mAdapter = new ShowRtrVideoListViewAdapter(videoContentLists);
                 mScrollAdapter = InfiniteScrollAdapter.wrap(mAdapter);
                 mDiscreteScrollView.addScrollStateChangeListener(new MyScrollStateChangeListener() {
@@ -198,24 +200,12 @@ public class ShowActivity extends AppCompatActivity {
                     isStartMediaPlayActivity = true;
 
                     VideoContentList videoContentInfo = videoContentLists.get(realPosition);
-
-                    int videoType = -1;
-
-                    if (videoContentInfo.getType() == 2) {
-                        // 全景出版
-                        videoType = 1;
-                    } else if (videoContentInfo.getType() == 1) {
-                        // 全景视频
-                        videoType = 2;
-                    }
-                    int videoClassify = Integer.parseInt(videoContentInfo.getClassify());
-                    VrSyncPlayInfo.obtain().setCategory(videoClassify);
-                    VrSyncPlayInfo.obtain().setTag(videoType);
+                    setVrSyncPlayInfoTagAndCategory(videoContentInfo);
                     int videoId = videoContentInfo.getId();
 
                     Intent intent = new Intent(ShowActivity.this, RtrMediaPlayActivity.class);
-                    intent.putExtra(MEDIA_FROM_TAG, videoType);
-                    intent.putExtra(MEDIA_CATEGORY_TAG, videoClassify);
+                    intent.putExtra(MEDIA_FROM_TAG, VrSyncPlayInfo.obtain().getTag());
+                    intent.putExtra(MEDIA_CATEGORY_TAG, VrSyncPlayInfo.obtain().getCategory());
                     intent.putExtra(MEDIA_ID, videoId);
                     ShowActivity.this.startActivityForResult(intent, REQUEST_CODE_PAD_MEDIA_ACTIVITY);
 
@@ -248,6 +238,20 @@ public class ShowActivity extends AppCompatActivity {
 
             }
         });
+    }
+
+    private void setVrSyncPlayInfoTagAndCategory(VideoContentList videoContentInfo) {
+        int videoType = -1;
+        if (videoContentInfo.getType() == 2) {
+            // 全景出版
+            videoType = 1;
+        } else if (videoContentInfo.getType() == 1) {
+            // 全景视频
+            videoType = 2;
+        }
+        VrSyncPlayInfo.obtain().setTag(videoType);
+        int videoClassify = Integer.parseInt(videoContentInfo.getClassify());
+        VrSyncPlayInfo.obtain().setCategory(videoClassify);
     }
 
     private boolean isStartMediaPlayActivity;
