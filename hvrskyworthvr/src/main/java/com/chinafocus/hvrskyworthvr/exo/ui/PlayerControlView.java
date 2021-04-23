@@ -1221,11 +1221,11 @@ public class PlayerControlView extends FrameLayout {
             ((View) timeBar).setVisibility(!shouldShowReplayNextButton ? VISIBLE : GONE);
         }
 
-        if (durationView != null) {
+        if (durationView != null && !isSync) {
             durationView.setVisibility(!shouldShowReplayNextButton ? VISIBLE : GONE);
         }
 
-        if (positionView != null) {
+        if (positionView != null && !isSync) {
             positionView.setVisibility(!shouldShowReplayNextButton ? VISIBLE : GONE);
         }
 

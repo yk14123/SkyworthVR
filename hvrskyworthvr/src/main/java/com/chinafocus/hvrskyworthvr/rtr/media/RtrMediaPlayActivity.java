@@ -540,17 +540,17 @@ public class RtrMediaPlayActivity extends AppCompatActivity implements ViewBindH
     public void onStop() {
         super.onStop();
         EventBus.getDefault().unregister(this);
-        mExoMediaHelper.onClear();
-        if (mExoMediaHelper.getPlayer() != null) {
-            mExoMediaHelper.getPlayer().removeListener(mMyPlayerEventListener);
-            mMyPlayerEventListener = null;
-        }
     }
 
     @Override
     public void onDestroy() {
         super.onDestroy();
 //        mExoMediaHelper.onDestroy();
+        mExoMediaHelper.onClear();
+        if (mExoMediaHelper.getPlayer() != null) {
+            mExoMediaHelper.getPlayer().removeListener(mMyPlayerEventListener);
+            mMyPlayerEventListener = null;
+        }
         mMyBluetoothLostDelayTaskRunnable = null;
     }
 

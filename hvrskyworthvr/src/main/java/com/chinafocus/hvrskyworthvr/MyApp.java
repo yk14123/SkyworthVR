@@ -7,6 +7,7 @@ import com.arialyy.aria.core.Aria;
 import com.blankj.utilcode.util.LogUtils;
 import com.chinafocus.hvrskyworthvr.model.DeviceInfoManager;
 import com.chinafocus.hvrskyworthvr.net.NetworkRequestInfo;
+import com.chinafocus.hvrskyworthvr.util.LocalLogUtils;
 import com.chinafocus.lib_network.net.ApiManager;
 import com.devyk.crash_module.Crash;
 import com.devyk.crash_module.inter.JavaCrashUtils;
@@ -68,6 +69,8 @@ public class MyApp extends Application implements JavaCrashUtils.OnCrashListener
                 Log.e("MyLog", " RxJavaPlugins 捕获 throwable >>> " + throwable.getMessage());
             }
         });
+
+        LocalLogUtils.init(this);
     }
 
     private void initFileDirectory() {

@@ -29,6 +29,7 @@ import com.chinafocus.hvrskyworthvr.service.event.VrMediaWaitSelected;
 import com.chinafocus.hvrskyworthvr.service.event.VrRotation;
 import com.chinafocus.hvrskyworthvr.service.event.VrSyncMediaStatus;
 import com.chinafocus.hvrskyworthvr.service.event.VrSyncPlayInfo;
+import com.chinafocus.hvrskyworthvr.util.LocalLogUtils;
 import com.chinafocus.lib_bluetooth.BluetoothEngineHelper;
 import com.chinafocus.lib_bluetooth.BluetoothEngineService;
 
@@ -195,7 +196,13 @@ public class BluetoothService implements BluetoothEngineService.AsyncThreadReadB
 
     public void sendMessage(int videoTag, int videoCategory, int videoId, long seek) {
 
-        Log.d("MyLog", "-----发送给VR端的信息" +
+        Log.d("MyLog", "-----[发送给VR端]的信息" +
+                " >>> video_tag : " + videoTag
+                + " >>> video_category : " + videoCategory
+                + " >>> video_id : " + videoId
+                + " >>> seek : " + seek);
+
+        LocalLogUtils.e("BluetoothService", "-----[发送给VR端]的信息" +
                 " >>> video_tag : " + videoTag
                 + " >>> video_category : " + videoCategory
                 + " >>> video_id : " + videoId
@@ -542,7 +549,8 @@ public class BluetoothService implements BluetoothEngineService.AsyncThreadReadB
 
         VrSyncMediaStatus obtain = VrSyncMediaStatus.obtain();
         obtain.saveAllState(tag, seek);
-        Log.e("MyLog", "-----收到VR端同步过来的Media状态 obtain >> " + obtain);
+        Log.e("MyLog", "-----[收到VR端]同步过来的Media状态 >> " + obtain);
+        LocalLogUtils.e("MyLog", "-----[收到VR端]同步过来的Media状态 >> " + obtain);
     }
 
     /**

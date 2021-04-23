@@ -12,6 +12,7 @@ import com.chinafocus.hvrskyworthvr.global.ConfigManager;
 import com.chinafocus.hvrskyworthvr.model.bean.VideoDetail;
 import com.chinafocus.hvrskyworthvr.net.ApiMultiService;
 import com.chinafocus.hvrskyworthvr.net.RequestBodyManager;
+import com.chinafocus.hvrskyworthvr.util.LocalLogUtils;
 import com.chinafocus.lib_network.net.ApiManager;
 import com.chinafocus.lib_network.net.base.BaseViewModel;
 import com.chinafocus.lib_network.net.errorhandler.ExceptionHandle;
@@ -34,6 +35,8 @@ public class MediaViewModel extends BaseViewModel {
         String obj = SPUtils.getInstance().getString(tag + ";" + id);
         if (!TextUtils.isEmpty(obj)) {
             videoDetailMutableLiveData.postValue(new Gson().fromJson(obj, VideoDetail.class));
+        } else {
+            LocalLogUtils.e("MediaViewModel", " ******[严重错误]******  本地缓存内容为null ***** 对应null的tag和id为 >>> " + tag + ";" + id);
         }
     }
 
