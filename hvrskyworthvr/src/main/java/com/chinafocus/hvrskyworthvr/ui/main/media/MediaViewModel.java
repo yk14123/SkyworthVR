@@ -71,7 +71,7 @@ public class MediaViewModel extends BaseViewModel {
     }
 
     public void downLoadSubTitle(String url, String fileName) {
-        File subtitle = getApplication().getExternalFilesDir("subtitle");
+        File subtitle = getApplication().getApplicationContext().getExternalFilesDir("subtitle");
 
         File file = new File(subtitle, fileName);
         Aria.download(this)

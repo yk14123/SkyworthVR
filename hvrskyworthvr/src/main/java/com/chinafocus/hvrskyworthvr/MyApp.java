@@ -31,7 +31,7 @@ public class MyApp extends Application implements JavaCrashUtils.OnCrashListener
 
         ApiManager.init(new NetworkRequestInfo(this));
 
-        DeviceInfoManager.getInstance().initDeviceInfo(this);
+        DeviceInfoManager.getInstance().initDeviceInfo(getApplicationContext());
 
         EventBus.builder().addIndex(new MyEventBusIndex()).installDefaultEventBus();
 
@@ -70,17 +70,17 @@ public class MyApp extends Application implements JavaCrashUtils.OnCrashListener
             }
         });
 
-        LocalLogUtils.init(this);
+        LocalLogUtils.init(getApplicationContext());
     }
 
     private void initFileDirectory() {
-        getExternalFilesDir("Config");
-        getExternalFilesDir("Videos");
-        getExternalFilesDir("preview");
+        getApplicationContext().getExternalFilesDir("Config");
+        getApplicationContext().getExternalFilesDir("Videos");
+        getApplicationContext().getExternalFilesDir("preview");
     }
 
     private void collectCrashInfo() {
-        File crash = getExternalFilesDir("crash");
+        File crash = getApplicationContext().getExternalFilesDir("crash");
         new Crash.CrashBuild(getApplicationContext())
                 .javaCrashPath(crash.getAbsolutePath(), this)
                 .build();
