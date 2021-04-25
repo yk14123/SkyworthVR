@@ -26,4 +26,10 @@ public class DeviceEngineHelper {
     public void setScreenOffTimeout(int time) {
         mDeviceUtils.setScreenOffTimeout(time);
     }
+
+    public void releaseDeviceEngine() {
+        if (mDeviceUtils != null) {
+            mDeviceUtils.pause();
+        }
+    }
 }

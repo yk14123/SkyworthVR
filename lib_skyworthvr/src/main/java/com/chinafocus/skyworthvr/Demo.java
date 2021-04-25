@@ -18,6 +18,8 @@ public class Demo extends AppCompatActivity {
     // 创维入口
     private SkyworthAndroidInterface mSkyworthAndroidInterface;
     private WifiEngineHelper mWifiEngineHelper;
+    private DeviceEngineHelper mDeviceEngineHelper;
+    private SensorEngineHelper mSensorEngineHelper;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -34,14 +36,14 @@ public class Demo extends AppCompatActivity {
         mWifiEngineHelper.initWifiEngine();
 
         // 1.通过反射创建对象
-        DeviceEngineHelper deviceEngineHelper = new DeviceEngineHelper();
+        mDeviceEngineHelper = new DeviceEngineHelper();
         // 2.调用方法初始化
-        deviceEngineHelper.initDeviceEngine();
+        mDeviceEngineHelper.initDeviceEngine();
         // 3.手动设置时间
-        deviceEngineHelper.setScreenOffTimeout(2000);
+        mDeviceEngineHelper.setScreenOffTimeout(2000);
 
-        SensorEngineHelper sensorEngineHelper = new SensorEngineHelper();
-        sensorEngineHelper.initProximitySensorEngine();
+        mSensorEngineHelper = new SensorEngineHelper();
+        mSensorEngineHelper.initProximitySensorEngine();
     }
 
     @Override
@@ -50,6 +52,8 @@ public class Demo extends AppCompatActivity {
         // 只销毁一次
         bluetoothEngineHelper.releaseBluetoothEngine();
         mWifiEngineHelper.releaseWifiEngine();
+        mDeviceEngineHelper.releaseDeviceEngine();
+        mSensorEngineHelper.releaseSensorEngine();
         // 最后调用
         mSkyworthAndroidInterface.releaseAll();
     }
