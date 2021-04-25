@@ -62,6 +62,9 @@ public class BluetoothEngineService {
     public static final int STATE_CONNECTING = 2; // now initiating an outgoing connection
     public static final int STATE_CONNECTED = 3;  // now connected to a remote device
 
+    public static final int STATE_UNABLE_TO_CONNECT = 6;  // now connected to a remote device
+    public static final int STATE_CONNECTION_LOST = 7;  // now connected to a remote device
+
     private boolean isStopBluetoothEngine;
     final static String ERROR_TAG = "error_tag";
     final static String ERROR_TAG_UNABLE_TO_CONNECT = "UnableToConnectDevice";

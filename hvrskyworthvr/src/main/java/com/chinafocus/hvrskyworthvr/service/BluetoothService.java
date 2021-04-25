@@ -29,7 +29,6 @@ import com.chinafocus.hvrskyworthvr.service.event.VrMediaWaitSelected;
 import com.chinafocus.hvrskyworthvr.service.event.VrRotation;
 import com.chinafocus.hvrskyworthvr.service.event.VrSyncMediaStatus;
 import com.chinafocus.hvrskyworthvr.service.event.VrSyncPlayInfo;
-import com.chinafocus.hvrskyworthvr.util.LocalLogUtils;
 import com.chinafocus.lib_bluetooth.BluetoothEngineHelper;
 import com.chinafocus.lib_bluetooth.BluetoothEngineService;
 
@@ -151,7 +150,7 @@ public class BluetoothService implements BluetoothEngineService.AsyncThreadReadB
      */
     private void sendBluetoothRetryConnect() {
 //        Log.d("MyLog", "-----发送给VR端的uuid " + " >>> 蓝牙重连 ");
-        sendUUIDMessage(1, "bluetoothRetryConnect", BLUETOOTH_RETRY_CONNECT);
+//        sendUUIDMessage(1, "bluetoothRetryConnect", BLUETOOTH_RETRY_CONNECT);
     }
 
     private void sendUUIDMessage(int tag, @NonNull String uuid) {
@@ -202,11 +201,11 @@ public class BluetoothService implements BluetoothEngineService.AsyncThreadReadB
                 + " >>> video_id : " + videoId
                 + " >>> seek : " + seek);
 
-        LocalLogUtils.e("BluetoothService", "-----[发送给VR端]的信息" +
-                " >>> video_tag : " + videoTag
-                + " >>> video_category : " + videoCategory
-                + " >>> video_id : " + videoId
-                + " >>> seek : " + seek);
+//        LocalLogUtils.e("BluetoothService", "-----[发送给VR端]的信息" +
+//                " >>> video_tag : " + videoTag
+//                + " >>> video_category : " + videoCategory
+//                + " >>> video_id : " + videoId
+//                + " >>> seek : " + seek);
 
         executor.execute(() -> {
             byte[] mediaInfoByte = new byte[34];
@@ -368,7 +367,7 @@ public class BluetoothService implements BluetoothEngineService.AsyncThreadReadB
         if (mBluetoothStatusListener != null) {
             mBluetoothStatusListener.onSyncUUIDSuccess(uuid);
         }
-        sendBluetoothRetryConnect();
+//        sendBluetoothRetryConnect();
 
         DeviceInfoManager.getInstance().postDeviceUUID(uuid);
 
@@ -550,7 +549,7 @@ public class BluetoothService implements BluetoothEngineService.AsyncThreadReadB
         VrSyncMediaStatus obtain = VrSyncMediaStatus.obtain();
         obtain.saveAllState(tag, seek);
         Log.e("MyLog", "-----[收到VR端]同步过来的Media状态 >> " + obtain);
-        LocalLogUtils.e("MyLog", "-----[收到VR端]同步过来的Media状态 >> " + obtain);
+//        LocalLogUtils.e("MyLog", "-----[收到VR端]同步过来的Media状态 >> " + obtain);
     }
 
     /**
@@ -576,14 +575,16 @@ public class BluetoothService implements BluetoothEngineService.AsyncThreadReadB
      * @param rotationByte 旋转信息
      */
     private void handRotation(byte[] rotationByte, int head) {
-        VrRotation obtain = VrRotation.obtain();
+        if (Constants.ACTIVITY_TAG == Constants.ACTIVITY_MEDIA) {
+            VrRotation obtain = VrRotation.obtain();
 
-        obtain.x = ByteBuffer.wrap(rotationByte).getFloat(head);
-        obtain.y = ByteBuffer.wrap(rotationByte).getFloat(head + 4);
-        obtain.z = ByteBuffer.wrap(rotationByte).getFloat(head + 8);
-        obtain.w = ByteBuffer.wrap(rotationByte).getFloat(head + 12);
+            obtain.x = ByteBuffer.wrap(rotationByte).getFloat(head);
+            obtain.y = ByteBuffer.wrap(rotationByte).getFloat(head + 4);
+            obtain.z = ByteBuffer.wrap(rotationByte).getFloat(head + 8);
+            obtain.w = ByteBuffer.wrap(rotationByte).getFloat(head + 12);
 
-        EventBus.getDefault().post(obtain);
+            EventBus.getDefault().post(obtain);
+        }
     }
 
     @Override

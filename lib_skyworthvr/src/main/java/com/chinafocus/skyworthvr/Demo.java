@@ -5,6 +5,8 @@ import android.os.Bundle;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.chinafocus.skyworthvr.bluetooth.BluetoothEngineHelper;
+import com.chinafocus.skyworthvr.device.DeviceEngineHelper;
+import com.chinafocus.skyworthvr.sensor.SensorEngineHelper;
 import com.chinafocus.skyworthvr.wifi.WifiEngineHelper;
 
 /**
@@ -30,6 +32,16 @@ public class Demo extends AppCompatActivity {
 
         mWifiEngineHelper = new WifiEngineHelper();
         mWifiEngineHelper.initWifiEngine();
+
+        // 1.通过反射创建对象
+        DeviceEngineHelper deviceEngineHelper = new DeviceEngineHelper();
+        // 2.调用方法初始化
+        deviceEngineHelper.initDeviceEngine();
+        // 3.手动设置时间
+        deviceEngineHelper.setScreenOffTimeout(2000);
+
+        SensorEngineHelper sensorEngineHelper = new SensorEngineHelper();
+        sensorEngineHelper.initProximitySensorEngine();
     }
 
     @Override

@@ -23,6 +23,11 @@ import java.util.Set;
 import static com.chinafocus.skyworthvr.bluetooth.BluetoothEngineService.ERROR_TAG;
 import static com.chinafocus.skyworthvr.bluetooth.BluetoothEngineService.ERROR_TAG_CONNECTION_LOST;
 import static com.chinafocus.skyworthvr.bluetooth.BluetoothEngineService.ERROR_TAG_UNABLE_TO_CONNECT;
+import static com.chinafocus.skyworthvr.bluetooth.BluetoothEngineService.STATE_CONNECTED;
+import static com.chinafocus.skyworthvr.bluetooth.BluetoothEngineService.STATE_CONNECTING;
+import static com.chinafocus.skyworthvr.bluetooth.BluetoothEngineService.STATE_CONNECTION_LOST;
+import static com.chinafocus.skyworthvr.bluetooth.BluetoothEngineService.STATE_LISTEN;
+import static com.chinafocus.skyworthvr.bluetooth.BluetoothEngineService.STATE_UNABLE_TO_CONNECT;
 
 public class BluetoothEngineHelper {
 
@@ -33,25 +38,21 @@ public class BluetoothEngineHelper {
     private BluetoothEngineService bluetoothEngineService;
     private BluetoothAdapter mBluetoothAdapter;
 
-    private int retryCount;
-    private boolean isStartBooted;
-
     private final Handler mHandler = new Handler(Looper.getMainLooper()) {
         @Override
         public void handleMessage(Message msg) {
             switch (msg.what) {
                 case Constants.MESSAGE_STATE_CHANGE:
                     switch (msg.arg1) {
-                        case BluetoothEngineService.STATE_CONNECTED:
-                            retryCount = 0;
-                            UnityPlayer.UnitySendMessage(UNITY_NAME, "ReadState", BluetoothEngineService.STATE_CONNECTED + "");
+                        case STATE_CONNECTED:
+                            UnityPlayer.UnitySendMessage(UNITY_NAME, "ReadState", STATE_CONNECTED + "");
                             break;
-                        case BluetoothEngineService.STATE_CONNECTING:
-                            UnityPlayer.UnitySendMessage(UNITY_NAME, "ReadState", BluetoothEngineService.STATE_CONNECTING + "");
+                        case STATE_CONNECTING:
+                            UnityPlayer.UnitySendMessage(UNITY_NAME, "ReadState", STATE_CONNECTING + "");
                             break;
-                        case BluetoothEngineService.STATE_LISTEN:
+                        case STATE_LISTEN:
                         case BluetoothEngineService.STATE_NONE:
-                            UnityPlayer.UnitySendMessage(UNITY_NAME, "ReadState", 1 + "");
+                            UnityPlayer.UnitySendMessage(UNITY_NAME, "ReadState", STATE_LISTEN + "");
                             break;
                     }
                     break;
@@ -89,39 +90,25 @@ public class BluetoothEngineHelper {
                     Bundle data = msg.getData();
                     String string = data.getString(ERROR_TAG);
 
-                    if (ERROR_TAG_UNABLE_TO_CONNECT.equals(string)) {
+                    if (ERROR_TAG_UNABLE_TO_CONNECT.equals(string) && bluetoothEngineService.getState() != STATE_CONNECTED) {
                         // 首次链接失败
-                        Log.d(TAG, "------ MESSAGE_TOAST >>> " + ERROR_TAG_UNABLE_TO_CONNECT);
-                        UnityPlayer.UnitySendMessage(UNITY_NAME, "ReadState", 6 + "");
+                        Log.d(TAG, "------ 首次链接失败 MESSAGE_TOAST >>> " + ERROR_TAG_UNABLE_TO_CONNECT);
+                        UnityPlayer.UnitySendMessage(UNITY_NAME, "ReadState", STATE_UNABLE_TO_CONNECT + "");
                         Message message = mHandler.obtainMessage(Constants.MESSAGE_RETRY_CONNECTED);
-                        mHandler.sendMessageDelayed(message, 1000);
+                        mHandler.sendMessageDelayed(message, 2000);
 
                     } else if (ERROR_TAG_CONNECTION_LOST.equals(string)) {
-                        // 链接成功后，中途再次出现断开链接
-                        Log.d(TAG, "------ MESSAGE_TOAST >>> " + ERROR_TAG_CONNECTION_LOST);
-                        UnityPlayer.UnitySendMessage(UNITY_NAME, "ReadState", 7 + "");
+                        // 链接成功后，中途再次出现断开链接，不进行重连，而是等待被链接
+                        Log.d(TAG, "------ 链接成功后，中途再次出现断开链接 MESSAGE_TOAST >>> " + ERROR_TAG_CONNECTION_LOST);
+                        UnityPlayer.UnitySendMessage(UNITY_NAME, "ReadState", STATE_CONNECTION_LOST + "");
                     }
-
-//                    if (isStartBooted && retryCount < 3) {
-//                    if (isStartBooted && retryCount < 3) {
-//                        Bundle data = msg.getData();
-//                        String string = data.getString(ERROR_TAG);
-//                        // 链接后，发现以[客户端]身份连不上，则重试3次
-//                        if (string != null && string.equals("connectionFailed")) {
-//                            Message message = mHandler.obtainMessage(Constants.MESSAGE_RETRY_CONNECTED);
-//                            mHandler.sendMessageDelayed(message, retryCount * 2000);
-////                            retryCount++;
-//                        }
-//                    }
-                    // 如果开机，发现以[客户端]身份连不上，则直接进入[服务端]等待
-//                    isStartBooted = true;
-                    // 出现错误断开链接
 
                     break;
                 case Constants.MESSAGE_RETRY_CONNECTED:
-//                    Log.d(TAG, "------发现以[客户端]身份连不上，则开始重试 >>> " + retryCount);
                     Log.d(TAG, "------发现以[客户端]身份连不上，则开始重试 >>> ");
-                    tryConnectBondedDevices();
+                    if (bluetoothEngineService.getState() != STATE_CONNECTED) {
+                        tryConnectBondedDevices();
+                    }
                     break;
             }
         }
@@ -228,7 +215,7 @@ public class BluetoothEngineHelper {
      */
     public void sendMessage(String message) {
         // Check that we're actually connected before trying anything
-        if (bluetoothEngineService.getState() != BluetoothEngineService.STATE_CONNECTED) {
+        if (bluetoothEngineService.getState() != STATE_CONNECTED) {
             Log.e(TAG, "------当前蓝牙链接断开，禁止发送消息---------");
             return;
         }
@@ -248,7 +235,7 @@ public class BluetoothEngineHelper {
      */
     public void sendMessage(byte[] bytes) {
         // Check that we're actually connected before trying anything
-        if (bluetoothEngineService.getState() != BluetoothEngineService.STATE_CONNECTED) {
+        if (bluetoothEngineService.getState() != STATE_CONNECTED) {
             Log.e(TAG, "------当前蓝牙链接断开，禁止发送消息---------");
             return;
         }
