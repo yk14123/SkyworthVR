@@ -29,6 +29,7 @@ import com.chinafocus.hvrskyworthvr.service.event.VrMediaWaitSelected;
 import com.chinafocus.hvrskyworthvr.service.event.VrRotation;
 import com.chinafocus.hvrskyworthvr.service.event.VrSyncMediaStatus;
 import com.chinafocus.hvrskyworthvr.service.event.VrSyncPlayInfo;
+import com.chinafocus.hvrskyworthvr.util.LocalLogUtils;
 import com.chinafocus.lib_bluetooth.BluetoothEngineHelper;
 import com.chinafocus.lib_bluetooth.BluetoothEngineService;
 
@@ -201,11 +202,11 @@ public class BluetoothService implements BluetoothEngineService.AsyncThreadReadB
                 + " >>> video_id : " + videoId
                 + " >>> seek : " + seek);
 
-//        LocalLogUtils.e("BluetoothService", "-----[发送给VR端]的信息" +
-//                " >>> video_tag : " + videoTag
-//                + " >>> video_category : " + videoCategory
-//                + " >>> video_id : " + videoId
-//                + " >>> seek : " + seek);
+        LocalLogUtils.e("BluetoothService", "-----[发送给VR端]的信息" +
+                " >>> video_tag : " + videoTag
+                + " >>> video_category : " + videoCategory
+                + " >>> video_id : " + videoId
+                + " >>> seek : " + seek);
 
         executor.execute(() -> {
             byte[] mediaInfoByte = new byte[34];

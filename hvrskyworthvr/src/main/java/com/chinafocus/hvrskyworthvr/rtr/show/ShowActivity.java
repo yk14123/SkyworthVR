@@ -129,6 +129,7 @@ public class ShowActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        EventBus.getDefault().register(this);
         StatusBarCompatFactory.getInstance().setStatusBarImmerse(this, false);
         setContentView(R.layout.activity_show);
 
@@ -495,7 +496,7 @@ public class ShowActivity extends AppCompatActivity {
     @Subscribe()
     @SuppressWarnings("unused")
     public void connectToVR(VrMainConnect event) {
-//        Log.d("MyLog", "-----在首页戴上VR眼镜-----");
+        Log.d("MyLog", "-----在[首页]戴上VR眼镜-----");
 
         // 1.关闭定时器
         closeTimer(null);
@@ -631,7 +632,7 @@ public class ShowActivity extends AppCompatActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
 
-        Log.e("BluetoothEngineService", " resultCode >>> " + resultCode);
+        Log.e("MyLog", " resultCode >>> " + resultCode);
 
         if (resultCode == RESULT_CODE_INACTIVE_DIALOG) {
             hideBluetoothLostDialog();
@@ -694,20 +695,9 @@ public class ShowActivity extends AppCompatActivity {
     }
 
     @Override
-    protected void onStart() {
-        super.onStart();
-        EventBus.getDefault().register(this);
-    }
-
-    @Override
-    protected void onStop() {
-        super.onStop();
-        EventBus.getDefault().unregister(this);
-    }
-
-    @Override
     protected void onDestroy() {
         super.onDestroy();
+        EventBus.getDefault().unregister(this);
         mMyPostBackGroundRunnable = null;
         mBluetoothLostDelayTaskRunnable = null;
         ExoManager.getInstance().onDestroy();

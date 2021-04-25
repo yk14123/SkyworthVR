@@ -7,6 +7,7 @@ import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.AppCompatButton;
+import androidx.appcompat.widget.AppCompatTextView;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.chinafocus.hvrskyworthvr.R;
@@ -37,10 +38,23 @@ public class SettingActivity extends AppCompatActivity {
     private DeviceInfoViewGroup mDeviceInfoViewGroup;
     private RtrVideoSubViewModel mViewModel;
 
+    private String getAppInfo() {
+        try {
+            String pkName = this.getPackageName();
+            return this.getPackageManager().getPackageInfo(
+                    pkName, 0).versionName;
+        } catch (Exception e) {
+        }
+        return "";
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_setting);
+
+        AppCompatTextView textView = findViewById(R.id.tv_version);
+        textView.setText(String.format("当前版本为:%s", getAppInfo()));
 
         mSettingWifiView = findViewById(R.id.view_devices_wifi);
         mSettingBluetoothView = findViewById(R.id.view_devices_bluetooth);
