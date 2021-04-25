@@ -86,7 +86,6 @@ public class RtrMediaPlayActivity extends AppCompatActivity implements ViewBindH
 
         mediaViewModel = new ViewModelProvider(this).get(MediaViewModel.class);
 
-        loadNetData(VrSyncPlayInfo.obtain().getVideoId());
         observerNetData();
     }
 
@@ -518,14 +517,10 @@ public class RtrMediaPlayActivity extends AppCompatActivity implements ViewBindH
     }
 
     @Override
-    protected void onStart() {
-        super.onStart();
-        EventBus.getDefault().register(this);
-    }
-
-    @Override
     protected void onResume() {
         super.onResume();
+        EventBus.getDefault().register(this);
+        loadNetData(VrSyncPlayInfo.obtain().getVideoId());
         Constants.ACTIVITY_TAG = Constants.ACTIVITY_MEDIA;
         mExoMediaHelper.onPlay();
     }
@@ -533,19 +528,8 @@ public class RtrMediaPlayActivity extends AppCompatActivity implements ViewBindH
     @Override
     protected void onPause() {
         super.onPause();
-        mExoMediaHelper.onPause();
-    }
-
-    @Override
-    public void onStop() {
-        super.onStop();
         EventBus.getDefault().unregister(this);
-    }
-
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
-//        mExoMediaHelper.onDestroy();
+        mExoMediaHelper.onPause();
         mExoMediaHelper.onClear();
         if (mExoMediaHelper.getPlayer() != null) {
             mExoMediaHelper.getPlayer().removeListener(mMyPlayerEventListener);

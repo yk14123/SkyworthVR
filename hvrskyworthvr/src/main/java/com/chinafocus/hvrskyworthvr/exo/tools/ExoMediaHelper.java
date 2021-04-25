@@ -9,6 +9,7 @@ import android.util.Log;
 import android.widget.Toast;
 
 import com.chinafocus.hvrskyworthvr.exo.ui.PlayerView;
+import com.chinafocus.hvrskyworthvr.service.event.VrSyncPlayInfo;
 import com.google.android.exoplayer2.C;
 import com.google.android.exoplayer2.DefaultLoadControl;
 import com.google.android.exoplayer2.ExoPlaybackException;
@@ -248,6 +249,9 @@ public class ExoMediaHelper {
             mediaSource = null;
         }
         if (player != null) {
+            updateStartPosition();
+            VrSyncPlayInfo.obtain().setSeekTime(startPosition);
+
             player.setPlayWhenReady(false);
             player.stop(true);
             player.seekTo(0);

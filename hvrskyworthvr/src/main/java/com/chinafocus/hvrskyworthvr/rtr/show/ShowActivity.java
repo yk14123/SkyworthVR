@@ -350,7 +350,7 @@ public class ShowActivity extends AppCompatActivity {
     private void bindIndicatorToItem(int index) {
         int centerIndex = Integer.MAX_VALUE / 2 + mTagHolders.get(index).getStartIndex();
         mDiscreteScrollView.scrollToPosition(centerIndex);
-        mDiscreteScrollView.post(() -> mScrollAdapter.notifyDataSetChanged());
+//        mScrollAdapter.notifyDataSetChanged();
 
         mMagicIndicator.onPageSelected(index);
         mMagicIndicator.onPageScrolled(index, 0.0F, 0);

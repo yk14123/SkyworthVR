@@ -41,6 +41,7 @@ public class ShowRtrVideoListViewAdapter extends RecyclerView.Adapter<BaseViewHo
     public BaseViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View inflate = LayoutInflater.from(parent.getContext()).inflate(R.layout.rtr_show_item_video_list, parent, false);
         BaseViewHolder baseViewHolder = new BaseViewHolder(inflate);
+        baseViewHolder.setIsRecyclable(false);
 
         ViewClickUtil.click(baseViewHolder.itemView, () -> {
             if (mCallback != null) {
