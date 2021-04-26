@@ -50,6 +50,7 @@ import static com.chinafocus.hvrskyworthvr.global.Constants.RESULT_CODE_ACTIVE_B
 import static com.chinafocus.hvrskyworthvr.global.Constants.RESULT_CODE_ACTIVE_BLUETOOTH_LOST;
 import static com.chinafocus.hvrskyworthvr.global.Constants.RESULT_CODE_ACTIVE_DIALOG;
 import static com.chinafocus.hvrskyworthvr.global.Constants.RESULT_CODE_INACTIVE_DIALOG;
+import static com.chinafocus.hvrskyworthvr.global.Constants.RESULT_CODE_INACTIVE_DIALOG_BACK;
 import static com.chinafocus.hvrskyworthvr.global.Constants.RESULT_CODE_SELF_INACTIVE_DIALOG;
 import static com.google.android.exoplayer2.Player.STATE_ENDED;
 
@@ -519,6 +520,15 @@ public class RtrMediaPlayActivity extends AppCompatActivity implements ViewBindH
     @Override
     protected void onResume() {
         super.onResume();
+
+        if (VrSyncPlayInfo.obtain().isVideoIdInvalid()) {
+            hideBluetoothConnectDialog();
+            hideBluetoothLostDialog();
+            setResult(RESULT_CODE_INACTIVE_DIALOG_BACK, new Intent().putExtra("currentVideoId", currentVideoId));
+            finish();
+            return;
+        }
+
         EventBus.getDefault().register(this);
         loadNetData(VrSyncPlayInfo.obtain().getVideoId());
         Constants.ACTIVITY_TAG = Constants.ACTIVITY_MEDIA;

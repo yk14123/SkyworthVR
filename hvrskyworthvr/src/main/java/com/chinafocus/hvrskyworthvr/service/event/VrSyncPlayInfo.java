@@ -48,6 +48,10 @@ public class VrSyncPlayInfo {
         return mVideoId;
     }
 
+    public boolean isVideoIdInvalid() {
+        return mVideoId == -1;
+    }
+
     public long getSeekTime() {
         return mSeekTime;
     }
