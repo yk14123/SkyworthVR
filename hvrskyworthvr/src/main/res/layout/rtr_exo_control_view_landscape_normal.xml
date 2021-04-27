@@ -48,6 +48,7 @@
         android:maxLines="1"
         android:textColor="@color/color_white"
         android:textSize="22sp"
+        app:layout_goneMarginStart="20dp"
         app:layout_constraintEnd_toStartOf="@+id/tv_media_video_intro_small"
         app:layout_constraintStart_toEndOf="@+id/exo_back"
         app:layout_constraintTop_toTopOf="parent"
@@ -257,7 +258,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:visibility="visible"
-        app:constraint_referenced_ids="rg_media_video,view_pos_holder" />
+        app:constraint_referenced_ids="rg_media_video,view_pos_holder,exo_back" />
 
     <androidx.constraintlayout.widget.Group
         android:id="@+id/group_connect"
