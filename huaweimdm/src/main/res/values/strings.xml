@@ -25,6 +25,9 @@
     <string name="enable_reboot">启动定时重启</string>
     <string name="disable_reboot">取消定时重启</string>
 
+    <string name="disable_usb_data">禁用USB调试和数据传输</string>
+    <string name="enable_usb_data">启用USB调试和数据传输</string>
+
     <string name="disable_status_bar_expand_pane">禁用状态栏下拉菜单</string>
     <string name="enable_status_bar_expand_pane">启用状态栏下拉菜单</string>
 

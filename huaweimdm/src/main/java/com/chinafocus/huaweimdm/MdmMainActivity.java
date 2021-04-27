@@ -66,6 +66,7 @@ public class MdmMainActivity extends Activity {
     private TextView mAllNotificationStateTxt;
     private TextView mKeyguardStateTxt;
     private TextView mSleepByPowerButtonStateTxt;
+    private TextView mUsbDataStateTxt;
 
     private List<String> mPackages;
     private ArrayList<String> mPackagesArray;
@@ -126,6 +127,18 @@ public class MdmMainActivity extends Activity {
         initKeyguardStateView();
         initSleepByPowerButtonStateView();
         initEnterSplash();
+        initUSBData();
+    }
+
+    /**
+     * 禁止/允许USB调试，数据传输
+     */
+    private void initUSBData() {
+        mUsbDataStateTxt = (TextView) findViewById(R.id.dataUSBStateTxt);
+        Button enableUSBDataButtonState = (Button) findViewById(R.id.enableUSBData);
+        Button disableUSBDataButtonState = (Button) findViewById(R.id.disableUSBData);
+        enableUSBDataButtonState.setOnClickListener(new SampleOnClickListener());
+        disableUSBDataButtonState.setOnClickListener(new SampleOnClickListener());
     }
 
     /**
@@ -329,6 +342,7 @@ public class MdmMainActivity extends Activity {
             mKeyguardStateTxt.setText(getString(R.string.state_not_actived));
             mSleepByPowerButtonStateTxt.setText(getString(R.string.state_not_actived));
             mRebootStateTxt.setText(getString(R.string.state_not_actived));
+            mUsbDataStateTxt.setText(getString(R.string.state_not_actived));
             return;
         }
 
@@ -339,6 +353,7 @@ public class MdmMainActivity extends Activity {
         boolean isNotificationDisabled = false;
         boolean isKeyguardDisabled = false;
         boolean isSleepByPowerButtonDisabled = false;
+        boolean isUsbDataDisabled = false;
         List<String> disallowedUninstallPackageList = null;
         List<String> persistentApp = null;
         String singleApp = "";
@@ -356,6 +371,7 @@ public class MdmMainActivity extends Activity {
 
             isKeyguardDisabled = mDevicePasswordManager.isKeyguardDisabled(mAdminName, 0);
             isSleepByPowerButtonDisabled = mDeviceRestrictionManager.isSleepByPowerButtonDisabled(mAdminName);
+            isUsbDataDisabled = mDeviceRestrictionManager.isUSBDataDisabled(mAdminName);
 
         } catch (SecurityException securityException) {
             Toast.makeText(getApplicationContext(), getString(R.string.no_permission), Toast.LENGTH_SHORT).show();
@@ -424,6 +440,12 @@ public class MdmMainActivity extends Activity {
             mSleepByPowerButtonStateTxt.setText(R.string.state_restricted);
         } else {
             mSleepByPowerButtonStateTxt.setText(R.string.state_nomal);
+        }
+
+        if (isUsbDataDisabled) {
+            mUsbDataStateTxt.setText(R.string.state_restricted);
+        } else {
+            mUsbDataStateTxt.setText(R.string.state_nomal);
         }
 
     }
@@ -515,6 +537,10 @@ public class MdmMainActivity extends Activity {
                     mDeviceRestrictionManager.setSleepByPowerButtonDisabled(mAdminName, true);
                 } else if (id == R.id.enableSleepByPowerButtonState) {
                     mDeviceRestrictionManager.setSleepByPowerButtonDisabled(mAdminName, false);
+                } else if (id == R.id.disableUSBData) {
+                    mDeviceRestrictionManager.setUSBDataDisabled(mAdminName, true);
+                } else if (id == R.id.enableUSBData) {
+                    mDeviceRestrictionManager.setUSBDataDisabled(mAdminName, false);
                 }
             } catch (SecurityException securityException) {
                 Toast.makeText(getApplicationContext(), getString(R.string.no_permission), Toast.LENGTH_SHORT).show();

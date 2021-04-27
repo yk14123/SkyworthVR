@@ -14,6 +14,7 @@
     <uses-permission android:name="com.huawei.systemmanager.permission.ACCESS_INTERFACE" />
     <uses-permission android:name="com.huawei.permission.sec.MDM_SETTINGS_RESTRICTION " />
     <uses-permission android:name="com.huawei.permission.sec.MDM_UPDATESTATE_MANAGER " />
+    <uses-permission android:name="com.huawei.permission.sec.MDM_USB " />
 
     <uses-permission android:name="android.Manifest.permission.START_ACTIVITIES_FROM_BACKGROUND" />
 
@@ -29,17 +30,17 @@
 
     <application>
 
-<!--        <receiver-->
-<!--            android:name=".broadcastReceiver.MyBroadcastReceiver"-->
-<!--            android:enabled="true"-->
-<!--            android:exported="true">-->
-<!--            <intent-filter>-->
-<!--                <action android:name="android.intent.action.BOOT_COMPLETED" />-->
-<!--                <action android:name="android.intent.action.QUICKBOOT_POWERON" />-->
+        <!--        <receiver-->
+        <!--            android:name=".broadcastReceiver.MyBroadcastReceiver"-->
+        <!--            android:enabled="true"-->
+        <!--            android:exported="true">-->
+        <!--            <intent-filter>-->
+        <!--                <action android:name="android.intent.action.BOOT_COMPLETED" />-->
+        <!--                <action android:name="android.intent.action.QUICKBOOT_POWERON" />-->
 
-<!--                <category android:name="android.intent.category.HOME" />-->
-<!--            </intent-filter>-->
-<!--        </receiver>-->
+        <!--                <category android:name="android.intent.category.HOME" />-->
+        <!--            </intent-filter>-->
+        <!--        </receiver>-->
 
         <meta-data
             android:name="hwc-theme"
@@ -48,13 +49,13 @@
         <activity
             android:name=".MdmMainActivity"
             android:label="@string/mdm_app_name"
-            android:screenOrientation="landscape"
-            android:permission="com.huawei.mdm.sample.permission.HW_MDM_KIT">
-<!--            <intent-filter>-->
-<!--                <action android:name="android.intent.action.MAIN" />-->
+            android:permission="com.huawei.mdm.sample.permission.HW_MDM_KIT"
+            android:screenOrientation="landscape">
+            <!--            <intent-filter>-->
+            <!--                <action android:name="android.intent.action.MAIN" />-->
 
-<!--                <category android:name="android.intent.category.LAUNCHER" />-->
-<!--            </intent-filter>-->
+            <!--                <category android:name="android.intent.category.LAUNCHER" />-->
+            <!--            </intent-filter>-->
         </activity>
 
         <service
