@@ -518,11 +518,10 @@ public class PlayerView extends FrameLayout implements AdsLoader.AdViewProvider 
 
         // Buffering view.
         // 缓冲的时候,展示的View,默认是 红色的ProgressBar
-        // Buffering view.
         bufferingView = findViewById(R.id.exo_buffering);
         if (bufferingView != null) {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                ColorStateList colorStateList = ColorStateList.valueOf(getResources().getColor(R.color.colorAccent));
+                ColorStateList colorStateList = ColorStateList.valueOf(getResources().getColor(R.color.color_white));
                 ProgressBar progressBar = (ProgressBar) bufferingView;
                 progressBar.setIndeterminateTintList(colorStateList);
             }
