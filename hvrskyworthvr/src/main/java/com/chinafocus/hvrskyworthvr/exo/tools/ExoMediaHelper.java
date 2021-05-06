@@ -8,6 +8,7 @@ import android.text.TextUtils;
 import android.util.Log;
 import android.widget.Toast;
 
+import com.chinafocus.hvrskyworthvr.exo.encrypt.MyDefaultDataSourceFactory;
 import com.chinafocus.hvrskyworthvr.exo.ui.PlayerView;
 import com.chinafocus.hvrskyworthvr.service.event.VrSyncPlayInfo;
 import com.google.android.exoplayer2.C;
@@ -26,7 +27,6 @@ import com.google.android.exoplayer2.source.hls.HlsMediaSource;
 import com.google.android.exoplayer2.upstream.DataSource;
 import com.google.android.exoplayer2.upstream.DataSpec;
 import com.google.android.exoplayer2.upstream.DefaultBandwidthMeter;
-import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory;
 import com.google.android.exoplayer2.upstream.DefaultHttpDataSource;
 import com.google.android.exoplayer2.upstream.HttpDataSource;
 import com.google.android.exoplayer2.util.MimeTypes;
@@ -275,10 +275,10 @@ public class ExoMediaHelper {
 //                .setTransferListener(BANDWIDTH_METER);
 
         // 创建加载数据的工厂
-        DefaultDataSourceFactory upstreamFactory =
-                new DefaultDataSourceFactory(context, null, httpDataFactory);
+//        DefaultDataSourceFactory upstreamFactory =
+//                new DefaultDataSourceFactory(context, null, httpDataFactory);
 
-        return upstreamFactory;
+        return new MyDefaultDataSourceFactory(context, null, httpDataFactory);
 
 //        // 创建SimpleCache
 //        SimpleCache simpleCache = VideoCache.getInstance(context);
@@ -343,7 +343,7 @@ public class ExoMediaHelper {
                     new HlsMediaSource.Factory(mMediaDataSourceFactory)
                             .createMediaSource(m3u8);
 
-        } else if (videoUrl.toLowerCase().endsWith("mp4")) {
+        } else if (videoUrl.toLowerCase().endsWith("mp4") || videoUrl.toLowerCase().endsWith("chinafocus")) {
             MediaItem mp4 = new MediaItem.Builder()
                     .setUri(Uri.parse(videoUrl))
                     .setMimeType(MimeTypes.APPLICATION_MP4)

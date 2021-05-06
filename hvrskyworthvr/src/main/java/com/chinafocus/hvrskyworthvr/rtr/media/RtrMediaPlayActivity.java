@@ -121,9 +121,19 @@ public class RtrMediaPlayActivity extends AppCompatActivity implements ViewBindH
             }
 
             String[] splitVideoUrl = videoUrl.split("/");
-            File fileVideoUrl = new File(getExternalFilesDir("Videos"), splitVideoUrl[splitVideoUrl.length - 1]);
-            if (fileVideoUrl.exists()) {
-                videoUrl = fileVideoUrl.getAbsolutePath();
+            String endUrl = splitVideoUrl[splitVideoUrl.length - 1];
+            if (endUrl.contains(".")) {
+                String[] split = endUrl.split("\\.");
+                endUrl = split[0];
+
+                File fileVideoUrl = new File(getExternalFilesDir("Videos"), endUrl + ".mp4");
+                if (fileVideoUrl.exists()) {
+                    videoUrl = fileVideoUrl.getAbsolutePath();
+                }
+                File encryptVideoUrl = new File(getExternalFilesDir("Videos"), endUrl + ".chinafocus");
+                if (encryptVideoUrl.exists()) {
+                    videoUrl = encryptVideoUrl.getAbsolutePath();
+                }
             }
 
             currentVideoId = videoDetail.getId();
