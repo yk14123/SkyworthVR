@@ -10,8 +10,8 @@ import android.widget.ImageView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
+import com.chinafocus.hvrskyworthvr.GlideApp;
 import com.chinafocus.hvrskyworthvr.R;
 import com.chinafocus.hvrskyworthvr.global.ConfigManager;
 import com.chinafocus.hvrskyworthvr.model.bean.VideoDataInfo;
@@ -79,7 +79,7 @@ public class BannerViewAdapter extends RecyclerView.Adapter<BaseViewHolder> {
                 .setText(R.id.tv_banner_title, banner.getTitle())
                 .setText(R.id.tv_banner_des, banner.getIntro());
 
-        Glide.with(holder.itemView.getContext())
+        GlideApp.with(holder.itemView.getContext())
                 .load(ConfigManager.getInstance().getDefaultUrl() + banner.getImgUrl() + ImageProcess.process(2160, 1080))
                 .apply(RequestOptions.bitmapTransform(colorFilterTransformation))
                 .into((ImageView) holder.getView(R.id.iv_banner_bg));

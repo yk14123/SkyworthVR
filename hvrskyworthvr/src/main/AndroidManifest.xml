@@ -21,6 +21,11 @@
         android:supportsRtl="true"
         android:usesCleartextTraffic="true"
         tools:targetApi="m">
+
+        <meta-data
+            android:name="com.chinafocus.hvrskyworthvr.MyAppGlideModule"
+            android:value="AppGlideModule"/>
+
         <activity
             android:name=".rtr.show.ShowActivity"
             android:launchMode="singleTask"

@@ -8,7 +8,7 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.widget.AppCompatImageView;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.bumptech.glide.Glide;
+import com.chinafocus.hvrskyworthvr.GlideApp;
 import com.chinafocus.hvrskyworthvr.R;
 import com.chinafocus.hvrskyworthvr.global.ConfigManager;
 import com.chinafocus.hvrskyworthvr.model.bean.VideoContentList;
@@ -54,7 +54,7 @@ public class ShowRtrVideoListViewAdapter extends RecyclerView.Adapter<BaseViewHo
 
     @Override
     public void onBindViewHolder(@NonNull BaseViewHolder holder, int position) {
-        Glide.with(holder.itemView.getContext())
+        GlideApp.with(holder.itemView.getContext())
                 .load(ConfigManager.getInstance().getDefaultUrl() + mVideoContentLists.get(position).getImgUrl() + ImageProcess.process(600, 400))
                 .placeholder(R.drawable.media_item_cover_bg)
                 .error(R.drawable.media_item_cover_bg)

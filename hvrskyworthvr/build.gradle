@@ -8,8 +8,8 @@ android {
         applicationId "com.chinafocus.hvrskyworthvr"
         minSdkVersion 22
         targetSdkVersion 30
-        versionCode 27
-        versionName "2.0.27"
+        versionCode 28
+        versionName "2.0.28"
 
         testInstrumentationRunner "androidx.sky_worth_login_logo.runner.AndroidJUnitRunner"
 
@@ -74,9 +74,9 @@ dependencies {
     // MagicIndicator
     implementation 'com.github.hackware1993:MagicIndicator:1.7.0' // for androidx
     // glide
-    implementation 'com.github.bumptech.glide:glide:4.11.0'
+    implementation 'com.github.bumptech.glide:glide:4.12.0'
     implementation 'jp.wasabeef:glide-transformations:4.1.0'
-    annotationProcessor 'com.github.bumptech.glide:compiler:4.11.0'
+    annotationProcessor 'com.github.bumptech.glide:compiler:4.12.0'
     // lottie
     implementation 'com.airbnb.android:lottie:3.5.0'
     // 调色板

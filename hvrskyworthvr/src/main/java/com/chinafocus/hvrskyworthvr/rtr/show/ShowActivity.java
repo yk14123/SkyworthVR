@@ -18,10 +18,10 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.MultiTransformation;
 import com.bumptech.glide.request.target.CustomTarget;
 import com.bumptech.glide.request.transition.Transition;
+import com.chinafocus.hvrskyworthvr.GlideApp;
 import com.chinafocus.hvrskyworthvr.R;
 import com.chinafocus.hvrskyworthvr.exo.ExoManager;
 import com.chinafocus.hvrskyworthvr.exo.tools.ExoMediaHelper;
@@ -270,7 +270,7 @@ public class ShowActivity extends AppCompatActivity {
 
     private void preLoadImage(List<VideoContentList> videoContentLists) {
         for (VideoContentList temp : videoContentLists) {
-            Glide.with(this)
+            GlideApp.with(this)
                     .load(ConfigManager.getInstance().getDefaultUrl() + temp.getImgUrl() + ImageProcess.process(600, 400))
                     .preload();
         }
@@ -667,9 +667,6 @@ public class ShowActivity extends AppCompatActivity {
             if (mAdapter != null) {
                 int crease = mAdapter.calculatePositionFromVideoId(currentVideoId);
                 mDiscreteScrollView.scrollToPosition(Integer.MAX_VALUE / 2 + crease);
-                if (mScrollAdapter != null) {
-                    mScrollAdapter.notifyDataSetChanged();
-                }
             }
         }
 
@@ -759,7 +756,7 @@ public class ShowActivity extends AppCompatActivity {
             mMultiTransformation = new MultiTransformation<>(cropTransformation, blurTransformation);
         }
 
-        Glide.with(this)
+        GlideApp.with(this)
                 .load(backgroundUrl)
                 .apply(bitmapTransform(mMultiTransformation))
                 .into(new CustomTarget<Drawable>() {

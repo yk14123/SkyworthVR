@@ -11,7 +11,7 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.blankj.utilcode.util.TimeUtils;
-import com.bumptech.glide.Glide;
+import com.chinafocus.hvrskyworthvr.GlideApp;
 import com.chinafocus.hvrskyworthvr.R;
 import com.chinafocus.hvrskyworthvr.global.ConfigManager;
 import com.chinafocus.hvrskyworthvr.model.bean.VideoDataInfo;
@@ -68,7 +68,7 @@ public class VideoListAdapter extends RecyclerView.Adapter<BaseViewHolder> {
     @Override
     public void onBindViewHolder(@NonNull BaseViewHolder holder, int position) {
 
-        Glide.with(holder.itemView.getContext())
+        GlideApp.with(holder.itemView.getContext())
                 .load(ConfigManager.getInstance().getDefaultUrl() + videoLists.get(position).getImgUrl() + ImageProcess.process(700, 395))
                 .into((ImageView) holder.getView(R.id.iv_video_list_bg));
 

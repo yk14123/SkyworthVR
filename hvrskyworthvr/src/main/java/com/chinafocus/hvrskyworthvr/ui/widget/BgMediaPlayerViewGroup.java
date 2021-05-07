@@ -18,9 +18,9 @@ import androidx.appcompat.widget.AppCompatImageView;
 import androidx.core.content.res.ResourcesCompat;
 import androidx.palette.graphics.Palette;
 
-import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.target.CustomTarget;
 import com.bumptech.glide.request.transition.Transition;
+import com.chinafocus.hvrskyworthvr.GlideApp;
 import com.chinafocus.hvrskyworthvr.R;
 import com.chinafocus.hvrskyworthvr.exo.ExoManager;
 import com.chinafocus.hvrskyworthvr.util.ColorUtil;
@@ -105,7 +105,7 @@ public class BgMediaPlayerViewGroup extends FrameLayout {
 
     private void handleVideoBgAndCover(String bgUrl) {
         mBackgroundAnimationRelativeLayout.setVisibility(VISIBLE);
-        Glide.with(this)
+        GlideApp.with(this)
                 .load(bgUrl)
                 .apply(bitmapTransform(mContentBgTransformation))
                 .into(new CustomTarget<Drawable>() {
