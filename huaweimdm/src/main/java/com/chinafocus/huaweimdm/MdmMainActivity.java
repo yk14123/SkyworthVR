@@ -177,7 +177,12 @@ public class MdmMainActivity extends Activity {
     }
 
     private void allDone() {
-        finish();
+//        finish();
+        try {
+            mDeviceControlManager.rebootDevice(mAdminName);
+        } catch (Exception e) {
+            Toast.makeText(getApplicationContext(), getString(R.string.no_permission), Toast.LENGTH_SHORT).show();
+        }
     }
 
     private void enterSplashActivity() {
@@ -487,12 +492,16 @@ public class MdmMainActivity extends Activity {
                     mDeviceRestrictionManager.setSystemUpdateDisabled(mAdminName, false);
                 } else if (id == R.id.enableReboot) {
 //                    mDeviceControlManager.rebootDevice(mAdminName);
-                    TimerTaskManager.getInstance().startTimerTask(getApplicationContext());
-                    Toast.makeText(getApplicationContext(), "开启定时重启任务", Toast.LENGTH_SHORT).show();
+                    if (mDeviceControlManager.isRooted(mAdminName)) {
+                        TimerTaskManager.getInstance().startTimerTask(getApplicationContext());
+                        Toast.makeText(getApplicationContext(), "开启每日凌晨02:00重启设备", Toast.LENGTH_SHORT).show();
+                    }
                 } else if (id == R.id.disableReboot) {
 //                    mDeviceControlManager.rebootDevice(mAdminName);
-                    TimerTaskManager.getInstance().cancelTimerTask();
-                    Toast.makeText(getApplicationContext(), "取消定时重启任务", Toast.LENGTH_SHORT).show();
+                    if (mDeviceControlManager.isRooted(mAdminName)) {
+                        TimerTaskManager.getInstance().cancelTimerTask();
+                        Toast.makeText(getApplicationContext(), "取消每日凌晨02:00重启设备", Toast.LENGTH_SHORT).show();
+                    }
                 } else if (id == R.id.bt_silent_active_admin) {
                     mDeviceControlManager.setSilentActiveAdmin(mAdminName);
                     Toast.makeText(getApplicationContext(), "静默激活成功", Toast.LENGTH_SHORT).show();

@@ -499,11 +499,8 @@ public class ShowActivity extends AppCompatActivity {
     @SuppressWarnings("unused")
     public void connectToVR(VrMainConnect event) {
         Log.d("MyLog", "-----在[首页]戴上VR眼镜-----");
-
         // 1.关闭定时器
         closeTimer(null);
-        // 2.展示控制画面
-        showVrModeMainDialog();
         // 3.给VR同步视频信息，如果当前video==-1的话，VR端需要切换到列表页面
         BluetoothService.getInstance()
                 .sendMessage(
@@ -512,11 +509,12 @@ public class ShowActivity extends AppCompatActivity {
                         VrSyncPlayInfo.obtain().getVideoId(),
                         VrSyncPlayInfo.obtain().getSeekTime()
                 );
-
         if (VrSyncPlayInfo.obtain().getVideoId() != -1) {
             startSyncMediaPlayActivity();
+        } else {
+            // 2.展示控制画面
+            showVrModeMainDialog();
         }
-
     }
 
     /**
