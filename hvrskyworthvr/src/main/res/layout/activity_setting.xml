@@ -7,18 +7,6 @@
     tools:context=".ui.setting.SettingActivity">
 
     <androidx.appcompat.widget.AppCompatTextView
-        android:id="@+id/tv_version"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="50dp"
-        android:textColor="@color/color_black"
-        android:textSize="22sp"
-        app:layout_constraintBottom_toBottomOf="@+id/appCompatTextView5"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/appCompatTextView5"
-        tools:text="当前版本为:" />
-
-    <androidx.appcompat.widget.AppCompatTextView
         android:id="@+id/appCompatTextView5"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

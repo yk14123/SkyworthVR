@@ -54,6 +54,10 @@
     <string name="bluetooth_status_lost">蓝牙断开，已进入脱机模式\n如想恢复连接，请联系工作人员</string>
     <string name="bluetooth_status_connected">蓝牙恢复\n已重新和VR建立连接</string>
     <string name="bluetooth_status_know">我知道了</string>
+    <string name="setting_device_info">设备信息</string>
+    <string name="setting_device_uuid">设备ID</string>
+    <string name="setting_device_account_id">客户ID</string>
+    <string name="setting_device_version_code">版本号</string>
 
 
 </resources>

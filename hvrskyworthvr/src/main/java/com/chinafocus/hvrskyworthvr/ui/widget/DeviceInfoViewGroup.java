@@ -33,12 +33,25 @@ public class DeviceInfoViewGroup extends FrameLayout {
         init(context);
     }
 
+    private String getAppInfo(Context context) {
+        try {
+            String pkName = context.getPackageName();
+            return context.getPackageManager().getPackageInfo(
+                    pkName, 0).versionName;
+        } catch (Exception e) {
+        }
+        return "";
+    }
+
 
     private void init(Context context) {
         LayoutInflater.from(context).inflate(R.layout.include_setting_device_info, this);
 
         mTvUuid = findViewById(R.id.tv_uuid);
         mProgressBar = findViewById(R.id.pb_device_info_uuid);
+
+        AppCompatTextView textView = findViewById(R.id.tv_setting_device_info_version_code);
+        textView.setText(getAppInfo(context));
 
         mTvAccountName = findViewById(R.id.tv_setting_device_info_account_name);
         AppCompatTextView tvAccountId = findViewById(R.id.tv_setting_device_info_account_id);

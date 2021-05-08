@@ -10,33 +10,56 @@
         android:id="@+id/tv_setting_main_title"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="设备信息"
+        android:text="@string/setting_device_info"
         android:textColor="@color/color_setting_id"
         android:textSize="19sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.131"
+        app:layout_constraintHorizontal_bias="0.123"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.075" />
+        app:layout_constraintVertical_bias="0.074" />
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/appCompatTextView8"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/setting_device_version_code"
+        android:textColor="@color/color_setting_id"
+        android:textSize="16sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="@+id/tv_setting_main_title"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.367" />
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/tv_setting_device_info_version_code"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="3dp"
+        android:textColor="@color/color_setting_id_create"
+        android:textSize="12sp"
+        app:layout_constraintStart_toStartOf="@+id/appCompatTextView8"
+        app:layout_constraintTop_toBottomOf="@+id/appCompatTextView8"
+        tools:text="2.3.0" />
 
     <androidx.appcompat.widget.AppCompatTextView
         android:id="@+id/appCompatTextView9"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="UUID"
+        android:text="@string/setting_device_uuid"
         android:textColor="@color/color_setting_id"
-        android:textSize="19sp"
+        android:textSize="16sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="@+id/tv_setting_main_title"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.37" />
+        app:layout_constraintVertical_bias="0.563" />
 
     <androidx.appcompat.widget.AppCompatTextView
         android:id="@+id/tv_setting_device_info_account_name"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginTop="3dp"
+        android:layout_marginTop="9dp"
         android:layout_marginEnd="18dp"
         android:textColor="@color/color_setting_id_create"
         android:textSize="12sp"
@@ -51,7 +74,7 @@
         android:id="@+id/tv_setting_device_info_account_id"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginTop="10dp"
+        android:layout_marginTop="3dp"
         android:layout_marginEnd="18dp"
         android:textColor="@color/color_setting_id_create"
         android:textSize="12sp"
@@ -64,19 +87,19 @@
         android:id="@+id/appCompatTextView7"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="ACCOUNT ID"
+        android:text="@string/setting_device_account_id"
         android:textColor="@color/color_setting_id"
-        android:textSize="19sp"
+        android:textSize="16sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="@+id/appCompatTextView9"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.652" />
+        app:layout_constraintVertical_bias="0.778" />
 
     <androidx.appcompat.widget.AppCompatTextView
         android:id="@+id/tv_uuid"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginTop="6dp"
+        android:layout_marginTop="3dp"
         android:layout_marginEnd="10dp"
         android:textColor="@color/color_setting_id_create"
         android:textSize="12sp"
