@@ -1,0 +1,250 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/color_black_a80">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/constraintLayout"
+        android:layout_width="408dp"
+        android:layout_height="wrap_content"
+        android:background="@drawable/rtr_check_version_bg"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <com.chinafocus.hvrskyworthvr.util.widget.GradientColorTextView
+            android:id="@+id/gradientColorTextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="40dp"
+            android:layout_marginTop="32dp"
+            android:includeFontPadding="false"
+            android:paddingStart="-15dp"
+            android:paddingEnd="0dp"
+            android:text="@string/check_version_title"
+            android:textSize="26sp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/tv_check_version_code_show"
+            android:layout_width="52dp"
+            android:layout_height="25dp"
+            android:layout_marginTop="10dp"
+            android:background="@drawable/shape_check_version_code_bg"
+            android:gravity="center"
+            android:text="V2.0.1"
+            android:textColor="@color/color_white"
+            android:textSize="11sp"
+            app:layout_constraintStart_toStartOf="@+id/gradientColorTextView"
+            app:layout_constraintTop_toBottomOf="@+id/gradientColorTextView"
+            tools:ignore="SmallSp" />
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/appCompatTextView10"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="40dp"
+            android:layout_marginTop="20dp"
+            android:layout_marginEnd="40dp"
+            android:lineSpacingExtra="10dp"
+            android:maxHeight="128dp"
+            android:minHeight="74dp"
+            android:textColor="@color/color_white"
+            android:textSize="13sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/tv_check_version_code_show"
+            tools:text="成都大熊猫繁育研究基地" />
+        <!--            tools:text="成都大熊猫繁育研究基地，是中国政府实施大熊猫等濒危野生动物迁地保护工程的主要研究基地之一，国家AAAA级旅游景区。成都大熊猫繁育研究基地，是中国政府实施大熊猫等濒危野生动物迁地保护工程的主要研究基地之一，国家AAAA级旅游景区。成都大熊猫繁育研究基地，是中国政府实施大熊猫等濒危野生动物迁地保护工程的主要研究基地之一，国家AAAA级旅游景区。成都大熊猫繁育研究基地，是中国政府实施大熊猫等濒危野生动物迁地保护工程的主要研究基地之一，国家AAAA级旅游景区。成都大熊猫繁育研究基地，是中国政府实施大熊猫等濒危野生动物迁地保护工程的主要研究基地之一，国家AAAA级旅游景区。成都大熊猫繁育研究基地，是中国政府实施大熊猫等濒危野生动物迁地保护工程的主要研究基地之一，国家AAAA级旅游景区。成都大熊猫繁育研究基地，是中国政府实施大熊猫等濒危野生动物迁地保护工程的主要研究基地之一，国家AAAA级旅游景区。成都大熊猫繁育研究基地，是中国政府实施大熊猫等濒危野生动物迁地保护工程的主要研究基地之一，国家AAAA级旅游景区。" />-->
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/bt_bluetooth_status_ok"
+            android:layout_width="152dp"
+            android:layout_height="44dp"
+            android:layout_marginTop="20dp"
+            android:layout_marginBottom="26dp"
+            android:background="@drawable/shape_check_version_cancel_bg"
+            android:gravity="center"
+            android:text="@string/check_version_cancel"
+            android:textColor="@color/color_white"
+            android:textSize="13sp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="@+id/appCompatTextView10"
+            app:layout_constraintTop_toBottomOf="@+id/appCompatTextView10" />
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/appCompatButton2"
+            android:layout_width="152dp"
+            android:layout_height="44dp"
+            android:layout_marginTop="20dp"
+            android:layout_marginBottom="26dp"
+            android:background="@drawable/shape_check_version_confirm_bg"
+            android:gravity="center"
+            android:text="@string/check_version_confirm"
+            android:textColor="@color/color_white"
+            android:textSize="13sp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="@+id/appCompatTextView10"
+            app:layout_constraintTop_toBottomOf="@+id/appCompatTextView10" />
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/appCompatButton"
+            android:layout_width="152dp"
+            android:layout_height="44dp"
+            android:layout_marginTop="20dp"
+            android:layout_marginBottom="26dp"
+            android:background="@drawable/shape_check_version_confirm_bg"
+            android:gravity="center"
+            android:text="@string/check_version_confirm"
+            android:textColor="@color/color_white"
+            android:textSize="13sp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/appCompatTextView10" />
+
+        <androidx.constraintlayout.widget.Group
+            android:id="@+id/group1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:visibility="visible"
+            app:constraint_referenced_ids="appCompatButton2,bt_bluetooth_status_ok" />
+
+        <androidx.constraintlayout.widget.Group
+            android:id="@+id/group2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:visibility="gone"
+            app:constraint_referenced_ids="appCompatButton" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/constraintLayout2"
+        android:layout_width="408dp"
+        android:layout_height="285dp"
+        android:background="@drawable/shape_check_version_download_bg"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <com.chinafocus.hvrskyworthvr.util.widget.ProgressChart
+            android:id="@+id/pc_check_version_download"
+            android:layout_width="72dp"
+            android:layout_height="72dp"
+            app:bgColor="@color/color_white_a30"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.343"
+            app:progressColor="#11C378"
+            app:progressWidth="4dp"
+            app:textSize1="15sp"
+            app:textSize2="12sp"
+            app:txtColor="@color/color_white" />
+
+        <com.chinafocus.hvrskyworthvr.util.widget.GradientColorTextView
+            android:id="@+id/gradientColorTextView2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="42dp"
+            android:includeFontPadding="false"
+            android:text="@string/check_version_download_des"
+            android:textSize="19sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/pc_check_version_download" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/constraintLayout3"
+        android:layout_width="408dp"
+        android:layout_height="285dp"
+        android:background="@drawable/shape_check_version_download_bg"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/appCompatImageView7"
+            android:layout_width="55dp"
+            android:layout_height="55dp"
+            android:layout_marginTop="32dp"
+            android:background="@drawable/rtr_check_version_error"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="30dp"
+            android:gravity="center"
+            android:text="@string/check_version_download_error"
+            android:textColor="@color/color_white"
+            android:textSize="19sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/appCompatImageView7" />
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/bt_bluetooth_status_ok4"
+            android:layout_width="152dp"
+            android:layout_height="44dp"
+            android:layout_marginStart="40dp"
+            android:layout_marginBottom="26dp"
+            android:background="@drawable/shape_check_version_cancel_bg"
+            android:gravity="center"
+            android:text="@string/check_version_cancel"
+            android:textColor="@color/color_white"
+            android:textSize="13sp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent" />
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/appCompatButton4"
+            android:layout_width="152dp"
+            android:layout_height="44dp"
+            android:layout_marginEnd="40dp"
+            android:layout_marginBottom="26dp"
+            android:background="@drawable/shape_check_version_confirm_bg"
+            android:gravity="center"
+            android:text="@string/check_version_retry"
+            android:textColor="@color/color_white"
+            android:textSize="13sp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <androidx.constraintlayout.widget.Group
+        android:id="@+id/group3"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:visibility="gone"
+        app:constraint_referenced_ids="constraintLayout2" />
+
+    <androidx.constraintlayout.widget.Group
+        android:id="@+id/group4"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:visibility="gone"
+        app:constraint_referenced_ids="constraintLayout" />
+
+    <androidx.constraintlayout.widget.Group
+        android:id="@+id/group5"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:visibility="gone"
+        app:constraint_referenced_ids="constraintLayout3" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

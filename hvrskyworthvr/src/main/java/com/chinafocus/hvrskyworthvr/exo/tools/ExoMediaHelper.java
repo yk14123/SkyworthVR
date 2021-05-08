@@ -233,18 +233,12 @@ public class ExoMediaHelper {
             player.release();
             player = null;
         }
-        if (mContext != null) {
-            mContext = null;
-        }
         if (mediaSource != null) {
             mediaSource = null;
         }
     }
 
     public void onClear() {
-        if (mContext != null) {
-            mContext = null;
-        }
         if (mediaSource != null) {
             mediaSource = null;
         }

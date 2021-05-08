@@ -6,8 +6,10 @@ import android.util.Log;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.AppCompatImageView;
 import androidx.appcompat.widget.AppCompatTextView;
 
+import com.blankj.utilcode.util.AppUtils;
 import com.blankj.utilcode.util.BarUtils;
 import com.chinafocus.huaweimdm.MdmMainActivity;
 import com.chinafocus.hvrskyworthvr.R;
@@ -39,6 +41,11 @@ public class MineActivity extends AppCompatActivity {
         Constants.ACTIVITY_TAG = ACTIVITY_ABOUT;
 
         findViewById(R.id.ctl_mine_root).setPadding(0, BarUtils.getStatusBarHeight(), 0, 0);
+
+        AppCompatTextView checkVersionCode = findViewById(R.id.tv_about_check_version_code);
+        checkVersionCode.setText(String.format("检查新版本（V%s）", AppUtils.getAppVersionName()));
+        AppCompatImageView tag = findViewById(R.id.iv_check_version_icon_tag);
+
 
         AppCompatTextView account = findViewById(R.id.tv_mine_about_account);
         account.setText(DeviceInfoManager.getInstance().getDeviceAccountName());

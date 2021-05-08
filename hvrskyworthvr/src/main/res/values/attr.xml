@@ -9,4 +9,13 @@
     <declare-styleable name="SettingViewGroup">
         <attr name="settingType" />
     </declare-styleable>
+
+    <declare-styleable name="ProgressChart">
+        <attr name="progressWidth" format="dimension|reference" />
+        <attr name="textSize1" format="dimension|reference" />
+        <attr name="textSize2" format="dimension|reference" />
+        <attr name="bgColor" format="color|reference" />
+        <attr name="progressColor" format="color|reference" />
+        <attr name="txtColor" format="color|reference" />
+    </declare-styleable>
 </resources>

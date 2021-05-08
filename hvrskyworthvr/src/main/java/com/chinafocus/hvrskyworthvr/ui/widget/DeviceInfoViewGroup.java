@@ -11,6 +11,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.widget.AppCompatTextView;
 
+import com.blankj.utilcode.util.AppUtils;
 import com.chinafocus.hvrskyworthvr.R;
 import com.chinafocus.hvrskyworthvr.model.DeviceInfoManager;
 
@@ -33,17 +34,6 @@ public class DeviceInfoViewGroup extends FrameLayout {
         init(context);
     }
 
-    private String getAppInfo(Context context) {
-        try {
-            String pkName = context.getPackageName();
-            return context.getPackageManager().getPackageInfo(
-                    pkName, 0).versionName;
-        } catch (Exception e) {
-        }
-        return "";
-    }
-
-
     private void init(Context context) {
         LayoutInflater.from(context).inflate(R.layout.include_setting_device_info, this);
 
@@ -51,7 +41,7 @@ public class DeviceInfoViewGroup extends FrameLayout {
         mProgressBar = findViewById(R.id.pb_device_info_uuid);
 
         AppCompatTextView textView = findViewById(R.id.tv_setting_device_info_version_code);
-        textView.setText(getAppInfo(context));
+        textView.setText(AppUtils.getAppVersionName());
 
         mTvAccountName = findViewById(R.id.tv_setting_device_info_account_name);
         AppCompatTextView tvAccountId = findViewById(R.id.tv_setting_device_info_account_id);
