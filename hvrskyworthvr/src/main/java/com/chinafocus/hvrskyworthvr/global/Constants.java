@@ -6,8 +6,9 @@ public class Constants {
     public static final int ACTIVITY_MEDIA = 102;
     public static final int ACTIVITY_ABOUT = 103;
 
-    public static int REQUEST_CODE_VR_MEDIA_ACTIVITY = 10001;
-    public static int REQUEST_CODE_PAD_MEDIA_ACTIVITY = 10002;
+    public static int REQUEST_CODE_VR_MEDIA_ACTIVITY = 1001;
+    public static int REQUEST_CODE_PAD_MEDIA_ACTIVITY = 1002;
+    public static int REQUEST_CODE_PAD_MINE_ACTIVITY = 1003;
 
     public static int RESULT_CODE_INACTIVE_DIALOG = 10003;
     public static int RESULT_CODE_SELF_INACTIVE_DIALOG = 10004;

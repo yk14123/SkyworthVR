@@ -18,4 +18,12 @@
         <attr name="progressColor" format="color|reference" />
         <attr name="txtColor" format="color|reference" />
     </declare-styleable>
+
+    <declare-styleable name="CircleProgressbar">
+        <attr name="radius" format="dimension" />
+        <attr name="strokeWidth" format="dimension" />
+        <attr name="ringColor" format="color" />
+        <attr name="textColor" format="color" />
+    </declare-styleable>
+
 </resources>

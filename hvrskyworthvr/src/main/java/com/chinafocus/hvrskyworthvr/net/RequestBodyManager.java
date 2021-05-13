@@ -92,4 +92,8 @@ public class RequestBodyManager {
 
         return createRequestBody(jsonObject);
     }
+
+    public static RequestBody getCheckAppVersionRequestBody() {
+        return getVideoListRequestBody(0);
+    }
 }

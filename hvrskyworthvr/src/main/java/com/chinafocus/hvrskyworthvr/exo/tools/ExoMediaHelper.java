@@ -8,6 +8,7 @@ import android.text.TextUtils;
 import android.util.Log;
 import android.widget.Toast;
 
+import com.chinafocus.hvrskyworthvr.R;
 import com.chinafocus.hvrskyworthvr.exo.encrypt.MyDefaultDataSourceFactory;
 import com.chinafocus.hvrskyworthvr.exo.ui.PlayerView;
 import com.chinafocus.hvrskyworthvr.service.event.VrSyncPlayInfo;
@@ -482,13 +483,12 @@ public class ExoMediaHelper {
                     }
                     httpErrorIndex++;
                     if (httpErrorIndex % 4 == 0) {
-                        Toast.makeText(mContext, "网络错误，请检查网络设置", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(mContext, mContext.getString(R.string.check_network_error), Toast.LENGTH_SHORT).show();
                     }
                 }
                 // 当前是网络错误，就一直无限轮询请求
                 player.prepare();
             } else if (error.type == ExoPlaybackException.TYPE_UNEXPECTED) {
-//                Toast.makeText(mContext, "操作频繁，请重新打开", Toast.LENGTH_SHORT).show();
                 if (mUnexpectedRuntimeError != null) {
                     mUnexpectedRuntimeError.onUnexpectedRuntimeError();
                 }

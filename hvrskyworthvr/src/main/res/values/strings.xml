@@ -63,7 +63,14 @@
     <string name="check_version_cancel">以后再说</string>
     <string name="check_version_confirm">立即更新</string>
     <string name="check_version_retry">重新下载</string>
+    <string name="check_version_install_immediately">立即安装</string>
+    <string name="check_version_download_complete">下载已完成</string>
+    <string name="check_version_pause">暂停</string>
+    <string name="check_version_resume">恢复</string>
     <string name="check_version_download_des">正在下载升级包，请勿关闭设备…</string>
     <string name="check_version_download_error">下载失败\n请检查您的网络后再试</string>
+
+    <string name="check_version_latest">已经是最新版</string>
+    <string name="check_network_error">网络错误，请检查网络设置</string>
 
 </resources>

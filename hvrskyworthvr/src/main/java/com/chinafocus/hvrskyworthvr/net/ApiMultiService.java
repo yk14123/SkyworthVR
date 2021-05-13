@@ -1,11 +1,12 @@
 package com.chinafocus.hvrskyworthvr.net;
 
+import com.chinafocus.hvrskyworthvr.model.bean.AppVersionInfo;
 import com.chinafocus.hvrskyworthvr.model.bean.DefaultCloudUrl;
+import com.chinafocus.hvrskyworthvr.model.bean.DeviceInfo;
 import com.chinafocus.hvrskyworthvr.model.bean.VideoCategory;
 import com.chinafocus.hvrskyworthvr.model.bean.VideoContentList;
 import com.chinafocus.hvrskyworthvr.model.bean.VideoDataInfo;
 import com.chinafocus.hvrskyworthvr.model.bean.VideoDetail;
-import com.chinafocus.hvrskyworthvr.model.bean.DeviceInfo;
 import com.chinafocus.lib_network.net.beans.BaseResponse;
 
 import java.util.List;
@@ -56,4 +57,7 @@ public interface ApiMultiService {
 
     @POST("farm360/edu/contentList")
     Observable<BaseResponse<List<VideoContentList>>> getEduVideoContentList(@Body RequestBody body);
+
+    @POST("farm360/version/latestVersion2")
+    Observable<BaseResponse<AppVersionInfo>> checkAppVersionAndUpdate(@Body RequestBody body);
 }

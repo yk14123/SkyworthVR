@@ -31,9 +31,11 @@ import com.chinafocus.hvrskyworthvr.model.bean.TagHolder;
 import com.chinafocus.hvrskyworthvr.model.bean.VideoContentList;
 import com.chinafocus.hvrskyworthvr.net.ImageProcess;
 import com.chinafocus.hvrskyworthvr.rtr.adapter.ShowRtrVideoListViewAdapter;
+import com.chinafocus.hvrskyworthvr.rtr.dialog.RtrAppUpdateDialog;
 import com.chinafocus.hvrskyworthvr.rtr.dialog.RtrBluetoothConnectedDialog;
 import com.chinafocus.hvrskyworthvr.rtr.dialog.RtrBluetoothLostDialog;
 import com.chinafocus.hvrskyworthvr.rtr.dialog.RtrVrModeMainDialog;
+import com.chinafocus.hvrskyworthvr.rtr.install.AppInstallViewModel;
 import com.chinafocus.hvrskyworthvr.rtr.media.RtrMediaPlayActivity;
 import com.chinafocus.hvrskyworthvr.rtr.mine.MineActivity;
 import com.chinafocus.hvrskyworthvr.rtr.videolist.sub.RtrVideoSubViewModel;
@@ -87,6 +89,7 @@ import jp.wasabeef.glide.transformations.CropTransformation;
 
 import static com.bumptech.glide.request.RequestOptions.bitmapTransform;
 import static com.chinafocus.hvrskyworthvr.global.Constants.REQUEST_CODE_PAD_MEDIA_ACTIVITY;
+import static com.chinafocus.hvrskyworthvr.global.Constants.REQUEST_CODE_PAD_MINE_ACTIVITY;
 import static com.chinafocus.hvrskyworthvr.global.Constants.REQUEST_CODE_VR_MEDIA_ACTIVITY;
 import static com.chinafocus.hvrskyworthvr.global.Constants.RESULT_CODE_ACTIVE_BLUETOOTH_CONNECTED;
 import static com.chinafocus.hvrskyworthvr.global.Constants.RESULT_CODE_ACTIVE_BLUETOOTH_LOST;
@@ -124,6 +127,8 @@ public class ShowActivity extends AppCompatActivity {
     private RtrBluetoothLostDialog mRtrBluetoothLostDialog;
     private RtrBluetoothConnectedDialog mRtrBluetoothConnectedDialog;
     private View mDividerLine;
+    private AppInstallViewModel mAppInstallViewModel;
+    private RtrAppUpdateDialog mRtrAppUpdateDialog;
 
     @RequiresApi(api = Build.VERSION_CODES.N)
     @Override
@@ -135,10 +140,13 @@ public class ShowActivity extends AppCompatActivity {
 
         RtrVideoSubViewModel mViewModel = new ViewModelProvider(this).get(RtrVideoSubViewModel.class);
         mMediaViewModel = new ViewModelProvider(this).get(MediaViewModel.class);
+        mAppInstallViewModel = new ViewModelProvider(this).get(AppInstallViewModel.class);
+        mAppInstallViewModel.register();
 
+        mAppInstallViewModel.checkAppVersionAndUpdate();
         mViewModel.getVideoContentList();
 
-        findViewById(R.id.iv_mine_about).setOnClickListener(v -> TimeOutClickUtil.getDefault().startTimeOutClick(() -> startActivity(new Intent(ShowActivity.this, MineActivity.class))));
+        findViewById(R.id.iv_mine_about).setOnClickListener(v -> TimeOutClickUtil.getDefault().startTimeOutClick(() -> startActivityForResult(new Intent(ShowActivity.this, MineActivity.class), REQUEST_CODE_PAD_MINE_ACTIVITY)));
 
         mMagicIndicator = findViewById(R.id.magic_Indicator_main_tag);
         mDividerLine = findViewById(R.id.view_divider_line);
@@ -148,6 +156,8 @@ public class ShowActivity extends AppCompatActivity {
         mVideoDes = findViewById(R.id.tv_media_des);
         mDiscreteScrollView.setOrientation(DSVOrientation.HORIZONTAL);
         mDiscreteScrollView.setSlideOnFling(true);
+
+        initAppInstallViewModelObserve();
 
         mViewModel.videoDataMutableLiveData.observe(this, videoContentLists -> {
 
@@ -239,6 +249,78 @@ public class ShowActivity extends AppCompatActivity {
 
             }
         });
+    }
+
+    private void initAppInstallViewModelObserve() {
+        mAppInstallViewModel.getAppVersionInfoMutableLiveData().observe(this, appVersionInfo -> {
+
+            closeMainDialog();
+
+            if (mRtrAppUpdateDialog == null) {
+                mRtrAppUpdateDialog = new RtrAppUpdateDialog(this);
+                mRtrAppUpdateDialog.setDownLoadListener(new RtrAppUpdateDialog.DownLoadListener() {
+                    @RequiresApi(api = Build.VERSION_CODES.N)
+                    @Override
+                    public void immediatelyDownLoad() {
+                        mAppInstallViewModel.downLoadApk();
+                    }
+
+                    @RequiresApi(api = Build.VERSION_CODES.N)
+                    @Override
+                    public void retryDownLoad() {
+                        mAppInstallViewModel.retryDownLoad();
+                    }
+
+                    @Override
+                    public void pauseDownLoad() {
+                        mAppInstallViewModel.pauseDownLoad();
+                    }
+
+                    @Override
+                    public void resumeDownLoad() {
+                        mAppInstallViewModel.resumeDownLoad();
+                    }
+
+                    @Override
+                    public void installApp() {
+                        mAppInstallViewModel.installApp();
+                    }
+                });
+                mRtrAppUpdateDialog.setOnDismissListener(dialog -> {
+                    mAppInstallViewModel.cancelDownLoad();
+                    if (CURRENT_VR_ONLINE_STATUS == VR_STATUS_ONLINE) {
+                        showVrModeMainDialog();
+                    } else if (CURRENT_VR_ONLINE_STATUS == VR_STATUS_OFFLINE) {
+                        fixScrollToPosition(VrSyncPlayInfo.obtain().getVideoId());
+                    }
+                });
+            }
+            mRtrAppUpdateDialog.postStatusForce(appVersionInfo.getAutoDownLoad());
+            mRtrAppUpdateDialog.postVersionCodeAndDes(appVersionInfo.getVersionName(), appVersionInfo.getVersionIntro());
+            mRtrAppUpdateDialog.showUpdatePreUI();
+            if (!mRtrAppUpdateDialog.isShowing()) {
+                mRtrAppUpdateDialog.show();
+            }
+        });
+        mAppInstallViewModel.getTaskRunning().observe(this, integer -> {
+            if (mRtrAppUpdateDialog != null) {
+                mRtrAppUpdateDialog.postTaskRunningProgress(integer);
+            }
+        });
+        mAppInstallViewModel.getTaskComplete().observe(this, aVoid -> {
+            if (mRtrAppUpdateDialog != null) {
+                mRtrAppUpdateDialog.postTaskComplete();
+            }
+        });
+        mAppInstallViewModel.getTaskFail().observe(this, aVoid -> {
+            if (mRtrAppUpdateDialog != null) {
+                mRtrAppUpdateDialog.postTaskFail();
+            }
+        });
+    }
+
+    private boolean isAppInstallDialogShow() {
+        return mRtrAppUpdateDialog != null && mRtrAppUpdateDialog.isShowing();
     }
 
     private void setVrSyncPlayInfoTagAndCategory(VideoContentList videoContentInfo) {
@@ -509,6 +591,11 @@ public class ShowActivity extends AppCompatActivity {
                         VrSyncPlayInfo.obtain().getVideoId(),
                         VrSyncPlayInfo.obtain().getSeekTime()
                 );
+
+        if (isAppInstallDialogShow()) {
+            return;
+        }
+
         if (VrSyncPlayInfo.obtain().getVideoId() != -1) {
             startSyncMediaPlayActivity();
         } else {
@@ -540,7 +627,10 @@ public class ShowActivity extends AppCompatActivity {
     public void goToMediaPlayActivityAndActiveVRPlayerStatus(VrMainSyncMediaInfo vrMainSyncMediaInfo) {
         Log.d("MyLog", "-----VR选择了一个影片,Pad需要从首页跳转播放-----");
         closeTimer(null);
-        startSyncMediaPlayActivity();
+
+        if (!isAppInstallDialogShow()) {
+            startSyncMediaPlayActivity();
+        }
     }
 
     private void startSyncMediaPlayActivity() {
@@ -608,7 +698,7 @@ public class ShowActivity extends AppCompatActivity {
                     @Override
                     public void onSubscribe(Disposable d) {
                         closeTimer(null);
-//                        Log.d("MyLog", "-----开启2分钟定时器-----");
+                        Log.d("MyLog", "-----开启2分钟定时器-----");
                         mDisposable = d;
                     }
 
@@ -659,16 +749,22 @@ public class ShowActivity extends AppCompatActivity {
             hideBluetoothLostDialog();
             showBluetoothConnectDialog();
         }
+
+
         // 修复RecyclerView位置
         if (data != null) {
             int currentVideoId = data.getIntExtra("currentVideoId", Integer.MAX_VALUE / 2);
-            if (mAdapter != null) {
-                int crease = mAdapter.calculatePositionFromVideoId(currentVideoId);
-                mDiscreteScrollView.scrollToPosition(Integer.MAX_VALUE / 2 + crease);
-            }
+            fixScrollToPosition(currentVideoId);
         }
 
         super.onActivityResult(requestCode, resultCode, data);
+    }
+
+    private void fixScrollToPosition(int videoId) {
+        if (mAdapter != null) {
+            int crease = mAdapter.calculatePositionFromVideoId(videoId);
+            mDiscreteScrollView.scrollToPosition(Integer.MAX_VALUE / 2 + crease);
+        }
     }
 
     /**
@@ -692,6 +788,18 @@ public class ShowActivity extends AppCompatActivity {
     }
 
     @Override
+    protected void onStart() {
+        super.onStart();
+        mMediaViewModel.register();
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        mMediaViewModel.unRegister();
+    }
+
+    @Override
     protected void onDestroy() {
         super.onDestroy();
         EventBus.getDefault().unregister(this);
@@ -700,6 +808,7 @@ public class ShowActivity extends AppCompatActivity {
         ExoManager.getInstance().onDestroy();
         ExoMediaHelper.getInstance().onDestroy();
         BluetoothService.getInstance().releaseAll(this);
+        mAppInstallViewModel.unRegister();
     }
 
     private static class MyRunnable implements Runnable {

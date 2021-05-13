@@ -13,6 +13,7 @@ import com.chinafocus.hvrskyworthvr.net.RequestBodyManager;
 import com.chinafocus.lib_network.net.ApiManager;
 import com.chinafocus.lib_network.net.base.BaseViewModel;
 import com.chinafocus.lib_network.net.errorhandler.ExceptionHandle;
+import com.chinafocus.lib_network.net.errorhandler.HttpErrorHandler;
 import com.chinafocus.lib_network.net.observer.BaseObserver;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
@@ -36,6 +37,7 @@ public class RtrVideoSubViewModel extends BaseViewModel {
                 .getService(ApiMultiService.class)
                 .getEduVideoContentList(RequestBodyManager.getVideoListRequestBody(1))
                 .subscribeOn(Schedulers.io())
+                .onErrorResumeNext(new HttpErrorHandler<>())
                 .subscribe(new BaseObserver<List<VideoContentList>>() {
                     @Override
                     public void onSuccess(List<VideoContentList> videoListData) {

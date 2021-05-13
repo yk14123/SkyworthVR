@@ -7,7 +7,7 @@
     android:background="@color/color_black_a80">
 
     <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/constraintLayout"
+        android:id="@+id/csl_update_pre_root"
         android:layout_width="408dp"
         android:layout_height="wrap_content"
         android:background="@drawable/rtr_check_version_bg"
@@ -31,21 +31,25 @@
             app:layout_constraintTop_toTopOf="parent" />
 
         <androidx.appcompat.widget.AppCompatTextView
-            android:id="@+id/tv_check_version_code_show"
-            android:layout_width="52dp"
-            android:layout_height="25dp"
+            android:id="@+id/tv_check_version_code"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:layout_marginTop="10dp"
             android:background="@drawable/shape_check_version_code_bg"
             android:gravity="center"
-            android:text="V2.0.1"
+            android:paddingStart="10dp"
+            android:paddingTop="6dp"
+            android:paddingEnd="10dp"
+            android:paddingBottom="6dp"
             android:textColor="@color/color_white"
             android:textSize="11sp"
-            app:layout_constraintStart_toStartOf="@+id/gradientColorTextView"
-            app:layout_constraintTop_toBottomOf="@+id/gradientColorTextView"
-            tools:ignore="SmallSp" />
+            app:layout_constraintStart_toStartOf="@id/gradientColorTextView"
+            app:layout_constraintTop_toBottomOf="@id/gradientColorTextView"
+            tools:ignore="SmallSp"
+            tools:text="V2.0.1" />
 
         <androidx.appcompat.widget.AppCompatTextView
-            android:id="@+id/appCompatTextView10"
+            android:id="@+id/tv_check_version_des"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginStart="40dp"
@@ -58,12 +62,12 @@
             android:textSize="13sp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/tv_check_version_code_show"
+            app:layout_constraintTop_toBottomOf="@id/tv_check_version_code"
             tools:text="成都大熊猫繁育研究基地" />
         <!--            tools:text="成都大熊猫繁育研究基地，是中国政府实施大熊猫等濒危野生动物迁地保护工程的主要研究基地之一，国家AAAA级旅游景区。成都大熊猫繁育研究基地，是中国政府实施大熊猫等濒危野生动物迁地保护工程的主要研究基地之一，国家AAAA级旅游景区。成都大熊猫繁育研究基地，是中国政府实施大熊猫等濒危野生动物迁地保护工程的主要研究基地之一，国家AAAA级旅游景区。成都大熊猫繁育研究基地，是中国政府实施大熊猫等濒危野生动物迁地保护工程的主要研究基地之一，国家AAAA级旅游景区。成都大熊猫繁育研究基地，是中国政府实施大熊猫等濒危野生动物迁地保护工程的主要研究基地之一，国家AAAA级旅游景区。成都大熊猫繁育研究基地，是中国政府实施大熊猫等濒危野生动物迁地保护工程的主要研究基地之一，国家AAAA级旅游景区。成都大熊猫繁育研究基地，是中国政府实施大熊猫等濒危野生动物迁地保护工程的主要研究基地之一，国家AAAA级旅游景区。成都大熊猫繁育研究基地，是中国政府实施大熊猫等濒危野生动物迁地保护工程的主要研究基地之一，国家AAAA级旅游景区。" />-->
 
         <androidx.appcompat.widget.AppCompatButton
-            android:id="@+id/bt_bluetooth_status_ok"
+            android:id="@+id/bt_update_pre_cancel"
             android:layout_width="152dp"
             android:layout_height="44dp"
             android:layout_marginTop="20dp"
@@ -74,11 +78,11 @@
             android:textColor="@color/color_white"
             android:textSize="13sp"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toStartOf="@+id/appCompatTextView10"
-            app:layout_constraintTop_toBottomOf="@+id/appCompatTextView10" />
+            app:layout_constraintStart_toStartOf="@+id/tv_check_version_des"
+            app:layout_constraintTop_toBottomOf="@+id/tv_check_version_des" />
 
         <androidx.appcompat.widget.AppCompatButton
-            android:id="@+id/appCompatButton2"
+            android:id="@+id/bt_status_update_handle"
             android:layout_width="152dp"
             android:layout_height="44dp"
             android:layout_marginTop="20dp"
@@ -89,11 +93,11 @@
             android:textColor="@color/color_white"
             android:textSize="13sp"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="@+id/appCompatTextView10"
-            app:layout_constraintTop_toBottomOf="@+id/appCompatTextView10" />
+            app:layout_constraintEnd_toEndOf="@+id/tv_check_version_des"
+            app:layout_constraintTop_toBottomOf="@+id/tv_check_version_des" />
 
         <androidx.appcompat.widget.AppCompatButton
-            android:id="@+id/appCompatButton"
+            android:id="@+id/bt_status_update_force"
             android:layout_width="152dp"
             android:layout_height="44dp"
             android:layout_marginTop="20dp"
@@ -106,26 +110,26 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/appCompatTextView10" />
+            app:layout_constraintTop_toBottomOf="@+id/tv_check_version_des" />
 
         <androidx.constraintlayout.widget.Group
-            android:id="@+id/group1"
+            android:id="@+id/group_update_pre_handle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:visibility="visible"
-            app:constraint_referenced_ids="appCompatButton2,bt_bluetooth_status_ok" />
+            app:constraint_referenced_ids="bt_status_update_handle,bt_update_pre_cancel" />
 
         <androidx.constraintlayout.widget.Group
-            android:id="@+id/group2"
+            android:id="@+id/group_update_pre_force"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:visibility="gone"
-            app:constraint_referenced_ids="appCompatButton" />
+            app:constraint_referenced_ids="bt_status_update_force" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
     <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/constraintLayout2"
+        android:id="@+id/csl_update_running_root"
         android:layout_width="408dp"
         android:layout_height="285dp"
         android:background="@drawable/shape_check_version_download_bg"
@@ -134,38 +138,74 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
-        <com.chinafocus.hvrskyworthvr.util.widget.ProgressChart
-            android:id="@+id/pc_check_version_download"
+        <com.chinafocus.hvrskyworthvr.util.widget.CircleProgressBar
+            android:id="@+id/pc_update_running"
             android:layout_width="72dp"
             android:layout_height="72dp"
-            app:bgColor="@color/color_white_a30"
-            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintBottom_toTopOf="@id/tv_update_running_des"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.343"
-            app:progressColor="#11C378"
-            app:progressWidth="4dp"
-            app:textSize1="15sp"
-            app:textSize2="12sp"
-            app:txtColor="@color/color_white" />
+            app:layout_constraintVertical_chainStyle="packed"
+            app:radius="32dp"
+            app:ringColor="@color/color_ok_enable_start"
+            app:strokeWidth="4dp"
+            app:textColor="@color/color_white" />
 
-        <com.chinafocus.hvrskyworthvr.util.widget.GradientColorTextView
-            android:id="@+id/gradientColorTextView2"
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/tv_update_running_des"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="42dp"
+            android:layout_marginTop="26dp"
             android:includeFontPadding="false"
             android:text="@string/check_version_download_des"
+            android:textColor="@color/color_white"
             android:textSize="19sp"
+            app:layout_constraintBottom_toTopOf="@id/bt_update_running_cancel"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/pc_check_version_download" />
+            app:layout_constraintTop_toBottomOf="@id/pc_update_running" />
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/bt_update_running_cancel"
+            android:layout_width="152dp"
+            android:layout_height="44dp"
+            android:layout_marginStart="40dp"
+            android:layout_marginTop="40dp"
+            android:background="@drawable/shape_check_version_cancel_bg"
+            android:gravity="center"
+            android:text="@string/setting_status_cancel"
+            android:textColor="@color/color_white"
+            android:textSize="13sp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/tv_update_running_des" />
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/bt_update_running_ok"
+            android:layout_width="152dp"
+            android:layout_height="44dp"
+            android:layout_marginEnd="40dp"
+            android:background="@drawable/shape_check_version_pause_bg"
+            android:gravity="center"
+            android:text="@string/check_version_pause"
+            android:textColor="@color/color_white"
+            android:textSize="13sp"
+            app:layout_constraintBottom_toBottomOf="@id/bt_update_running_cancel"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="@id/bt_update_running_cancel" />
+
+        <androidx.constraintlayout.widget.Group
+            android:id="@+id/group_update_running_handle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:visibility="visible"
+            app:constraint_referenced_ids="bt_update_running_cancel,bt_update_running_ok" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
     <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/constraintLayout3"
+        android:id="@+id/csl_update_error_root"
         android:layout_width="408dp"
         android:layout_height="285dp"
         android:background="@drawable/shape_check_version_download_bg"
@@ -178,7 +218,7 @@
             android:id="@+id/appCompatImageView7"
             android:layout_width="55dp"
             android:layout_height="55dp"
-            android:layout_marginTop="32dp"
+            android:layout_marginTop="35dp"
             android:background="@drawable/rtr_check_version_error"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -187,21 +227,21 @@
         <androidx.appcompat.widget.AppCompatTextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="30dp"
+            android:layout_marginTop="26dp"
             android:gravity="center"
             android:text="@string/check_version_download_error"
             android:textColor="@color/color_white"
             android:textSize="19sp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/appCompatImageView7" />
+            app:layout_constraintTop_toBottomOf="@id/appCompatImageView7" />
 
         <androidx.appcompat.widget.AppCompatButton
-            android:id="@+id/bt_bluetooth_status_ok4"
+            android:id="@+id/bt_status_error_cancel"
             android:layout_width="152dp"
             android:layout_height="44dp"
             android:layout_marginStart="40dp"
-            android:layout_marginBottom="26dp"
+            android:layout_marginBottom="35dp"
             android:background="@drawable/shape_check_version_cancel_bg"
             android:gravity="center"
             android:text="@string/check_version_cancel"
@@ -211,11 +251,11 @@
             app:layout_constraintStart_toStartOf="parent" />
 
         <androidx.appcompat.widget.AppCompatButton
-            android:id="@+id/appCompatButton4"
+            android:id="@+id/bt_status_error_retry"
             android:layout_width="152dp"
             android:layout_height="44dp"
             android:layout_marginEnd="40dp"
-            android:layout_marginBottom="26dp"
+            android:layout_marginBottom="35dp"
             android:background="@drawable/shape_check_version_confirm_bg"
             android:gravity="center"
             android:text="@string/check_version_retry"
@@ -227,24 +267,24 @@
     </androidx.constraintlayout.widget.ConstraintLayout>
 
     <androidx.constraintlayout.widget.Group
-        android:id="@+id/group3"
+        android:id="@+id/group_update_pre"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:visibility="gone"
-        app:constraint_referenced_ids="constraintLayout2" />
+        android:visibility="visible"
+        app:constraint_referenced_ids="csl_update_pre_root" />
 
     <androidx.constraintlayout.widget.Group
-        android:id="@+id/group4"
+        android:id="@+id/group_update_running"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:visibility="gone"
-        app:constraint_referenced_ids="constraintLayout" />
+        app:constraint_referenced_ids="csl_update_running_root" />
 
     <androidx.constraintlayout.widget.Group
-        android:id="@+id/group5"
+        android:id="@+id/group_update_error"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:visibility="gone"
-        app:constraint_referenced_ids="constraintLayout3" />
+        app:constraint_referenced_ids="csl_update_error_root" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

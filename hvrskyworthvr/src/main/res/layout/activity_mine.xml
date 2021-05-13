@@ -138,6 +138,7 @@
         android:layout_height="5dp"
         android:layout_marginTop="10dp"
         android:layout_marginEnd="10dp"
+        android:visibility="gone"
         android:src="@drawable/rtr_icon_check_version"
         app:layout_constraintEnd_toEndOf="@+id/tv_about_check_version_code"
         app:layout_constraintTop_toTopOf="@+id/tv_about_check_version_code" />

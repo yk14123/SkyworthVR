@@ -61,7 +61,12 @@ public class MyApp extends Application implements JavaCrashUtils.OnCrashListener
 
         collectCrashInfo();
 
-        Aria.init(this);
+        Aria.init(this)
+                .getAppConfig().setNotNetRetry(false);
+        Aria.init(this)
+                .getDownloadConfig()
+                .setReTryNum(20)
+                .setReTryInterval(5000);
 
         RxJavaPlugins.setErrorHandler(new Consumer<Throwable>() {
             @Override
@@ -77,6 +82,7 @@ public class MyApp extends Application implements JavaCrashUtils.OnCrashListener
         getApplicationContext().getExternalFilesDir("Config");
         getApplicationContext().getExternalFilesDir("Videos");
         getApplicationContext().getExternalFilesDir("preview");
+        getApplicationContext().getExternalFilesDir("ApkInstall");
     }
 
     private void collectCrashInfo() {
