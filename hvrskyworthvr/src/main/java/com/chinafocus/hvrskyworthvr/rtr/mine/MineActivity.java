@@ -120,7 +120,7 @@ public class MineActivity extends AppCompatActivity {
                     @RequiresApi(api = Build.VERSION_CODES.N)
                     @Override
                     public void immediatelyDownLoad() {
-                        mAppInstallViewModel.downLoadApk();
+                        mAppInstallViewModel.retryDownLoad();
                     }
 
                     @RequiresApi(api = Build.VERSION_CODES.N)

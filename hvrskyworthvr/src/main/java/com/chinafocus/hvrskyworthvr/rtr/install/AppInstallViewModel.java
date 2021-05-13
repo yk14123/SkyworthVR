@@ -18,6 +18,7 @@ import com.chinafocus.hvrskyworthvr.net.ApiMultiService;
 import com.chinafocus.hvrskyworthvr.net.RequestBodyManager;
 import com.chinafocus.lib_network.net.ApiManager;
 import com.chinafocus.lib_network.net.base.BaseViewModel;
+import com.chinafocus.lib_network.net.beans.BaseResponse;
 import com.chinafocus.lib_network.net.errorhandler.ExceptionHandle;
 import com.chinafocus.lib_network.net.errorhandler.HttpErrorHandler;
 import com.chinafocus.lib_network.net.observer.BaseObserver;
@@ -45,6 +46,7 @@ public class AppInstallViewModel extends BaseViewModel {
     private String mUrl;
 
     private String mTaskCompletePath;
+    private Observable<BaseResponse<AppVersionInfo>> mAppVersionObservable;
 
     public AppInstallViewModel(@NonNull Application application) {
         super(application);
@@ -82,13 +84,20 @@ public class AppInstallViewModel extends BaseViewModel {
         Aria.download(this).register();
     }
 
+    private Observable<BaseResponse<AppVersionInfo>> getAppVersionObservable() {
+        if (mAppVersionObservable == null) {
+            mAppVersionObservable = ApiManager
+                    .getService(ApiMultiService.class)
+                    .checkAppVersionAndUpdate(RequestBodyManager.getCheckAppVersionRequestBody())
+                    .subscribeOn(Schedulers.io())
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .onErrorResumeNext(new HttpErrorHandler<>());
+        }
+        return mAppVersionObservable;
+    }
+
     public void checkAppVersionAndUpdate() {
-        ApiManager
-                .getService(ApiMultiService.class)
-                .checkAppVersionAndUpdate(RequestBodyManager.getCheckAppVersionRequestBody())
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .onErrorResumeNext(new HttpErrorHandler<>())
+        getAppVersionObservable()
                 .subscribe(new BaseObserver<AppVersionInfo>() {
                     @Override
                     public void onSuccess(AppVersionInfo appVersionInfo) {
@@ -112,20 +121,14 @@ public class AppInstallViewModel extends BaseViewModel {
                         mTaskFail.postValue(null);
                     }
                 });
-
     }
 
     public boolean isUpdate() {
         return isUpdate;
     }
 
-    private void retryAppVersionAndUpdate() {
-        ApiManager
-                .getService(ApiMultiService.class)
-                .checkAppVersionAndUpdate(RequestBodyManager.getCheckAppVersionRequestBody())
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .onErrorResumeNext(new HttpErrorHandler<>())
+    public void retryDownLoadApp() {
+        getAppVersionObservable()
                 .subscribe(new BaseObserver<AppVersionInfo>() {
                     @RequiresApi(api = Build.VERSION_CODES.N)
                     @Override
@@ -152,7 +155,7 @@ public class AppInstallViewModel extends BaseViewModel {
 
     @SuppressWarnings("all")
     @RequiresApi(api = Build.VERSION_CODES.N)
-    public void downLoadApk() {
+    private void downLoadApk() {
         if (TextUtils.isEmpty(mUrl)) {
             return;
         }
@@ -168,7 +171,6 @@ public class AppInstallViewModel extends BaseViewModel {
                 )
                 .subscribe(File::delete);
 
-
         //创建并启动下载
         mTaskId = Aria.download(this)
                 .load(mUrl)     //读取下载地址
@@ -180,7 +182,7 @@ public class AppInstallViewModel extends BaseViewModel {
 
     @RequiresApi(api = Build.VERSION_CODES.N)
     public void retryDownLoad() {
-        retryAppVersionAndUpdate();
+        retryDownLoadApp();
     }
 
     public void pauseDownLoad() {
@@ -210,26 +212,36 @@ public class AppInstallViewModel extends BaseViewModel {
     //在这里处理任务执行中的状态，如进度进度条的刷新
     @Download.onTaskRunning
     protected void running(DownloadTask task) {
-        mTaskRunning.postValue(task.getPercent());
+        if (!TextUtils.isEmpty(mUrl) && mUrl.equals(task.getKey())) {
+            mTaskRunning.postValue(task.getPercent());
+        }
     }
 
     @Download.onTaskComplete
     protected void taskComplete(DownloadTask task) {
-        mTaskRunning.postValue(100);
-        mTaskComplete.postValue(null);
-        mTaskCompletePath = task.getFilePath();
-        installApp();
+        if (checkTaskUrl(task)) {
+            mTaskRunning.postValue(100);
+            mTaskComplete.postValue(null);
+            mTaskCompletePath = task.getFilePath();
+            installApp();
+        }
     }
 
     @Download.onTaskFail
     protected void taskFail(DownloadTask task) {
-        mTaskRunning.postValue(0);
-        mTaskFail.postValue(null);
+        if (checkTaskUrl(task)) {
+            mTaskRunning.postValue(0);
+            mTaskFail.postValue(null);
+        }
     }
 
     public void installApp() {
         if (!TextUtils.isEmpty(mTaskCompletePath)) {
             AppUtils.installApp(mTaskCompletePath);
         }
+    }
+
+    private boolean checkTaskUrl(DownloadTask task) {
+        return !TextUtils.isEmpty(mUrl) && task != null && mUrl.equals(task.getKey());
     }
 }

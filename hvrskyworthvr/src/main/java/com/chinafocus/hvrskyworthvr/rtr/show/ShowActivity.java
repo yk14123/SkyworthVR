@@ -140,6 +140,7 @@ public class ShowActivity extends AppCompatActivity {
 
         RtrVideoSubViewModel mViewModel = new ViewModelProvider(this).get(RtrVideoSubViewModel.class);
         mMediaViewModel = new ViewModelProvider(this).get(MediaViewModel.class);
+//        mMediaViewModel.register();
         mAppInstallViewModel = new ViewModelProvider(this).get(AppInstallViewModel.class);
         mAppInstallViewModel.register();
 
@@ -262,7 +263,7 @@ public class ShowActivity extends AppCompatActivity {
                     @RequiresApi(api = Build.VERSION_CODES.N)
                     @Override
                     public void immediatelyDownLoad() {
-                        mAppInstallViewModel.downLoadApk();
+                        mAppInstallViewModel.retryDownLoad();
                     }
 
                     @RequiresApi(api = Build.VERSION_CODES.N)
@@ -788,18 +789,6 @@ public class ShowActivity extends AppCompatActivity {
     }
 
     @Override
-    protected void onStart() {
-        super.onStart();
-        mMediaViewModel.register();
-    }
-
-    @Override
-    protected void onStop() {
-        super.onStop();
-        mMediaViewModel.unRegister();
-    }
-
-    @Override
     protected void onDestroy() {
         super.onDestroy();
         EventBus.getDefault().unregister(this);
@@ -809,6 +798,7 @@ public class ShowActivity extends AppCompatActivity {
         ExoMediaHelper.getInstance().onDestroy();
         BluetoothService.getInstance().releaseAll(this);
         mAppInstallViewModel.unRegister();
+//        mMediaViewModel.unRegister();
     }
 
     private static class MyRunnable implements Runnable {

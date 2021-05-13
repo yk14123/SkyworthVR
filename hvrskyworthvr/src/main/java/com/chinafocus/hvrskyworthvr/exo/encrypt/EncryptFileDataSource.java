@@ -26,7 +26,6 @@ import com.google.android.exoplayer2.upstream.DataSource;
 import com.google.android.exoplayer2.upstream.DataSpec;
 import com.google.android.exoplayer2.upstream.TransferListener;
 import com.google.android.exoplayer2.util.Assertions;
-import com.google.android.exoplayer2.util.Log;
 
 import java.io.EOFException;
 import java.io.FileNotFoundException;
@@ -105,7 +104,7 @@ public final class EncryptFileDataSource extends BaseDataSource {
 
             String path = uri.getPath();
             if (path != null) {
-                Log.e("MyLog", " filePath open >>> " + path);
+//                Log.e("MyLog", " filePath open >>> " + path);
                 if (path.toLowerCase().endsWith("chinafocus")) {
                     offset = 10L;
                 }
