@@ -7,8 +7,8 @@ public class AppVersionInfo {
     /**
      * appName : app名称
      * versionId : -1
-     * versionCode : 2
-     * identifier: "2.0.2"
+     * versionCode : "2.0.30"
+     * identifier: 30
      * versionIntro : 版本说明
      * versionUrl :
      * size : 123
@@ -19,8 +19,9 @@ public class AppVersionInfo {
     
     private String appName;
     private int versionId;
-    private int versionCode;
     @SerializedName("identifier")
+    private int defaultVersionCode;
+    @SerializedName("versionCode")
     private String versionName;
     private String versionIntro;
     private String versionUrl;
@@ -29,12 +30,12 @@ public class AppVersionInfo {
     private String upEndTime;
     private int autoDownLoad;
 
-    public int getVersionCode() {
-        return versionCode;
+    public int getDefaultVersionCode() {
+        return defaultVersionCode;
     }
 
-    public void setVersionCode(int versionCode) {
-        this.versionCode = versionCode;
+    public void setDefaultVersionCode(int defaultVersionCode) {
+        this.defaultVersionCode = defaultVersionCode;
     }
 
     public String getVersionName() {

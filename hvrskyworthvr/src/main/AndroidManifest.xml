@@ -34,7 +34,7 @@
         <activity
             android:name=".rtr.mine.MineActivity"
             android:screenOrientation="landscape"
-            android:theme="@style/AppTheme" />
+            android:theme="@style/Theme.MaterialComponents.Light.NoActionBar" />
         <activity
             android:name=".rtr.media.RtrMediaPlayActivity"
             android:launchMode="singleTop"

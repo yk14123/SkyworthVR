@@ -140,7 +140,6 @@ public class ShowActivity extends AppCompatActivity {
 
         RtrVideoSubViewModel mViewModel = new ViewModelProvider(this).get(RtrVideoSubViewModel.class);
         mMediaViewModel = new ViewModelProvider(this).get(MediaViewModel.class);
-//        mMediaViewModel.register();
         mAppInstallViewModel = new ViewModelProvider(this).get(AppInstallViewModel.class);
         mAppInstallViewModel.register();
 
@@ -502,7 +501,11 @@ public class ShowActivity extends AppCompatActivity {
         String intro = videoContentList.getIntro();
         String color = videoContentList.getClassStyleColor();
         String classify = videoContentList.getClassName();
-        mVideoDes.post(() -> mVideoDes.setContentAndTag("  " + intro, Collections.singletonList(classify), color));
+        if (!TextUtils.isEmpty(classify) && !TextUtils.isEmpty(color)) {
+            mVideoDes.post(() -> mVideoDes.setContentAndTag("  " + intro, Collections.singletonList(classify), color));
+        } else {
+            mVideoDes.post(() -> mVideoDes.setText(intro));
+        }
     }
 
     @Override
@@ -798,7 +801,6 @@ public class ShowActivity extends AppCompatActivity {
         ExoMediaHelper.getInstance().onDestroy();
         BluetoothService.getInstance().releaseAll(this);
         mAppInstallViewModel.unRegister();
-//        mMediaViewModel.unRegister();
     }
 
     private static class MyRunnable implements Runnable {

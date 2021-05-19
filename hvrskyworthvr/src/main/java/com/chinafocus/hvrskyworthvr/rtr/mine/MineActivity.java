@@ -1,10 +1,15 @@
 package com.chinafocus.hvrskyworthvr.rtr.mine;
 
+import android.annotation.SuppressLint;
 import android.content.Intent;
+import android.content.res.ColorStateList;
+import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.CompoundButton;
+import android.widget.Switch;
 import android.widget.Toast;
 
 import androidx.annotation.Nullable;
@@ -23,6 +28,7 @@ import com.chinafocus.hvrskyworthvr.global.Constants;
 import com.chinafocus.hvrskyworthvr.model.DeviceInfoManager;
 import com.chinafocus.hvrskyworthvr.net.ApiMultiService;
 import com.chinafocus.hvrskyworthvr.rtr.dialog.RtrAppUpdateDialog;
+import com.chinafocus.hvrskyworthvr.rtr.dialog.RtrVideoUpdateDialog;
 import com.chinafocus.hvrskyworthvr.rtr.install.AppInstallViewModel;
 import com.chinafocus.hvrskyworthvr.service.BluetoothService;
 import com.chinafocus.hvrskyworthvr.service.event.VrAboutConnect;
@@ -32,6 +38,7 @@ import com.chinafocus.hvrskyworthvr.ui.setting.SettingActivity;
 import com.chinafocus.hvrskyworthvr.util.TimeOutClickUtil;
 import com.chinafocus.hvrskyworthvr.util.ViewClickUtil;
 import com.chinafocus.hvrskyworthvr.util.statusbar.StatusBarCompatFactory;
+import com.google.android.material.chip.Chip;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -47,6 +54,9 @@ public class MineActivity extends AppCompatActivity {
 
     private AppInstallViewModel mAppInstallViewModel;
     private RtrAppUpdateDialog mRtrAppUpdateDialog;
+
+    private boolean show;
+    private RtrVideoUpdateDialog mRtrVideoUpdateDialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -84,6 +94,30 @@ public class MineActivity extends AppCompatActivity {
             finish();
         });
 
+        @SuppressLint("UseSwitchCompatOrMaterialCode") Switch toggleButton = findViewById(R.id.view_switch_button);
+        toggleButton.setChecked(false);
+        toggleButton.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                Log.e("MyLog", " OnCheckedChanged >>> " + isChecked);
+                showVideoUpdateDialog();
+            }
+        });
+
+
+        Chip chip = findViewById(R.id.view_chip);
+
+        chip.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                chip.setChipIconVisible(show);
+                show = !show;
+
+                chip.setChipBackgroundColor(ColorStateList.valueOf(Color.parseColor("#F65A56")));
+            }
+        });
+
+
         ViewClickUtil.click(
                 findViewById(R.id.tv_about_user_protocol),
                 () -> WebAboutActivity.startWebAboutActivity(
@@ -109,6 +143,15 @@ public class MineActivity extends AppCompatActivity {
         );
 
         initAppInstallViewModelObserve();
+    }
+
+    private void showVideoUpdateDialog() {
+        if (mRtrVideoUpdateDialog == null) {
+            mRtrVideoUpdateDialog = new RtrVideoUpdateDialog(this);
+        }
+        if (!mRtrVideoUpdateDialog.isShowing()) {
+            mRtrVideoUpdateDialog.show();
+        }
     }
 
     private void initAppInstallViewModelObserve() {

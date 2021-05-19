@@ -37,6 +37,19 @@ android {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
             signingConfig signingConfigs.release
+            // 打包后应用名称
+            applicationVariants.all { variant ->
+                variant.outputs.all { output ->
+                    def outputFile = output.outputFile
+                    if (outputFile != null && outputFile.name.endsWith('.apk')) {
+                        if ("release" == variant.buildType.name) {
+                            outputFileName = "hvrskyworthvr-release_pad_v${defaultConfig.versionName}_${defaultConfig.versionCode}.apk"
+                        } else if ("debug" == variant.buildType.name) {
+                            outputFileName = "hvrskyworthvr-debug_pad_v${defaultConfig.versionName}_${defaultConfig.versionCode}.apk"
+                        }
+                    }
+                }
+            }
         }
         debug {
 //            applicationIdSuffix ".only.debug"

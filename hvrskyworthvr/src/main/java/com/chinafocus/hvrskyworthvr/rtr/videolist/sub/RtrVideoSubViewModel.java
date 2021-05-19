@@ -65,8 +65,10 @@ public class RtrVideoSubViewModel extends BaseViewModel {
                     new BaseObserver<List<VideoContentList>>() {
                         @Override
                         public void onSuccess(List<VideoContentList> videoListData) {
-                            SPUtils.getInstance().put(VIDEO_LIST_DATA, new Gson().toJson(videoListData));
-                            videoDataMutableLiveData.postValue(videoListData);
+                            if (videoListData.size() > 0) {
+                                SPUtils.getInstance().put(VIDEO_LIST_DATA, new Gson().toJson(videoListData));
+                                videoDataMutableLiveData.postValue(videoListData);
+                            }
                         }
 
                         @Override

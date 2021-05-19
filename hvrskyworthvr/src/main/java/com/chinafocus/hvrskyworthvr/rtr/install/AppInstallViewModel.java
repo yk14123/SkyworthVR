@@ -103,7 +103,7 @@ public class AppInstallViewModel extends BaseViewModel {
                     public void onSuccess(AppVersionInfo appVersionInfo) {
                         if (appVersionInfo != null) {
                             int localAppVersionCode = AppUtils.getAppVersionCode();
-                            if (appVersionInfo.getVersionCode() > localAppVersionCode && !TextUtils.isEmpty(appVersionInfo.getVersionUrl())) {
+                            if (appVersionInfo.getDefaultVersionCode() > localAppVersionCode && !TextUtils.isEmpty(appVersionInfo.getVersionUrl())) {
                                 isUpdate = true;
                                 mUrl = ConfigManager.getInstance().getDefaultUrl() + appVersionInfo.getVersionUrl();
                                 mAppVersionInfoMutableLiveData.postValue(appVersionInfo);
@@ -135,7 +135,7 @@ public class AppInstallViewModel extends BaseViewModel {
                     public void onSuccess(AppVersionInfo appVersionInfo) {
                         if (appVersionInfo != null) {
                             int localAppVersionCode = AppUtils.getAppVersionCode();
-                            if (appVersionInfo.getVersionCode() > localAppVersionCode && !TextUtils.isEmpty(appVersionInfo.getVersionUrl())) {
+                            if (appVersionInfo.getDefaultVersionCode() > localAppVersionCode && !TextUtils.isEmpty(appVersionInfo.getVersionUrl())) {
                                 isUpdate = true;
                                 mUrl = ConfigManager.getInstance().getDefaultUrl() + appVersionInfo.getVersionUrl();
                                 downLoadApk();
