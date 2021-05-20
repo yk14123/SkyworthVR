@@ -24,7 +24,7 @@
 
         <meta-data
             android:name="com.chinafocus.hvrskyworthvr.MyAppGlideModule"
-            android:value="AppGlideModule"/>
+            android:value="AppGlideModule" />
 
         <activity
             android:name=".rtr.show.ShowActivity"
@@ -34,7 +34,13 @@
         <activity
             android:name=".rtr.mine.MineActivity"
             android:screenOrientation="landscape"
-            android:theme="@style/Theme.MaterialComponents.Light.NoActionBar" />
+            android:theme="@style/Theme.MaterialComponents.Light.NoActionBar">
+            <!--            <intent-filter>-->
+            <!--                <action android:name="android.intent.action.MAIN" />-->
+
+            <!--                <category android:name="android.intent.category.LAUNCHER" />-->
+            <!--            </intent-filter>-->
+        </activity>
         <activity
             android:name=".rtr.media.RtrMediaPlayActivity"
             android:launchMode="singleTop"

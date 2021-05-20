@@ -59,4 +59,7 @@
     <color name="color_check_version_code_confirm_bg">#FF14C27B</color>
     <color name="color_check_version_code_download_bg">#FF1D1E24</color>
     <color name="color_check_version_code_pause_bg">#FFF65A56</color>
+
+    <color name="color_video_update_ok_bg">#FF065FED</color>
+    <color name="color_video_update_error_bg">#FFF65A56</color>
 </resources>

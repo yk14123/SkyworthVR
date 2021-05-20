@@ -41,6 +41,7 @@ public class AppInstallViewModel extends BaseViewModel {
     private MutableLiveData<Void> mTaskFail = new MutableLiveData<>();
     private MutableLiveData<Void> mNetWorkError = new MutableLiveData<>();
     private MutableLiveData<Void> mVersionLatest = new MutableLiveData<>();
+    private MutableLiveData<Void> mTaskResume = new MutableLiveData<>();
 
     private long mTaskId = -1;
     private String mUrl;
@@ -74,6 +75,10 @@ public class AppInstallViewModel extends BaseViewModel {
 
     public MutableLiveData<Void> getVersionLatest() {
         return mVersionLatest;
+    }
+
+    public MutableLiveData<Void> getTaskResume() {
+        return mTaskResume;
     }
 
     public void unRegister() {
@@ -150,7 +155,6 @@ public class AppInstallViewModel extends BaseViewModel {
                         mTaskFail.postValue(null);
                     }
                 });
-
     }
 
     @SuppressWarnings("all")
@@ -192,11 +196,27 @@ public class AppInstallViewModel extends BaseViewModel {
                 .stop();
     }
 
-    public void resumeDownLoad() {
+    private void resumeDownLoad() {
         Aria
                 .download(this)
                 .load(mTaskId)
                 .resume();
+    }
+
+    public void checkNetWorkAndResumeDownLoad() {
+        getAppVersionObservable()
+                .subscribe(new BaseObserver<AppVersionInfo>() {
+                    @Override
+                    public void onSuccess(AppVersionInfo appVersionInfo) {
+                        resumeDownLoad();
+                        mTaskResume.postValue(null);
+                    }
+
+                    @Override
+                    public void onFailure(ExceptionHandle.ResponseThrowable e) {
+                        mNetWorkError.postValue(null);
+                    }
+                });
     }
 
     public void cancelDownLoad() {

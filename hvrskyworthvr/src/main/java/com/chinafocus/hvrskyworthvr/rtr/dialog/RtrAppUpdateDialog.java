@@ -99,7 +99,7 @@ public class RtrAppUpdateDialog extends Dialog implements View.OnClickListener {
         pauseUpdateRunningButtonUI();
     }
 
-    private void pauseUpdateRunningButtonUI() {
+    public void pauseUpdateRunningButtonUI() {
         currentStatus = TASK_PAUSE;
         mTvUpdateRunningDes.setText(getContext().getString(R.string.check_version_download_des));
         mBtUpdateRunningOk.setText(getContext().getString(R.string.check_version_pause));
@@ -214,7 +214,6 @@ public class RtrAppUpdateDialog extends Dialog implements View.OnClickListener {
         if (mDownLoadListener != null) {
             mDownLoadListener.resumeDownLoad();
         }
-        pauseUpdateRunningButtonUI();
     }
 
     // 立即暂停

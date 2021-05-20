@@ -165,6 +165,7 @@
         android:text="@string/video_update_button"
         android:textColor="@color/color_white"
         android:textSize="13sp"
+        android:visibility="invisible"
         app:layout_constraintBottom_toTopOf="@+id/appCompatTextView11"
         app:layout_constraintStart_toStartOf="@+id/tv_mine_about_uuid"
         app:layout_constraintTop_toBottomOf="@+id/tv_mine_about_uuid" />
@@ -177,21 +178,23 @@
         android:showText="false"
         android:thumb="@drawable/thumb_selector"
         android:track="@drawable/track_selector_bg"
+        android:visibility="invisible"
         app:layout_constraintBottom_toBottomOf="@+id/appCompatTextView10"
         app:layout_constraintStart_toEndOf="@+id/appCompatTextView10"
         app:layout_constraintTop_toTopOf="@+id/appCompatTextView10"
         tools:ignore="UseSwitchCompatOrMaterialXml" />
 
-    <com.google.android.material.chip.Chip
+    <com.chinafocus.hvrskyworthvr.ui.widget.VideoUpdateChip
         android:id="@+id/view_chip"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_height="44dp"
         android:layout_marginStart="10dp"
         android:includeFontPadding="false"
-        android:text="更新列表"
+        android:text="@string/video_update_init_text"
         android:textColor="@color/color_white"
         android:textSize="10sp"
-        app:chipBackgroundColor="#065FED"
+        android:visibility="invisible"
+        app:chipBackgroundColor="@color/color_video_update_ok_bg"
         app:chipCornerRadius="40dp"
         app:chipEndPadding="10dp"
         app:chipIcon="@drawable/ic_baseline_cached_24"

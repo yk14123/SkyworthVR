@@ -78,5 +78,9 @@
     <string name="video_update_text_close">关闭后，新增、变更的视频将通过网络\n播放，确认关闭？</string>
     <string name="video_update_button_close">确定关闭</string>
     <string name="video_update_button_open">确定开启</string>
+    <string name="video_update_init_text">更新列表</string>
+    <string name="video_update_running_text">正在更新</string>
+    <string name="video_update_error_text">更新失败，重试</string>
+    <string name="video_update_Latest_text">列表已是最新</string>
 
 </resources>

@@ -270,14 +270,14 @@
         android:id="@+id/group_update_pre"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:visibility="visible"
+        android:visibility="gone"
         app:constraint_referenced_ids="csl_update_pre_root" />
 
     <androidx.constraintlayout.widget.Group
         android:id="@+id/group_update_running"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:visibility="gone"
+        android:visibility="visible"
         app:constraint_referenced_ids="csl_update_running_root" />
 
     <androidx.constraintlayout.widget.Group

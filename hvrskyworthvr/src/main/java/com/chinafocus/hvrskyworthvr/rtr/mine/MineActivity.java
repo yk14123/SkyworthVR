@@ -2,13 +2,10 @@ package com.chinafocus.hvrskyworthvr.rtr.mine;
 
 import android.annotation.SuppressLint;
 import android.content.Intent;
-import android.content.res.ColorStateList;
-import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
-import android.widget.CompoundButton;
 import android.widget.Switch;
 import android.widget.Toast;
 
@@ -21,6 +18,8 @@ import androidx.lifecycle.ViewModelProvider;
 
 import com.blankj.utilcode.util.AppUtils;
 import com.blankj.utilcode.util.BarUtils;
+import com.blankj.utilcode.util.SPUtils;
+import com.blankj.utilcode.util.ToastUtils;
 import com.chinafocus.huaweimdm.MdmMainActivity;
 import com.chinafocus.hvrskyworthvr.R;
 import com.chinafocus.hvrskyworthvr.global.ConfigManager;
@@ -35,10 +34,10 @@ import com.chinafocus.hvrskyworthvr.service.event.VrAboutConnect;
 import com.chinafocus.hvrskyworthvr.service.event.VrSyncPlayInfo;
 import com.chinafocus.hvrskyworthvr.ui.main.about.WebAboutActivity;
 import com.chinafocus.hvrskyworthvr.ui.setting.SettingActivity;
+import com.chinafocus.hvrskyworthvr.ui.widget.VideoUpdateChip;
 import com.chinafocus.hvrskyworthvr.util.TimeOutClickUtil;
 import com.chinafocus.hvrskyworthvr.util.ViewClickUtil;
 import com.chinafocus.hvrskyworthvr.util.statusbar.StatusBarCompatFactory;
-import com.google.android.material.chip.Chip;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -47,6 +46,7 @@ import static com.chinafocus.hvrskyworthvr.global.Constants.ACTIVITY_ABOUT;
 import static com.chinafocus.hvrskyworthvr.global.Constants.RESULT_CODE_ACTIVE_DIALOG;
 import static com.chinafocus.hvrskyworthvr.global.Constants.RESULT_CODE_INACTIVE_DIALOG;
 import static com.chinafocus.hvrskyworthvr.global.Constants.RESULT_CODE_MINE_FINISH;
+import static com.chinafocus.hvrskyworthvr.global.Constants.VIDEO_UPDATE_STATUS;
 import static com.chinafocus.hvrskyworthvr.service.BluetoothService.CURRENT_VR_ONLINE_STATUS;
 import static com.chinafocus.hvrskyworthvr.service.BluetoothService.VR_STATUS_ONLINE;
 
@@ -55,8 +55,11 @@ public class MineActivity extends AppCompatActivity {
     private AppInstallViewModel mAppInstallViewModel;
     private RtrAppUpdateDialog mRtrAppUpdateDialog;
 
-    private boolean show;
     private RtrVideoUpdateDialog mRtrVideoUpdateDialog;
+    @SuppressLint("UseSwitchCompatOrMaterialCode")
+    private Switch mToggleButton;
+    private VideoUpdateChip mChip;
+    private AppCompatImageView mTag;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -73,11 +76,11 @@ public class MineActivity extends AppCompatActivity {
 
         AppCompatTextView checkVersionCode = findViewById(R.id.tv_about_check_version_code);
         checkVersionCode.setText(String.format("检查新版本（V%s）", AppUtils.getAppVersionName()));
-        AppCompatImageView tag = findViewById(R.id.iv_check_version_icon_tag);
+        mTag = findViewById(R.id.iv_check_version_icon_tag);
         if (mAppInstallViewModel.isUpdate()) {
-            tag.setVisibility(View.VISIBLE);
+            mTag.setVisibility(View.VISIBLE);
         } else {
-            tag.setVisibility(View.GONE);
+            mTag.setVisibility(View.GONE);
         }
         checkVersionCode.setOnClickListener(v -> mAppInstallViewModel.checkAppVersionAndUpdate());
 
@@ -94,29 +97,9 @@ public class MineActivity extends AppCompatActivity {
             finish();
         });
 
-        @SuppressLint("UseSwitchCompatOrMaterialCode") Switch toggleButton = findViewById(R.id.view_switch_button);
-        toggleButton.setChecked(false);
-        toggleButton.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                Log.e("MyLog", " OnCheckedChanged >>> " + isChecked);
-                showVideoUpdateDialog();
-            }
-        });
-
-
-        Chip chip = findViewById(R.id.view_chip);
-
-        chip.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                chip.setChipIconVisible(show);
-                show = !show;
-
-                chip.setChipBackgroundColor(ColorStateList.valueOf(Color.parseColor("#F65A56")));
-            }
-        });
-
+        mToggleButton = findViewById(R.id.view_switch_button);
+        mChip = findViewById(R.id.view_chip);
+        initVideoUpdateUI();
 
         ViewClickUtil.click(
                 findViewById(R.id.tv_about_user_protocol),
@@ -145,9 +128,47 @@ public class MineActivity extends AppCompatActivity {
         initAppInstallViewModelObserve();
     }
 
+    private void initVideoUpdateUI() {
+        mToggleButton.setOnCheckedChangeListener((buttonView, isChecked) -> isShowChip(isChecked));
+        boolean open = SPUtils.getInstance().getBoolean(VIDEO_UPDATE_STATUS);
+        mToggleButton.setChecked(open);
+        mToggleButton.setOnClickListener(v -> showVideoUpdateDialog());
+
+        mChip.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+//                chip.setChipIconVisible(show);
+//                show = !show;
+//                chip.setChipBackgroundColor(ColorStateList.valueOf(Color.parseColor("#F65A56")));
+                // TODO 开始下载
+
+//                mChip.showVideoUpdateRunning(3, 6);
+//                mChip.showVideoUpdateError();
+            }
+        });
+
+    }
+
+    private void isShowChip(boolean open) {
+        if (open) {
+            mChip.setVisibility(View.VISIBLE);
+        } else {
+            mChip.setVisibility(View.GONE);
+        }
+    }
+
     private void showVideoUpdateDialog() {
         if (mRtrVideoUpdateDialog == null) {
             mRtrVideoUpdateDialog = new RtrVideoUpdateDialog(this);
+            mRtrVideoUpdateDialog.setOnCheckedChangeListener((isChange, isClearTask) -> {
+                if (!isChange) {
+                    mToggleButton.setChecked(!mToggleButton.isChecked());
+                }
+                if (isClearTask) {
+                    // TODO 需要清空当前下载任务
+                    Log.e("MyLog", " 需要清空当前下载任务 !!!!!!!!");
+                }
+            });
         }
         if (!mRtrVideoUpdateDialog.isShowing()) {
             mRtrVideoUpdateDialog.show();
@@ -156,7 +177,7 @@ public class MineActivity extends AppCompatActivity {
 
     private void initAppInstallViewModelObserve() {
         mAppInstallViewModel.getAppVersionInfoMutableLiveData().observe(this, appVersionInfo -> {
-
+            mTag.setVisibility(View.VISIBLE);
             if (mRtrAppUpdateDialog == null) {
                 mRtrAppUpdateDialog = new RtrAppUpdateDialog(this);
                 mRtrAppUpdateDialog.setDownLoadListener(new RtrAppUpdateDialog.DownLoadListener() {
@@ -179,7 +200,7 @@ public class MineActivity extends AppCompatActivity {
 
                     @Override
                     public void resumeDownLoad() {
-                        mAppInstallViewModel.resumeDownLoad();
+                        mAppInstallViewModel.checkNetWorkAndResumeDownLoad();
                     }
 
                     @Override
@@ -217,9 +238,12 @@ public class MineActivity extends AppCompatActivity {
                 mRtrAppUpdateDialog.postTaskFail();
             }
         });
-
-        mAppInstallViewModel.getNetWorkError().observe(this, aVoid -> Toast.makeText(getApplicationContext(), MineActivity.this.getString(R.string.check_network_error), Toast.LENGTH_SHORT).show());
-
+        mAppInstallViewModel.getTaskResume().observe(this, aVoid -> {
+            if (mRtrAppUpdateDialog != null) {
+                mRtrAppUpdateDialog.pauseUpdateRunningButtonUI();
+            }
+        });
+        mAppInstallViewModel.getNetWorkError().observe(this, aVoid -> ToastUtils.showShort(MineActivity.this.getString(R.string.check_network_error)));
         mAppInstallViewModel.getVersionLatest().observe(this, aVoid -> Toast.makeText(getApplicationContext(), MineActivity.this.getString(R.string.check_version_latest), Toast.LENGTH_SHORT).show());
     }
 

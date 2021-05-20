@@ -11,8 +11,11 @@ import androidx.appcompat.widget.AppCompatButton;
 import androidx.appcompat.widget.AppCompatTextView;
 import androidx.core.content.ContextCompat;
 
+import com.blankj.utilcode.util.SPUtils;
 import com.blankj.utilcode.util.ScreenUtils;
 import com.chinafocus.hvrskyworthvr.R;
+
+import static com.chinafocus.hvrskyworthvr.global.Constants.VIDEO_UPDATE_STATUS;
 
 /**
  * Video提示更新Dialog
@@ -21,8 +24,6 @@ public class RtrVideoUpdateDialog extends Dialog {
 
     private AppCompatTextView mVideoUpdateText;
     private AppCompatButton mVideoUpdateOk;
-
-    private boolean isOpen;
 
     public RtrVideoUpdateDialog(Context context) {
         super(context, R.style.VrModeMainDialog);
@@ -36,10 +37,19 @@ public class RtrVideoUpdateDialog extends Dialog {
         setContentView(mContentView, new ViewGroup.LayoutParams(screenWidth, screenHeight));
 
         mVideoUpdateText = mContentView.findViewById(R.id.tv_video_update_des);
-        mContentView.findViewById(R.id.bt_video_update_cancel).setOnClickListener(v -> dismiss());
+        mContentView.findViewById(R.id.bt_video_update_cancel).setOnClickListener(v -> {
+            if (mOnCheckedChangeListener != null) {
+                mOnCheckedChangeListener.onCheckedChanged(false, false);
+            }
+            dismiss();
+        });
         mVideoUpdateOk = mContentView.findViewById(R.id.bt_video_update_ok);
         mVideoUpdateOk.setOnClickListener(v -> {
-            isOpen = !isOpen;
+            boolean open = SPUtils.getInstance().getBoolean(VIDEO_UPDATE_STATUS);
+            SPUtils.getInstance().put(VIDEO_UPDATE_STATUS, !open);
+            if (mOnCheckedChangeListener != null) {
+                mOnCheckedChangeListener.onCheckedChanged(true, open);
+            }
             dismiss();
         });
 
@@ -47,7 +57,6 @@ public class RtrVideoUpdateDialog extends Dialog {
         setCancelable(false);
         setCanceledOnTouchOutside(false);
     }
-
 
     private void showOpenVideoUpdateUI() {
         mVideoUpdateText.setText(getContext().getString(R.string.video_update_text_open));
@@ -63,12 +72,23 @@ public class RtrVideoUpdateDialog extends Dialog {
 
     @Override
     public void show() {
-        if (isOpen) {
-            showOpenVideoUpdateUI();
-        } else {
+        boolean open = SPUtils.getInstance().getBoolean(VIDEO_UPDATE_STATUS);
+        if (open) {
             showCloseVideoUpdateUI();
+        } else {
+            showOpenVideoUpdateUI();
         }
         super.show();
+    }
+
+    public interface OnCheckedChangeListener {
+        void onCheckedChanged(boolean isChange, boolean isClearTask);
+    }
+
+    private OnCheckedChangeListener mOnCheckedChangeListener;
+
+    public void setOnCheckedChangeListener(OnCheckedChangeListener OnCheckedChangeListener) {
+        mOnCheckedChangeListener = OnCheckedChangeListener;
     }
 
 }

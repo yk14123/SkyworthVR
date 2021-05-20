@@ -18,6 +18,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.blankj.utilcode.util.ToastUtils;
 import com.bumptech.glide.load.MultiTransformation;
 import com.bumptech.glide.request.target.CustomTarget;
 import com.bumptech.glide.request.transition.Transition;
@@ -173,6 +174,9 @@ public class ShowActivity extends AppCompatActivity {
                 mDiscreteScrollView.addScrollStateChangeListener(new MyScrollStateChangeListener() {
                     @Override
                     public void onScrollStart(@NonNull RecyclerView.ViewHolder currentItemHolder, int adapterPosition) {
+                        if (isStartMediaPlayActivity) {
+                            return;
+                        }
                         // 视频暂停！
                         ExoManager.getInstance().setPlayWhenReady(false);
                         if (!isStartMediaPlayActivity) {
@@ -186,13 +190,10 @@ public class ShowActivity extends AppCompatActivity {
                 });
 
                 mAdapter.setOnClickCallback(adapterPosition -> {
-
                     if (isStartMediaPlayActivity) {
                         return;
                     }
-
                     closeTimer(null);
-
                     // realPosition：在list中，响应点击的实际item位置，0~list.size-1
                     int realPosition = mScrollAdapter.getRealPosition(adapterPosition);
                     // realCurrentPosition：在list中,当前中心点的实际item位置，0~list.size-1
@@ -232,9 +233,10 @@ public class ShowActivity extends AppCompatActivity {
                 setIndicatorContent(videoContentLists);
 
                 mDiscreteScrollView.addOnItemChangedListener((viewHolder, adapterPosition) -> {
-
+                    if (isStartMediaPlayActivity) {
+                        return;
+                    }
                     int realPosition = mScrollAdapter.getRealPosition(adapterPosition);
-
                     VideoContentList videoContentList = videoContentLists.get(realPosition);
 
                     bindItemToIndicator(videoContentList);
@@ -278,7 +280,7 @@ public class ShowActivity extends AppCompatActivity {
 
                     @Override
                     public void resumeDownLoad() {
-                        mAppInstallViewModel.resumeDownLoad();
+                        mAppInstallViewModel.checkNetWorkAndResumeDownLoad();
                     }
 
                     @Override
@@ -302,6 +304,11 @@ public class ShowActivity extends AppCompatActivity {
                 mRtrAppUpdateDialog.show();
             }
         });
+        mAppInstallViewModel.getTaskResume().observe(this, aVoid -> {
+            if (mRtrAppUpdateDialog != null) {
+                mRtrAppUpdateDialog.pauseUpdateRunningButtonUI();
+            }
+        });
         mAppInstallViewModel.getTaskRunning().observe(this, integer -> {
             if (mRtrAppUpdateDialog != null) {
                 mRtrAppUpdateDialog.postTaskRunningProgress(integer);
@@ -317,6 +324,7 @@ public class ShowActivity extends AppCompatActivity {
                 mRtrAppUpdateDialog.postTaskFail();
             }
         });
+        mAppInstallViewModel.getNetWorkError().observe(this, aVoid -> ToastUtils.showShort(ShowActivity.this.getString(R.string.check_network_error)));
     }
 
     private boolean isAppInstallDialogShow() {
