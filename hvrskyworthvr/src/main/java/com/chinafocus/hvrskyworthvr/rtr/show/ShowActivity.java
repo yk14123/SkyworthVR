@@ -130,6 +130,7 @@ public class ShowActivity extends AppCompatActivity {
     private View mDividerLine;
     private AppInstallViewModel mAppInstallViewModel;
     private RtrAppUpdateDialog mRtrAppUpdateDialog;
+    private View mCover;
 
     @RequiresApi(api = Build.VERSION_CODES.N)
     @Override
@@ -151,6 +152,7 @@ public class ShowActivity extends AppCompatActivity {
 
         mMagicIndicator = findViewById(R.id.magic_Indicator_main_tag);
         mDividerLine = findViewById(R.id.view_divider_line);
+        mCover = findViewById(R.id.cover);
 
         mDiscreteScrollView = findViewById(R.id.rv_main_hot_cover);
         mBackgroundAnimationRelativeLayout = findViewById(R.id.view_background_change_animation);
@@ -174,15 +176,10 @@ public class ShowActivity extends AppCompatActivity {
                 mDiscreteScrollView.addScrollStateChangeListener(new MyScrollStateChangeListener() {
                     @Override
                     public void onScrollStart(@NonNull RecyclerView.ViewHolder currentItemHolder, int adapterPosition) {
-                        if (isStartMediaPlayActivity) {
-                            return;
-                        }
                         // 视频暂停！
                         ExoManager.getInstance().setPlayWhenReady(false);
-                        if (!isStartMediaPlayActivity) {
-                            Log.d("MyLog", " ---------Pad在【主页面】中，列表开始滑动了，把videoId设置为-1-----");
-                            VrSyncPlayInfo.obtain().restoreVideoInfo();
-                        }
+                        Log.d("MyLog", " ---------Pad在【主页面】中，列表开始滑动了，把videoId设置为-1-----");
+                        VrSyncPlayInfo.obtain().restoreVideoInfo();
                         closeTimer(null);
                         mBackgroundAnimationRelativeLayout.removeCallbacks(mMyPostBackGroundRunnable);
                         ((BaseViewHolder) currentItemHolder).getView(R.id.lottie_center_media).setVisibility(View.GONE);
@@ -190,16 +187,13 @@ public class ShowActivity extends AppCompatActivity {
                 });
 
                 mAdapter.setOnClickCallback(adapterPosition -> {
-                    if (isStartMediaPlayActivity) {
-                        return;
-                    }
                     closeTimer(null);
                     // realPosition：在list中，响应点击的实际item位置，0~list.size-1
                     int realPosition = mScrollAdapter.getRealPosition(adapterPosition);
                     // realCurrentPosition：在list中,当前中心点的实际item位置，0~list.size-1
                     int realCurrentPosition = mScrollAdapter.getRealCurrentPosition();
 
-                    if (realCurrentPosition != realPosition && !isStartMediaPlayActivity) {
+                    if (realCurrentPosition != realPosition) {
                         // 视频暂停！
                         ExoManager.getInstance().setPlayWhenReady(false);
                         Log.d("MyLog", " ---------Pad在【主页面】中，非中心的item被点击了，把videoId设置为-1-----");
@@ -209,7 +203,7 @@ public class ShowActivity extends AppCompatActivity {
                         return;
                     }
 
-                    isStartMediaPlayActivity = true;
+                    mCover.setVisibility(View.VISIBLE);
 
                     VideoContentList videoContentInfo = videoContentLists.get(realPosition);
                     setVrSyncPlayInfoTagAndCategory(videoContentInfo);
@@ -233,9 +227,6 @@ public class ShowActivity extends AppCompatActivity {
                 setIndicatorContent(videoContentLists);
 
                 mDiscreteScrollView.addOnItemChangedListener((viewHolder, adapterPosition) -> {
-                    if (isStartMediaPlayActivity) {
-                        return;
-                    }
                     int realPosition = mScrollAdapter.getRealPosition(adapterPosition);
                     VideoContentList videoContentList = videoContentLists.get(realPosition);
 
@@ -251,6 +242,8 @@ public class ShowActivity extends AppCompatActivity {
 
             }
         });
+
+//        startService(new Intent(this, VideoUpdateService.class));
     }
 
     private void initAppInstallViewModelObserve() {
@@ -344,8 +337,6 @@ public class ShowActivity extends AppCompatActivity {
         int videoClassify = Integer.parseInt(videoContentInfo.getClassify());
         VrSyncPlayInfo.obtain().setCategory(videoClassify);
     }
-
-    private boolean isStartMediaPlayActivity;
 
     @Override
     public void onBackPressed() {
@@ -530,8 +521,7 @@ public class ShowActivity extends AppCompatActivity {
         Constants.ACTIVITY_TAG = Constants.ACTIVITY_MAIN;
 
         ExoManager.getInstance().setPlayWhenReady(true);
-
-        isStartMediaPlayActivity = false;
+        mCover.setVisibility(View.GONE);
     }
 
     @Override
@@ -761,7 +751,6 @@ public class ShowActivity extends AppCompatActivity {
             hideBluetoothLostDialog();
             showBluetoothConnectDialog();
         }
-
 
         // 修复RecyclerView位置
         if (data != null) {

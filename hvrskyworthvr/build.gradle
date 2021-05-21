@@ -8,8 +8,8 @@ android {
         applicationId "com.chinafocus.hvrskyworthvr"
         minSdkVersion 22
         targetSdkVersion 30
-        versionCode 31
-        versionName "2.0.31"
+        versionCode 32
+        versionName "2.0.32"
 
         testInstrumentationRunner "androidx.sky_worth_login_logo.runner.AndroidJUnitRunner"
 
@@ -42,12 +42,10 @@ android {
                 variant.outputs.all { output ->
                     def outputFile = output.outputFile
                     if (outputFile != null && outputFile.name.endsWith('.apk')) {
+                        // 只处理release 设置debug名称后调试出错
                         if ("release" == variant.buildType.name) {
                             outputFileName = "hvrskyworthvr-release_pad_v${defaultConfig.versionName}_${defaultConfig.versionCode}.apk"
                         }
-//                        else if ("debug" == variant.buildType.name) {
-//                            outputFileName = "hvrskyworthvr-debug_pad_v${defaultConfig.versionName}_${defaultConfig.versionCode}.apk"
-//                        }
                     }
                 }
             }

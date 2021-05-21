@@ -132,7 +132,6 @@ public class WifiService {
         String customerName = SPUtils.getInstance().getString(DEVICE_INFO_CUSTOMER_NAME);
         String alias = SPUtils.getInstance().getString(DEVICE_INFO_ALIAS);
         if (!TextUtils.isEmpty(customerName)) {
-
             DeviceInfoManager.getInstance().postDeviceAccountName(customerName);
             DeviceInfoManager.getInstance().postDeviceAlias(alias);
             if (mWifiStatusListener != null) {
@@ -140,7 +139,6 @@ public class WifiService {
                         customerName,
                         alias);
             }
-
         }
 
         ApiManager
@@ -152,10 +150,11 @@ public class WifiService {
                 .subscribe(new BaseObserver<DeviceInfo>() {
                     @Override
                     public void onSuccess(DeviceInfo deviceInfo) {
-
+                        if (deviceInfo == null) {
+                            return;
+                        }
                         SPUtils.getInstance().put(DEVICE_INFO_CUSTOMER_NAME, deviceInfo.getCustomerName());
                         SPUtils.getInstance().put(DEVICE_INFO_ALIAS, deviceInfo.getAlias());
-
                         DeviceInfoManager.getInstance().postDeviceAccountName(deviceInfo.getCustomerName());
                         DeviceInfoManager.getInstance().postDeviceAlias(deviceInfo.getAlias());
                         if (mWifiStatusListener != null) {

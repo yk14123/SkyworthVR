@@ -7,7 +7,6 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Switch;
-import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
@@ -88,7 +87,7 @@ public class MineActivity extends AppCompatActivity {
         account.setText(DeviceInfoManager.getInstance().getDeviceAccountName());
 
         AppCompatTextView uuid = findViewById(R.id.tv_mine_about_uuid);
-        uuid.setText(String.format("UUID：%s", DeviceInfoManager.getInstance().getDeviceUUID()));
+        uuid.setText(String.format("%s : %s", getString(R.string.setting_device_uuid), DeviceInfoManager.getInstance().getDeviceUUID()));
 
         findViewById(R.id.tv_back_door).setOnClickListener(v -> TimeOutClickUtil.getDefault().startTimeOutClick(this::startSettingActivity));
         findViewById(R.id.iv_setting_mdm).setOnClickListener(v -> TimeOutClickUtil.getMDM().startTimeOutClick(this::startMDMActivity));
@@ -244,7 +243,7 @@ public class MineActivity extends AppCompatActivity {
             }
         });
         mAppInstallViewModel.getNetWorkError().observe(this, aVoid -> ToastUtils.showShort(MineActivity.this.getString(R.string.check_network_error)));
-        mAppInstallViewModel.getVersionLatest().observe(this, aVoid -> Toast.makeText(getApplicationContext(), MineActivity.this.getString(R.string.check_version_latest), Toast.LENGTH_SHORT).show());
+        mAppInstallViewModel.getVersionLatest().observe(this, aVoid -> ToastUtils.showShort(MineActivity.this.getString(R.string.check_version_latest)));
     }
 
     private boolean isAppInstallDialogShow() {

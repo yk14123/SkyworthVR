@@ -95,6 +95,8 @@
             android:name="com.tencent.smtt.export.external.DexClassLoaderProviderService"
             android:label="dexopt"
             android:process=":dexopt" />
+
+        <service android:name=".download.VideoUpdateService" />
     </application>
 
 </manifest>

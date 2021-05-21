@@ -104,4 +104,11 @@ public class VideoContentList {
     public void setType(int type) {
         this.type = type;
     }
+
+    @Override
+    public String toString() {
+        return "VideoContentList{" +
+                "title='" + title + '\'' +
+                '}';
+    }
 }
