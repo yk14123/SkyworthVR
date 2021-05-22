@@ -243,7 +243,10 @@ public class MineActivity extends AppCompatActivity {
             }
         });
         mAppInstallViewModel.getNetWorkError().observe(this, aVoid -> ToastUtils.showShort(MineActivity.this.getString(R.string.check_network_error)));
-        mAppInstallViewModel.getVersionLatest().observe(this, aVoid -> ToastUtils.showShort(MineActivity.this.getString(R.string.check_version_latest)));
+        mAppInstallViewModel.getVersionLatest().observe(this, aVoid -> {
+            ToastUtils.showShort(MineActivity.this.getString(R.string.check_version_latest));
+            mTag.setVisibility(View.GONE);
+        });
     }
 
     private boolean isAppInstallDialogShow() {

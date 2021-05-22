@@ -81,7 +81,9 @@ public class MyApp extends Application implements JavaCrashUtils.OnCrashListener
     private void initFileDirectory() {
         getApplicationContext().getExternalFilesDir("Config");
         getApplicationContext().getExternalFilesDir("Videos");
+        getApplicationContext().getExternalFilesDir("Videos/temp");
         getApplicationContext().getExternalFilesDir("preview");
+        getApplicationContext().getExternalFilesDir("preview/temp");
         getApplicationContext().getExternalFilesDir("ApkInstall");
     }
 
