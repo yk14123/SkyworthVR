@@ -1,21 +1,39 @@
 package com.chinafocus.hvrskyworthvr.download;
 
-public class DownLoadHolder {
-    private String downLoadUrl;
+import androidx.annotation.NonNull;
+
+public class DownLoadHolder implements Cloneable{
     private boolean isEncrypted;
-    private String outputPath;
     private boolean shouldDownload;
-
-    private boolean isFinish;
-
+    private String downLoadUrl;
+    private String outputPath;
+    private String finalPath;
     private String title;
+    private long downloadFileRange;
+    private long fileLength;
 
-    public boolean isFinish() {
-        return isFinish;
+    public long getFileLength() {
+        return fileLength;
     }
 
-    public void setFinish(boolean finish) {
-        isFinish = finish;
+    public void setFileLength(long fileLength) {
+        this.fileLength = fileLength;
+    }
+
+    public long getDownloadFileRange() {
+        return downloadFileRange;
+    }
+
+    public void setDownloadFileRange(long downloadFileRange) {
+        this.downloadFileRange = downloadFileRange;
+    }
+
+    public String getFinalPath() {
+        return finalPath;
+    }
+
+    public void setFinalPath(String finalPath) {
+        this.finalPath = finalPath;
     }
 
     public String getTitle() {
@@ -63,5 +81,11 @@ public class DownLoadHolder {
         return "DownLoadHolder{" +
                 "title='" + title + '\'' +
                 '}';
+    }
+
+    @NonNull
+    @Override
+    public DownLoadHolder clone() throws CloneNotSupportedException {
+        return (DownLoadHolder) super.clone();
     }
 }

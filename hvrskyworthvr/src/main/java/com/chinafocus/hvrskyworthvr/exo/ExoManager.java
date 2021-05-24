@@ -8,6 +8,7 @@ import android.view.TextureView;
 
 import androidx.annotation.NonNull;
 
+import com.chinafocus.hvrskyworthvr.exo.encrypt.MyDefaultDataSourceFactory;
 import com.google.android.exoplayer2.C;
 import com.google.android.exoplayer2.DefaultLoadControl;
 import com.google.android.exoplayer2.ExoPlaybackException;
@@ -23,7 +24,6 @@ import com.google.android.exoplayer2.source.hls.HlsMediaSource;
 import com.google.android.exoplayer2.upstream.DataSource;
 import com.google.android.exoplayer2.upstream.DataSpec;
 import com.google.android.exoplayer2.upstream.DefaultBandwidthMeter;
-import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory;
 import com.google.android.exoplayer2.upstream.DefaultHttpDataSource;
 import com.google.android.exoplayer2.upstream.HttpDataSource;
 import com.google.android.exoplayer2.util.MimeTypes;
@@ -218,10 +218,11 @@ public class ExoManager {
                 .setTransferListener(BANDWIDTH_METER);
 
         // 创建加载数据的工厂
-        DefaultDataSourceFactory upstreamFactory =
-                new DefaultDataSourceFactory(context, BANDWIDTH_METER, httpDataFactory);
+//        DefaultDataSourceFactory upstreamFactory =
+//                new DefaultDataSourceFactory(context, BANDWIDTH_METER, httpDataFactory);
+//        return upstreamFactory;
 
-        return upstreamFactory;
+        return new MyDefaultDataSourceFactory(context, null, httpDataFactory);
 
         // 创建SimpleCache
 //        SimpleCache simpleCache = VideoCache.getInstance(context);
@@ -283,8 +284,8 @@ public class ExoManager {
             videoSource =
                     new HlsMediaSource.Factory(buildDataSourceFactory(context))
                             .createMediaSource(m3u8);
-        } else if (videoUrl.toLowerCase().endsWith("mp4")) {
 
+        } else if (videoUrl.toLowerCase().endsWith("mp4") || videoUrl.toLowerCase().endsWith("chinafocus")) {
             MediaItem mp4 = new MediaItem.Builder()
                     .setUri(Uri.parse(videoUrl))
                     .setMimeType(MimeTypes.APPLICATION_MP4)

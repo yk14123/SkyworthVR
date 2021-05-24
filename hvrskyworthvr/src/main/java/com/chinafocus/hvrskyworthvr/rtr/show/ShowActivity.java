@@ -474,10 +474,15 @@ public class ShowActivity extends AppCompatActivity {
         String menuVideoUrl = videoContentList.getMenuVideoUrl();
         if (!TextUtils.isEmpty(menuVideoUrl)) {
             String previewVideoUrl = ConfigManager.getInstance().getDefaultUrl() + videoContentList.getMenuVideoUrl();
-            String[] splitVideoUrl = previewVideoUrl.split("/");
-            File file = new File(getExternalFilesDir("preview"), splitVideoUrl[splitVideoUrl.length - 1]);
-            if (file.exists()) {
-                previewVideoUrl = file.getAbsolutePath();
+            String endUrl = previewVideoUrl.substring(previewVideoUrl.lastIndexOf("/") + 1);
+            endUrl = endUrl.substring(0, endUrl.indexOf("."));
+            File fileVideoUrl = new File(getExternalFilesDir("preview"), endUrl + ".mp4");
+            if (fileVideoUrl.exists()) {
+                previewVideoUrl = fileVideoUrl.getAbsolutePath();
+            }
+            File encryptVideoUrl = new File(getExternalFilesDir("preview"), endUrl + ".chinafocus");
+            if (encryptVideoUrl.exists()) {
+                previewVideoUrl = encryptVideoUrl.getAbsolutePath();
             }
 //            Log.d("MyLog", "-----当前[预览视频]播放地址是 videoUrl >>> " + previewVideoUrl);
             ExoManager.getInstance().prepareSource(getApplicationContext(), previewVideoUrl);
