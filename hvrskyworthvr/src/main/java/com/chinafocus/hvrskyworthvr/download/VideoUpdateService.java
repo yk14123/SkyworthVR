@@ -18,15 +18,10 @@ public class VideoUpdateService extends Service {
     private DownLoadCreatorManager mDownLoadCreatorManager;
     private DownLoadRunningManager mDownLoadRunningManager;
 
-    @Nullable
-    @Override
-    public IBinder onBind(Intent intent) {
-        return null;
-    }
+    public static final String VIDEO_UPDATE_SERVICE_CHECK = "video_update_service_check";
+    public static final String VIDEO_UPDATE_SERVICE_START = "video_update_service_start";
+    public static final String VIDEO_UPDATE_SERVICE = "video_update_service";
 
-    /**
-     * 创建服务的时候，只执行一次
-     */
     @Override
     public void onCreate() {
         super.onCreate();
@@ -35,28 +30,35 @@ public class VideoUpdateService extends Service {
         mDownLoadRunningManager = DownLoadRunningManager.getInstance();
     }
 
-    /**
-     * 多次执行
-     *
-     * @param intent  intent
-     * @param flags   flags
-     * @param startId startId
-     * @return 1
-     */
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         Log.e(TAG, "VideoUpdateService >>> onStartCommand >>> startEngine");
-        startEngine();
+        String stringExtra = intent.getStringExtra(VIDEO_UPDATE_SERVICE);
+        if (VIDEO_UPDATE_SERVICE_CHECK.equals(stringExtra)) {
+            checkVideoUpdateEngine();
+        } else if (VIDEO_UPDATE_SERVICE_START.equals(stringExtra)) {
+            startDownLoadTaskEngine();
+        }
         return super.onStartCommand(intent, flags, startId);
     }
 
-    private void startEngine() {
+    private void checkVideoUpdateEngine() {
         // 如果在下载中或者在检查中，则不检查
         if (mDownLoadCreatorManager.isDownLoadChecking() || mDownLoadRunningManager.isDownLoadRunning()) {
             return;
         }
         // 1.拉取网络对比生成download任务
         mDownLoadCreatorManager.checkedVideoUpdateTask();
+    }
+
+    private void startDownLoadTaskEngine() {
+        mDownLoadRunningManager.startDownloadEngine();
+    }
+
+    @Nullable
+    @Override
+    public IBinder onBind(Intent intent) {
+        return null;
     }
 
 }

@@ -44,6 +44,11 @@ public class DownLoadRunningManager {
     // 下载任务总数量
     private int taskTotalSize;
 
+    /**
+     * 设置下载任务
+     *
+     * @param downLoadTaskTotal 下载任务
+     */
     public void setDownLoadTaskTotal(List<DownLoadHolder> downLoadTaskTotal) {
         mDownLoadTaskTotal.clear();
         for (DownLoadHolder temp : downLoadTaskTotal) {
@@ -55,6 +60,9 @@ public class DownLoadRunningManager {
         }
     }
 
+    /**
+     * 下载引擎
+     */
     public void startDownloadEngine() {
         if (mDownLoadTaskTotal.size() > 0) {
             taskTotalSize = mDownLoadTaskTotal.size();
@@ -65,87 +73,19 @@ public class DownLoadRunningManager {
                     .filter(DownLoadHolder::isShouldDownload)
                     .subscribeOn(Schedulers.io())
                     // 配合retry断点续下使用
-                    .map(downLoadHolder -> {
-                        long downloadFileRange;
-                        File file = new File(downLoadHolder.getOutputPath());
-                        long length = file.length();
-                        if (file.exists() && downLoadHolder.isEncrypted()) {
-                            downloadFileRange = length - 10L;
-                        } else {
-                            Log.e("MyLog", "如果不存在文件 或者 存在文件但不加密 那么 file.length() >>> " + file.length());
-                            downloadFileRange = length;
-                        }
-                        downLoadHolder.setDownloadFileRange(downloadFileRange);
-                        downLoadHolder.setFileLength(length);
-                        return downLoadHolder;
-                    })
-                    .map(downLoadHolder -> {
-                        ApiManager
-                                .getService(ApiMultiService.class)
-                                .executeDownload("bytes=" + downLoadHolder.getDownloadFileRange() + "-", downLoadHolder.getDownLoadUrl())
-                                .subscribeOn(Schedulers.trampoline())
-                                .map(response -> {
-                                    if (response.isSuccessful() && response.body() != null) {
-                                        downloadFile(
-                                                downLoadHolder.isEncrypted(),
-                                                downLoadHolder.getFileLength(),
-                                                response.body(),
-                                                downLoadHolder.getOutputPath(),
-                                                new DownloadApkListener() {
-                                                    @Override
-                                                    public void onStart() {
-                                                        // TODO 当前任务开始下载
-                                                        if (downLoadHolder.getFileLength() == 0) {
-                                                            Log.e("MyLog", " 开启新的下载 >>> " + downLoadHolder.getTitle());
-                                                        } else {
-                                                            Log.e("MyLog", " 开启断点续下 >>> " + downLoadHolder.getTitle());
-                                                        }
-                                                    }
-
-                                                    @Override
-                                                    public void onProgress(int p) {
-                                                        // TODO 当前任务下载百分比
-//                                                    Log.e("MyLog", "----------下载中 >>> " + p);
-                                                    }
-
-                                                    @Override
-                                                    public void onFinish(String path) {
-                                                        // TODO 当前任务下载完成
-                                                        Log.e("MyLog", " ------------ 下载完成 >>> " + path);
-                                                        downLoadHolder.setShouldDownload(false);
-                                                    }
-
-                                                    @Override
-                                                    public void onError(String msg) {
-                                                        // TODO 当前任务下载错误
-                                                        Log.e("MyLog", " ------------ 下载错误 >>> " + msg);
-                                                        downLoadHolder.setShouldDownload(true);
-                                                    }
-                                                });
-                                    } else {
-                                        // TODO 当前任务下载错误
-                                        Log.e("MyLog", "server contact failed");
-                                        downLoadHolder.setShouldDownload(true);
-                                    }
-                                    return downLoadHolder;
-
-                                })
-                                .onErrorResumeNext(new HttpErrorHandler<>())
-                                .subscribe();
-                        return downLoadHolder;
-                    })
-                    .map(downLoadHolder -> {
+                    .doOnNext(this::calculateFileRange)
+                    .doOnNext(this::realDownLoad)
+                    .doOnNext(downLoadHolder -> {
                         if (downLoadHolder.isShouldDownload()) {
                             throw new IllegalArgumentException("----------只要没有下载完成，就抛出异常----------");
                         }
-                        return downLoadHolder;
                     })
                     .retry(retryCount, throwable -> {
                         Log.e("MyLog", "---------- 等待5秒后 重试retry >>> ");
                         SystemClock.sleep(5000);
                         return true;
                     })
-                    .map(downLoadHolder -> {
+                    .doOnNext(downLoadHolder -> {
                         // TODO 下载完其中一个
                         Log.e("MyLog", " ------------ 下载完其中一个 >>> " + downLoadHolder.getTitle());
                         File src = new File(downLoadHolder.getOutputPath());
@@ -156,10 +96,10 @@ public class DownLoadRunningManager {
                         } else {
                             Log.e("MyLog", " ------------ 从temp目录移动到 video目录 失败 >>> " + downLoadHolder.getTitle());
                         }
-                        return --taskTotalSize;
+                        --taskTotalSize;
                     })
-                    .doOnNext(totalSize -> {
-                        if (totalSize <= 0) {
+                    .doOnComplete(() -> {
+                        if (taskTotalSize <= 0) {
                             // TODO 全部任务完成
                             Log.e("MyLog", " ------------ 所有任务全部下载完成 >>> ");
                             isDownLoadRunning = false;
@@ -172,6 +112,85 @@ public class DownLoadRunningManager {
                     })
                     .subscribe();
         }
+    }
+
+    /**
+     * 处理断点续下的位置
+     *
+     * @param downLoadHolder 下载任务
+     */
+    private void calculateFileRange(DownLoadHolder downLoadHolder) {
+        long downloadFileRange;
+        File file = new File(downLoadHolder.getOutputPath());
+        long length = file.length();
+        if (file.exists() && downLoadHolder.isEncrypted()) {
+            downloadFileRange = length - 10L;
+        } else {
+            Log.e("MyLog", "如果不存在文件 或者 存在文件但不加密 那么 file.length() >>> " + file.length());
+            downloadFileRange = length;
+        }
+        downLoadHolder.setDownloadFileRange(downloadFileRange);
+        downLoadHolder.setFileLength(length);
+    }
+
+    /**
+     * 真正开始下载
+     *
+     * @param downLoadHolder 下载任务
+     */
+    private void realDownLoad(DownLoadHolder downLoadHolder) {
+        ApiManager
+                .getService(ApiMultiService.class)
+                .executeDownload("bytes=" + downLoadHolder.getDownloadFileRange() + "-", downLoadHolder.getDownLoadUrl())
+                .subscribeOn(Schedulers.trampoline())
+                .map(response -> {
+                    if (response.isSuccessful() && response.body() != null) {
+                        downloadFile(
+                                downLoadHolder.isEncrypted(),
+                                downLoadHolder.getFileLength(),
+                                response.body(),
+                                downLoadHolder.getOutputPath(),
+                                new DownloadApkListener() {
+                                    @Override
+                                    public void onStart() {
+                                        // TODO 当前任务开始下载
+                                        if (downLoadHolder.getFileLength() == 0) {
+                                            Log.e("MyLog", " 开启新的下载 >>> " + downLoadHolder.getTitle());
+                                        } else {
+                                            Log.e("MyLog", " 开启断点续下 >>> " + downLoadHolder.getTitle());
+                                        }
+                                    }
+
+                                    @Override
+                                    public void onProgress(int p) {
+                                        // TODO 当前任务下载百分比
+//                                                    Log.e("MyLog", "----------下载中 >>> " + p);
+                                    }
+
+                                    @Override
+                                    public void onFinish(String path) {
+                                        // TODO 当前任务下载完成
+                                        Log.e("MyLog", " ------------ 下载完成 >>> " + path);
+                                        downLoadHolder.setShouldDownload(false);
+                                    }
+
+                                    @Override
+                                    public void onError(String msg) {
+                                        // TODO 当前任务下载错误
+                                        Log.e("MyLog", " ------------ 下载错误 >>> " + msg);
+                                        downLoadHolder.setShouldDownload(true);
+                                    }
+                                });
+                    } else {
+                        // TODO 当前任务下载错误
+                        Log.e("MyLog", "server contact failed");
+                        downLoadHolder.setShouldDownload(true);
+                    }
+                    return downLoadHolder;
+
+                })
+                .onErrorResumeNext(new HttpErrorHandler<>())
+                .subscribe();
     }
 
     /**

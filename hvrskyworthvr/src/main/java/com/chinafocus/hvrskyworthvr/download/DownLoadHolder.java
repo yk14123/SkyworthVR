@@ -2,7 +2,7 @@ package com.chinafocus.hvrskyworthvr.download;
 
 import androidx.annotation.NonNull;
 
-public class DownLoadHolder implements Cloneable{
+class DownLoadHolder implements Cloneable {
     private boolean isEncrypted;
     private boolean shouldDownload;
     private String downLoadUrl;

@@ -37,6 +37,12 @@ public class VideoUpdateChip extends Chip {
         setText(String.format("%s  %d/%d", getContext().getString(R.string.video_update_running_text), currentTask, total));
     }
 
+    public void showVideoUpdateDownloadError() {
+        setChipIconVisible(true);
+        setChipBackgroundColor(ColorStateList.valueOf(ContextCompat.getColor(getContext(), R.color.color_video_update_error_bg)));
+        setText(getContext().getString(R.string.video_update_download_error_text));
+    }
+
     public void showVideoUpdateError() {
         setChipIconVisible(true);
         setChipBackgroundColor(ColorStateList.valueOf(ContextCompat.getColor(getContext(), R.color.color_video_update_error_bg)));
