@@ -3,6 +3,7 @@ package com.chinafocus.hvrskyworthvr.rtr.adapter;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ProgressBar;
 
 import androidx.annotation.NonNull;
 import androidx.constraintlayout.utils.widget.ImageFilterView;
@@ -31,13 +32,6 @@ public class VideoUpdateListAdapter extends RecyclerView.Adapter<BaseViewHolder>
         View inflate = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_video_update, parent, false);
         BaseViewHolder baseViewHolder = new BaseViewHolder(inflate);
 //        baseViewHolder.setIsRecyclable(false);
-
-//        ViewClickUtil.click(baseViewHolder.itemView, () -> {
-//            if (mCallback != null) {
-//                mCallback.onClick(baseViewHolder.getAdapterPosition());
-//            }
-//        });
-
         return baseViewHolder;
     }
 
@@ -51,6 +45,18 @@ public class VideoUpdateListAdapter extends RecyclerView.Adapter<BaseViewHolder>
 
         holder.setText(R.id.tv_video_update_title, mDownLoadHolders.get(position).getTitle());
         holder.setText(R.id.tv_video_update_duration, TimeUtil.timeParse(mDownLoadHolders.get(position).getDuration()));
+        holder.setText(R.id.tv_video_update_status, mDownLoadHolders.get(position).getCurrentStatus());
+        ((ProgressBar) holder.getView(R.id.pb_video_update)).setProgress(mDownLoadHolders.get(position).getProgress());
+    }
+
+    @Override
+    public void onBindViewHolder(@NonNull BaseViewHolder holder, int position, @NonNull List<Object> payloads) {
+        if (payloads.isEmpty()) {
+            onBindViewHolder(holder, position);
+        } else {
+            ((ProgressBar) holder.getView(R.id.pb_video_update)).setProgress(mDownLoadHolders.get(position).getProgress());
+            holder.setText(R.id.tv_video_update_status, mDownLoadHolders.get(position).getCurrentStatus());
+        }
     }
 
     @Override

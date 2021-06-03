@@ -17,12 +17,14 @@ import com.chinafocus.hvrskyworthvr.download.VideoUpdateService;
 import com.chinafocus.hvrskyworthvr.rtr.dialog.RtrVideoUpdateDialog;
 import com.chinafocus.hvrskyworthvr.service.event.download.VideoUpdateLatest;
 import com.chinafocus.hvrskyworthvr.service.event.download.VideoUpdateListError;
+import com.chinafocus.hvrskyworthvr.service.event.download.VideoUpdateManagerStatus;
 import com.chinafocus.hvrskyworthvr.util.SizeUtil;
 import com.chinafocus.hvrskyworthvr.util.statusbar.StatusBarCompatFactory;
 import com.chinafocus.hvrskyworthvr.util.widget.VideoUpdateStatusView;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
 
 import java.text.MessageFormat;
 import java.util.List;
@@ -30,6 +32,7 @@ import java.util.Objects;
 
 import static com.chinafocus.hvrskyworthvr.download.VideoUpdateService.VIDEO_UPDATE_SERVICE;
 import static com.chinafocus.hvrskyworthvr.download.VideoUpdateService.VIDEO_UPDATE_SERVICE_CHECK;
+import static com.chinafocus.hvrskyworthvr.download.VideoUpdateService.VIDEO_UPDATE_SERVICE_START;
 import static com.chinafocus.hvrskyworthvr.global.Constants.VIDEO_UPDATE_STATUS;
 
 public class VideoUpdateManagerActivity extends AppCompatActivity {
@@ -50,7 +53,8 @@ public class VideoUpdateManagerActivity extends AppCompatActivity {
         mSize = findViewById(R.id.tv_total_size);
 
         mVideoUpdateStatusView = findViewById(R.id.view_video_update_status);
-        mVideoUpdateStatusView.setNetErrorRetryClick(this::retryDownLoadEngine);
+        mVideoUpdateStatusView.setNetErrorRetryClick(this::retryVideoUpdateEngine);
+        mVideoUpdateStatusView.setRetryDownLoadClick(this::retryDownLoadEngine);
 
         mSwitch = findViewById(R.id.view_switch_button);
         findViewById(R.id.iv_video_update_back).setOnClickListener(v -> finish());
@@ -71,7 +75,7 @@ public class VideoUpdateManagerActivity extends AppCompatActivity {
                     if (switchStatus) {
                         Log.e("MyLog", " 开始网络下载对比 !!!!!!!!");
                         mVideoUpdateStatusView.setVisibility(View.INVISIBLE);
-                        startDownLoadEngine();
+                        startVideoUpdateEngine();
                     } else {
                         // TODO 需要清空当前下载任务
                         Log.e("MyLog", " 需要清空当前下载任务 !!!!!!!!");
@@ -88,7 +92,7 @@ public class VideoUpdateManagerActivity extends AppCompatActivity {
     private void initSwitch() {
         boolean isCheck = SPUtils.getInstance().getBoolean(VIDEO_UPDATE_STATUS);
         if (isCheck) {
-            startDownLoadEngine();
+            startVideoUpdateEngine();
         }
         mSwitch.setChecked(isCheck);
         mSwitch.setOnCheckedChangeListener((buttonView, isChecked) -> showVideoUpdateDialog());
@@ -98,6 +102,20 @@ public class VideoUpdateManagerActivity extends AppCompatActivity {
         String availableSize = SizeUtil.getFsAvailableSize(Objects.requireNonNull(getExternalFilesDir("Videos")).getAbsolutePath());
         String totalSize = SizeUtil.getFsTotalSize(Objects.requireNonNull(getExternalFilesDir("Videos")).getAbsolutePath());
         mSize.setText(MessageFormat.format("{0}可用 / 共{1}", availableSize, totalSize));
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    @SuppressWarnings("unused")
+    public void VideoUpdateManagerStatus(VideoUpdateManagerStatus event) {
+//        Log.d("MyLog", "-----局部刷新 进度-----");
+        mVideoUpdateStatusView.postVideoUpdateManagerStatus(event);
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    @SuppressWarnings("unused")
+    public void VideoUpdatePayload(DownLoadHolder event) {
+//        Log.d("MyLog", "-----局部刷新 进度-----");
+        mVideoUpdateStatusView.postPayload(event);
     }
 
     @Subscribe()
@@ -136,19 +154,37 @@ public class VideoUpdateManagerActivity extends AppCompatActivity {
     /**
      * 开启下载引擎
      */
-    private void startDownLoadEngine() {
+    private void startVideoUpdateEngine() {
         Intent intent = new Intent(this, VideoUpdateService.class);
         intent.putExtra(VIDEO_UPDATE_SERVICE, VIDEO_UPDATE_SERVICE_CHECK);
         startService(intent);
     }
 
     /**
-     * 大列表网络重下 !!!!!!!!
+     * 重新下载下载引擎
+     */
+    private void retryDownLoadEngine() {
+        Intent intent = new Intent(this, VideoUpdateService.class);
+        intent.putExtra(VIDEO_UPDATE_SERVICE, VIDEO_UPDATE_SERVICE_START);
+        startService(intent);
+    }
+
+    /**
+     * 重新比对网络大列表 !!!!!!!!
+     *
+     * @param v View
+     */
+    private void retryVideoUpdateEngine(View v) {
+        startVideoUpdateEngine();
+    }
+
+    /**
+     * 重新下载任务 !!!!!!!!
      *
      * @param v View
      */
     private void retryDownLoadEngine(View v) {
-        startDownLoadEngine();
+        retryDownLoadEngine();
     }
 
 }

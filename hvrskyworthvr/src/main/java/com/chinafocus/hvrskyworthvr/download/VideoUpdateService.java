@@ -48,7 +48,7 @@ public class VideoUpdateService extends Service {
             return;
         }
         // 1.拉取网络对比生成download任务
-        mDownLoadCreatorManager.checkedVideoUpdateTask();
+        mDownLoadCreatorManager.checkedTaskAndDownLoad();
     }
 
     private void startDownLoadTaskEngine() {

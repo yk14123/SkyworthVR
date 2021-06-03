@@ -10,10 +10,41 @@ public class DownLoadHolder implements Cloneable {
     private String finalPath;
     private String title;
     private long downloadFileRange;
-    private long fileLength;
+    private long localTempFileLength;
 
     private String imageUrl;
     private long duration;
+
+    // 当前下载任务的位置
+    private int pos;
+    // 已完成  等待下载  等待继续下载  下载速度
+    private String currentStatus;
+    // 进度
+    private int progress;
+
+    public int getProgress() {
+        return progress;
+    }
+
+    public void setProgress(int progress) {
+        this.progress = progress;
+    }
+
+    public String getCurrentStatus() {
+        return currentStatus;
+    }
+
+    public void setCurrentStatus(String currentStatus) {
+        this.currentStatus = currentStatus;
+    }
+
+    public int getPos() {
+        return pos;
+    }
+
+    public void setPos(int pos) {
+        this.pos = pos;
+    }
 
     public String getImageUrl() {
         return imageUrl;
@@ -31,12 +62,12 @@ public class DownLoadHolder implements Cloneable {
         this.duration = duration;
     }
 
-    public long getFileLength() {
-        return fileLength;
+    public long getLocalTempFileLength() {
+        return localTempFileLength;
     }
 
-    public void setFileLength(long fileLength) {
-        this.fileLength = fileLength;
+    public void setLocalTempFileLength(long localTempFileLength) {
+        this.localTempFileLength = localTempFileLength;
     }
 
     public long getDownloadFileRange() {

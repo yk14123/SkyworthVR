@@ -16,6 +16,7 @@ import com.blankj.utilcode.util.SPUtils;
 import com.chinafocus.hvrskyworthvr.R;
 import com.chinafocus.hvrskyworthvr.download.DownLoadHolder;
 import com.chinafocus.hvrskyworthvr.rtr.adapter.VideoUpdateListAdapter;
+import com.chinafocus.hvrskyworthvr.service.event.download.VideoUpdateManagerStatus;
 
 import java.util.List;
 
@@ -30,6 +31,7 @@ public class VideoUpdateStatusView extends FrameLayout {
     private RecyclerView mRecyclerView;
     private VideoUpdateListAdapter mVideoUpdateListAdapter;
     private AppCompatImageView mNetErrorRetry;
+    private VideoUpdateManagerStatusView mVideoUpdateManagerStatusView;
 
     public VideoUpdateStatusView(@NonNull Context context) {
         this(context, null);
@@ -55,13 +57,17 @@ public class VideoUpdateStatusView extends FrameLayout {
         mNetErrorRetry = findViewById(R.id.iv_video_update_net_error_retry);
 
         mRecyclerView = findViewById(R.id.rv_video_update_list);
+        mRecyclerView.setHasFixedSize(true);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+
+        mVideoUpdateManagerStatusView = findViewById(R.id.view_video_update_manager_status);
 
         boolean aBoolean = SPUtils.getInstance().getBoolean(VIDEO_UPDATE_STATUS);
         if (!aBoolean) {
             showVideoUpdateClose();
         }
     }
+
 
     public void showVideoUpdateClose() {
         setVisibility(VISIBLE);
@@ -98,7 +104,6 @@ public class VideoUpdateStatusView extends FrameLayout {
             mVideoUpdateListAdapter = new VideoUpdateListAdapter(data);
             mRecyclerView.setAdapter(mVideoUpdateListAdapter);
         }
-
     }
 
     public void setNetErrorRetryClick(OnClickListener l) {
@@ -108,4 +113,29 @@ public class VideoUpdateStatusView extends FrameLayout {
         });
     }
 
+    public void setRetryDownLoadClick(OnClickListener l) {
+        mVideoUpdateManagerStatusView.setOnClickListener(l);
+    }
+
+    public void postPayload(DownLoadHolder event) {
+        mVideoUpdateListAdapter.notifyItemChanged(event.getPos(), event);
+    }
+
+    public void postVideoUpdateManagerStatus(VideoUpdateManagerStatus event) {
+        if (event.getVideoUpdateStatus() == null) {
+            return;
+        }
+        switch (event.getVideoUpdateStatus()) {
+            case START:
+            case DOWNLOADING:
+                mVideoUpdateManagerStatusView.showDownLoading(event.getCurrentIndex(), event.getTotal());
+                break;
+            case COMPLETED:
+                mVideoUpdateManagerStatusView.showCompleted(event.getTotal());
+                break;
+            case RETRY:
+                mVideoUpdateManagerStatusView.showDownLoadError();
+                break;
+        }
+    }
 }

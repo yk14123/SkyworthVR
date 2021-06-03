@@ -16,7 +16,6 @@ import com.chinafocus.lib_network.net.errorhandler.HttpErrorHandler;
 
 import org.greenrobot.eventbus.EventBus;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 
@@ -57,7 +56,7 @@ public class DownLoadCreatorManager {
     /**
      * 拉取网络数据并对比本地文件，生成下载任务
      */
-    public void checkedVideoUpdateTask() {
+    public void checkedTaskAndDownLoad() {
         isDownLoadChecking = true;
         ApiManager
                 .getService(ApiMultiService.class)
@@ -78,15 +77,9 @@ public class DownLoadCreatorManager {
                         }
                         // TODO 有更新任务需要处理
                         Log.e("MyLog", " 有更新！！！ ");
-//                        DownLoadRunningManager instance = DownLoadRunningManager.getInstance();
-//                        instance.setDownLoadTaskTotal(mDownLoadHolders);
-//                        instance.startDownloadEngine();
-
-                        List<DownLoadHolder> loadHolders = new ArrayList<>();
-                        for (DownLoadHolder temp : mDownLoadHolders) {
-                            loadHolders.add(temp.clone());
-                        }
-                        EventBus.getDefault().post(loadHolders);
+                        DownLoadRunningManager instance = DownLoadRunningManager.getInstance();
+                        instance.setDownLoadTaskTotal(mDownLoadHolders);
+                        instance.startDownloadEngine();
                     } else {
                         // TODO 列表已经是最新的
                         Log.e("MyLog", " 列表已经是最新的 ");
@@ -100,7 +93,6 @@ public class DownLoadCreatorManager {
                     Log.e("MyLog", " 拉取横向大列表失败 throwable >>> " + throwable.getMessage());
                     mDownLoadHolders.clear();
                     isDownLoadChecking = false;
-
                     EventBus.getDefault().post(VideoUpdateListError.obtain());
                 })
                 .subscribe();

@@ -1,6 +1,6 @@
 package com.chinafocus.lib_network.net;
 
-public interface DownloadApkListener {
+public interface DownloadCallback {
     void onStart();
     void onProgress(int p);
     void onFinish(String path);

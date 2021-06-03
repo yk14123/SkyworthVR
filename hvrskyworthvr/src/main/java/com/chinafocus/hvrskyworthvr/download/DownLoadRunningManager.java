@@ -6,9 +6,12 @@ import android.util.Log;
 
 import com.blankj.utilcode.util.Utils;
 import com.chinafocus.hvrskyworthvr.net.ApiMultiService;
+import com.chinafocus.hvrskyworthvr.service.event.download.VideoUpdateManagerStatus;
 import com.chinafocus.lib_network.net.ApiManager;
-import com.chinafocus.lib_network.net.DownloadApkListener;
+import com.chinafocus.lib_network.net.DownloadCallback;
 import com.chinafocus.lib_network.net.errorhandler.HttpErrorHandler;
+
+import org.greenrobot.eventbus.EventBus;
 
 import java.io.File;
 import java.io.InputStream;
@@ -16,7 +19,6 @@ import java.io.RandomAccessFile;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
-import java.util.concurrent.atomic.AtomicLong;
 
 import io.reactivex.Observable;
 import io.reactivex.android.schedulers.AndroidSchedulers;
@@ -24,13 +26,12 @@ import io.reactivex.disposables.Disposable;
 import io.reactivex.schedulers.Schedulers;
 import okhttp3.ResponseBody;
 
+import static com.chinafocus.hvrskyworthvr.service.event.download.VideoUpdateManagerStatus.VideoUpdateStatus.COMPLETED;
+import static com.chinafocus.hvrskyworthvr.service.event.download.VideoUpdateManagerStatus.VideoUpdateStatus.DOWNLOADING;
+import static com.chinafocus.hvrskyworthvr.service.event.download.VideoUpdateManagerStatus.VideoUpdateStatus.RETRY;
+import static com.chinafocus.hvrskyworthvr.service.event.download.VideoUpdateManagerStatus.VideoUpdateStatus.START;
+
 public class DownLoadRunningManager {
-
-    // 是否正在下载中
-    private boolean isDownLoadRunning;
-
-    private List<DownLoadHolder> mDownLoadTaskTotal;
-    private Disposable mSpeedDisposable;
 
     private DownLoadRunningManager() {
         this.mDownLoadTaskTotal = new ArrayList<>();
@@ -47,9 +48,14 @@ public class DownLoadRunningManager {
     }
 
     // 重试次数
-    private static final int retryCount = 5;
-    // 下载任务总数量
-    private int taskTotalSize;
+    private static final int retryCount = 2;
+    private static final int retryTimeOut = 2000;
+    // 当前下载速度
+    private long mSpeedByte;
+    // 是否正在下载中
+    private boolean isDownLoadRunning;
+    // 下载列表
+    private List<DownLoadHolder> mDownLoadTaskTotal;
 
     /**
      * 设置下载任务
@@ -58,13 +64,20 @@ public class DownLoadRunningManager {
      */
     public void setDownLoadTaskTotal(List<DownLoadHolder> downLoadTaskTotal) {
         mDownLoadTaskTotal.clear();
-        for (DownLoadHolder temp : downLoadTaskTotal) {
+
+        for (int i = 0; i < downLoadTaskTotal.size(); i++) {
             try {
-                mDownLoadTaskTotal.add(temp.clone());
+                DownLoadHolder clone = downLoadTaskTotal.get(i).clone();
+                clone.setPos(i);
+                mDownLoadTaskTotal.add(clone);
             } catch (CloneNotSupportedException e) {
                 e.printStackTrace();
             }
         }
+    }
+
+    public List<DownLoadHolder> getDownLoadTaskTotal() {
+        return mDownLoadTaskTotal;
     }
 
     /**
@@ -72,7 +85,14 @@ public class DownLoadRunningManager {
      */
     public void startDownloadEngine() {
         if (mDownLoadTaskTotal.size() > 0) {
-            taskTotalSize = mDownLoadTaskTotal.size();
+
+            EventBus.getDefault().post(mDownLoadTaskTotal);
+            int pos = mDownLoadTaskTotal.get(0).getPos();
+            VideoUpdateManagerStatus.obtain().setTotal(mDownLoadTaskTotal.size());
+            VideoUpdateManagerStatus.obtain().setCurrentIndex(++pos);
+            VideoUpdateManagerStatus.obtain().setVideoUpdateStatus(START);
+            EventBus.getDefault().post(VideoUpdateManagerStatus.obtain());
+
             isDownLoadRunning = true;
             // 开始下载
             Observable
@@ -89,7 +109,7 @@ public class DownLoadRunningManager {
                     })
                     .retry(retryCount, throwable -> {
                         Log.e("MyLog", "---------- 等待5秒后 重试retry >>> ");
-                        SystemClock.sleep(5000);
+                        SystemClock.sleep(retryTimeOut);
                         return true;
                     })
                     .doOnNext(downLoadHolder -> {
@@ -101,27 +121,26 @@ public class DownLoadRunningManager {
                         if (b) {
                             Log.e("MyLog", " ------------ 从temp目录移动到 video目录 成功 >>>  " + downLoadHolder.getTitle());
                         } else {
+                            // TODO 如果出现了源文件已经存在。那么移动失败。需要把源文件删除再移动
                             Log.e("MyLog", " ------------ 从temp目录移动到 video目录 失败 >>> " + downLoadHolder.getTitle());
                         }
-                        --taskTotalSize;
                     })
                     .doOnComplete(() -> {
-                        if (taskTotalSize <= 0) {
-                            // TODO 全部任务完成
-                            Log.e("MyLog", " ------------ 所有任务全部下载完成 >>> ");
-                            isDownLoadRunning = false;
-                            if (mSpeedDisposable != null) {
-                                mSpeedDisposable.dispose();
-                            }
-                        }
+                        // TODO 全部任务完成
+                        Log.e("MyLog", " ------------ 所有任务全部下载完成 >>> ");
+                        isDownLoadRunning = false;
+                        VideoUpdateManagerStatus.obtain().setVideoUpdateStatus(COMPLETED);
+                        EventBus.getDefault().post(VideoUpdateManagerStatus.obtain());
                     })
                     .doOnError(throwable -> {
                         // TODO 下载失败
                         Log.e("MyLog", " ------------ 整体下载结束  抛出错误 >>> " + throwable.getMessage());
                         isDownLoadRunning = false;
-                        if (mSpeedDisposable != null) {
-                            mSpeedDisposable.dispose();
-                        }
+                        VideoUpdateManagerStatus.obtain().setVideoUpdateStatus(RETRY);
+                        EventBus.getDefault().post(VideoUpdateManagerStatus.obtain());
+
+
+
                     })
                     .subscribe();
         }
@@ -143,7 +162,7 @@ public class DownLoadRunningManager {
             downloadFileRange = length;
         }
         downLoadHolder.setDownloadFileRange(downloadFileRange);
-        downLoadHolder.setFileLength(length);
+        downLoadHolder.setLocalTempFileLength(length);
     }
 
     /**
@@ -158,34 +177,39 @@ public class DownLoadRunningManager {
                 .subscribeOn(Schedulers.trampoline())
                 .map(response -> {
                     if (response.isSuccessful() && response.body() != null) {
-                        mSpeedDisposable = Observable
+
+                        int pos = downLoadHolder.getPos();
+                        VideoUpdateManagerStatus.obtain().setCurrentIndex(++pos);
+                        VideoUpdateManagerStatus.obtain().setVideoUpdateStatus(DOWNLOADING);
+                        EventBus.getDefault().post(VideoUpdateManagerStatus.obtain());
+                        mSpeedByte = 0L;
+                        Disposable speedDisposable = Observable
                                 .interval(1L, TimeUnit.SECONDS)
                                 .map(aLong -> {
-                                    String s;
-                                    while (true) {
-                                        long i = mSpeedByteCount.get();
-                                        boolean b = mSpeedByteCount.compareAndSet(i, 0);
-                                        if (b) {
-                                            s = Formatter.formatFileSize(Utils.getApp().getApplicationContext(), i);
-                                            break;
-                                        }
-                                    }
-                                    return s;
+                                    long speed = mSpeedByte;
+                                    mSpeedByte = 0L;
+                                    String s = Formatter.formatFileSize(Utils.getApp().getApplicationContext(), speed);
+                                    return s.replaceAll(" ", "") + "/s";
                                 })
+                                .distinct()
                                 .observeOn(AndroidSchedulers.mainThread())
-                                .doOnNext(s -> Log.e("MyLog", "当前的速度为 >>> " + s + "/s" + " 当前线程为 >>> " + Thread.currentThread().getName()))
+                                .doOnNext(s -> {
+                                    downLoadHolder.setCurrentStatus(s);
+                                    EventBus.getDefault().post(downLoadHolder);
+                                    Log.e("MyLog", "当前的速度为 >>> " + s + " 当前线程为 >>> " + Thread.currentThread().getName());
+                                })
                                 .subscribe();
 
                         downloadFile(
                                 downLoadHolder.isEncrypted(),
-                                downLoadHolder.getFileLength(),
+                                downLoadHolder.getLocalTempFileLength(),
                                 response.body(),
                                 downLoadHolder.getOutputPath(),
-                                new DownloadApkListener() {
+                                new DownloadCallback() {
                                     @Override
                                     public void onStart() {
                                         // TODO 当前任务开始下载
-                                        if (downLoadHolder.getFileLength() == 0) {
+                                        if (downLoadHolder.getLocalTempFileLength() == 0) {
                                             Log.e("MyLog", " 开启新的下载 >>> " + downLoadHolder.getTitle());
                                         } else {
                                             Log.e("MyLog", " 开启断点续下 >>> " + downLoadHolder.getTitle());
@@ -196,6 +220,7 @@ public class DownLoadRunningManager {
                                     public void onProgress(int p) {
                                         // TODO 当前任务下载百分比
 //                                                    Log.e("MyLog", "----------下载中 >>> " + p);
+                                        downLoadHolder.setProgress(p);
                                     }
 
                                     @Override
@@ -203,6 +228,10 @@ public class DownLoadRunningManager {
                                         // TODO 当前任务下载完成
                                         Log.e("MyLog", " ------------ 下载完成 >>> " + path);
                                         downLoadHolder.setShouldDownload(false);
+                                        speedDisposable.dispose();
+                                        downLoadHolder.setProgress(100);
+                                        downLoadHolder.setCurrentStatus("已完成,并同步至视频列表");
+                                        EventBus.getDefault().post(downLoadHolder);
                                     }
 
                                     @Override
@@ -210,6 +239,9 @@ public class DownLoadRunningManager {
                                         // TODO 当前任务下载错误
                                         Log.e("MyLog", " ------------ 下载错误 >>> " + msg);
                                         downLoadHolder.setShouldDownload(true);
+                                        speedDisposable.dispose();
+                                        downLoadHolder.setCurrentStatus("0B/s");
+                                        EventBus.getDefault().post(downLoadHolder);
                                     }
                                 });
                     } else {
@@ -224,8 +256,6 @@ public class DownLoadRunningManager {
                 .subscribe();
     }
 
-    private AtomicLong mSpeedByteCount = new AtomicLong();
-
     /**
      * 写入硬盘
      *
@@ -235,7 +265,7 @@ public class DownLoadRunningManager {
      * @param localFilePath    当前文件路径
      * @param downloadCallback 状态回调
      */
-    private void downloadFile(boolean isEncrypted, long fileLength, ResponseBody responseBody, String localFilePath, final DownloadApkListener downloadCallback) {
+    private void downloadFile(boolean isEncrypted, long fileLength, ResponseBody responseBody, String localFilePath, final DownloadCallback downloadCallback) {
         downloadCallback.onStart();
         RandomAccessFile randomAccessFile = null;
         InputStream inputStream = null;
@@ -265,7 +295,7 @@ public class DownLoadRunningManager {
                 randomAccessFile.write(buf, 0, len);
                 total += len;
 
-                mSpeedByteCount.getAndAdd(len);
+                mSpeedByte += len;
 
                 lastProgress = progress;
                 progress = (int) (total * 100 / totalLength);
@@ -276,7 +306,6 @@ public class DownLoadRunningManager {
             }
             downloadCallback.onFinish(localFilePath);
         } catch (Exception e) {
-//            Log.d(TAG, e.getMessage());
             downloadCallback.onError(e.getMessage());
             e.printStackTrace();
         } finally {

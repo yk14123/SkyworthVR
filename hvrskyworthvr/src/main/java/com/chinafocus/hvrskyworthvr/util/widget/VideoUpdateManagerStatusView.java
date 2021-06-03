@@ -33,7 +33,7 @@ public class VideoUpdateManagerStatusView extends AppCompatTextView {
     }
 
     public void showDownLoading(int i, int total) {
-        setText(String.format(Locale.getDefault(), "正在下载%d/%d", i, total));
+        setText(String.format(Locale.getDefault(), "正在下载（%d/%d）", i, total));
         setTextColor(ContextCompat.getColor(getContext(), R.color.color_setting_status_gray));
         setEnabled(false);
     }

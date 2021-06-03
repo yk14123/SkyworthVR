@@ -28,14 +28,14 @@ class DownLoadHolderBuilder {
 
     public <T> DownLoadHolderBuilder(T data) {
         if (data instanceof VideoDetail) {
-            mTitle = "预览影片 :" + ((VideoDetail) data).getTitle();
+            mTitle = "正式影片 :" + ((VideoDetail) data).getTitle();
             mVideoDownloadUrl = ConfigManager.getInstance().getDefaultUrl() + ((VideoDetail) data).getVideoUrl();
             outputRootPath = "Videos/temp";
             finalRootPath = "Videos";
             imageUrl = ConfigManager.getInstance().getDefaultUrl() + ((VideoDetail) data).getImgUrl();
             duration = ((VideoDetail) data).getDuration();
         } else if (data instanceof VideoContentList) {
-            mTitle = "正式影片 :" + ((VideoContentList) data).getTitle();
+            mTitle = "预览影片 :" + ((VideoContentList) data).getTitle();
             mVideoDownloadUrl = ConfigManager.getInstance().getDefaultUrl() + ((VideoContentList) data).getMenuVideoUrl();
             outputRootPath = "preview/temp";
             finalRootPath = "preview";
@@ -96,6 +96,8 @@ class DownLoadHolderBuilder {
 
         downLoadHolder.setDuration(duration);
         downLoadHolder.setImageUrl(imageUrl);
+
+        downLoadHolder.setCurrentStatus("等待下载");
 
         if (isShouldDownload()) {
             downLoadHolder.setShouldDownload(true);

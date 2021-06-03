@@ -11,10 +11,10 @@
         android:id="@+id/iv_video_update_image_url"
         android:layout_width="130dp"
         android:layout_height="73dp"
+        android:scaleType="centerCrop"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        android:scaleType="centerCrop"
         app:round="3dp"
         tools:src="#f00" />
 
@@ -37,19 +37,21 @@
         android:layout_width="0dp"
         android:layout_height="2dp"
         android:layout_marginTop="30dp"
+        android:max="100"
         android:progressDrawable="@drawable/video_update_pb_bg_blog"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="@id/tv_video_update_title"
         app:layout_constraintTop_toBottomOf="@id/tv_video_update_title" />
 
     <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/tv_video_update_status"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="已完成"
         android:textSize="10sp"
         app:layout_constraintBottom_toBottomOf="@id/iv_video_update_image_url"
         app:layout_constraintStart_toStartOf="@id/pb_video_update"
-        tools:ignore="SmallSp" />
+        tools:ignore="SmallSp"
+        tools:text="等待下载" />
 
     <androidx.appcompat.widget.AppCompatTextView
         android:id="@+id/tv_video_update_duration"
