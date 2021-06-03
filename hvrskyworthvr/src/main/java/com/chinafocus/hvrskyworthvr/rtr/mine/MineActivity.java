@@ -1,12 +1,10 @@
 package com.chinafocus.hvrskyworthvr.rtr.mine;
 
-import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
-import android.widget.Switch;
 
 import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
@@ -17,7 +15,6 @@ import androidx.lifecycle.ViewModelProvider;
 
 import com.blankj.utilcode.util.AppUtils;
 import com.blankj.utilcode.util.BarUtils;
-import com.blankj.utilcode.util.SPUtils;
 import com.blankj.utilcode.util.ToastUtils;
 import com.chinafocus.huaweimdm.MdmMainActivity;
 import com.chinafocus.hvrskyworthvr.R;
@@ -26,14 +23,13 @@ import com.chinafocus.hvrskyworthvr.global.Constants;
 import com.chinafocus.hvrskyworthvr.model.DeviceInfoManager;
 import com.chinafocus.hvrskyworthvr.net.ApiMultiService;
 import com.chinafocus.hvrskyworthvr.rtr.dialog.RtrAppUpdateDialog;
-import com.chinafocus.hvrskyworthvr.rtr.dialog.RtrVideoUpdateDialog;
 import com.chinafocus.hvrskyworthvr.rtr.install.AppInstallViewModel;
+import com.chinafocus.hvrskyworthvr.rtr.videoupdate.VideoUpdateManagerActivity;
 import com.chinafocus.hvrskyworthvr.service.BluetoothService;
 import com.chinafocus.hvrskyworthvr.service.event.VrAboutConnect;
 import com.chinafocus.hvrskyworthvr.service.event.VrSyncPlayInfo;
 import com.chinafocus.hvrskyworthvr.ui.main.about.WebAboutActivity;
 import com.chinafocus.hvrskyworthvr.ui.setting.SettingActivity;
-import com.chinafocus.hvrskyworthvr.ui.widget.VideoUpdateChip;
 import com.chinafocus.hvrskyworthvr.util.TimeOutClickUtil;
 import com.chinafocus.hvrskyworthvr.util.ViewClickUtil;
 import com.chinafocus.hvrskyworthvr.util.statusbar.StatusBarCompatFactory;
@@ -45,7 +41,6 @@ import static com.chinafocus.hvrskyworthvr.global.Constants.ACTIVITY_ABOUT;
 import static com.chinafocus.hvrskyworthvr.global.Constants.RESULT_CODE_ACTIVE_DIALOG;
 import static com.chinafocus.hvrskyworthvr.global.Constants.RESULT_CODE_INACTIVE_DIALOG;
 import static com.chinafocus.hvrskyworthvr.global.Constants.RESULT_CODE_MINE_FINISH;
-import static com.chinafocus.hvrskyworthvr.global.Constants.VIDEO_UPDATE_STATUS;
 import static com.chinafocus.hvrskyworthvr.service.BluetoothService.CURRENT_VR_ONLINE_STATUS;
 import static com.chinafocus.hvrskyworthvr.service.BluetoothService.VR_STATUS_ONLINE;
 
@@ -54,10 +49,6 @@ public class MineActivity extends AppCompatActivity {
     private AppInstallViewModel mAppInstallViewModel;
     private RtrAppUpdateDialog mRtrAppUpdateDialog;
 
-    private RtrVideoUpdateDialog mRtrVideoUpdateDialog;
-    @SuppressLint("UseSwitchCompatOrMaterialCode")
-    private Switch mToggleButton;
-    private VideoUpdateChip mChip;
     private AppCompatImageView mTag;
 
     @Override
@@ -86,6 +77,11 @@ public class MineActivity extends AppCompatActivity {
         AppCompatTextView account = findViewById(R.id.tv_mine_about_account);
         account.setText(DeviceInfoManager.getInstance().getDeviceAccountName());
 
+        ViewClickUtil.click(
+                findViewById(R.id.tv_video_update_enter),
+                this::startVideoUpdateManagerActivity
+        );
+
         AppCompatTextView uuid = findViewById(R.id.tv_mine_about_uuid);
         uuid.setText(String.format("%s : %s", getString(R.string.setting_device_uuid), DeviceInfoManager.getInstance().getDeviceUUID()));
 
@@ -95,10 +91,6 @@ public class MineActivity extends AppCompatActivity {
             setResult(RESULT_CODE_INACTIVE_DIALOG, new Intent().putExtra("currentVideoId", VrSyncPlayInfo.obtain().getVideoId()));
             finish();
         });
-
-        mToggleButton = findViewById(R.id.view_switch_button);
-        mChip = findViewById(R.id.view_chip);
-        initVideoUpdateUI();
 
         ViewClickUtil.click(
                 findViewById(R.id.tv_about_user_protocol),
@@ -125,53 +117,6 @@ public class MineActivity extends AppCompatActivity {
         );
 
         initAppInstallViewModelObserve();
-    }
-
-    private void initVideoUpdateUI() {
-        mToggleButton.setOnCheckedChangeListener((buttonView, isChecked) -> isShowChip(isChecked));
-        boolean open = SPUtils.getInstance().getBoolean(VIDEO_UPDATE_STATUS);
-        mToggleButton.setChecked(open);
-        mToggleButton.setOnClickListener(v -> showVideoUpdateDialog());
-
-        mChip.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-//                chip.setChipIconVisible(show);
-//                show = !show;
-//                chip.setChipBackgroundColor(ColorStateList.valueOf(Color.parseColor("#F65A56")));
-                // TODO 开始下载
-
-//                mChip.showVideoUpdateRunning(3, 6);
-//                mChip.showVideoUpdateError();
-            }
-        });
-
-    }
-
-    private void isShowChip(boolean open) {
-        if (open) {
-            mChip.setVisibility(View.VISIBLE);
-        } else {
-            mChip.setVisibility(View.GONE);
-        }
-    }
-
-    private void showVideoUpdateDialog() {
-        if (mRtrVideoUpdateDialog == null) {
-            mRtrVideoUpdateDialog = new RtrVideoUpdateDialog(this);
-            mRtrVideoUpdateDialog.setOnCheckedChangeListener((isChange, isClearTask) -> {
-                if (!isChange) {
-                    mToggleButton.setChecked(!mToggleButton.isChecked());
-                }
-                if (isClearTask) {
-                    // TODO 需要清空当前下载任务
-                    Log.e("MyLog", " 需要清空当前下载任务 !!!!!!!!");
-                }
-            });
-        }
-        if (!mRtrVideoUpdateDialog.isShowing()) {
-            mRtrVideoUpdateDialog.show();
-        }
     }
 
     private void initAppInstallViewModelObserve() {
@@ -251,6 +196,11 @@ public class MineActivity extends AppCompatActivity {
 
     private boolean isAppInstallDialogShow() {
         return mRtrAppUpdateDialog != null && mRtrAppUpdateDialog.isShowing();
+    }
+
+    private void startVideoUpdateManagerActivity() {
+        startActivity(new Intent(this, VideoUpdateManagerActivity.class));
+        finish();
     }
 
     private void startSettingActivity() {

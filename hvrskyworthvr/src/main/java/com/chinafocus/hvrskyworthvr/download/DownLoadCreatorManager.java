@@ -8,10 +8,15 @@ import com.chinafocus.hvrskyworthvr.model.bean.VideoContentList;
 import com.chinafocus.hvrskyworthvr.model.bean.VideoDetail;
 import com.chinafocus.hvrskyworthvr.net.ApiMultiService;
 import com.chinafocus.hvrskyworthvr.net.RequestBodyManager;
+import com.chinafocus.hvrskyworthvr.service.event.download.VideoUpdateLatest;
+import com.chinafocus.hvrskyworthvr.service.event.download.VideoUpdateListError;
 import com.chinafocus.lib_network.net.ApiManager;
 import com.chinafocus.lib_network.net.beans.BaseResponse;
 import com.chinafocus.lib_network.net.errorhandler.HttpErrorHandler;
 
+import org.greenrobot.eventbus.EventBus;
+
+import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 
@@ -73,12 +78,19 @@ public class DownLoadCreatorManager {
                         }
                         // TODO 有更新任务需要处理
                         Log.e("MyLog", " 有更新！！！ ");
-                        DownLoadRunningManager instance = DownLoadRunningManager.getInstance();
-                        instance.setDownLoadTaskTotal(mDownLoadHolders);
-                        instance.startDownloadEngine();
+//                        DownLoadRunningManager instance = DownLoadRunningManager.getInstance();
+//                        instance.setDownLoadTaskTotal(mDownLoadHolders);
+//                        instance.startDownloadEngine();
+
+                        List<DownLoadHolder> loadHolders = new ArrayList<>();
+                        for (DownLoadHolder temp : mDownLoadHolders) {
+                            loadHolders.add(temp.clone());
+                        }
+                        EventBus.getDefault().post(loadHolders);
                     } else {
                         // TODO 列表已经是最新的
                         Log.e("MyLog", " 列表已经是最新的 ");
+                        EventBus.getDefault().post(VideoUpdateLatest.obtain());
                     }
                     mDownLoadHolders.clear();
                     isDownLoadChecking = false;
@@ -88,6 +100,8 @@ public class DownLoadCreatorManager {
                     Log.e("MyLog", " 拉取横向大列表失败 throwable >>> " + throwable.getMessage());
                     mDownLoadHolders.clear();
                     isDownLoadChecking = false;
+
+                    EventBus.getDefault().post(VideoUpdateListError.obtain());
                 })
                 .subscribe();
     }

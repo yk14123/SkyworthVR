@@ -18,7 +18,7 @@ public class VideoContentList {
     private String className;
     private String classStyleColor;
     private String imgUrl;
-    private int duration;
+    private long duration;
     private String title;
     private String intro;
     private int id;
@@ -57,11 +57,11 @@ public class VideoContentList {
         this.imgUrl = imgUrl;
     }
 
-    public int getDuration() {
+    public long getDuration() {
         return duration;
     }
 
-    public void setDuration(int duration) {
+    public void setDuration(long duration) {
         this.duration = duration;
     }
 

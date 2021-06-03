@@ -24,7 +24,6 @@ import com.bumptech.glide.request.target.CustomTarget;
 import com.bumptech.glide.request.transition.Transition;
 import com.chinafocus.hvrskyworthvr.GlideApp;
 import com.chinafocus.hvrskyworthvr.R;
-import com.chinafocus.hvrskyworthvr.download.VideoUpdateService;
 import com.chinafocus.hvrskyworthvr.exo.ExoManager;
 import com.chinafocus.hvrskyworthvr.exo.tools.ExoMediaHelper;
 import com.chinafocus.hvrskyworthvr.global.ConfigManager;
@@ -244,7 +243,9 @@ public class ShowActivity extends AppCompatActivity {
             }
         });
 
-        startService(new Intent(this, VideoUpdateService.class));
+//        Intent intent = new Intent(this, VideoUpdateService.class);
+//        intent.putExtra(VIDEO_UPDATE_SERVICE, VIDEO_UPDATE_SERVICE_CHECK);
+//        startService(intent);
     }
 
     private void initAppInstallViewModelObserve() {

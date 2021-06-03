@@ -20,15 +20,15 @@ public class VideoDetail {
      * nextId : 10107
      */
 
-//    private String imgUrl;
-//    private int duration;
+    private String imgUrl;
+    private long duration;
     private String title;
     private String description;
-//    private String copyright;
+    //    private String copyright;
     private String videoUrl;
     private Object audioUrl;
     private String subtitle;
-//    private Object saleStartTime;
+    //    private Object saleStartTime;
 //    private Object saleEndTime;
 //    private String startTime;
 //    private String endTime;
@@ -37,6 +37,22 @@ public class VideoDetail {
     private int id;
     private int nextId;
     private int nextType;
+
+    public String getImgUrl() {
+        return imgUrl;
+    }
+
+    public void setImgUrl(String imgUrl) {
+        this.imgUrl = imgUrl;
+    }
+
+    public long getDuration() {
+        return duration;
+    }
+
+    public void setDuration(long duration) {
+        this.duration = duration;
+    }
 
     public int getNextType() {
         return nextType;

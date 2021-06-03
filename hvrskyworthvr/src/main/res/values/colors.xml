@@ -19,6 +19,7 @@
     <color name="color_black">#000000</color>
     <color name="color_F6">#F6F6F6</color>
 
+    <color name="color_black_a10">#1A000000</color>
     <color name="color_black_a20">#33000000</color>
     <color name="color_black_a30">#4D000000</color>
     <color name="color_black_a40">#66000000</color>
@@ -62,4 +63,7 @@
 
     <color name="color_video_update_ok_bg">#FF065FED</color>
     <color name="color_video_update_error_bg">#FFF65A56</color>
+    <color name="color_video_update_icon_enable_bg">#FF1EBE83</color>
+    <color name="color_video_update_icon_disable_bg">#FFDADADD</color>
+
 </resources>

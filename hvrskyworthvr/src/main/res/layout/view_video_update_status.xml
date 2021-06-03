@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <androidx.appcompat.widget.AppCompatImageView
+        android:id="@+id/appCompatImageView9"
+        android:layout_width="402dp"
+        android:layout_height="128dp"
+        android:src="@drawable/video_update_close_bg"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.39" />
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/appCompatTextView12"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="110dp"
+        android:gravity="center"
+        android:text="@string/video_update_close_text"
+        android:textColor="@color/color_setting_status_gray"
+        android:textSize="16sp"
+        app:layout_constraintEnd_toEndOf="@id/appCompatImageView9"
+        app:layout_constraintStart_toStartOf="@id/appCompatImageView9"
+        app:layout_constraintTop_toTopOf="@id/appCompatImageView9" />
+
+    <androidx.appcompat.widget.AppCompatImageView
+        android:id="@+id/iv_video_update_net_error_retry"
+        android:layout_width="402dp"
+        android:layout_height="128dp"
+        android:src="@drawable/video_update_net_error_bg"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.39" />
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/appCompatTextView13"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:text="@string/video_update_get_text4"
+        android:textColor="@color/color_setting_status_gray"
+        android:textSize="16sp"
+        app:layout_constraintBottom_toBottomOf="@id/iv_video_update_net_error_retry"
+        app:layout_constraintEnd_toEndOf="@id/iv_video_update_net_error_retry"
+        app:layout_constraintStart_toStartOf="@id/iv_video_update_net_error_retry" />
+
+    <androidx.appcompat.widget.AppCompatImageView
+        android:id="@+id/appCompatImageView8"
+        android:layout_width="402dp"
+        android:layout_height="128dp"
+        android:src="@drawable/video_update_latest_bg"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.39" />
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/appCompatTextView14"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="20dp"
+        android:gravity="center"
+        android:text="@string/video_update_get_text5"
+        android:textColor="@color/color_setting_status_gray"
+        android:textSize="16sp"
+        app:layout_constraintBottom_toBottomOf="@id/appCompatImageView8"
+        app:layout_constraintEnd_toEndOf="@id/appCompatImageView8"
+        app:layout_constraintStart_toStartOf="@id/appCompatImageView8" />
+
+    <androidx.constraintlayout.widget.Group
+        android:id="@+id/group_video_update_close"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:visibility="gone"
+        app:constraint_referenced_ids="appCompatImageView9,appCompatTextView12" />
+
+    <androidx.constraintlayout.widget.Group
+        android:id="@+id/group_video_update_net_error"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:visibility="gone"
+        app:constraint_referenced_ids="appCompatTextView13,iv_video_update_net_error_retry" />
+
+    <androidx.constraintlayout.widget.Group
+        android:id="@+id/group_video_update_latest"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:visibility="gone"
+        app:constraint_referenced_ids="appCompatTextView14,appCompatImageView8" />
+
+    <com.chinafocus.hvrskyworthvr.util.widget.VideoUpdateManagerStatusView
+        android:id="@+id/view_video_update_manager_status"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="38dp"
+        android:layout_marginTop="30dp"
+        android:includeFontPadding="false"
+        android:padding="10dp"
+        android:text="下载完成（3/3）"
+        android:textColor="@color/color_black"
+        android:textSize="13sp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rv_video_update_list"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/view_video_update_manager_status" />
+
+    <androidx.constraintlayout.widget.Group
+        android:id="@+id/group_video_update_download"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:visibility="gone"
+        app:constraint_referenced_ids="rv_video_update_list,view_video_update_manager_status" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

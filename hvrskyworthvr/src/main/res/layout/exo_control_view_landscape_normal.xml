@@ -200,7 +200,7 @@
         app:layout_constraintStart_toStartOf="@+id/appCompatTextView4" />
 
     <ProgressBar
-        android:id="@+id/pb_time_bar"
+        android:id="@+id/pb_video_update"
         style="?android:attr/progressBarStyleHorizontal"
         android:layout_width="0dp"
         android:layout_height="3dp"
@@ -225,7 +225,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:visibility="visible"
-        app:constraint_referenced_ids="appCompatImageView4,appCompatTextView4,pb_time_bar" />
+        app:constraint_referenced_ids="appCompatImageView4,appCompatTextView4,pb_video_update" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -48,7 +48,7 @@ public class RtrVideoUpdateDialog extends Dialog {
             boolean open = SPUtils.getInstance().getBoolean(VIDEO_UPDATE_STATUS);
             SPUtils.getInstance().put(VIDEO_UPDATE_STATUS, !open);
             if (mOnCheckedChangeListener != null) {
-                mOnCheckedChangeListener.onCheckedChanged(true, open);
+                mOnCheckedChangeListener.onCheckedChanged(true, !open);
             }
             dismiss();
         });
@@ -82,7 +82,7 @@ public class RtrVideoUpdateDialog extends Dialog {
     }
 
     public interface OnCheckedChangeListener {
-        void onCheckedChanged(boolean isChange, boolean isClearTask);
+        void onCheckedChanged(boolean isChange, boolean switchStatus);
     }
 
     private OnCheckedChangeListener mOnCheckedChangeListener;

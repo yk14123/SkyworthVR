@@ -1,8 +1,10 @@
 package com.chinafocus.hvrskyworthvr.download;
 
 import android.os.SystemClock;
+import android.text.format.Formatter;
 import android.util.Log;
 
+import com.blankj.utilcode.util.Utils;
 import com.chinafocus.hvrskyworthvr.net.ApiMultiService;
 import com.chinafocus.lib_network.net.ApiManager;
 import com.chinafocus.lib_network.net.DownloadApkListener;
@@ -13,8 +15,12 @@ import java.io.InputStream;
 import java.io.RandomAccessFile;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicLong;
 
 import io.reactivex.Observable;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.disposables.Disposable;
 import io.reactivex.schedulers.Schedulers;
 import okhttp3.ResponseBody;
 
@@ -24,6 +30,7 @@ public class DownLoadRunningManager {
     private boolean isDownLoadRunning;
 
     private List<DownLoadHolder> mDownLoadTaskTotal;
+    private Disposable mSpeedDisposable;
 
     private DownLoadRunningManager() {
         this.mDownLoadTaskTotal = new ArrayList<>();
@@ -103,12 +110,18 @@ public class DownLoadRunningManager {
                             // TODO 全部任务完成
                             Log.e("MyLog", " ------------ 所有任务全部下载完成 >>> ");
                             isDownLoadRunning = false;
+                            if (mSpeedDisposable != null) {
+                                mSpeedDisposable.dispose();
+                            }
                         }
                     })
                     .doOnError(throwable -> {
                         // TODO 下载失败
                         Log.e("MyLog", " ------------ 整体下载结束  抛出错误 >>> " + throwable.getMessage());
                         isDownLoadRunning = false;
+                        if (mSpeedDisposable != null) {
+                            mSpeedDisposable.dispose();
+                        }
                     })
                     .subscribe();
         }
@@ -145,6 +158,24 @@ public class DownLoadRunningManager {
                 .subscribeOn(Schedulers.trampoline())
                 .map(response -> {
                     if (response.isSuccessful() && response.body() != null) {
+                        mSpeedDisposable = Observable
+                                .interval(1L, TimeUnit.SECONDS)
+                                .map(aLong -> {
+                                    String s;
+                                    while (true) {
+                                        long i = mSpeedByteCount.get();
+                                        boolean b = mSpeedByteCount.compareAndSet(i, 0);
+                                        if (b) {
+                                            s = Formatter.formatFileSize(Utils.getApp().getApplicationContext(), i);
+                                            break;
+                                        }
+                                    }
+                                    return s;
+                                })
+                                .observeOn(AndroidSchedulers.mainThread())
+                                .doOnNext(s -> Log.e("MyLog", "当前的速度为 >>> " + s + "/s" + " 当前线程为 >>> " + Thread.currentThread().getName()))
+                                .subscribe();
+
                         downloadFile(
                                 downLoadHolder.isEncrypted(),
                                 downLoadHolder.getFileLength(),
@@ -193,6 +224,8 @@ public class DownLoadRunningManager {
                 .subscribe();
     }
 
+    private AtomicLong mSpeedByteCount = new AtomicLong();
+
     /**
      * 写入硬盘
      *
@@ -231,6 +264,9 @@ public class DownLoadRunningManager {
             while ((len = inputStream.read(buf)) != -1) {
                 randomAccessFile.write(buf, 0, len);
                 total += len;
+
+                mSpeedByteCount.getAndAdd(len);
+
                 lastProgress = progress;
                 progress = (int) (total * 100 / totalLength);
                 if (progress > 0 && progress != lastProgress) {

@@ -12,7 +12,7 @@ public class TimeUtil {
      * @param duration 音乐时长
      * @return
      */
-    public static String timeParse(int duration) {
+    public static String timeParse(long duration) {
         String time = "";
         long minute = duration / 60;
         long seconds = duration % 60;

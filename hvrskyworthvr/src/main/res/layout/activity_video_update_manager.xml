@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".rtr.videoupdate.VideoUpdateManagerActivity">
+
+    <androidx.appcompat.widget.AppCompatImageView
+        android:id="@+id/iv_video_update_back"
+        android:layout_width="42dp"
+        android:layout_height="42dp"
+        android:layout_marginStart="36dp"
+        android:layout_marginTop="27dp"
+        android:padding="10dp"
+        android:src="@drawable/sky_worth_setting_about_back"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/appCompatTextView10"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="6dp"
+        android:includeFontPadding="false"
+        android:text="@string/video_update_get_text2"
+        android:textColor="@color/color_setting_id"
+        android:textSize="22sp"
+        app:layout_constraintBottom_toBottomOf="@id/iv_video_update_back"
+        app:layout_constraintStart_toEndOf="@id/iv_video_update_back"
+        app:layout_constraintTop_toTopOf="@id/iv_video_update_back" />
+
+    <Switch
+        android:id="@+id/view_switch_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="18dp"
+        android:checked="true"
+        android:padding="10dp"
+        android:showText="false"
+        android:thumb="@drawable/thumb_selector"
+        android:track="@drawable/track_selector_bg"
+        android:visibility="visible"
+        app:layout_constraintBottom_toBottomOf="@id/iv_video_update_back"
+        app:layout_constraintStart_toEndOf="@id/appCompatTextView10"
+        app:layout_constraintTop_toTopOf="@id/iv_video_update_back"
+        tools:ignore="UseSwitchCompatOrMaterialXml" />
+
+    <View
+        android:id="@+id/view2"
+        android:layout_width="match_parent"
+        android:layout_height="59dp"
+        android:background="@color/color_DA"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="41dp"
+        android:includeFontPadding="false"
+        android:text="@string/video_update_get_text3"
+        android:textSize="13sp"
+        app:layout_constraintBottom_toBottomOf="@id/view2"
+        app:layout_constraintStart_toStartOf="@id/view2"
+        app:layout_constraintTop_toTopOf="@id/view2" />
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/tv_total_size"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="36dp"
+        android:includeFontPadding="false"
+        android:textColor="@color/color_setting_id_create"
+        android:textSize="11sp"
+        app:layout_constraintBottom_toBottomOf="@id/view2"
+        app:layout_constraintEnd_toEndOf="@id/view2"
+        app:layout_constraintTop_toTopOf="@id/view2"
+        tools:ignore="SmallSp"
+        tools:text="102.17GB可用 / 共956.45GB" />
+
+    <com.chinafocus.hvrskyworthvr.util.widget.VideoUpdateStatusView
+        android:id="@+id/view_video_update_status"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:layout_constraintBottom_toTopOf="@id/view2"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/iv_video_update_back" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

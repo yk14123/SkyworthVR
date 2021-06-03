@@ -4,6 +4,7 @@ import android.os.Bundle;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.chinafocus.skyworthvr.app.AppUtilEngineHelper;
 import com.chinafocus.skyworthvr.bluetooth.BluetoothEngineHelper;
 import com.chinafocus.skyworthvr.device.DeviceEngineHelper;
 import com.chinafocus.skyworthvr.sensor.SensorEngineHelper;
@@ -20,6 +21,7 @@ public class Demo extends AppCompatActivity {
     private WifiEngineHelper mWifiEngineHelper;
     private DeviceEngineHelper mDeviceEngineHelper;
     private SensorEngineHelper mSensorEngineHelper;
+    private AppUtilEngineHelper mAppUtilEngineHelper;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -34,6 +36,9 @@ public class Demo extends AppCompatActivity {
 
         mWifiEngineHelper = new WifiEngineHelper();
         mWifiEngineHelper.initWifiEngine();
+
+        mAppUtilEngineHelper = new AppUtilEngineHelper();
+        mAppUtilEngineHelper.initAppUtilEngine();
 
         // 1.通过反射创建对象
         mDeviceEngineHelper = new DeviceEngineHelper();
@@ -91,6 +96,12 @@ public class Demo extends AppCompatActivity {
 
     public void retryBluetoothConnect() {
         bluetoothEngineHelper.retryConnect();
+    }
+
+    // --------------安装Apk调用--------------------
+
+    public void installApk(String path) {
+        mAppUtilEngineHelper.installApk(path);
     }
 
 }

@@ -16,24 +16,31 @@ class DownLoadHolderBuilder {
     private String mVideoDownloadUrl;
     private String mVideoSimpleName;
     private String mVideoFullName;
-    private String mTitle;
     // 默认加密
     private boolean isEncrypted = true;
 
     private String outputRootPath;
     private String finalRootPath;
 
+    private String mTitle;
+    private String imageUrl;
+    private long duration;
+
     public <T> DownLoadHolderBuilder(T data) {
         if (data instanceof VideoDetail) {
-            mTitle = ((VideoDetail) data).getTitle();
+            mTitle = "预览影片 :" + ((VideoDetail) data).getTitle();
             mVideoDownloadUrl = ConfigManager.getInstance().getDefaultUrl() + ((VideoDetail) data).getVideoUrl();
             outputRootPath = "Videos/temp";
             finalRootPath = "Videos";
+            imageUrl = ConfigManager.getInstance().getDefaultUrl() + ((VideoDetail) data).getImgUrl();
+            duration = ((VideoDetail) data).getDuration();
         } else if (data instanceof VideoContentList) {
-            mTitle = ((VideoContentList) data).getTitle();
+            mTitle = "正式影片 :" + ((VideoContentList) data).getTitle();
             mVideoDownloadUrl = ConfigManager.getInstance().getDefaultUrl() + ((VideoContentList) data).getMenuVideoUrl();
             outputRootPath = "preview/temp";
             finalRootPath = "preview";
+            imageUrl = ConfigManager.getInstance().getDefaultUrl() + ((VideoContentList) data).getImgUrl();
+            duration = ((VideoContentList) data).getDuration();
         }
     }
 
@@ -86,6 +93,10 @@ class DownLoadHolderBuilder {
         downLoadHolder.setTitle(mTitle);
         downLoadHolder.setOutputPath(getOutputPath());
         downLoadHolder.setFinalPath(getFinalPath());
+
+        downLoadHolder.setDuration(duration);
+        downLoadHolder.setImageUrl(imageUrl);
+
         if (isShouldDownload()) {
             downLoadHolder.setShouldDownload(true);
         }

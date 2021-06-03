@@ -22,6 +22,11 @@
         android:usesCleartextTraffic="true"
         tools:targetApi="m">
 
+        <activity
+            android:name=".rtr.videoupdate.VideoUpdateManagerActivity"
+            android:screenOrientation="landscape"
+            android:theme="@style/AppTheme" />
+
         <meta-data
             android:name="com.chinafocus.hvrskyworthvr.MyAppGlideModule"
             android:value="AppGlideModule" />
@@ -35,11 +40,12 @@
             android:name=".rtr.mine.MineActivity"
             android:screenOrientation="landscape"
             android:theme="@style/Theme.MaterialComponents.Light.NoActionBar">
-            <!--            <intent-filter>-->
-            <!--                <action android:name="android.intent.action.MAIN" />-->
 
-            <!--                <category android:name="android.intent.category.LAUNCHER" />-->
-            <!--            </intent-filter>-->
+            <!-- <intent-filter> -->
+            <!-- <action android:name="android.intent.action.MAIN" /> -->
+
+            <!-- <category android:name="android.intent.category.LAUNCHER" /> -->
+            <!-- </intent-filter> -->
         </activity>
         <activity
             android:name=".rtr.media.RtrMediaPlayActivity"
@@ -95,7 +101,6 @@
             android:name="com.tencent.smtt.export.external.DexClassLoaderProviderService"
             android:label="dexopt"
             android:process=":dexopt" />
-
         <service android:name=".download.VideoUpdateService" />
     </application>
 
