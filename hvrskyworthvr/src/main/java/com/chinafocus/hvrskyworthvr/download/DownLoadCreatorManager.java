@@ -1,9 +1,11 @@
 package com.chinafocus.hvrskyworthvr.download;
 
-import android.content.Context;
+import android.annotation.SuppressLint;
+import android.text.TextUtils;
 import android.util.Log;
 
-import com.blankj.utilcode.util.Utils;
+import com.blankj.utilcode.util.FileUtils;
+import com.chinafocus.hvrskyworthvr.global.ConfigManager;
 import com.chinafocus.hvrskyworthvr.model.bean.VideoContentList;
 import com.chinafocus.hvrskyworthvr.model.bean.VideoDetail;
 import com.chinafocus.hvrskyworthvr.net.ApiMultiService;
@@ -16,11 +18,15 @@ import com.chinafocus.lib_network.net.errorhandler.HttpErrorHandler;
 
 import org.greenrobot.eventbus.EventBus;
 
+import java.io.File;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 import io.reactivex.Observable;
 import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.disposables.Disposable;
 import io.reactivex.schedulers.Schedulers;
 
 public class DownLoadCreatorManager {
@@ -30,11 +36,9 @@ public class DownLoadCreatorManager {
 
     // 是否加密
     private boolean isEncrypted = true;
-    private Context mContext;
 
-    private DownLoadCreatorManager() {
-        this.mContext = Utils.getApp().getApplicationContext();
-    }
+    // 整体流程控制
+    private Disposable mSubscribe;
 
     private static DownLoadCreatorManager INSTANCE = new DownLoadCreatorManager();
 
@@ -53,30 +57,40 @@ public class DownLoadCreatorManager {
 
     private List<DownLoadHolder> mDownLoadHolders = new CopyOnWriteArrayList<>();
 
+    private List<String> mDeletedName = new ArrayList<>();
+
     /**
      * 拉取网络数据并对比本地文件，生成下载任务
      */
     public void checkedTaskAndDownLoad() {
         isDownLoadChecking = true;
-        ApiManager
-                .getService(ApiMultiService.class)
-                .getEduVideoContentList(RequestBodyManager.getVideoListRequestBody(1))
-                .subscribeOn(Schedulers.io())
-                .onErrorResumeNext(new HttpErrorHandler<>())
+        // 防止清理不干净，这里需要再次清理集合
+        mDownLoadHolders.clear();
+        mDeletedName.clear();
+        doWork();
+    }
+
+    @SuppressLint("NewApi")
+    private void doWork() {
+        mSubscribe = createVideoContentListObservable()
+                .doOnNext(listBaseResponse -> {
+                    listBaseResponse.getData().forEach(this::addDeletedName);
+                    checkPreVideoFileDeleted();
+                })
                 .flatMap(listBaseResponse -> Observable.fromIterable(listBaseResponse.getData()))
                 .doOnNext(this::createDownLoadHolder)
                 .flatMap(this::createVideoDetailObservable)
                 .map(BaseResponse::getData)
                 .doOnNext(this::createDownLoadHolder)
+                .doOnNext(this::addDeletedName)
                 .observeOn(AndroidSchedulers.mainThread())
+                .doOnComplete(this::checkRealVideoFileDeleted)
                 .doOnComplete(() -> {
                     if (mDownLoadHolders.size() > 0) {
                         for (DownLoadHolder downLoadHolder : mDownLoadHolders) {
                             Log.e("MyLog", " DownLoadHolder 名称是 >>> " + downLoadHolder.getTitle());
-                            Log.e("MyLog", " DownLoadHolder 地址是 >>> " + downLoadHolder.getDownLoadUrl());
                         }
                         // TODO 有更新任务需要处理
-                        Log.e("MyLog", " 有更新！！！ ");
                         DownLoadRunningManager instance = DownLoadRunningManager.getInstance();
                         instance.setDownLoadTaskTotal(mDownLoadHolders);
                         instance.startDownloadEngine();
@@ -85,17 +99,63 @@ public class DownLoadCreatorManager {
                         Log.e("MyLog", " 列表已经是最新的 ");
                         EventBus.getDefault().post(VideoUpdateLatest.obtain());
                     }
-                    mDownLoadHolders.clear();
-                    isDownLoadChecking = false;
                 })
                 .doOnError(throwable -> {
                     // TODO 最开始拉取列表对比就失败了，如果拉取横向大列表成功，但是中途再拉取详情出错不走这个异常
                     Log.e("MyLog", " 拉取横向大列表失败 throwable >>> " + throwable.getMessage());
-                    mDownLoadHolders.clear();
-                    isDownLoadChecking = false;
                     EventBus.getDefault().post(VideoUpdateListError.obtain());
                 })
+                .doFinally(this::clearAll)
                 .subscribe();
+    }
+
+    @SuppressLint("NewApi")
+    private <T> void addDeletedName(T t) {
+        String name = null;
+        if (t instanceof VideoDetail) {
+            name = ((VideoDetail) t).getVideoUrl();
+        } else if (t instanceof VideoContentList) {
+            name = ((VideoContentList) t).getMenuVideoUrl();
+        }
+
+        Optional.ofNullable(name)
+                .filter(s -> !TextUtils.isEmpty(s))
+                .ifPresent(s -> mDeletedName.add(s));
+    }
+
+    private void checkPreVideoFileDeleted() {
+        checkAndDeletedFile(ConfigManager.getInstance().getPreVideoFilePath());
+    }
+
+    private void checkRealVideoFileDeleted() {
+        checkAndDeletedFile(ConfigManager.getInstance().getRealVideoFilePath());
+    }
+
+    private void checkAndDeletedFile(String filePath) {
+        File file = new File(filePath);
+        String[] list = file.list();
+        if (list != null) {
+            for (String s : list) {
+                boolean isDeleted = true;
+                String tempName;
+                int i = s.indexOf(".");
+                if (i != -1) {
+                    tempName = s.substring(0, i);
+                } else {
+                    tempName = s;
+                }
+                for (String temp : mDeletedName) {
+                    if (temp.contains(tempName)) {
+                        isDeleted = false;
+                        break;
+                    }
+                }
+                if (isDeleted) {
+                    FileUtils.delete(s);
+                }
+            }
+        }
+        mDeletedName.clear();
     }
 
     /**
@@ -110,7 +170,6 @@ public class DownLoadCreatorManager {
                 .subscribeOn(Schedulers.trampoline())
                 .map(videoDetail ->
                         new DownLoadHolderBuilder(videoDetail)
-                                .setContext(mContext)
                                 .setEncrypted(isEncrypted)
                                 .build()
                 )
@@ -135,6 +194,38 @@ public class DownLoadCreatorManager {
                 .getVideoDetailData(RequestBodyManager.getVideoDetailDataRequestBody(videoContentList.getType(), videoContentList.getId()))
                 .subscribeOn(Schedulers.trampoline())
                 .onErrorResumeNext(new HttpErrorHandler<>());
+    }
+
+    /**
+     * 创建横向大列表VideoContentList网络接口Observable
+     *
+     * @return 网络接口Observable
+     */
+    private Observable<BaseResponse<List<VideoContentList>>> createVideoContentListObservable() {
+        return ApiManager
+                .getService(ApiMultiService.class)
+                .getEduVideoContentList(RequestBodyManager.getVideoListRequestBody(1))
+                .subscribeOn(Schedulers.io())
+                .onErrorResumeNext(new HttpErrorHandler<>());
+    }
+
+    /**
+     * 手动关闭下载引擎按钮
+     */
+    void cancelDownLoadEngine() {
+        if (mSubscribe != null && !mSubscribe.isDisposed()) {
+            mSubscribe.dispose();
+        }
+        mSubscribe = null;
+    }
+
+    /**
+     * 清空数据和状态
+     */
+    private void clearAll() {
+        isDownLoadChecking = false;
+        mDownLoadHolders.clear();
+        mDeletedName.clear();
     }
 
 }

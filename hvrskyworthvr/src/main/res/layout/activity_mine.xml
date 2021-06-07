@@ -170,6 +170,16 @@
         tools:layout_editor_absoluteY="1041dp" />
 
     <androidx.appcompat.widget.AppCompatImageView
+        android:id="@+id/iv_video_update_icon_tag"
+        android:layout_width="5dp"
+        android:layout_height="5dp"
+        android:src="@drawable/rtr_icon_check_version"
+        android:visibility="gone"
+        android:layout_marginTop="10dp"
+        app:layout_constraintEnd_toEndOf="@id/tv_video_update_enter"
+        app:layout_constraintTop_toTopOf="@id/tv_video_update_enter" />
+
+    <androidx.appcompat.widget.AppCompatImageView
         android:id="@+id/iv_setting_mdm"
         android:layout_width="200dp"
         android:layout_height="200dp"

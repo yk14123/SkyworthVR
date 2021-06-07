@@ -1,6 +1,6 @@
 package com.chinafocus.hvrskyworthvr.download;
 
-import android.content.Context;
+import android.graphics.Color;
 
 import com.chinafocus.hvrskyworthvr.global.ConfigManager;
 import com.chinafocus.hvrskyworthvr.model.bean.VideoContentList;
@@ -10,9 +10,11 @@ import java.io.File;
 
 import io.reactivex.Observable;
 
+import static com.chinafocus.hvrskyworthvr.download.VideoType.PRE_VIDEO;
+import static com.chinafocus.hvrskyworthvr.download.VideoType.REAL_VIDEO;
+
 class DownLoadHolderBuilder {
 
-    private Context mContext;
     private String mVideoDownloadUrl;
     private String mVideoSimpleName;
     private String mVideoFullName;
@@ -26,27 +28,26 @@ class DownLoadHolderBuilder {
     private String imageUrl;
     private long duration;
 
+    private VideoType mVideoType;
+
     public <T> DownLoadHolderBuilder(T data) {
         if (data instanceof VideoDetail) {
-            mTitle = "正式影片 :" + ((VideoDetail) data).getTitle();
+            mTitle = "正片 ： " + ((VideoDetail) data).getTitle();
             mVideoDownloadUrl = ConfigManager.getInstance().getDefaultUrl() + ((VideoDetail) data).getVideoUrl();
-            outputRootPath = "Videos/temp";
-            finalRootPath = "Videos";
+            outputRootPath = ConfigManager.getInstance().getRealVideoTempFilePath();
+            finalRootPath = ConfigManager.getInstance().getRealVideoFilePath();
             imageUrl = ConfigManager.getInstance().getDefaultUrl() + ((VideoDetail) data).getImgUrl();
             duration = ((VideoDetail) data).getDuration();
+            mVideoType = REAL_VIDEO;
         } else if (data instanceof VideoContentList) {
-            mTitle = "预览影片 :" + ((VideoContentList) data).getTitle();
+            mTitle = "预览 ： " + ((VideoContentList) data).getTitle();
             mVideoDownloadUrl = ConfigManager.getInstance().getDefaultUrl() + ((VideoContentList) data).getMenuVideoUrl();
-            outputRootPath = "preview/temp";
-            finalRootPath = "preview";
+            outputRootPath = ConfigManager.getInstance().getPreVideoTempFilePath();
+            finalRootPath = ConfigManager.getInstance().getPreVideoFilePath();
             imageUrl = ConfigManager.getInstance().getDefaultUrl() + ((VideoContentList) data).getImgUrl();
             duration = ((VideoContentList) data).getDuration();
+            mVideoType = PRE_VIDEO;
         }
-    }
-
-    public DownLoadHolderBuilder setContext(Context context) {
-        this.mContext = context;
-        return this;
     }
 
     public DownLoadHolderBuilder setEncrypted(boolean isEncrypted) {
@@ -55,16 +56,16 @@ class DownLoadHolderBuilder {
     }
 
     private String getOutputPath() {
-        return new File(mContext.getExternalFilesDir(outputRootPath), mVideoFullName).getAbsolutePath();
+        return new File(outputRootPath, mVideoFullName).getAbsolutePath();
     }
 
     private String getFinalPath() {
-        return new File(mContext.getExternalFilesDir(finalRootPath), mVideoFullName).getAbsolutePath();
+        return new File(finalRootPath, mVideoFullName).getAbsolutePath();
     }
 
     private boolean isShouldDownload() {
-        File file1 = new File(mContext.getExternalFilesDir(finalRootPath), mVideoSimpleName + ".mp4");
-        File file2 = new File(mContext.getExternalFilesDir(finalRootPath), mVideoSimpleName + ".chinafocus");
+        File file1 = new File(finalRootPath, mVideoSimpleName + ".mp4");
+        File file2 = new File(finalRootPath, mVideoSimpleName + ".chinafocus");
         return !(file1.exists() || file2.exists());
     }
 
@@ -97,7 +98,11 @@ class DownLoadHolderBuilder {
         downLoadHolder.setDuration(duration);
         downLoadHolder.setImageUrl(imageUrl);
 
+        downLoadHolder.setVideoType(mVideoType);
+
+        downLoadHolder.setProgressingColor(Color.parseColor("#FF14C27B"));
         downLoadHolder.setCurrentStatus("等待下载");
+        downLoadHolder.setCurrentStatusColor(Color.parseColor("#FFA0A0A3"));
 
         if (isShouldDownload()) {
             downLoadHolder.setShouldDownload(true);

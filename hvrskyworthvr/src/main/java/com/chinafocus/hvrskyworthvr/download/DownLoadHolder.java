@@ -19,8 +19,38 @@ public class DownLoadHolder implements Cloneable {
     private int pos;
     // 已完成  等待下载  等待继续下载  下载速度
     private String currentStatus;
+    // 文案颜色
+    private int currentStatusColor;
     // 进度
     private int progress;
+    // 进度条颜色
+    private int progressingColor;
+
+    private VideoType mVideoType;
+
+    public int getCurrentStatusColor() {
+        return currentStatusColor;
+    }
+
+    public void setCurrentStatusColor(int currentStatusColor) {
+        this.currentStatusColor = currentStatusColor;
+    }
+
+    public int getProgressingColor() {
+        return progressingColor;
+    }
+
+    public void setProgressingColor(int progressingColor) {
+        this.progressingColor = progressingColor;
+    }
+
+    public VideoType getVideoType() {
+        return mVideoType;
+    }
+
+    public void setVideoType(VideoType videoType) {
+        mVideoType = videoType;
+    }
 
     public int getProgress() {
         return progress;

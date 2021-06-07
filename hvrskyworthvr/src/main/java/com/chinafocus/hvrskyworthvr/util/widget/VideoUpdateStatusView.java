@@ -59,6 +59,8 @@ public class VideoUpdateStatusView extends FrameLayout {
         mRecyclerView = findViewById(R.id.rv_video_update_list);
         mRecyclerView.setHasFixedSize(true);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+        mVideoUpdateListAdapter = new VideoUpdateListAdapter();
+        mRecyclerView.setAdapter(mVideoUpdateListAdapter);
 
         mVideoUpdateManagerStatusView = findViewById(R.id.view_video_update_manager_status);
 
@@ -100,10 +102,7 @@ public class VideoUpdateStatusView extends FrameLayout {
         mGroupVideoUpdateNetError.setVisibility(INVISIBLE);
         mGroupVideoUpdateClose.setVisibility(INVISIBLE);
 
-        if (mVideoUpdateListAdapter == null) {
-            mVideoUpdateListAdapter = new VideoUpdateListAdapter(data);
-            mRecyclerView.setAdapter(mVideoUpdateListAdapter);
-        }
+        mVideoUpdateListAdapter.refreshDownLoadHolder(data);
     }
 
     public void setNetErrorRetryClick(OnClickListener l) {

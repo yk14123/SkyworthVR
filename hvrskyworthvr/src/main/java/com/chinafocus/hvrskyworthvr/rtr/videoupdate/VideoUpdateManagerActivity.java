@@ -31,6 +31,7 @@ import java.util.List;
 import java.util.Objects;
 
 import static com.chinafocus.hvrskyworthvr.download.VideoUpdateService.VIDEO_UPDATE_SERVICE;
+import static com.chinafocus.hvrskyworthvr.download.VideoUpdateService.VIDEO_UPDATE_SERVICE_CANCEL;
 import static com.chinafocus.hvrskyworthvr.download.VideoUpdateService.VIDEO_UPDATE_SERVICE_CHECK;
 import static com.chinafocus.hvrskyworthvr.download.VideoUpdateService.VIDEO_UPDATE_SERVICE_START;
 import static com.chinafocus.hvrskyworthvr.global.Constants.VIDEO_UPDATE_STATUS;
@@ -78,6 +79,7 @@ public class VideoUpdateManagerActivity extends AppCompatActivity {
                         startVideoUpdateEngine();
                     } else {
                         // TODO 需要清空当前下载任务
+                        cancelDownLoadEngine();
                         Log.e("MyLog", " 需要清空当前下载任务 !!!!!!!!");
                         mVideoUpdateStatusView.showVideoUpdateClose();
                     }
@@ -107,14 +109,14 @@ public class VideoUpdateManagerActivity extends AppCompatActivity {
     @Subscribe(threadMode = ThreadMode.MAIN)
     @SuppressWarnings("unused")
     public void VideoUpdateManagerStatus(VideoUpdateManagerStatus event) {
-//        Log.d("MyLog", "-----局部刷新 进度-----");
+        Log.d("MyLog", "----更新左上方状态显示 1/3 3/3 失败-----");
         mVideoUpdateStatusView.postVideoUpdateManagerStatus(event);
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     @SuppressWarnings("unused")
     public void VideoUpdatePayload(DownLoadHolder event) {
-//        Log.d("MyLog", "-----局部刷新 进度-----");
+        Log.d("MyLog", "-----局部刷新 进度-----");
         mVideoUpdateStatusView.postPayload(event);
     }
 
@@ -157,6 +159,15 @@ public class VideoUpdateManagerActivity extends AppCompatActivity {
     private void startVideoUpdateEngine() {
         Intent intent = new Intent(this, VideoUpdateService.class);
         intent.putExtra(VIDEO_UPDATE_SERVICE, VIDEO_UPDATE_SERVICE_CHECK);
+        startService(intent);
+    }
+
+    /**
+     * 退出下载引擎
+     */
+    private void cancelDownLoadEngine() {
+        Intent intent = new Intent(this, VideoUpdateService.class);
+        intent.putExtra(VIDEO_UPDATE_SERVICE, VIDEO_UPDATE_SERVICE_CANCEL);
         startService(intent);
     }
 

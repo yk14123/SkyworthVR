@@ -1,5 +1,7 @@
 package com.chinafocus.hvrskyworthvr.service.event.download;
 
+import com.chinafocus.hvrskyworthvr.download.VideoUpdateStatus;
+
 public class VideoUpdateManagerStatus {
     private static final VideoUpdateManagerStatus vrConnect = new VideoUpdateManagerStatus();
 
@@ -11,13 +13,6 @@ public class VideoUpdateManagerStatus {
     private int total;
 
     private VideoUpdateStatus mVideoUpdateStatus;
-
-    public enum VideoUpdateStatus {
-        START,
-        DOWNLOADING,
-        RETRY,
-        COMPLETED
-    }
 
     public VideoUpdateStatus getVideoUpdateStatus() {
         return mVideoUpdateStatus;

@@ -18,6 +18,7 @@ import com.blankj.utilcode.util.BarUtils;
 import com.blankj.utilcode.util.ToastUtils;
 import com.chinafocus.huaweimdm.MdmMainActivity;
 import com.chinafocus.hvrskyworthvr.R;
+import com.chinafocus.hvrskyworthvr.download.DownLoadRunningManager;
 import com.chinafocus.hvrskyworthvr.global.ConfigManager;
 import com.chinafocus.hvrskyworthvr.global.Constants;
 import com.chinafocus.hvrskyworthvr.model.DeviceInfoManager;
@@ -50,6 +51,7 @@ public class MineActivity extends AppCompatActivity {
     private RtrAppUpdateDialog mRtrAppUpdateDialog;
 
     private AppCompatImageView mTag;
+    private AppCompatImageView mVideoUpdateTag;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -67,11 +69,7 @@ public class MineActivity extends AppCompatActivity {
         AppCompatTextView checkVersionCode = findViewById(R.id.tv_about_check_version_code);
         checkVersionCode.setText(String.format("检查新版本（V%s）", AppUtils.getAppVersionName()));
         mTag = findViewById(R.id.iv_check_version_icon_tag);
-        if (mAppInstallViewModel.isUpdate()) {
-            mTag.setVisibility(View.VISIBLE);
-        } else {
-            mTag.setVisibility(View.GONE);
-        }
+        mVideoUpdateTag = findViewById(R.id.iv_video_update_icon_tag);
         checkVersionCode.setOnClickListener(v -> mAppInstallViewModel.checkAppVersionAndUpdate());
 
         AppCompatTextView account = findViewById(R.id.tv_mine_about_account);
@@ -252,6 +250,7 @@ public class MineActivity extends AppCompatActivity {
     protected void onStart() {
         super.onStart();
         EventBus.getDefault().register(this);
+        showRedTag();
     }
 
     @Override
@@ -264,5 +263,18 @@ public class MineActivity extends AppCompatActivity {
     protected void onDestroy() {
         super.onDestroy();
         mAppInstallViewModel.unRegister();
+    }
+
+    private void showRedTag() {
+        if (mAppInstallViewModel.isUpdate()) {
+            mTag.setVisibility(View.VISIBLE);
+        } else {
+            mTag.setVisibility(View.GONE);
+        }
+        if (DownLoadRunningManager.getInstance().isDownLoadRunning()) {
+            mVideoUpdateTag.setVisibility(View.VISIBLE);
+        } else {
+            mVideoUpdateTag.setVisibility(View.GONE);
+        }
     }
 }

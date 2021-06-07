@@ -5,6 +5,7 @@ import android.util.Log;
 
 import com.arialyy.aria.core.Aria;
 import com.blankj.utilcode.util.LogUtils;
+import com.chinafocus.hvrskyworthvr.global.ConfigManager;
 import com.chinafocus.hvrskyworthvr.model.DeviceInfoManager;
 import com.chinafocus.hvrskyworthvr.net.NetworkRequestInfo;
 import com.chinafocus.hvrskyworthvr.util.LocalLogUtils;
@@ -18,6 +19,7 @@ import org.greenrobot.eventbus.EventBus;
 
 import java.io.File;
 import java.util.HashMap;
+import java.util.Objects;
 
 import io.reactivex.functions.Consumer;
 import io.reactivex.plugins.RxJavaPlugins;
@@ -80,17 +82,23 @@ public class MyApp extends Application implements JavaCrashUtils.OnCrashListener
 
     private void initFileDirectory() {
         getApplicationContext().getExternalFilesDir("Config");
-        getApplicationContext().getExternalFilesDir("Videos");
-        getApplicationContext().getExternalFilesDir("Videos/temp");
-        getApplicationContext().getExternalFilesDir("preview");
-        getApplicationContext().getExternalFilesDir("preview/temp");
         getApplicationContext().getExternalFilesDir("ApkInstall");
+
+        File tempRealVideo = getApplicationContext().getExternalFilesDir("Videos/temp");
+        File realVideo = getApplicationContext().getExternalFilesDir("Videos");
+        ConfigManager.getInstance().setRealVideoTempFilePath(Objects.requireNonNull(tempRealVideo).getAbsolutePath());
+        ConfigManager.getInstance().setRealVideoFilePath(Objects.requireNonNull(realVideo).getAbsolutePath());
+
+        File tempPreVideo = getApplicationContext().getExternalFilesDir("preview/temp");
+        File preVideo = getApplicationContext().getExternalFilesDir("preview");
+        ConfigManager.getInstance().setPreVideoTempFilePath(Objects.requireNonNull(tempPreVideo).getAbsolutePath());
+        ConfigManager.getInstance().setPreVideoFilePath(Objects.requireNonNull(preVideo).getAbsolutePath());
     }
 
     private void collectCrashInfo() {
         File crash = getApplicationContext().getExternalFilesDir("crash");
         new Crash.CrashBuild(getApplicationContext())
-                .javaCrashPath(crash.getAbsolutePath(), this)
+                .javaCrashPath(Objects.requireNonNull(crash).getAbsolutePath(), this)
                 .build();
     }
 
