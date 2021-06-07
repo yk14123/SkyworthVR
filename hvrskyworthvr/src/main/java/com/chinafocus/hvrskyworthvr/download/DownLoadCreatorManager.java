@@ -133,9 +133,13 @@ public class DownLoadCreatorManager {
 
     private void checkAndDeletedFile(String filePath) {
         File file = new File(filePath);
-        String[] list = file.list();
-        if (list != null) {
-            for (String s : list) {
+        File[] files = file.listFiles();
+        if (files != null) {
+            for (File f : files) {
+                String s = f.getName();
+                if (s.equals("temp")) {
+                    continue;
+                }
                 boolean isDeleted = true;
                 String tempName;
                 int i = s.indexOf(".");
@@ -151,7 +155,7 @@ public class DownLoadCreatorManager {
                     }
                 }
                 if (isDeleted) {
-                    FileUtils.delete(s);
+                    FileUtils.delete(f);
                 }
             }
         }
