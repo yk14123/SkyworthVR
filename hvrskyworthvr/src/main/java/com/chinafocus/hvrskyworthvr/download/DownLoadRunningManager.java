@@ -56,9 +56,11 @@ public class DownLoadRunningManager {
 
     // 重试次数
     private static final int retryCount = 5;
-    private static final int retryTimeOut = 5000;
+    private static final int retryTimeOut = 3000;
     // 当前下载速度
     private long mSpeedByte;
+    // 当前正在下载的位置
+    private int mDownLoadPos;
     // 是否正在下载中
     private boolean isDownLoadRunning;
     // 下载列表
@@ -95,18 +97,13 @@ public class DownLoadRunningManager {
      */
     public void startDownloadEngine() {
         if (mDownLoadTaskTotal.size() > 0) {
-
-            EventBus.getDefault().post(mDownLoadTaskTotal);
-            VideoUpdateManagerStatus.obtain().setTotal(mDownLoadTaskTotal.size());
-            if (mRetryDownLoadHolder != null) {
-                int tempPos = mRetryDownLoadHolder.getPos();
-                VideoUpdateManagerStatus.obtain().setCurrentIndex(++tempPos);
+            if (mRetryDownLoadHolder == null) {
+                mDownLoadPos = 1;
             } else {
-                VideoUpdateManagerStatus.obtain().setCurrentIndex(1);
+                mDownLoadPos = mRetryDownLoadHolder.getPos() + 1;
             }
-            VideoUpdateManagerStatus.obtain().setVideoUpdateStatus(START);
-            EventBus.getDefault().post(VideoUpdateManagerStatus.obtain());
-
+            postVideoUpdateManagerStatus(START);
+            EventBus.getDefault().post(mDownLoadTaskTotal);
             isDownLoadRunning = true;
             // 开始下载
             mDownLoadEngineSubscribe = Observable
@@ -124,7 +121,7 @@ public class DownLoadRunningManager {
                         }
                     })
                     .retry(retryCount, throwable -> {
-                        Log.e("MyLog", "---------- 等待5秒后 重试retry >>> ");
+                        Log.e("MyLog", "---------- 等待3秒后 重试retry >>> ");
                         SystemClock.sleep(retryTimeOut);
                         return true;
                     })
@@ -137,7 +134,7 @@ public class DownLoadRunningManager {
                         if (b) {
                             Log.e("MyLog", " ------------ 从temp目录移动到 video目录 成功 >>>  " + downLoadHolder.getTitle());
                         } else {
-                            // TODO 如果出现了源文件已经存在。那么移动失败。需要把源文件删除再移动
+                            // TODO 如果出现了源文件已经存在。那么会自动覆盖
                             Log.e("MyLog", " ------------ 从temp目录移动到 video目录 失败 >>> " + downLoadHolder.getTitle());
                         }
                     })
@@ -145,15 +142,13 @@ public class DownLoadRunningManager {
                         // TODO 全部任务完成
                         Log.e("MyLog", " ------------ 所有任务全部下载完成 >>> ");
                         isDownLoadRunning = false;
-                        VideoUpdateManagerStatus.obtain().setVideoUpdateStatus(COMPLETED);
-                        EventBus.getDefault().post(VideoUpdateManagerStatus.obtain());
+                        postVideoUpdateManagerStatus(COMPLETED);
                     })
                     .doOnError(throwable -> {
                         // TODO 下载失败
                         Log.e("MyLog", " ------------ 整体下载结束  抛出错误 >>> " + throwable.getMessage());
 //                        isDownLoadRunning = false;
-                        VideoUpdateManagerStatus.obtain().setVideoUpdateStatus(RETRY);
-                        EventBus.getDefault().post(VideoUpdateManagerStatus.obtain());
+                        postVideoUpdateManagerStatus(RETRY);
 
                         if (mRetryDownLoadHolder != null) {
                             mRetryDownLoadHolder.setCurrentStatus("等待继续下载");
@@ -165,6 +160,18 @@ public class DownLoadRunningManager {
                     })
                     .subscribe();
         }
+    }
+
+    /**
+     * 整体下载状态 1/3 3/3 错误重试
+     *
+     * @param videoUpdateStatus videoUpdateStatus
+     */
+    private void postVideoUpdateManagerStatus(VideoUpdateStatus videoUpdateStatus) {
+        VideoUpdateManagerStatus.obtain().setCurrentIndex(mDownLoadPos);
+        VideoUpdateManagerStatus.obtain().setTotal(mDownLoadTaskTotal.size());
+        VideoUpdateManagerStatus.obtain().setVideoUpdateStatus(videoUpdateStatus);
+        EventBus.getDefault().post(VideoUpdateManagerStatus.obtain());
     }
 
     /**
@@ -198,30 +205,11 @@ public class DownLoadRunningManager {
                 .subscribeOn(Schedulers.trampoline())
                 .map(response -> {
                     if (response.isSuccessful() && response.body() != null) {
+                        mRetryDownLoadHolder = null;
+                        mDownLoadPos = downLoadHolder.getPos() + 1;
+                        postVideoUpdateManagerStatus(DOWNLOADING);
 
-                        int pos = downLoadHolder.getPos();
-                        VideoUpdateManagerStatus.obtain().setCurrentIndex(++pos);
-                        VideoUpdateManagerStatus.obtain().setVideoUpdateStatus(DOWNLOADING);
-                        EventBus.getDefault().post(VideoUpdateManagerStatus.obtain());
-                        mSpeedByte = 0L;
-                        Disposable speedDisposable = Observable
-                                .interval(1L, TimeUnit.SECONDS)
-                                .map(aLong -> {
-                                    long speed = mSpeedByte;
-                                    mSpeedByte = 0L;
-                                    String s = Formatter.formatFileSize(Utils.getApp().getApplicationContext(), speed);
-                                    return s.replaceAll(" ", "") + "/s";
-                                })
-                                .distinct()
-                                .observeOn(AndroidSchedulers.mainThread())
-                                .doOnNext(s -> {
-                                    downLoadHolder.setCurrentStatus(s);
-                                    downLoadHolder.setProgressingColor(Color.parseColor("#FF14C27B"));
-                                    downLoadHolder.setCurrentStatusColor(Color.parseColor("#FF14C27B"));
-                                    EventBus.getDefault().post(downLoadHolder);
-                                    Log.e("MyLog", "当前的速度为 >>> " + s + " 当前线程为 >>> " + Thread.currentThread().getName());
-                                })
-                                .subscribe();
+                        Disposable speedDisposable = createSpeedByteMonitor(downLoadHolder);
 
                         downloadFile(
                                 downLoadHolder.isEncrypted(),
@@ -281,6 +269,34 @@ public class DownLoadRunningManager {
     }
 
     /**
+     * 下载速度监测
+     *
+     * @param downLoadHolder downLoadHolder
+     * @return 下载速度监测
+     */
+    private Disposable createSpeedByteMonitor(DownLoadHolder downLoadHolder) {
+        mSpeedByte = 0L;
+        return Observable
+                .interval(1L, TimeUnit.SECONDS)
+                .map(aLong -> {
+                    long speed = mSpeedByte;
+                    mSpeedByte = 0L;
+                    String s = Formatter.formatFileSize(Utils.getApp().getApplicationContext(), speed);
+                    return s.replaceAll(" ", "") + "/s";
+                })
+                .distinct()
+                .observeOn(AndroidSchedulers.mainThread())
+                .doOnNext(s -> {
+                    downLoadHolder.setCurrentStatus(s);
+                    downLoadHolder.setProgressingColor(Color.parseColor("#FF14C27B"));
+                    downLoadHolder.setCurrentStatusColor(Color.parseColor("#FF14C27B"));
+                    EventBus.getDefault().post(downLoadHolder);
+                    Log.e("MyLog", "当前的速度为 >>> " + s + " 当前线程为 >>> " + Thread.currentThread().getName());
+                })
+                .subscribe();
+    }
+
+    /**
      * 写入硬盘
      *
      * @param isEncrypted      是否加密下载
@@ -328,7 +344,7 @@ public class DownLoadRunningManager {
                 if (progress > 0 && progress != lastProgress) {
                     downloadCallback.onProgress(progress);
 //                    Log.e("MyLog", " isEncrypted >>> " + isEncrypted + " responseBody.contentLength() >>> " + responseBody.contentLength() + " 当前range是 >>> " + fileLength + " 当前进度是 >>> " + progress + " 下载多少字节 >>> " + total + " 文件总大小 >>> " + totalLength);
-                    Log.e("MyLog", " isEncrypted >>> " + isEncrypted + " 当前进度是 >>> " + progress);
+                    Log.e("MyLog", " isEncrypted >>> " + isEncrypted + " 当前进度是 >>> " + progress + "%");
                 }
             }
             downloadCallback.onFinish(localFilePath);
@@ -361,8 +377,8 @@ public class DownLoadRunningManager {
             mDownLoadEngineSubscribe.dispose();
             mDownLoadEngineSubscribe = null;
         }
+        mRetryDownLoadHolder = null;
         FileUtils.deleteAllInDir(ConfigManager.getInstance().getPreVideoTempFilePath());
         FileUtils.deleteAllInDir(ConfigManager.getInstance().getRealVideoTempFilePath());
-        VideoUpdateManagerStatus.obtain().setCurrentIndex(1);
     }
 }

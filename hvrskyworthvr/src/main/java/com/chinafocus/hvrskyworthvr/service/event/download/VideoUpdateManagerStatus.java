@@ -11,7 +11,6 @@ public class VideoUpdateManagerStatus {
 
     private int currentIndex;
     private int total;
-
     private VideoUpdateStatus mVideoUpdateStatus;
 
     public VideoUpdateStatus getVideoUpdateStatus() {
