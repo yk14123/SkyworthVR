@@ -37,6 +37,7 @@ import com.chinafocus.hvrskyworthvr.rtr.adapter.ShowRtrVideoListViewAdapter;
 import com.chinafocus.hvrskyworthvr.rtr.dialog.RtrAppUpdateDialog;
 import com.chinafocus.hvrskyworthvr.rtr.dialog.RtrBluetoothConnectedDialog;
 import com.chinafocus.hvrskyworthvr.rtr.dialog.RtrBluetoothLostDialog;
+import com.chinafocus.hvrskyworthvr.rtr.dialog.RtrVideoUpdateNotificationDialog;
 import com.chinafocus.hvrskyworthvr.rtr.dialog.RtrVrModeMainDialog;
 import com.chinafocus.hvrskyworthvr.rtr.install.AppInstallViewModel;
 import com.chinafocus.hvrskyworthvr.rtr.media.RtrMediaPlayActivity;
@@ -50,6 +51,7 @@ import com.chinafocus.hvrskyworthvr.service.event.VrMainDisConnect;
 import com.chinafocus.hvrskyworthvr.service.event.VrMainStartBluetoothLostDelayTask;
 import com.chinafocus.hvrskyworthvr.service.event.VrMainSyncMediaInfo;
 import com.chinafocus.hvrskyworthvr.service.event.VrSyncPlayInfo;
+import com.chinafocus.hvrskyworthvr.service.event.download.VideoUpdateNotification;
 import com.chinafocus.hvrskyworthvr.ui.adapter.BaseViewHolder;
 import com.chinafocus.hvrskyworthvr.ui.main.media.MediaPlayActivity;
 import com.chinafocus.hvrskyworthvr.ui.main.media.MediaViewModel;
@@ -74,6 +76,7 @@ import net.lucode.hackware.magicindicator.buildins.commonnavigator.indicators.Li
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -136,6 +139,7 @@ public class ShowActivity extends AppCompatActivity {
     private AppInstallViewModel mAppInstallViewModel;
     private RtrAppUpdateDialog mRtrAppUpdateDialog;
     private View mCover;
+    private RtrVideoUpdateNotificationDialog mRtrVideoUpdateNotificationDialog;
 
     @RequiresApi(api = Build.VERSION_CODES.N)
     @Override
@@ -552,6 +556,16 @@ public class ShowActivity extends AppCompatActivity {
         ExoManager.getInstance().setPlayWhenReady(false);
     }
 
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    @SuppressWarnings("unused")
+    public void showVideoUpdateNotification(VideoUpdateNotification event) {
+        if (mRtrVideoUpdateNotificationDialog == null) {
+            mRtrVideoUpdateNotificationDialog = new RtrVideoUpdateNotificationDialog(this);
+        }
+        if (!mRtrVideoUpdateNotificationDialog.isShowing()) {
+            mRtrVideoUpdateNotificationDialog.show();
+        }
+    }
 
     /**
      * 当蓝牙断开链接的时候，处理一个延迟任务，如果超过2秒，就确定断开

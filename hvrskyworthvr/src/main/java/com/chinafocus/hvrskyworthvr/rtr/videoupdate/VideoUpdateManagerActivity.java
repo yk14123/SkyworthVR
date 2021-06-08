@@ -198,4 +198,8 @@ public class VideoUpdateManagerActivity extends AppCompatActivity {
         retryDownLoadEngine();
     }
 
+    @Override
+    public void onBackPressed() {
+//        super.onBackPressed();
+    }
 }

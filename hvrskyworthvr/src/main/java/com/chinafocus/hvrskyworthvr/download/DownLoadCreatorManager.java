@@ -12,6 +12,7 @@ import com.chinafocus.hvrskyworthvr.net.ApiMultiService;
 import com.chinafocus.hvrskyworthvr.net.RequestBodyManager;
 import com.chinafocus.hvrskyworthvr.service.event.download.VideoUpdateLatest;
 import com.chinafocus.hvrskyworthvr.service.event.download.VideoUpdateListError;
+import com.chinafocus.hvrskyworthvr.service.event.download.VideoUpdateNotification;
 import com.chinafocus.lib_network.net.ApiManager;
 import com.chinafocus.lib_network.net.beans.BaseResponse;
 import com.chinafocus.lib_network.net.errorhandler.HttpErrorHandler;
@@ -83,14 +84,15 @@ public class DownLoadCreatorManager {
                 .map(BaseResponse::getData)
                 .doOnNext(this::createDownLoadHolder)
                 .doOnNext(this::addDeletedName)
-                .observeOn(AndroidSchedulers.mainThread())
                 .doOnComplete(this::checkRealVideoFileDeleted)
+                .observeOn(AndroidSchedulers.mainThread())
                 .doOnComplete(() -> {
                     if (mDownLoadHolders.size() > 0) {
                         for (DownLoadHolder downLoadHolder : mDownLoadHolders) {
                             Log.e("MyLog", " DownLoadHolder 名称是 >>> " + downLoadHolder.getTitle());
                         }
                         // TODO 有更新任务需要处理
+                        EventBus.getDefault().post(VideoUpdateNotification.obtain());
                         DownLoadRunningManager instance = DownLoadRunningManager.getInstance();
                         instance.setDownLoadTaskTotal(mDownLoadHolders);
                         instance.startDownloadEngine();

@@ -91,5 +91,6 @@
     <string name="video_update_get_text3">未缓存至本地的视频将使用流量播放</string>
     <string name="video_update_get_text4">当前网络不可用，点击重试</string>
     <string name="video_update_get_text5">当前已是最新</string>
+    <string name="video_update_get_text6">当前视频资源更新，请前往离线下载页\n面下载最新视频</string>
 
 </resources>
