@@ -61,7 +61,6 @@ public class VideoUpdateManagerActivity extends AppCompatActivity {
         findViewById(R.id.iv_video_update_back).setOnClickListener(v -> finish());
 
         initSwitch();
-        initAvailableSizeAndTotalSize();
     }
 
     private void showVideoUpdateDialog() {
@@ -145,6 +144,7 @@ public class VideoUpdateManagerActivity extends AppCompatActivity {
     protected void onStart() {
         super.onStart();
         EventBus.getDefault().register(this);
+        initAvailableSizeAndTotalSize();
     }
 
     @Override

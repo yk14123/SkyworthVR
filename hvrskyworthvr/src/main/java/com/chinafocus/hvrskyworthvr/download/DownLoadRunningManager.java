@@ -218,13 +218,16 @@ public class DownLoadRunningManager {
                                 downLoadHolder.getOutputPath(),
                                 new DownloadCallback() {
                                     @Override
-                                    public void onStart() {
+                                    public void onStart(long totalLength) {
                                         // TODO 当前任务开始下载
                                         if (downLoadHolder.getLocalTempFileLength() == 0) {
                                             Log.e("MyLog", " 开启新的下载 >>> " + downLoadHolder.getTitle());
                                         } else {
                                             Log.e("MyLog", " 开启断点续下 >>> " + downLoadHolder.getTitle());
                                         }
+                                        String s = Formatter.formatFileSize(Utils.getApp().getApplicationContext(), totalLength);
+                                        String size = s.replaceAll(" ", "");
+                                        downLoadHolder.setVideoSize(size);
                                     }
 
                                     @Override
@@ -306,7 +309,6 @@ public class DownLoadRunningManager {
      * @param downloadCallback 状态回调
      */
     private void downloadFile(boolean isEncrypted, long fileLength, ResponseBody responseBody, String localFilePath, final DownloadCallback downloadCallback) {
-        downloadCallback.onStart();
         RandomAccessFile randomAccessFile = null;
         InputStream inputStream = null;
 
@@ -330,6 +332,7 @@ public class DownLoadRunningManager {
             }
 
             long totalLength = responseBody.contentLength() + total;
+            downloadCallback.onStart(totalLength);
 
             while ((len = inputStream.read(buf)) != -1) {
                 if (!isDownLoadRunning) {

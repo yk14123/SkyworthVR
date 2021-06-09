@@ -32,7 +32,7 @@ class DownLoadHolderBuilder {
 
     public <T> DownLoadHolderBuilder(T data) {
         if (data instanceof VideoDetail) {
-            mTitle = "正片 ： " + ((VideoDetail) data).getTitle();
+            mTitle = ((VideoDetail) data).getTitle();
             mVideoDownloadUrl = ConfigManager.getInstance().getDefaultUrl() + ((VideoDetail) data).getVideoUrl();
             outputRootPath = ConfigManager.getInstance().getRealVideoTempFilePath();
             finalRootPath = ConfigManager.getInstance().getRealVideoFilePath();
@@ -40,12 +40,12 @@ class DownLoadHolderBuilder {
             duration = ((VideoDetail) data).getDuration();
             mVideoType = REAL_VIDEO;
         } else if (data instanceof VideoContentList) {
-            mTitle = "预览 ： " + ((VideoContentList) data).getTitle();
+            mTitle = ((VideoContentList) data).getTitle();
             mVideoDownloadUrl = ConfigManager.getInstance().getDefaultUrl() + ((VideoContentList) data).getMenuVideoUrl();
             outputRootPath = ConfigManager.getInstance().getPreVideoTempFilePath();
             finalRootPath = ConfigManager.getInstance().getPreVideoFilePath();
             imageUrl = ConfigManager.getInstance().getDefaultUrl() + ((VideoContentList) data).getImgUrl();
-            duration = ((VideoContentList) data).getDuration();
+            duration = ((VideoContentList) data).getMenuVideoDuration();
             mVideoType = PRE_VIDEO;
         }
     }
@@ -103,6 +103,8 @@ class DownLoadHolderBuilder {
         downLoadHolder.setProgressingColor(Color.parseColor("#FF14C27B"));
         downLoadHolder.setCurrentStatus("等待下载");
         downLoadHolder.setCurrentStatusColor(Color.parseColor("#FFA0A0A3"));
+
+        downLoadHolder.setVideoSize("等待获取");
 
         if (isShouldDownload()) {
             downLoadHolder.setShouldDownload(true);

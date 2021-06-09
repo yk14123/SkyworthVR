@@ -7,10 +7,11 @@ package com.chinafocus.hvrskyworthvr.util;
  */
 public class TimeUtil {
     /**
-     * Android 音乐播放器应用里，读出的音乐时长为 long 类型以毫秒数为单位，例如：将 234736 转化为分钟和秒应为 03:55 （包含四舍五入）
+     * Android 音乐播放器应用里，读出的音乐时长为 long 类型以[秒]为单位
+     * 例如：将 261 转化为分钟和秒应为 04:21 （包含四舍五入）
      *
      * @param duration 音乐时长
-     * @return
+     * @return 时间格式
      */
     public static String timeParse(long duration) {
         String time = "";

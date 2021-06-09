@@ -52,6 +52,7 @@ public class VideoUpdateListAdapter extends RecyclerView.Adapter<BaseViewHolder>
         updateProgressColor(holder, position);
         updateItemText(holder, position);
         initVideoType(holder, position);
+        updateVideoSize(holder, position);
     }
 
     @Override
@@ -62,6 +63,7 @@ public class VideoUpdateListAdapter extends RecyclerView.Adapter<BaseViewHolder>
             Log.e("MyLog", " payloads !=null 更新了文字内容 >>> " + mDownLoadHolders.get(position).getCurrentStatus());
             updateProgressColor(holder, position);
             updateItemText(holder, position);
+            updateVideoSize(holder, position);
         }
     }
 
@@ -87,6 +89,10 @@ public class VideoUpdateListAdapter extends RecyclerView.Adapter<BaseViewHolder>
     private void updateProgressColor(@NonNull BaseViewHolder holder, int position) {
         ((ProgressBar) holder.getView(R.id.pb_video_update)).setProgress(mDownLoadHolders.get(position).getProgress());
         ((ProgressBar) holder.getView(R.id.pb_video_update)).setProgressTintList(ColorStateList.valueOf(mDownLoadHolders.get(position).getProgressingColor()));
+    }
+
+    private void updateVideoSize(BaseViewHolder holder, int position) {
+        holder.setText(R.id.tv_video_update_size, mDownLoadHolders.get(position).getVideoSize());
     }
 
 }

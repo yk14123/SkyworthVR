@@ -80,14 +80,15 @@
         tools:text="3：56" />
 
     <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/tv_video_update_size"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginEnd="69dp"
-        android:text="806MB"
         android:textColor="@color/color_setting_id_create"
         android:textSize="10sp"
         app:layout_constraintBottom_toBottomOf="@id/iv_video_update_image_url"
         app:layout_constraintEnd_toEndOf="parent"
-        tools:ignore="SmallSp" />
+        tools:ignore="SmallSp"
+        tools:text="806MB" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

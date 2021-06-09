@@ -27,6 +27,16 @@ public class DownLoadHolder implements Cloneable {
     private int progressingColor;
 
     private VideoType mVideoType;
+    // 文件大小
+    private String mVideoSize;
+
+    public String getVideoSize() {
+        return mVideoSize;
+    }
+
+    public void setVideoSize(String videoSize) {
+        mVideoSize = videoSize;
+    }
 
     public int getCurrentStatusColor() {
         return currentStatusColor;
