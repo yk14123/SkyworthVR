@@ -15,6 +15,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.AppCompatTextView;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -140,6 +141,7 @@ public class ShowActivity extends AppCompatActivity {
     private RtrAppUpdateDialog mRtrAppUpdateDialog;
     private View mCover;
     private RtrVideoUpdateNotificationDialog mRtrVideoUpdateNotificationDialog;
+    private AppCompatTextView mCoverNoData;
 
     @RequiresApi(api = Build.VERSION_CODES.N)
     @Override
@@ -163,6 +165,8 @@ public class ShowActivity extends AppCompatActivity {
         mDividerLine = findViewById(R.id.view_divider_line);
         mCover = findViewById(R.id.cover);
 
+        mCoverNoData = findViewById(R.id.cover_no_data);
+
         mDiscreteScrollView = findViewById(R.id.rv_main_hot_cover);
         mBackgroundAnimationRelativeLayout = findViewById(R.id.view_background_change_animation);
         mVideoDes = findViewById(R.id.tv_media_des);
@@ -170,6 +174,14 @@ public class ShowActivity extends AppCompatActivity {
         mDiscreteScrollView.setSlideOnFling(true);
 
         initAppInstallViewModelObserve();
+
+        mViewModel.noData.observe(this, aBoolean -> {
+            if (aBoolean) {
+                mCoverNoData.setVisibility(View.VISIBLE);
+            } else {
+                mCoverNoData.setVisibility(View.GONE);
+            }
+        });
 
         mViewModel.videoDataMutableLiveData.observe(this, videoContentLists -> {
 

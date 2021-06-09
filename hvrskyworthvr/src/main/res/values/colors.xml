@@ -39,6 +39,7 @@
     <color name="color_setting_status_gray">#A0A0A3</color>
     <color name="color_setting_status_yellow">#F79707</color>
     <color name="color_setting_status_success">#19C79D</color>
+    <color name="color_no_data">#0F0F0F</color>
 
     <color name="color_DA">#DADADD</color>
 

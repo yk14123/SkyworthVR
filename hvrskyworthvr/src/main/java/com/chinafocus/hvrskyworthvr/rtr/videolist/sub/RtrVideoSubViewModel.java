@@ -27,6 +27,7 @@ public class RtrVideoSubViewModel extends BaseViewModel {
     private static final String VIDEO_LIST_DATA = "video_list_data";
 
     public MutableLiveData<List<VideoContentList>> videoDataMutableLiveData = new MutableLiveData<>();
+    public MutableLiveData<Boolean> noData = new MutableLiveData<>();
 
     public RtrVideoSubViewModel(@NonNull Application application) {
         super(application);
@@ -56,8 +57,13 @@ public class RtrVideoSubViewModel extends BaseViewModel {
         if (!TextUtils.isEmpty(list)) {
             List<VideoContentList> videoContentLists = new Gson().fromJson(list, new TypeToken<List<VideoContentList>>() {
             }.getType());
-            videoDataMutableLiveData.setValue(videoContentLists);
+            if (videoContentLists.size() > 0) {
+                videoDataMutableLiveData.setValue(videoContentLists);
+            } else {
+                noData.postValue(true);
+            }
         } else {
+            noData.postValue(true);
             addSubscribe(
                     ApiManager
                             .getService(ApiMultiService.class)
@@ -68,6 +74,7 @@ public class RtrVideoSubViewModel extends BaseViewModel {
                             if (videoListData.size() > 0) {
                                 SPUtils.getInstance().put(VIDEO_LIST_DATA, new Gson().toJson(videoListData));
                                 videoDataMutableLiveData.postValue(videoListData);
+                                noData.postValue(false);
                             }
                         }
 
