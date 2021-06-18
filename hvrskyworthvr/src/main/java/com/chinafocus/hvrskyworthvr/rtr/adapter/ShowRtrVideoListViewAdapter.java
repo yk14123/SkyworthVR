@@ -18,6 +18,7 @@ import com.chinafocus.hvrskyworthvr.util.TextureVideoViewOutlineProvider;
 import com.chinafocus.hvrskyworthvr.util.TimeUtil;
 import com.chinafocus.hvrskyworthvr.util.ViewClickUtil;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class ShowRtrVideoListViewAdapter extends RecyclerView.Adapter<BaseViewHolder> {
@@ -31,9 +32,18 @@ public class ShowRtrVideoListViewAdapter extends RecyclerView.Adapter<BaseViewHo
         mCallback = callback;
     }
 
-    public ShowRtrVideoListViewAdapter(List<VideoContentList> videoContentLists) {
-        mVideoContentLists = videoContentLists;
+    public ShowRtrVideoListViewAdapter() {
+        mVideoContentLists = new ArrayList<>();
         mTextureVideoViewOutlineProvider = new TextureVideoViewOutlineProvider(20.f);
+    }
+
+    public void refreshData(List<VideoContentList> videoContentLists) {
+        mVideoContentLists.clear();
+        mVideoContentLists.addAll(videoContentLists);
+    }
+
+    public List<VideoContentList> getVideoContentLists() {
+        return mVideoContentLists;
     }
 
     @NonNull

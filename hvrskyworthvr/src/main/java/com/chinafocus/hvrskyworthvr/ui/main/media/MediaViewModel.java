@@ -37,6 +37,7 @@ public class MediaViewModel extends BaseViewModel {
         if (!TextUtils.isEmpty(obj)) {
             videoDetailMutableLiveData.postValue(new Gson().fromJson(obj, VideoDetail.class));
         } else {
+//            saveVideoDetailDataFromNet(tag, id);
             LocalLogUtils.e("MediaViewModel", " ******[严重错误]******  本地缓存内容为null ***** 对应null的tag和id为 >>> " + tag + ";" + id);
         }
     }

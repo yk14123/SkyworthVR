@@ -5,6 +5,7 @@ import android.util.Log;
 
 import com.arialyy.aria.core.Aria;
 import com.blankj.utilcode.util.LogUtils;
+import com.blankj.utilcode.util.SPUtils;
 import com.chinafocus.hvrskyworthvr.global.ConfigManager;
 import com.chinafocus.hvrskyworthvr.model.DeviceInfoManager;
 import com.chinafocus.hvrskyworthvr.net.NetworkRequestInfo;
@@ -23,6 +24,8 @@ import java.util.Objects;
 
 import io.reactivex.functions.Consumer;
 import io.reactivex.plugins.RxJavaPlugins;
+
+import static com.chinafocus.hvrskyworthvr.global.Constants.VIDEO_UPDATE_STATUS;
 
 public class MyApp extends Application implements JavaCrashUtils.OnCrashListener {
     @Override
@@ -78,6 +81,9 @@ public class MyApp extends Application implements JavaCrashUtils.OnCrashListener
         });
 
         LocalLogUtils.init(getApplicationContext());
+
+        // 开机就把应用自动下载关闭
+        SPUtils.getInstance().put(VIDEO_UPDATE_STATUS, false);
     }
 
     private void initFileDirectory() {
@@ -93,6 +99,9 @@ public class MyApp extends Application implements JavaCrashUtils.OnCrashListener
         File preVideo = getApplicationContext().getExternalFilesDir("preview");
         ConfigManager.getInstance().setPreVideoTempFilePath(Objects.requireNonNull(tempPreVideo).getAbsolutePath());
         ConfigManager.getInstance().setPreVideoFilePath(Objects.requireNonNull(preVideo).getAbsolutePath());
+
+        File subtitle = getApplicationContext().getExternalFilesDir("subtitle");
+        ConfigManager.getInstance().setSubtitleFilePath(Objects.requireNonNull(subtitle).getAbsolutePath());
     }
 
     private void collectCrashInfo() {

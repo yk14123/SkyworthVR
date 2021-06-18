@@ -17,6 +17,8 @@ import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.AppCompatTextView;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.recyclerview.widget.DiffUtil;
+import androidx.recyclerview.widget.ListUpdateCallback;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.blankj.utilcode.util.SPUtils;
@@ -24,6 +26,7 @@ import com.blankj.utilcode.util.ToastUtils;
 import com.bumptech.glide.load.MultiTransformation;
 import com.bumptech.glide.request.target.CustomTarget;
 import com.bumptech.glide.request.transition.Transition;
+import com.chinafocus.huaweimdm.tools.TimerTaskManager;
 import com.chinafocus.hvrskyworthvr.GlideApp;
 import com.chinafocus.hvrskyworthvr.R;
 import com.chinafocus.hvrskyworthvr.download.VideoUpdateService;
@@ -34,6 +37,7 @@ import com.chinafocus.hvrskyworthvr.global.Constants;
 import com.chinafocus.hvrskyworthvr.model.bean.TagHolder;
 import com.chinafocus.hvrskyworthvr.model.bean.VideoContentList;
 import com.chinafocus.hvrskyworthvr.net.ImageProcess;
+import com.chinafocus.hvrskyworthvr.rtr.adapter.DiffUtilCallback;
 import com.chinafocus.hvrskyworthvr.rtr.adapter.ShowRtrVideoListViewAdapter;
 import com.chinafocus.hvrskyworthvr.rtr.dialog.RtrAppUpdateDialog;
 import com.chinafocus.hvrskyworthvr.rtr.dialog.RtrBluetoothConnectedDialog;
@@ -45,6 +49,7 @@ import com.chinafocus.hvrskyworthvr.rtr.media.RtrMediaPlayActivity;
 import com.chinafocus.hvrskyworthvr.rtr.mine.MineActivity;
 import com.chinafocus.hvrskyworthvr.rtr.videolist.sub.RtrVideoSubViewModel;
 import com.chinafocus.hvrskyworthvr.service.BluetoothService;
+import com.chinafocus.hvrskyworthvr.service.event.NotifyVideoContentList;
 import com.chinafocus.hvrskyworthvr.service.event.VrCancelTimeTask;
 import com.chinafocus.hvrskyworthvr.service.event.VrMainCancelBluetoothLostDelayTask;
 import com.chinafocus.hvrskyworthvr.service.event.VrMainConnect;
@@ -96,6 +101,7 @@ import jp.wasabeef.glide.transformations.CropTransformation;
 
 import static com.bumptech.glide.request.RequestOptions.bitmapTransform;
 import static com.chinafocus.hvrskyworthvr.download.VideoUpdateService.VIDEO_UPDATE_SERVICE;
+import static com.chinafocus.hvrskyworthvr.download.VideoUpdateService.VIDEO_UPDATE_SERVICE_CANCEL;
 import static com.chinafocus.hvrskyworthvr.download.VideoUpdateService.VIDEO_UPDATE_SERVICE_CHECK;
 import static com.chinafocus.hvrskyworthvr.global.Constants.REQUEST_CODE_PAD_MEDIA_ACTIVITY;
 import static com.chinafocus.hvrskyworthvr.global.Constants.REQUEST_CODE_PAD_MINE_ACTIVITY;
@@ -142,6 +148,7 @@ public class ShowActivity extends AppCompatActivity {
     private View mCover;
     private RtrVideoUpdateNotificationDialog mRtrVideoUpdateNotificationDialog;
     private AppCompatTextView mCoverNoData;
+    private RtrVideoSubViewModel mViewModel;
 
     @RequiresApi(api = Build.VERSION_CODES.N)
     @Override
@@ -151,13 +158,13 @@ public class ShowActivity extends AppCompatActivity {
         StatusBarCompatFactory.getInstance().setStatusBarImmerse(this, false);
         setContentView(R.layout.activity_show);
 
-        RtrVideoSubViewModel mViewModel = new ViewModelProvider(this).get(RtrVideoSubViewModel.class);
+        mViewModel = new ViewModelProvider(this).get(RtrVideoSubViewModel.class);
+        notifyVideoContentList(null);
         mMediaViewModel = new ViewModelProvider(this).get(MediaViewModel.class);
         mAppInstallViewModel = new ViewModelProvider(this).get(AppInstallViewModel.class);
         mAppInstallViewModel.register();
 
         mAppInstallViewModel.checkAppVersionAndUpdate();
-        mViewModel.getVideoContentList();
 
         findViewById(R.id.iv_mine_about).setOnClickListener(v -> TimeOutClickUtil.getDefault().startTimeOutClick(() -> startActivityForResult(new Intent(ShowActivity.this, MineActivity.class), REQUEST_CODE_PAD_MINE_ACTIVITY)));
 
@@ -192,7 +199,7 @@ public class ShowActivity extends AppCompatActivity {
 
                 setVrSyncPlayInfoTagAndCategory(videoContentLists.get(0));
 
-                mAdapter = new ShowRtrVideoListViewAdapter(videoContentLists);
+                mAdapter = new ShowRtrVideoListViewAdapter();
                 mScrollAdapter = InfiniteScrollAdapter.wrap(mAdapter);
                 mDiscreteScrollView.addScrollStateChangeListener(new MyScrollStateChangeListener() {
                     @Override
@@ -245,8 +252,6 @@ public class ShowActivity extends AppCompatActivity {
                         .setMaxScale(1.8115f)
                         .build());
 
-                setIndicatorContent(videoContentLists);
-
                 mDiscreteScrollView.addOnItemChangedListener((viewHolder, adapterPosition) -> {
                     int realPosition = mScrollAdapter.getRealPosition(adapterPosition);
                     VideoContentList videoContentList = videoContentLists.get(realPosition);
@@ -260,14 +265,51 @@ public class ShowActivity extends AppCompatActivity {
                         startMenuMediaPlayer((BaseViewHolder) viewHolder, videoContentList);
                     }
                 });
-
             }
+
+            DiffUtil.DiffResult diffResult = DiffUtil.calculateDiff(new DiffUtilCallback(mAdapter.getVideoContentLists(), videoContentLists), true);
+            mAdapter.refreshData(videoContentLists);
+            diffResult.dispatchUpdatesTo(new ListUpdateCallback() {
+                @Override
+                public void onInserted(int position, int count) {
+                    Log.e("MyLog", " onMoved onInserted >>> " + position + " count >>> " + count);
+                    mScrollAdapter.notifyItemRangeInserted(position, count);
+                }
+
+                @Override
+                public void onRemoved(int position, int count) {
+                    Log.e("MyLog", " onMoved onRemoved >>> " + position + " count >>> " + count);
+                    mScrollAdapter.notifyItemRangeRemoved(position, count);
+                }
+
+                @Override
+                public void onMoved(int fromPosition, int toPosition) {
+                    Log.e("MyLog", " onMoved fromPosition >>> " + fromPosition + " toPosition >>> " + toPosition);
+                    mScrollAdapter.notifyItemMoved(fromPosition, toPosition);
+                }
+
+                @Override
+                public void onChanged(int position, int count, @Nullable Object payload) {
+                    Log.e("MyLog", " onChange position >>> " + position + " count >>> " + count);
+                    mScrollAdapter.notifyItemRangeChanged(position, count, payload);
+                }
+            });
+            setIndicatorContent(videoContentLists);
         });
 
-        boolean isCheck = SPUtils.getInstance().getBoolean(VIDEO_UPDATE_STATUS);
-        if (isCheck) {
-            startVideoUpdateEngine();
-        }
+//        boolean isCheck = SPUtils.getInstance().getBoolean(VIDEO_UPDATE_STATUS);
+//        if (isCheck) {
+//            startVideoUpdateEngine();
+//        }
+        TimerTaskManager.getInstance().startCheckVideoDownloadTask(this::startVideoUpdateEngine);
+        TimerTaskManager.getInstance().startCancelVideoDownloadTask(this::cancelDownLoadEngine);
+//        TimerTaskManager.getInstance().startCancelAppDownloadTask();
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    @SuppressWarnings("unused")
+    public void notifyVideoContentList(NotifyVideoContentList event) {
+        mViewModel.getVideoContentList();
     }
 
     /**
@@ -277,6 +319,17 @@ public class ShowActivity extends AppCompatActivity {
         Intent intent = new Intent(this, VideoUpdateService.class);
         intent.putExtra(VIDEO_UPDATE_SERVICE, VIDEO_UPDATE_SERVICE_CHECK);
         startService(intent);
+        SPUtils.getInstance().put(VIDEO_UPDATE_STATUS, true);
+    }
+
+    /**
+     * 退出下载引擎
+     */
+    private void cancelDownLoadEngine() {
+        Intent intent = new Intent(this, VideoUpdateService.class);
+        intent.putExtra(VIDEO_UPDATE_SERVICE, VIDEO_UPDATE_SERVICE_CANCEL);
+        startService(intent);
+        SPUtils.getInstance().put(VIDEO_UPDATE_STATUS, false);
     }
 
     private void initAppInstallViewModelObserve() {
@@ -391,7 +444,10 @@ public class ShowActivity extends AppCompatActivity {
     }
 
     private void setIndicatorContent(List<VideoContentList> videoContentLists) {
-        mTagHolders = new ArrayList<>();
+        if (mTagHolders == null) {
+            mTagHolders = new ArrayList<>();
+        }
+        mTagHolders.clear();
 
         for (int i = 0; i < videoContentLists.size(); i++) {
             String className = videoContentLists.get(i).getClassName();

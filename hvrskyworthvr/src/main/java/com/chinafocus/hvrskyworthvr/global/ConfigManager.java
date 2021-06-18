@@ -6,6 +6,7 @@ public class ConfigManager {
     private String realVideoTempFilePath;
     private String preVideoFilePath;
     private String realVideoFilePath;
+    private String subtitleFilePath;
 
     private String defaultUrl;
 
@@ -70,5 +71,13 @@ public class ConfigManager {
 
     public void setRealVideoFilePath(String realVideoFilePath) {
         this.realVideoFilePath = realVideoFilePath;
+    }
+
+    public String getSubtitleFilePath() {
+        return subtitleFilePath;
+    }
+
+    public void setSubtitleFilePath(String subtitleFilePath) {
+        this.subtitleFilePath = subtitleFilePath;
     }
 }
