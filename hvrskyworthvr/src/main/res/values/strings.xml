@@ -72,6 +72,7 @@
 
     <string name="check_version_latest">已经是最新版</string>
     <string name="check_network_error">网络错误，请检查网络设置</string>
+    <string name="app_download_running">新版本正在后台更新中</string>
 
     <string name="video_update_button">视频缓存</string>
     <string name="video_update_text_open">开启后，新增、变更的视频将下载并存\n储于本地，确认开启？</string>

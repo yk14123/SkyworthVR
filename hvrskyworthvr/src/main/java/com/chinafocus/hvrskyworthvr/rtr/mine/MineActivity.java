@@ -1,13 +1,11 @@
 package com.chinafocus.hvrskyworthvr.rtr.mine;
 
 import android.content.Intent;
-import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 
 import androidx.annotation.Nullable;
-import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.AppCompatImageView;
 import androidx.appcompat.widget.AppCompatTextView;
@@ -123,16 +121,14 @@ public class MineActivity extends AppCompatActivity {
             if (mRtrAppUpdateDialog == null) {
                 mRtrAppUpdateDialog = new RtrAppUpdateDialog(this);
                 mRtrAppUpdateDialog.setDownLoadListener(new RtrAppUpdateDialog.DownLoadListener() {
-                    @RequiresApi(api = Build.VERSION_CODES.N)
                     @Override
                     public void immediatelyDownLoad() {
-                        mAppInstallViewModel.retryDownLoad();
+                        mAppInstallViewModel.restartDownLoad();
                     }
 
-                    @RequiresApi(api = Build.VERSION_CODES.N)
                     @Override
                     public void retryDownLoad() {
-                        mAppInstallViewModel.retryDownLoad();
+                        mAppInstallViewModel.restartDownLoad();
                     }
 
                     @Override
@@ -158,7 +154,8 @@ public class MineActivity extends AppCompatActivity {
                     }
                 });
             }
-            mRtrAppUpdateDialog.postStatusForce(appVersionInfo.getAutoDownLoad());
+//            mRtrAppUpdateDialog.postStatusForce(appVersionInfo.getAutoDownLoad());
+            mRtrAppUpdateDialog.postStatusForce(1);
             mRtrAppUpdateDialog.postVersionCodeAndDes(appVersionInfo.getVersionName(), appVersionInfo.getVersionIntro());
             mRtrAppUpdateDialog.showUpdatePreUI();
             if (!mRtrAppUpdateDialog.isShowing()) {
@@ -190,6 +187,7 @@ public class MineActivity extends AppCompatActivity {
             ToastUtils.showShort(MineActivity.this.getString(R.string.check_version_latest));
             mTag.setVisibility(View.GONE);
         });
+        mAppInstallViewModel.getTaskUpdateRunning().observe(this, aVoid -> ToastUtils.showShort(MineActivity.this.getString(R.string.app_download_running)));
     }
 
     private boolean isAppInstallDialogShow() {
@@ -266,7 +264,7 @@ public class MineActivity extends AppCompatActivity {
     }
 
     private void showRedTag() {
-        if (mAppInstallViewModel.isUpdate()) {
+        if (mAppInstallViewModel.hasUpdate()) {
             mTag.setVisibility(View.VISIBLE);
         } else {
             mTag.setVisibility(View.GONE);

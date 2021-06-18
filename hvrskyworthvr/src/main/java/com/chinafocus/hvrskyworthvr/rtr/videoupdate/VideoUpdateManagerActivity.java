@@ -32,8 +32,8 @@ import java.util.Objects;
 
 import static com.chinafocus.hvrskyworthvr.download.VideoUpdateService.VIDEO_UPDATE_SERVICE;
 import static com.chinafocus.hvrskyworthvr.download.VideoUpdateService.VIDEO_UPDATE_SERVICE_CANCEL;
-import static com.chinafocus.hvrskyworthvr.download.VideoUpdateService.VIDEO_UPDATE_SERVICE_CHECK;
 import static com.chinafocus.hvrskyworthvr.download.VideoUpdateService.VIDEO_UPDATE_SERVICE_START;
+import static com.chinafocus.hvrskyworthvr.download.VideoUpdateService.VIDEO_UPDATE_SERVICE_RESTART;
 import static com.chinafocus.hvrskyworthvr.global.Constants.VIDEO_UPDATE_STATUS;
 
 public class VideoUpdateManagerActivity extends AppCompatActivity {
@@ -158,7 +158,7 @@ public class VideoUpdateManagerActivity extends AppCompatActivity {
      */
     private void startVideoUpdateEngine() {
         Intent intent = new Intent(this, VideoUpdateService.class);
-        intent.putExtra(VIDEO_UPDATE_SERVICE, VIDEO_UPDATE_SERVICE_CHECK);
+        intent.putExtra(VIDEO_UPDATE_SERVICE, VIDEO_UPDATE_SERVICE_START);
         startService(intent);
     }
 
@@ -176,7 +176,7 @@ public class VideoUpdateManagerActivity extends AppCompatActivity {
      */
     private void retryDownLoadEngine() {
         Intent intent = new Intent(this, VideoUpdateService.class);
-        intent.putExtra(VIDEO_UPDATE_SERVICE, VIDEO_UPDATE_SERVICE_START);
+        intent.putExtra(VIDEO_UPDATE_SERVICE, VIDEO_UPDATE_SERVICE_RESTART);
         startService(intent);
     }
 

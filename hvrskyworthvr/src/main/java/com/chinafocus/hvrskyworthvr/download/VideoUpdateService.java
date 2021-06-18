@@ -18,8 +18,8 @@ public class VideoUpdateService extends Service {
     private DownLoadCreatorManager mDownLoadCreatorManager;
     private DownLoadRunningManager mDownLoadRunningManager;
 
-    public static final String VIDEO_UPDATE_SERVICE_CHECK = "video_update_service_check";
     public static final String VIDEO_UPDATE_SERVICE_START = "video_update_service_start";
+    public static final String VIDEO_UPDATE_SERVICE_RESTART = "video_update_service_restart";
     public static final String VIDEO_UPDATE_SERVICE_CANCEL = "video_update_service_cancel";
     public static final String VIDEO_UPDATE_SERVICE = "video_update_service";
 
@@ -35,10 +35,10 @@ public class VideoUpdateService extends Service {
     public int onStartCommand(Intent intent, int flags, int startId) {
         Log.e(TAG, "VideoUpdateService >>> onStartCommand >>> startEngine");
         String stringExtra = intent.getStringExtra(VIDEO_UPDATE_SERVICE);
-        if (VIDEO_UPDATE_SERVICE_CHECK.equals(stringExtra)) {
+        if (VIDEO_UPDATE_SERVICE_START.equals(stringExtra)) {
             checkVideoUpdateEngine();
-        } else if (VIDEO_UPDATE_SERVICE_START.equals(stringExtra)) {
-            startDownLoadTaskEngine();
+        } else if (VIDEO_UPDATE_SERVICE_RESTART.equals(stringExtra)) {
+            restartDownLoadTaskEngine();
         } else if (VIDEO_UPDATE_SERVICE_CANCEL.equals(stringExtra)) {
             cancelDownLoadTaskEngine();
         }
@@ -59,7 +59,7 @@ public class VideoUpdateService extends Service {
         mDownLoadCreatorManager.checkedTaskAndDownLoad();
     }
 
-    private void startDownLoadTaskEngine() {
+    private void restartDownLoadTaskEngine() {
         mDownLoadRunningManager.startDownloadEngine();
     }
 

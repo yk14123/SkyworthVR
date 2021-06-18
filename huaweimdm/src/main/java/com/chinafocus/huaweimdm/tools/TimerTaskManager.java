@@ -16,11 +16,13 @@ public class TimerTaskManager {
     // 首次开始的时间
     private Date mCheckVideoDownloadDate = new Date();
     private Date mCancelVideoDownloadDate = new Date();
+    private Date mStartAppDownloadDate = new Date();
     private Date mCancelAppDownloadDate = new Date();
 
     private static volatile TimerTaskManager sTimerTaskManager;
     private Timer mCheckVideoDownloadTask;
     private Timer mCancelVideoDownloadTask;
+    private Timer mStartAppDownloadTask;
     private Timer mCancelAppDownloadTask;
 
     public static TimerTaskManager getInstance() {
@@ -37,6 +39,7 @@ public class TimerTaskManager {
     private TimerTaskManager() {
         initDate(mCheckVideoDownloadDate, 1);
         initDate(mCancelVideoDownloadDate, 6);
+        initDate(mStartAppDownloadDate, 6, 10, 0);
         initDate(mCancelAppDownloadDate, 8);
     }
 
@@ -66,7 +69,7 @@ public class TimerTaskManager {
 //        return mCheckVideoDownloadTask != null;
 //    }
 
-    public void startCheckVideoDownloadTask(final Runnable runnable) {
+    public void startVideoDownloadTask(final Runnable runnable) {
         if (mCheckVideoDownloadTask == null && runnable != null) {
             mCheckVideoDownloadTask = new Timer();
             //安排指定的任务在指定的时间开始进行重复的固定延迟执行。
@@ -79,7 +82,7 @@ public class TimerTaskManager {
         }
     }
 
-    public void startCancelVideoDownloadTask(final Runnable runnable) {
+    public void cancelVideoDownloadTask(final Runnable runnable) {
         if (mCancelVideoDownloadTask == null && runnable != null) {
             mCancelVideoDownloadTask = new Timer();
             mCancelVideoDownloadTask.schedule(new TimerTask() {
@@ -91,7 +94,19 @@ public class TimerTaskManager {
         }
     }
 
-    public void startCancelAppDownloadTask(final Runnable runnable) {
+    public void startAppDownloadTask(final Runnable runnable) {
+        if (mStartAppDownloadTask == null && runnable != null) {
+            mStartAppDownloadTask = new Timer();
+            mStartAppDownloadTask.schedule(new TimerTask() {
+                @Override
+                public void run() {
+                    runnable.run();
+                }
+            }, mStartAppDownloadDate, PERIOD_DAY);
+        }
+    }
+
+    public void cancelAppDownloadTask(final Runnable runnable) {
         if (mCancelAppDownloadTask == null && runnable != null) {
             mCancelAppDownloadTask = new Timer();
             mCancelAppDownloadTask.schedule(new TimerTask() {

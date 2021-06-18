@@ -118,7 +118,6 @@ public class DownLoadCreatorManager {
                         // TODO 列表已经是最新的
                         Log.e("MyLog", " 列表已经是最新的 ");
                         EventBus.getDefault().post(VideoUpdateLatest.obtain());
-                        // todo 走下载app逻辑
                     }
                 })
                 .doOnError(throwable -> {
