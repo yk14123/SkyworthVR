@@ -3,26 +3,33 @@
     <paths>
         <!--相当于Context.getFilesDir() + /path/-->
         <files-path
-            name="name"
-            path="" />
+            name="files_path"
+            path="." />
         <!-- 物理路径相当于Context.getCacheDir() + /path/-->
         <cache-path
-            name="name"
-            path="" />
+            name="cache_path"
+            path="." />
         <!--物理路径相当于Environment.getExternalStorageDirectory() + /path/-->
         <external-path
-            name="name"
-            path="" />
+            name="external_path"
+            path="." />
         <!-- 物理路径相当于Context.getExternalFilesDir(String) + /path/-->
+        <!-- apkPath : /storage/emulated/0/Android/data/com.chinafocus.hvrskyworthvr/files/ApkInstall/update.apk-->
+        <!-- content://com.chinafocus.hvrskyworthvr.myprovider/external_files_path/ApkInstall/update.apk-->
+        <!-- com.chinafocus.hvrskyworthvr.myprovider == authority-->
+        <!-- external_files_path == external-files-path里面的name-->
         <external-files-path
-            name="name"
-            path="" />
+            name="external_files_path"
+            path="." />
         <!-- 物理路径相当于Context.getExternalCacheDir() + /path/-->
         <external-cache-path
-            name="name"
-            path="" />
+            name="external_cache_path"
+            path="." />
         <root-path
-            name="name"
-            path="" />
+            name="root_path"
+            path="." />
+        <external-media-path
+            name="external_media_path"
+            path="." />
     </paths>
 </resources>

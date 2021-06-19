@@ -12,6 +12,8 @@ import com.arialyy.annotations.Download;
 import com.arialyy.aria.core.Aria;
 import com.arialyy.aria.core.task.DownloadTask;
 import com.blankj.utilcode.util.AppUtils;
+import com.blankj.utilcode.util.FileUtils;
+import com.chinafocus.huaweimdm.tools.MdmTools;
 import com.chinafocus.hvrskyworthvr.global.ConfigManager;
 import com.chinafocus.hvrskyworthvr.model.bean.AppVersionInfo;
 import com.chinafocus.hvrskyworthvr.net.ApiMultiService;
@@ -169,7 +171,7 @@ public class AppInstallViewModel extends BaseViewModel {
                                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
                                     downLoadApk();
                                 }
-                            }else {
+                            } else {
                                 isAppUpdateRunning = false;
                                 hasAppUpdate = false;
                             }
@@ -285,6 +287,7 @@ public class AppInstallViewModel extends BaseViewModel {
     public void installApp() {
         if (!TextUtils.isEmpty(mTaskCompletePath)) {
             AppUtils.installApp(mTaskCompletePath);
+//            MdmTools.getInstance().installPackage(getApplication().getApplicationContext(), mTaskCompletePath);
         }
     }
 
