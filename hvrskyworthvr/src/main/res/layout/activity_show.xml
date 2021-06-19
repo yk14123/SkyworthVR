@@ -121,4 +121,36 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
 
+    <androidx.appcompat.widget.AppCompatButton
+        android:id="@+id/test_start_video"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="延迟10秒下载视频"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <androidx.appcompat.widget.AppCompatButton
+        android:id="@+id/test_cancel_video"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="延迟10秒关闭视频"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/test_start_video" />
+
+    <androidx.appcompat.widget.AppCompatButton
+        android:id="@+id/test_start_app"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="开始app更新"
+        app:layout_constraintBottom_toBottomOf="@+id/view_background_change_animation"
+        app:layout_constraintStart_toEndOf="@+id/test_cancel_video" />
+
+    <androidx.appcompat.widget.AppCompatButton
+        android:id="@+id/test_cancel_app"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="结束app更新"
+        app:layout_constraintBottom_toBottomOf="@+id/view_background_change_animation"
+        app:layout_constraintStart_toEndOf="@+id/test_start_app" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>

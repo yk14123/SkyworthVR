@@ -15,9 +15,11 @@ import com.chinafocus.hvrskyworthvr.R;
 import com.chinafocus.hvrskyworthvr.download.DownLoadHolder;
 import com.chinafocus.hvrskyworthvr.download.VideoUpdateService;
 import com.chinafocus.hvrskyworthvr.rtr.dialog.RtrVideoUpdateDialog;
+import com.chinafocus.hvrskyworthvr.service.event.download.VideoUpdateCancel;
 import com.chinafocus.hvrskyworthvr.service.event.download.VideoUpdateLatest;
 import com.chinafocus.hvrskyworthvr.service.event.download.VideoUpdateListError;
 import com.chinafocus.hvrskyworthvr.service.event.download.VideoUpdateManagerStatus;
+import com.chinafocus.hvrskyworthvr.service.event.download.VideoUpdateStart;
 import com.chinafocus.hvrskyworthvr.util.SizeUtil;
 import com.chinafocus.hvrskyworthvr.util.statusbar.StatusBarCompatFactory;
 import com.chinafocus.hvrskyworthvr.util.widget.VideoUpdateStatusView;
@@ -96,7 +98,13 @@ public class VideoUpdateManagerActivity extends AppCompatActivity {
             startVideoUpdateEngine();
         }
         mSwitch.setChecked(isCheck);
-        mSwitch.setOnCheckedChangeListener((buttonView, isChecked) -> showVideoUpdateDialog());
+        mSwitch.setOnCheckedChangeListener((buttonView, isChecked) -> {
+            if (isInterceptShowDialog) {
+                isInterceptShowDialog = false;
+                return;
+            }
+            showVideoUpdateDialog();
+        });
     }
 
     private void initAvailableSizeAndTotalSize() {
@@ -107,28 +115,28 @@ public class VideoUpdateManagerActivity extends AppCompatActivity {
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     @SuppressWarnings("unused")
-    public void VideoUpdateManagerStatus(VideoUpdateManagerStatus event) {
+    public void videoUpdateManagerStatus(VideoUpdateManagerStatus event) {
         Log.d("MyLog", "----更新左上方状态显示 1/3 3/3 失败-----");
         mVideoUpdateStatusView.postVideoUpdateManagerStatus(event);
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     @SuppressWarnings("unused")
-    public void VideoUpdatePayload(DownLoadHolder event) {
+    public void videoUpdatePayload(DownLoadHolder event) {
         Log.d("MyLog", "-----局部刷新 进度-----");
         mVideoUpdateStatusView.postPayload(event);
     }
 
     @Subscribe()
     @SuppressWarnings("unused")
-    public void VideoUpdateStart(List<DownLoadHolder> event) {
+    public void videoUpdateStart(List<DownLoadHolder> event) {
         Log.d("MyLog", "-----存在更新，展示recyclerView-----");
         mVideoUpdateStatusView.showVideoUpdateDownload(event);
     }
 
     @Subscribe()
     @SuppressWarnings("unused")
-    public void VideoUpdateLatest(VideoUpdateLatest event) {
+    public void videoUpdateLatest(VideoUpdateLatest event) {
         Log.d("MyLog", "-----当前列表已经是最新的-----");
         mVideoUpdateStatusView.showVideoUpdateLatest();
     }
@@ -151,6 +159,44 @@ public class VideoUpdateManagerActivity extends AppCompatActivity {
     protected void onStop() {
         super.onStop();
         EventBus.getDefault().unregister(this);
+    }
+
+    boolean isInterceptShowDialog;
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    @SuppressWarnings("unused")
+    public void videoUpdateCancel(VideoUpdateCancel event) {
+        Log.d("MyLog", "-----下载时间到了，强制关闭下载-----");
+        if (mSwitch != null) {
+            if (mSwitch.isChecked()) {
+                isInterceptShowDialog = true;
+                mSwitch.setChecked(false);
+            }
+        }
+        if (mVideoUpdateStatusView != null) {
+            mVideoUpdateStatusView.showVideoUpdateClose();
+        }
+        if (mRtrVideoUpdateDialog != null && mRtrVideoUpdateDialog.isShowing()) {
+            mRtrVideoUpdateDialog.dismiss();
+        }
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    @SuppressWarnings("unused")
+    public void videoUpdateStart(VideoUpdateStart event) {
+        Log.d("MyLog", "-----videoUpdateStart，VideoUpdateManagerActivity 开始下载-----");
+        if (mSwitch != null) {
+            if (!mSwitch.isChecked()) {
+                isInterceptShowDialog = true;
+                mSwitch.setChecked(true);
+            }
+        }
+        if (mVideoUpdateStatusView != null) {
+            mVideoUpdateStatusView.setVisibility(View.INVISIBLE);
+        }
+        if (mRtrVideoUpdateDialog != null && mRtrVideoUpdateDialog.isShowing()) {
+            mRtrVideoUpdateDialog.dismiss();
+        }
     }
 
     /**

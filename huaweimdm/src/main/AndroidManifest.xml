@@ -90,7 +90,7 @@
 
         <provider
             android:name="androidx.core.content.FileProvider"
-            android:authorities="com.chinafocus.hvr_local_v2.myprovider"
+            android:authorities="com.chinafocus.huaweimdm.myprovider"
             android:exported="false"
             android:grantUriPermissions="true">
             <meta-data

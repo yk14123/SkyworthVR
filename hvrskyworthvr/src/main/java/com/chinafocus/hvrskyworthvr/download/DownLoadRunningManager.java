@@ -381,7 +381,7 @@ public class DownLoadRunningManager {
             mDownLoadEngineSubscribe = null;
         }
         mRetryDownLoadHolder = null;
-        mDownLoadTaskTotal.clear();
+//        mDownLoadTaskTotal.clear();
         FileUtils.deleteAllInDir(ConfigManager.getInstance().getPreVideoTempFilePath());
         FileUtils.deleteAllInDir(ConfigManager.getInstance().getRealVideoTempFilePath());
     }

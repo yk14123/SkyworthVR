@@ -7,6 +7,7 @@ import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
@@ -56,7 +57,9 @@ import com.chinafocus.hvrskyworthvr.service.event.VrMainDisConnect;
 import com.chinafocus.hvrskyworthvr.service.event.VrMainStartBluetoothLostDelayTask;
 import com.chinafocus.hvrskyworthvr.service.event.VrMainSyncMediaInfo;
 import com.chinafocus.hvrskyworthvr.service.event.VrSyncPlayInfo;
+import com.chinafocus.hvrskyworthvr.service.event.download.VideoUpdateCancel;
 import com.chinafocus.hvrskyworthvr.service.event.download.VideoUpdateNotification;
+import com.chinafocus.hvrskyworthvr.service.event.download.VideoUpdateStart;
 import com.chinafocus.hvrskyworthvr.ui.adapter.BaseViewHolder;
 import com.chinafocus.hvrskyworthvr.ui.main.media.MediaPlayActivity;
 import com.chinafocus.hvrskyworthvr.ui.main.media.MediaViewModel;
@@ -192,7 +195,6 @@ public class ShowActivity extends AppCompatActivity {
 
                 preLoadImage(videoContentLists);
                 preLoadAllVideoDetail(videoContentLists);
-
                 setVrSyncPlayInfoTagAndCategory(videoContentLists.get(0));
 
                 mAdapter = new ShowRtrVideoListViewAdapter();
@@ -229,7 +231,7 @@ public class ShowActivity extends AppCompatActivity {
 
                     mCover.setVisibility(View.VISIBLE);
 
-                    VideoContentList videoContentInfo = videoContentLists.get(realPosition);
+                    VideoContentList videoContentInfo = mAdapter.getVideoContentLists().get(realPosition);
                     setVrSyncPlayInfoTagAndCategory(videoContentInfo);
                     int videoId = videoContentInfo.getId();
 
@@ -250,7 +252,7 @@ public class ShowActivity extends AppCompatActivity {
 
                 mDiscreteScrollView.addOnItemChangedListener((viewHolder, adapterPosition) -> {
                     int realPosition = mScrollAdapter.getRealPosition(adapterPosition);
-                    VideoContentList videoContentList = videoContentLists.get(realPosition);
+                    VideoContentList videoContentList = mAdapter.getVideoContentLists().get(realPosition);
 
                     bindItemToIndicator(videoContentList);
                     setTagViewContent(videoContentList);
@@ -262,41 +264,20 @@ public class ShowActivity extends AppCompatActivity {
                     }
                 });
             }
-
-            DiffUtil.DiffResult diffResult = DiffUtil.calculateDiff(new DiffUtilCallback(mAdapter.getVideoContentLists(), videoContentLists), true);
-            mAdapter.refreshData(videoContentLists);
-            diffResult.dispatchUpdatesTo(new ListUpdateCallback() {
-                @Override
-                public void onInserted(int position, int count) {
-                    Log.e("MyLog", " onMoved onInserted >>> " + position + " count >>> " + count);
-                    mScrollAdapter.notifyItemRangeInserted(position, count);
-                }
-
-                @Override
-                public void onRemoved(int position, int count) {
-                    Log.e("MyLog", " onMoved onRemoved >>> " + position + " count >>> " + count);
-                    mScrollAdapter.notifyItemRangeRemoved(position, count);
-                }
-
-                @Override
-                public void onMoved(int fromPosition, int toPosition) {
-                    Log.e("MyLog", " onMoved fromPosition >>> " + fromPosition + " toPosition >>> " + toPosition);
-                    mScrollAdapter.notifyItemMoved(fromPosition, toPosition);
-                }
-
-                @Override
-                public void onChanged(int position, int count, @Nullable Object payload) {
-                    Log.e("MyLog", " onChange position >>> " + position + " count >>> " + count);
-                    mScrollAdapter.notifyItemRangeChanged(position, count, payload);
-                }
-            });
             setIndicatorContent(videoContentLists);
+            mAdapter.refreshData(videoContentLists);
+            mScrollAdapter.notifyDataSetChanged();
         });
 
         TimerTaskManager.getInstance().startVideoDownloadTask(this::startVideoUpdateEngine);
         TimerTaskManager.getInstance().cancelVideoDownloadTask(this::cancelDownLoadEngine);
         TimerTaskManager.getInstance().startAppDownloadTask(this::startAppDownload);
         TimerTaskManager.getInstance().cancelAppDownloadTask(this::cancelAppDownload);
+
+        findViewById(R.id.test_start_video).setOnClickListener(v -> v.postDelayed(this::startVideoUpdateEngine, 1000 * 10));
+        findViewById(R.id.test_cancel_video).setOnClickListener(v -> v.postDelayed(this::cancelDownLoadEngine, 1000 * 10));
+        findViewById(R.id.test_start_app).setOnClickListener(v -> startAppDownload());
+        findViewById(R.id.test_cancel_app).setOnClickListener(v -> cancelAppDownload());
     }
 
 
@@ -328,6 +309,7 @@ public class ShowActivity extends AppCompatActivity {
         intent.putExtra(VIDEO_UPDATE_SERVICE, VIDEO_UPDATE_SERVICE_START);
         startService(intent);
         SPUtils.getInstance().put(VIDEO_UPDATE_STATUS, true);
+        EventBus.getDefault().post(VideoUpdateStart.obtain());
     }
 
     /**
@@ -338,6 +320,7 @@ public class ShowActivity extends AppCompatActivity {
         intent.putExtra(VIDEO_UPDATE_SERVICE, VIDEO_UPDATE_SERVICE_CANCEL);
         startService(intent);
         SPUtils.getInstance().put(VIDEO_UPDATE_STATUS, false);
+        EventBus.getDefault().post(VideoUpdateCancel.obtain());
     }
 
     private void initAppInstallViewModelObserve() {

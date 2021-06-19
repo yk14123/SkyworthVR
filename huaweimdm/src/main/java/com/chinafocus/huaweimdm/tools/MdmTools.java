@@ -60,7 +60,7 @@ public class MdmTools {
         try {
             File file = new File(apkPath);
             Uri contentUri = FileProvider.getUriForFile(context,
-                    "com.chinafocus.hvr_local_v2.myprovider",
+                    "com.chinafocus.huaweimdm.myprovider",
                     file);
             context.grantUriPermission("android", contentUri, Intent.FLAG_GRANT_READ_URI_PERMISSION);
             DevicePackageManager devicePackageManager = new DevicePackageManager();

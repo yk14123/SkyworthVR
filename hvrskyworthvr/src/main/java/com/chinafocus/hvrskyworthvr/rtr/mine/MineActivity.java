@@ -27,6 +27,9 @@ import com.chinafocus.hvrskyworthvr.rtr.videoupdate.VideoUpdateManagerActivity;
 import com.chinafocus.hvrskyworthvr.service.BluetoothService;
 import com.chinafocus.hvrskyworthvr.service.event.VrAboutConnect;
 import com.chinafocus.hvrskyworthvr.service.event.VrSyncPlayInfo;
+import com.chinafocus.hvrskyworthvr.service.event.download.VideoUpdateCancel;
+import com.chinafocus.hvrskyworthvr.service.event.download.VideoUpdateLatest;
+import com.chinafocus.hvrskyworthvr.service.event.download.VideoUpdateStart;
 import com.chinafocus.hvrskyworthvr.ui.main.about.WebAboutActivity;
 import com.chinafocus.hvrskyworthvr.ui.setting.SettingActivity;
 import com.chinafocus.hvrskyworthvr.util.TimeOutClickUtil;
@@ -35,6 +38,7 @@ import com.chinafocus.hvrskyworthvr.util.statusbar.StatusBarCompatFactory;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
 
 import static com.chinafocus.hvrskyworthvr.global.Constants.ACTIVITY_ABOUT;
 import static com.chinafocus.hvrskyworthvr.global.Constants.RESULT_CODE_ACTIVE_DIALOG;
@@ -273,6 +277,33 @@ public class MineActivity extends AppCompatActivity {
             mVideoUpdateTag.setVisibility(View.VISIBLE);
         } else {
             mVideoUpdateTag.setVisibility(View.GONE);
+        }
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    @SuppressWarnings("unused")
+    public void videoUpdateLatest(VideoUpdateLatest event) {
+        Log.d("MyLog", "-----videoUpdateLatest，MineActivity 关闭小红点-----");
+        if (mVideoUpdateTag != null) {
+            mVideoUpdateTag.setVisibility(View.GONE);
+        }
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    @SuppressWarnings("unused")
+    public void videoUpdateCancel(VideoUpdateCancel event) {
+        Log.d("MyLog", "-----videoUpdateCancel，MineActivity 关闭小红点-----");
+        if (mVideoUpdateTag != null) {
+            mVideoUpdateTag.setVisibility(View.GONE);
+        }
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    @SuppressWarnings("unused")
+    public void videoUpdateStart(VideoUpdateStart event) {
+        Log.d("MyLog", "-----videoUpdateStart，MineActivity 展示小红点-----");
+        if (mVideoUpdateTag != null) {
+            mVideoUpdateTag.setVisibility(View.VISIBLE);
         }
     }
 }
