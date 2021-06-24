@@ -251,6 +251,16 @@ public class AppInstallViewModel extends BaseViewModel {
             Aria
                     .download(this)
                     .load(mTaskId)
+                    .cancel(false);
+        }
+        mTaskId = -1;
+    }
+
+    public void removeDownLoad() {
+        if (mTaskId != -1) {
+            Aria
+                    .download(this)
+                    .load(mTaskId)
                     .cancel(true);
         }
         mTaskId = -1;

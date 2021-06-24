@@ -151,7 +151,7 @@ public class MineActivity extends AppCompatActivity {
                     }
                 });
                 mRtrAppUpdateDialog.setOnDismissListener(dialog -> {
-                    mAppInstallViewModel.cancelDownLoad();
+                    mAppInstallViewModel.removeDownLoad();
                     if (CURRENT_VR_ONLINE_STATUS == VR_STATUS_ONLINE) {
                         setResult(RESULT_CODE_ACTIVE_DIALOG, new Intent().putExtra("currentVideoId", VrSyncPlayInfo.obtain().getVideoId()));
                         finish();
