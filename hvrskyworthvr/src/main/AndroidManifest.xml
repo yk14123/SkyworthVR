@@ -11,7 +11,8 @@
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.READ_PHONE_STATE" />
     <uses-permission android:name="android.permission.WAKE_LOCK" />
-    <uses-permission android:name="android.permission.WRITE_SETTINGS"
+    <uses-permission
+        android:name="android.permission.WRITE_SETTINGS"
         tools:ignore="ProtectedPermissions" />
 
     <application
@@ -23,16 +24,6 @@
         android:supportsRtl="true"
         android:usesCleartextTraffic="true"
         tools:targetApi="m">
-
-        <activity
-            android:name=".rtr.videoupdate.VideoUpdateManagerActivity"
-            android:screenOrientation="landscape"
-            android:theme="@style/AppTheme" >
-             <intent-filter>
-                 <action android:name="android.intent.action.MAIN" />
-                 <category android:name="android.intent.category.LAUNCHER" />
-             </intent-filter>
-        </activity>
 
         <meta-data
             android:name="com.chinafocus.hvrskyworthvr.MyAppGlideModule"
@@ -47,12 +38,10 @@
             android:name=".rtr.mine.MineActivity"
             android:screenOrientation="landscape"
             android:theme="@style/Theme.MaterialComponents.Light.NoActionBar">
-
-            <!-- <intent-filter> -->
-            <!-- <action android:name="android.intent.action.MAIN" /> -->
-
-            <!-- <category android:name="android.intent.category.LAUNCHER" /> -->
-            <!-- </intent-filter> -->
+            <!--             <intent-filter>-->
+            <!--                 <action android:name="android.intent.action.MAIN" />-->
+            <!--                 <category android:name="android.intent.category.LAUNCHER" />-->
+            <!--             </intent-filter>-->
         </activity>
         <activity
             android:name=".rtr.media.RtrMediaPlayActivity"
@@ -70,10 +59,7 @@
         <activity
             android:name=".ui.setting.SettingActivity"
             android:screenOrientation="landscape"
-            android:theme="@style/AppTheme" /> <!-- <service -->
-        <!-- android:name=".service.SocketService" -->
-        <!-- android:exported="true" -->
-        <!-- android:permission="android.permission.BIND_JOB_SERVICE" /> -->
+            android:theme="@style/AppTheme" />
         <activity
             android:name=".ui.main.media.MediaPlayActivity"
             android:launchMode="singleTop"
@@ -87,17 +73,24 @@
             android:name=".ui.splash.SplashActivity"
             android:screenOrientation="landscape"
             android:theme="@style/AppTheme">
-<!--            <intent-filter>-->
-<!--                <action android:name="android.intent.action.MAIN" />-->
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
 
-<!--                <category android:name="android.intent.category.LAUNCHER" />-->
-<!--            </intent-filter>-->
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
         </activity>
         <activity
             android:name=".ui.main.MainActivity"
             android:screenOrientation="landscape"
+            android:theme="@style/AppTheme" />
+        <activity
+            android:name=".rtr.playcount.VideoPlayCountActivity"
+            android:screenOrientation="landscape"
+            android:theme="@style/AppTheme" />
+        <activity
+            android:name=".rtr.videoupdate.VideoUpdateManagerActivity"
+            android:screenOrientation="landscape"
             android:theme="@style/AppTheme">
-
             <!-- <intent-filter> -->
             <!-- <action android:name="android.intent.action.MAIN" /> -->
             <!-- <category android:name="android.intent.category.LAUNCHER" /> -->

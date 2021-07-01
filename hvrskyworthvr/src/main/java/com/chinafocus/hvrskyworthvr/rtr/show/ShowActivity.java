@@ -276,10 +276,10 @@ public class ShowActivity extends AppCompatActivity {
             mScrollAdapter.notifyDataSetChanged();
         });
 
-        TimerTaskManager.getInstance().startVideoDownloadTask(this::startVideoUpdateEngine);
-        TimerTaskManager.getInstance().cancelVideoDownloadTask(this::cancelDownLoadEngine);
-        TimerTaskManager.getInstance().startAppDownloadTask(this::startAppDownload);
-        TimerTaskManager.getInstance().cancelAppDownloadTask(this::cancelAppDownload);
+//        TimerTaskManager.getInstance().startVideoDownloadTask(this::startVideoUpdateEngine);
+//        TimerTaskManager.getInstance().cancelVideoDownloadTask(this::cancelDownLoadEngine);
+//        TimerTaskManager.getInstance().startAppDownloadTask(this::startAppDownload);
+//        TimerTaskManager.getInstance().cancelAppDownloadTask(this::cancelAppDownload);
 
         findViewById(R.id.test_start_video).setOnClickListener(v -> v.postDelayed(this::startVideoUpdateEngine, 1000 * 10));
         findViewById(R.id.test_cancel_video).setOnClickListener(v -> v.postDelayed(this::cancelDownLoadEngine, 1000 * 10));

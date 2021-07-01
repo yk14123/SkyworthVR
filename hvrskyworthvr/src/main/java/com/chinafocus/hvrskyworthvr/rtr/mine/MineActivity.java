@@ -23,6 +23,7 @@ import com.chinafocus.hvrskyworthvr.model.DeviceInfoManager;
 import com.chinafocus.hvrskyworthvr.net.ApiMultiService;
 import com.chinafocus.hvrskyworthvr.rtr.dialog.RtrAppUpdateDialog;
 import com.chinafocus.hvrskyworthvr.rtr.install.AppInstallViewModel;
+import com.chinafocus.hvrskyworthvr.rtr.playcount.VideoPlayCountActivity;
 import com.chinafocus.hvrskyworthvr.rtr.videoupdate.VideoUpdateManagerActivity;
 import com.chinafocus.hvrskyworthvr.service.BluetoothService;
 import com.chinafocus.hvrskyworthvr.service.event.VrAboutConnect;
@@ -80,6 +81,11 @@ public class MineActivity extends AppCompatActivity {
         ViewClickUtil.click(
                 findViewById(R.id.tv_video_update_enter),
                 this::startVideoUpdateManagerActivity
+        );
+
+        ViewClickUtil.click(
+                findViewById(R.id.tv_video_play_count),
+                this::startVideoPlayCountManagerActivity
         );
 
         AppCompatTextView uuid = findViewById(R.id.tv_mine_about_uuid);
@@ -200,6 +206,11 @@ public class MineActivity extends AppCompatActivity {
 
     private void startVideoUpdateManagerActivity() {
         startActivity(new Intent(this, VideoUpdateManagerActivity.class));
+        finish();
+    }
+
+    private void startVideoPlayCountManagerActivity() {
+        startActivity(new Intent(this, VideoPlayCountActivity.class));
         finish();
     }
 

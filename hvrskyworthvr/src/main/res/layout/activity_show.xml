@@ -116,8 +116,8 @@
 
     <View
         android:id="@+id/iv_mine_about"
-        android:layout_width="50dp"
-        android:layout_height="50dp"
+        android:layout_width="150dp"
+        android:layout_height="150dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
 
@@ -215,5 +215,12 @@
         android:text="设置自动亮度"
         app:layout_constraintBottom_toTopOf="@+id/test_start_video"
         app:layout_constraintStart_toStartOf="parent" />
+
+    <androidx.constraintlayout.widget.Group
+        android:id="@+id/group"
+        android:visibility="gone"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:constraint_referenced_ids="test_start_app,appCompatButton,test_start_video,test_cancel_video,appCompatButton4,appCompatButton2,appCompatButton5,appCompatButton6,test_cancel_app,appCompatButton3,appCompatButton7" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
