@@ -93,7 +93,10 @@
     <string name="video_update_get_text4">当前网络不可用，点击重试</string>
     <string name="video_update_get_text5">当前已是最新</string>
     <string name="video_update_get_text6">当前视频资源更新，请前往离线下载页\n面下载最新视频</string>
+    <string name="video_update_get_text7">将在以下时间段开启离线下载服务</string>
 
     <string name="video_list_no_data">暂无数据</string>
+    <string name="video_update_time_text">时间设置</string>
+    <string name="video_update_time_text2">至</string>
 
 </resources>

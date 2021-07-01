@@ -5,11 +5,13 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
+import android.media.AudioManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.text.TextUtils;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.View;
 
 import androidx.annotation.NonNull;
@@ -22,8 +24,10 @@ import androidx.recyclerview.widget.DiffUtil;
 import androidx.recyclerview.widget.ListUpdateCallback;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.blankj.utilcode.util.BrightnessUtils;
 import com.blankj.utilcode.util.SPUtils;
 import com.blankj.utilcode.util.ToastUtils;
+import com.blankj.utilcode.util.VolumeUtils;
 import com.bumptech.glide.load.MultiTransformation;
 import com.bumptech.glide.request.target.CustomTarget;
 import com.bumptech.glide.request.transition.Transition;
@@ -101,6 +105,9 @@ import io.reactivex.schedulers.Schedulers;
 import jp.wasabeef.glide.transformations.BlurTransformation;
 import jp.wasabeef.glide.transformations.CropTransformation;
 
+import static android.media.AudioManager.FLAG_PLAY_SOUND;
+import static android.view.KeyEvent.KEYCODE_VOLUME_DOWN;
+import static android.view.KeyEvent.KEYCODE_VOLUME_UP;
 import static com.bumptech.glide.request.RequestOptions.bitmapTransform;
 import static com.chinafocus.hvrskyworthvr.download.VideoUpdateService.VIDEO_UPDATE_SERVICE;
 import static com.chinafocus.hvrskyworthvr.download.VideoUpdateService.VIDEO_UPDATE_SERVICE_CANCEL;
@@ -819,6 +826,55 @@ public class ShowActivity extends AppCompatActivity {
         ExoMediaHelper.getInstance().onDestroy();
         BluetoothService.getInstance().releaseAll(this);
         mAppInstallViewModel.unRegister();
+    }
+
+    public void volumeClick(View view) {
+        int STREAM_MUSIC = VolumeUtils.getVolume(AudioManager.STREAM_MUSIC);
+
+        int maxVolume = VolumeUtils.getMaxVolume(AudioManager.STREAM_MUSIC);
+        int minVolume = VolumeUtils.getMinVolume(AudioManager.STREAM_MUSIC);
+        Log.e("MyLog", " STREAM_MUSIC >>> " + STREAM_MUSIC);
+        Log.e("MyLog", " maxVolume >>> " + maxVolume);
+        Log.e("MyLog", " minVolume >>> " + minVolume);
+
+
+    }
+
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        Log.e("MyLog", " keyCode >>> " + keyCode + " KeyEvent >>> " + event);
+//        if (KEYCODE_VOLUME_UP == keyCode || KEYCODE_VOLUME_DOWN == keyCode){
+//            return true;
+//        }
+        return super.onKeyDown(keyCode, event);
+    }
+
+    public void volumeUp(View view) {
+        VolumeUtils.setVolume(AudioManager.STREAM_MUSIC, 15, FLAG_PLAY_SOUND);
+    }
+
+    public void volumeDown(View view) {
+        VolumeUtils.setVolume(AudioManager.STREAM_MUSIC, 1, FLAG_PLAY_SOUND);
+    }
+
+    public void brightnessUp(View view) {
+        BrightnessUtils.setBrightness(255);
+    }
+
+    public void brightnessDown(View view) {
+        BrightnessUtils.setBrightness(0);
+    }
+
+    public void brightnessGet(View view) {
+        int brightness = BrightnessUtils.getBrightness();
+        Log.e("MyLog", " brightness >>> " + brightness + " b >>> " + BrightnessUtils.isAutoBrightnessEnabled());
+    }
+
+    private boolean autoBrightness;
+
+    public void brightnessAuto(View view) {
+        BrightnessUtils.setAutoBrightnessEnabled(!autoBrightness);
+        autoBrightness = !autoBrightness;
     }
 
     private static class MyRunnable implements Runnable {

@@ -14,6 +14,7 @@ import com.blankj.utilcode.util.SPUtils;
 import com.chinafocus.hvrskyworthvr.R;
 import com.chinafocus.hvrskyworthvr.download.DownLoadHolder;
 import com.chinafocus.hvrskyworthvr.download.VideoUpdateService;
+import com.chinafocus.hvrskyworthvr.rtr.dialog.RtrTimeTaskDialog;
 import com.chinafocus.hvrskyworthvr.rtr.dialog.RtrVideoUpdateDialog;
 import com.chinafocus.hvrskyworthvr.service.event.download.VideoUpdateCancel;
 import com.chinafocus.hvrskyworthvr.service.event.download.VideoUpdateLatest;
@@ -46,6 +47,7 @@ public class VideoUpdateManagerActivity extends AppCompatActivity {
     private Switch mSwitch;
 
     private RtrVideoUpdateDialog mRtrVideoUpdateDialog;
+    private RtrTimeTaskDialog mRtrTimeTaskDialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -63,6 +65,22 @@ public class VideoUpdateManagerActivity extends AppCompatActivity {
         findViewById(R.id.iv_video_update_back).setOnClickListener(v -> finish());
 
         initSwitch();
+        initTimeTask();
+    }
+
+    private void initTimeTask() {
+        AppCompatTextView timeTask = findViewById(R.id.tv_video_update_time);
+
+        timeTask.setOnClickListener(v -> {
+            if (mRtrTimeTaskDialog == null) {
+                mRtrTimeTaskDialog = new RtrTimeTaskDialog(VideoUpdateManagerActivity.this);
+            }
+            if (!mRtrTimeTaskDialog.isShowing()) {
+                mRtrTimeTaskDialog.show();
+            }
+        });
+
+
     }
 
     private void showVideoUpdateDialog() {
