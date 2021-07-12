@@ -103,4 +103,5 @@ android {
             dirs 'libs'
         }
     }
+    ndkVersion '22.1.7171670'
 }

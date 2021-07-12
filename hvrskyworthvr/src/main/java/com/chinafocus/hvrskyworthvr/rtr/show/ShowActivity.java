@@ -8,7 +8,6 @@ import android.graphics.drawable.Drawable;
 import android.media.AudioManager;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.Handler;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.KeyEvent;
@@ -20,8 +19,6 @@ import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.AppCompatTextView;
 import androidx.lifecycle.ViewModelProvider;
-import androidx.recyclerview.widget.DiffUtil;
-import androidx.recyclerview.widget.ListUpdateCallback;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.blankj.utilcode.util.BrightnessUtils;
@@ -31,7 +28,6 @@ import com.blankj.utilcode.util.VolumeUtils;
 import com.bumptech.glide.load.MultiTransformation;
 import com.bumptech.glide.request.target.CustomTarget;
 import com.bumptech.glide.request.transition.Transition;
-import com.chinafocus.huaweimdm.tools.TimerTaskManager;
 import com.chinafocus.hvrskyworthvr.GlideApp;
 import com.chinafocus.hvrskyworthvr.R;
 import com.chinafocus.hvrskyworthvr.download.VideoUpdateService;
@@ -42,7 +38,6 @@ import com.chinafocus.hvrskyworthvr.global.Constants;
 import com.chinafocus.hvrskyworthvr.model.bean.TagHolder;
 import com.chinafocus.hvrskyworthvr.model.bean.VideoContentList;
 import com.chinafocus.hvrskyworthvr.net.ImageProcess;
-import com.chinafocus.hvrskyworthvr.rtr.adapter.DiffUtilCallback;
 import com.chinafocus.hvrskyworthvr.rtr.adapter.ShowRtrVideoListViewAdapter;
 import com.chinafocus.hvrskyworthvr.rtr.dialog.RtrBluetoothConnectedDialog;
 import com.chinafocus.hvrskyworthvr.rtr.dialog.RtrBluetoothLostDialog;
@@ -106,8 +101,6 @@ import jp.wasabeef.glide.transformations.BlurTransformation;
 import jp.wasabeef.glide.transformations.CropTransformation;
 
 import static android.media.AudioManager.FLAG_PLAY_SOUND;
-import static android.view.KeyEvent.KEYCODE_VOLUME_DOWN;
-import static android.view.KeyEvent.KEYCODE_VOLUME_UP;
 import static com.bumptech.glide.request.RequestOptions.bitmapTransform;
 import static com.chinafocus.hvrskyworthvr.download.VideoUpdateService.VIDEO_UPDATE_SERVICE;
 import static com.chinafocus.hvrskyworthvr.download.VideoUpdateService.VIDEO_UPDATE_SERVICE_CANCEL;
@@ -281,10 +274,10 @@ public class ShowActivity extends AppCompatActivity {
 //        TimerTaskManager.getInstance().startAppDownloadTask(this::startAppDownload);
 //        TimerTaskManager.getInstance().cancelAppDownloadTask(this::cancelAppDownload);
 
-        findViewById(R.id.test_start_video).setOnClickListener(v -> v.postDelayed(this::startVideoUpdateEngine, 1000 * 10));
-        findViewById(R.id.test_cancel_video).setOnClickListener(v -> v.postDelayed(this::cancelDownLoadEngine, 1000 * 10));
-        findViewById(R.id.test_start_app).setOnClickListener(v -> startAppDownload());
-        findViewById(R.id.test_cancel_app).setOnClickListener(v -> cancelAppDownload());
+//        findViewById(R.id.test_start_video).setOnClickListener(v -> v.postDelayed(this::startVideoUpdateEngine, 1000 * 10));
+//        findViewById(R.id.test_cancel_video).setOnClickListener(v -> v.postDelayed(this::cancelDownLoadEngine, 1000 * 10));
+//        findViewById(R.id.test_start_app).setOnClickListener(v -> startAppDownload());
+//        findViewById(R.id.test_cancel_app).setOnClickListener(v -> cancelAppDownload());
     }
 
 
