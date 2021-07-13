@@ -41,7 +41,7 @@ public class DownLoadCreatorManager {
     // 整体流程控制
     private Disposable mSubscribe;
 
-    private static DownLoadCreatorManager INSTANCE = new DownLoadCreatorManager();
+    private static final DownLoadCreatorManager INSTANCE = new DownLoadCreatorManager();
 
     public static DownLoadCreatorManager getInstance() {
         return INSTANCE;
@@ -56,9 +56,9 @@ public class DownLoadCreatorManager {
         return isDownLoadChecking;
     }
 
-    private List<DownLoadHolder> mDownLoadHolders = new CopyOnWriteArrayList<>();
+    private final List<DownLoadHolder> mDownLoadHolders = new CopyOnWriteArrayList<>();
 
-    private List<String> mDeletedName = new ArrayList<>();
+    private final List<String> mDeletedName = new ArrayList<>();
 
     /**
      * 拉取网络数据并对比本地文件，生成下载任务
@@ -122,7 +122,7 @@ public class DownLoadCreatorManager {
 
         Optional.ofNullable(name)
                 .filter(s -> !TextUtils.isEmpty(s))
-                .ifPresent(s -> mDeletedName.add(s));
+                .ifPresent(mDeletedName::add);
     }
 
     private void checkPreVideoFileDeleted() {
