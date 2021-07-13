@@ -1,5 +1,7 @@
 package com.chinafocus.hvrskyworthvr.model.bean;
 
+import java.util.Objects;
+
 public class VideoContentList {
 
     /**
@@ -120,5 +122,19 @@ public class VideoContentList {
         return "VideoContentList{" +
                 "title='" + title + '\'' +
                 '}';
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        VideoContentList that = (VideoContentList) o;
+        return id == that.id &&
+                type == that.type;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, type);
     }
 }

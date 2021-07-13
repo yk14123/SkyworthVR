@@ -4,6 +4,7 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
+import android.util.Log;
 
 import androidx.core.content.FileProvider;
 
@@ -58,17 +59,19 @@ public class MdmTools {
      */
     public void installPackage(Context context, String apkPath) {
         try {
+//            Log.e("MyLog", " 静默安装 >>> apkPath : " + apkPath);
             File file = new File(apkPath);
             Uri contentUri = FileProvider.getUriForFile(context,
-                    "com.chinafocus.hvr_local_v2.myprovider",
+                    "com.chinafocus.hvrskyworthvr.myprovider",
                     file);
-            context.grantUriPermission("android", contentUri, Intent.FLAG_GRANT_READ_URI_PERMISSION);
+            context.grantUriPermission("com.chinafocus.hvrskyworthvr", contentUri, Intent.FLAG_GRANT_READ_URI_PERMISSION);
             DevicePackageManager devicePackageManager = new DevicePackageManager();
             ComponentName adminName = new ComponentName(context, SampleDeviceReceiver.class);
+//            Log.e("MyLog", " 静默安装 >>> contentUri.toString() : " + contentUri.toString());
             devicePackageManager.installPackage(adminName, contentUri.toString());
 
         } catch (Exception e) {
-
+            Log.e("MyLog", " 静默安装 >>> 失败 : 没有权限");
         }
     }
 

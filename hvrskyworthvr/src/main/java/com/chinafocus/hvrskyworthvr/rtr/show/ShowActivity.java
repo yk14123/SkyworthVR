@@ -5,10 +5,12 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
+import android.media.AudioManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.View;
 
 import androidx.annotation.NonNull;
@@ -19,8 +21,10 @@ import androidx.appcompat.widget.AppCompatTextView;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.blankj.utilcode.util.BrightnessUtils;
 import com.blankj.utilcode.util.SPUtils;
 import com.blankj.utilcode.util.ToastUtils;
+import com.blankj.utilcode.util.VolumeUtils;
 import com.bumptech.glide.load.MultiTransformation;
 import com.bumptech.glide.request.target.CustomTarget;
 import com.bumptech.glide.request.transition.Transition;
@@ -35,7 +39,6 @@ import com.chinafocus.hvrskyworthvr.model.bean.TagHolder;
 import com.chinafocus.hvrskyworthvr.model.bean.VideoContentList;
 import com.chinafocus.hvrskyworthvr.net.ImageProcess;
 import com.chinafocus.hvrskyworthvr.rtr.adapter.ShowRtrVideoListViewAdapter;
-import com.chinafocus.hvrskyworthvr.rtr.dialog.RtrAppUpdateDialog;
 import com.chinafocus.hvrskyworthvr.rtr.dialog.RtrBluetoothConnectedDialog;
 import com.chinafocus.hvrskyworthvr.rtr.dialog.RtrBluetoothLostDialog;
 import com.chinafocus.hvrskyworthvr.rtr.dialog.RtrVideoUpdateNotificationDialog;
@@ -45,6 +48,7 @@ import com.chinafocus.hvrskyworthvr.rtr.media.RtrMediaPlayActivity;
 import com.chinafocus.hvrskyworthvr.rtr.mine.MineActivity;
 import com.chinafocus.hvrskyworthvr.rtr.videolist.sub.RtrVideoSubViewModel;
 import com.chinafocus.hvrskyworthvr.service.BluetoothService;
+import com.chinafocus.hvrskyworthvr.service.event.NotifyVideoContentList;
 import com.chinafocus.hvrskyworthvr.service.event.VrCancelTimeTask;
 import com.chinafocus.hvrskyworthvr.service.event.VrMainCancelBluetoothLostDelayTask;
 import com.chinafocus.hvrskyworthvr.service.event.VrMainConnect;
@@ -52,7 +56,9 @@ import com.chinafocus.hvrskyworthvr.service.event.VrMainDisConnect;
 import com.chinafocus.hvrskyworthvr.service.event.VrMainStartBluetoothLostDelayTask;
 import com.chinafocus.hvrskyworthvr.service.event.VrMainSyncMediaInfo;
 import com.chinafocus.hvrskyworthvr.service.event.VrSyncPlayInfo;
+import com.chinafocus.hvrskyworthvr.service.event.download.VideoUpdateCancel;
 import com.chinafocus.hvrskyworthvr.service.event.download.VideoUpdateNotification;
+import com.chinafocus.hvrskyworthvr.service.event.download.VideoUpdateStart;
 import com.chinafocus.hvrskyworthvr.ui.adapter.BaseViewHolder;
 import com.chinafocus.hvrskyworthvr.ui.main.media.MediaPlayActivity;
 import com.chinafocus.hvrskyworthvr.ui.main.media.MediaViewModel;
@@ -94,9 +100,11 @@ import io.reactivex.schedulers.Schedulers;
 import jp.wasabeef.glide.transformations.BlurTransformation;
 import jp.wasabeef.glide.transformations.CropTransformation;
 
+import static android.media.AudioManager.FLAG_PLAY_SOUND;
 import static com.bumptech.glide.request.RequestOptions.bitmapTransform;
 import static com.chinafocus.hvrskyworthvr.download.VideoUpdateService.VIDEO_UPDATE_SERVICE;
-import static com.chinafocus.hvrskyworthvr.download.VideoUpdateService.VIDEO_UPDATE_SERVICE_CHECK;
+import static com.chinafocus.hvrskyworthvr.download.VideoUpdateService.VIDEO_UPDATE_SERVICE_CANCEL;
+import static com.chinafocus.hvrskyworthvr.download.VideoUpdateService.VIDEO_UPDATE_SERVICE_START;
 import static com.chinafocus.hvrskyworthvr.global.Constants.REQUEST_CODE_PAD_MEDIA_ACTIVITY;
 import static com.chinafocus.hvrskyworthvr.global.Constants.REQUEST_CODE_PAD_MINE_ACTIVITY;
 import static com.chinafocus.hvrskyworthvr.global.Constants.REQUEST_CODE_VR_MEDIA_ACTIVITY;
@@ -138,10 +146,10 @@ public class ShowActivity extends AppCompatActivity {
     private RtrBluetoothConnectedDialog mRtrBluetoothConnectedDialog;
     private View mDividerLine;
     private AppInstallViewModel mAppInstallViewModel;
-    private RtrAppUpdateDialog mRtrAppUpdateDialog;
     private View mCover;
     private RtrVideoUpdateNotificationDialog mRtrVideoUpdateNotificationDialog;
     private AppCompatTextView mCoverNoData;
+    private RtrVideoSubViewModel mViewModel;
 
     @RequiresApi(api = Build.VERSION_CODES.N)
     @Override
@@ -151,13 +159,11 @@ public class ShowActivity extends AppCompatActivity {
         StatusBarCompatFactory.getInstance().setStatusBarImmerse(this, false);
         setContentView(R.layout.activity_show);
 
-        RtrVideoSubViewModel mViewModel = new ViewModelProvider(this).get(RtrVideoSubViewModel.class);
+        mViewModel = new ViewModelProvider(this).get(RtrVideoSubViewModel.class);
+        notifyVideoContentList(null);
         mMediaViewModel = new ViewModelProvider(this).get(MediaViewModel.class);
         mAppInstallViewModel = new ViewModelProvider(this).get(AppInstallViewModel.class);
         mAppInstallViewModel.register();
-
-        mAppInstallViewModel.checkAppVersionAndUpdate();
-        mViewModel.getVideoContentList();
 
         findViewById(R.id.iv_mine_about).setOnClickListener(v -> TimeOutClickUtil.getDefault().startTimeOutClick(() -> startActivityForResult(new Intent(ShowActivity.this, MineActivity.class), REQUEST_CODE_PAD_MINE_ACTIVITY)));
 
@@ -189,10 +195,9 @@ public class ShowActivity extends AppCompatActivity {
 
                 preLoadImage(videoContentLists);
                 preLoadAllVideoDetail(videoContentLists);
-
                 setVrSyncPlayInfoTagAndCategory(videoContentLists.get(0));
 
-                mAdapter = new ShowRtrVideoListViewAdapter(videoContentLists);
+                mAdapter = new ShowRtrVideoListViewAdapter();
                 mScrollAdapter = InfiniteScrollAdapter.wrap(mAdapter);
                 mDiscreteScrollView.addScrollStateChangeListener(new MyScrollStateChangeListener() {
                     @Override
@@ -226,7 +231,7 @@ public class ShowActivity extends AppCompatActivity {
 
                     mCover.setVisibility(View.VISIBLE);
 
-                    VideoContentList videoContentInfo = videoContentLists.get(realPosition);
+                    VideoContentList videoContentInfo = mAdapter.getVideoContentLists().get(realPosition);
                     setVrSyncPlayInfoTagAndCategory(videoContentInfo);
                     int videoId = videoContentInfo.getId();
 
@@ -245,11 +250,9 @@ public class ShowActivity extends AppCompatActivity {
                         .setMaxScale(1.8115f)
                         .build());
 
-                setIndicatorContent(videoContentLists);
-
                 mDiscreteScrollView.addOnItemChangedListener((viewHolder, adapterPosition) -> {
                     int realPosition = mScrollAdapter.getRealPosition(adapterPosition);
-                    VideoContentList videoContentList = videoContentLists.get(realPosition);
+                    VideoContentList videoContentList = mAdapter.getVideoContentLists().get(realPosition);
 
                     bindItemToIndicator(videoContentList);
                     setTagViewContent(videoContentList);
@@ -260,14 +263,42 @@ public class ShowActivity extends AppCompatActivity {
                         startMenuMediaPlayer((BaseViewHolder) viewHolder, videoContentList);
                     }
                 });
-
             }
+            setIndicatorContent(videoContentLists);
+            mAdapter.refreshData(videoContentLists);
+            mScrollAdapter.notifyDataSetChanged();
         });
 
-        boolean isCheck = SPUtils.getInstance().getBoolean(VIDEO_UPDATE_STATUS);
-        if (isCheck) {
-            startVideoUpdateEngine();
-        }
+//        TimerTaskManager.getInstance().startVideoDownloadTask(this::startVideoUpdateEngine);
+//        TimerTaskManager.getInstance().cancelVideoDownloadTask(this::cancelDownLoadEngine);
+//        TimerTaskManager.getInstance().startAppDownloadTask(this::startAppDownload);
+//        TimerTaskManager.getInstance().cancelAppDownloadTask(this::cancelAppDownload);
+
+//        findViewById(R.id.test_start_video).setOnClickListener(v -> v.postDelayed(this::startVideoUpdateEngine, 1000 * 10));
+//        findViewById(R.id.test_cancel_video).setOnClickListener(v -> v.postDelayed(this::cancelDownLoadEngine, 1000 * 10));
+//        findViewById(R.id.test_start_app).setOnClickListener(v -> startAppDownload());
+//        findViewById(R.id.test_cancel_app).setOnClickListener(v -> cancelAppDownload());
+    }
+
+
+    /**
+     * 开启App下载引擎
+     */
+    private void startAppDownload() {
+        mAppInstallViewModel.restartDownLoad();
+    }
+
+    /**
+     * 取消App下载引擎
+     */
+    private void cancelAppDownload() {
+        mAppInstallViewModel.cancelDownLoad();
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    @SuppressWarnings("unused")
+    public void notifyVideoContentList(NotifyVideoContentList event) {
+        mViewModel.getVideoContentList();
     }
 
     /**
@@ -275,86 +306,25 @@ public class ShowActivity extends AppCompatActivity {
      */
     private void startVideoUpdateEngine() {
         Intent intent = new Intent(this, VideoUpdateService.class);
-        intent.putExtra(VIDEO_UPDATE_SERVICE, VIDEO_UPDATE_SERVICE_CHECK);
+        intent.putExtra(VIDEO_UPDATE_SERVICE, VIDEO_UPDATE_SERVICE_START);
         startService(intent);
+        SPUtils.getInstance().put(VIDEO_UPDATE_STATUS, true);
+        EventBus.getDefault().post(VideoUpdateStart.obtain());
+    }
+
+    /**
+     * 退出下载引擎
+     */
+    private void cancelDownLoadEngine() {
+        Intent intent = new Intent(this, VideoUpdateService.class);
+        intent.putExtra(VIDEO_UPDATE_SERVICE, VIDEO_UPDATE_SERVICE_CANCEL);
+        startService(intent);
+        SPUtils.getInstance().put(VIDEO_UPDATE_STATUS, false);
+        EventBus.getDefault().post(VideoUpdateCancel.obtain());
     }
 
     private void initAppInstallViewModelObserve() {
-        mAppInstallViewModel.getAppVersionInfoMutableLiveData().observe(this, appVersionInfo -> {
-
-            closeMainDialog();
-
-            if (mRtrAppUpdateDialog == null) {
-                mRtrAppUpdateDialog = new RtrAppUpdateDialog(this);
-                mRtrAppUpdateDialog.setDownLoadListener(new RtrAppUpdateDialog.DownLoadListener() {
-                    @RequiresApi(api = Build.VERSION_CODES.N)
-                    @Override
-                    public void immediatelyDownLoad() {
-                        mAppInstallViewModel.retryDownLoad();
-                    }
-
-                    @RequiresApi(api = Build.VERSION_CODES.N)
-                    @Override
-                    public void retryDownLoad() {
-                        mAppInstallViewModel.retryDownLoad();
-                    }
-
-                    @Override
-                    public void pauseDownLoad() {
-                        mAppInstallViewModel.pauseDownLoad();
-                    }
-
-                    @Override
-                    public void resumeDownLoad() {
-                        mAppInstallViewModel.checkNetWorkAndResumeDownLoad();
-                    }
-
-                    @Override
-                    public void installApp() {
-                        mAppInstallViewModel.installApp();
-                    }
-                });
-                mRtrAppUpdateDialog.setOnDismissListener(dialog -> {
-                    mAppInstallViewModel.cancelDownLoad();
-                    if (CURRENT_VR_ONLINE_STATUS == VR_STATUS_ONLINE) {
-                        showVrModeMainDialog();
-                    } else if (CURRENT_VR_ONLINE_STATUS == VR_STATUS_OFFLINE) {
-                        fixScrollToPosition(VrSyncPlayInfo.obtain().getVideoId());
-                    }
-                });
-            }
-            mRtrAppUpdateDialog.postStatusForce(appVersionInfo.getAutoDownLoad());
-            mRtrAppUpdateDialog.postVersionCodeAndDes(appVersionInfo.getVersionName(), appVersionInfo.getVersionIntro());
-            mRtrAppUpdateDialog.showUpdatePreUI();
-            if (!mRtrAppUpdateDialog.isShowing()) {
-                mRtrAppUpdateDialog.show();
-            }
-        });
-        mAppInstallViewModel.getTaskResume().observe(this, aVoid -> {
-            if (mRtrAppUpdateDialog != null) {
-                mRtrAppUpdateDialog.pauseUpdateRunningButtonUI();
-            }
-        });
-        mAppInstallViewModel.getTaskRunning().observe(this, integer -> {
-            if (mRtrAppUpdateDialog != null) {
-                mRtrAppUpdateDialog.postTaskRunningProgress(integer);
-            }
-        });
-        mAppInstallViewModel.getTaskComplete().observe(this, aVoid -> {
-            if (mRtrAppUpdateDialog != null) {
-                mRtrAppUpdateDialog.postTaskComplete();
-            }
-        });
-        mAppInstallViewModel.getTaskFail().observe(this, aVoid -> {
-            if (mRtrAppUpdateDialog != null) {
-                mRtrAppUpdateDialog.postTaskFail();
-            }
-        });
         mAppInstallViewModel.getNetWorkError().observe(this, aVoid -> ToastUtils.showShort(ShowActivity.this.getString(R.string.check_network_error)));
-    }
-
-    private boolean isAppInstallDialogShow() {
-        return mRtrAppUpdateDialog != null && mRtrAppUpdateDialog.isShowing();
     }
 
     private void setVrSyncPlayInfoTagAndCategory(VideoContentList videoContentInfo) {
@@ -391,7 +361,10 @@ public class ShowActivity extends AppCompatActivity {
     }
 
     private void setIndicatorContent(List<VideoContentList> videoContentLists) {
-        mTagHolders = new ArrayList<>();
+        if (mTagHolders == null) {
+            mTagHolders = new ArrayList<>();
+        }
+        mTagHolders.clear();
 
         for (int i = 0; i < videoContentLists.size(); i++) {
             String className = videoContentLists.get(i).getClassName();
@@ -642,9 +615,9 @@ public class ShowActivity extends AppCompatActivity {
                         VrSyncPlayInfo.obtain().getSeekTime()
                 );
 
-        if (isAppInstallDialogShow()) {
-            return;
-        }
+//        if (isAppInstallDialogShow()) {
+//            return;
+//        }
 
         if (VrSyncPlayInfo.obtain().getVideoId() != -1) {
             startSyncMediaPlayActivity();
@@ -678,9 +651,9 @@ public class ShowActivity extends AppCompatActivity {
         Log.d("MyLog", "-----VR选择了一个影片,Pad需要从首页跳转播放-----");
         closeTimer(null);
 
-        if (!isAppInstallDialogShow()) {
-            startSyncMediaPlayActivity();
-        }
+//        if (!isAppInstallDialogShow()) {
+        startSyncMediaPlayActivity();
+//        }
     }
 
     private void startSyncMediaPlayActivity() {
@@ -846,6 +819,55 @@ public class ShowActivity extends AppCompatActivity {
         ExoMediaHelper.getInstance().onDestroy();
         BluetoothService.getInstance().releaseAll(this);
         mAppInstallViewModel.unRegister();
+    }
+
+    public void volumeClick(View view) {
+        int STREAM_MUSIC = VolumeUtils.getVolume(AudioManager.STREAM_MUSIC);
+
+        int maxVolume = VolumeUtils.getMaxVolume(AudioManager.STREAM_MUSIC);
+        int minVolume = VolumeUtils.getMinVolume(AudioManager.STREAM_MUSIC);
+        Log.e("MyLog", " STREAM_MUSIC >>> " + STREAM_MUSIC);
+        Log.e("MyLog", " maxVolume >>> " + maxVolume);
+        Log.e("MyLog", " minVolume >>> " + minVolume);
+
+
+    }
+
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        Log.e("MyLog", " keyCode >>> " + keyCode + " KeyEvent >>> " + event);
+//        if (KEYCODE_VOLUME_UP == keyCode || KEYCODE_VOLUME_DOWN == keyCode){
+//            return true;
+//        }
+        return super.onKeyDown(keyCode, event);
+    }
+
+    public void volumeUp(View view) {
+        VolumeUtils.setVolume(AudioManager.STREAM_MUSIC, 15, FLAG_PLAY_SOUND);
+    }
+
+    public void volumeDown(View view) {
+        VolumeUtils.setVolume(AudioManager.STREAM_MUSIC, 1, FLAG_PLAY_SOUND);
+    }
+
+    public void brightnessUp(View view) {
+        BrightnessUtils.setBrightness(255);
+    }
+
+    public void brightnessDown(View view) {
+        BrightnessUtils.setBrightness(0);
+    }
+
+    public void brightnessGet(View view) {
+        int brightness = BrightnessUtils.getBrightness();
+        Log.e("MyLog", " brightness >>> " + brightness + " b >>> " + BrightnessUtils.isAutoBrightnessEnabled());
+    }
+
+    private boolean autoBrightness;
+
+    public void brightnessAuto(View view) {
+        BrightnessUtils.setAutoBrightnessEnabled(!autoBrightness);
+        autoBrightness = !autoBrightness;
     }
 
     private static class MyRunnable implements Runnable {

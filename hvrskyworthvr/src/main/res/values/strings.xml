@@ -72,6 +72,7 @@
 
     <string name="check_version_latest">已经是最新版</string>
     <string name="check_network_error">网络错误，请检查网络设置</string>
+    <string name="app_download_running">新版本正在后台更新中</string>
 
     <string name="video_update_button">视频缓存</string>
     <string name="video_update_text_open">开启后，新增、变更的视频将下载并存\n储于本地，确认开启？</string>
@@ -83,7 +84,6 @@
     <string name="video_update_error_text">更新失败，重试</string>
     <string name="video_update_download_error_text">获取列表失败，重试</string>
     <string name="video_update_Latest_text">列表已是最新</string>
-
     <string name="video_update_text">视频资源更新</string>
     <string name="video_update_get_text">获取最新列表</string>
     <string name="video_update_get_text2">离线下载</string>
@@ -92,7 +92,16 @@
     <string name="video_update_get_text4">当前网络不可用，点击重试</string>
     <string name="video_update_get_text5">当前已是最新</string>
     <string name="video_update_get_text6">当前视频资源更新，请前往离线下载页\n面下载最新视频</string>
+    <string name="video_update_get_text7">将在以下时间段开启离线下载服务</string>
+
+    <string name="video_play_count_text">数据统计</string>
+    <string name="video_play_count_text2">内容播放次数</string>
+    <string name="video_play_count_text3">清空</string>
+    <string name="video_play_count_text4">是否要清空统计记录？\n(确认清空后，数据不可找回，请慎重操作!)</string>
+    <string name="video_play_count_text5">确认清空</string>
 
     <string name="video_list_no_data">暂无数据</string>
+    <string name="video_update_time_text">时间设置</string>
+    <string name="video_update_time_text2">至</string>
 
 </resources>

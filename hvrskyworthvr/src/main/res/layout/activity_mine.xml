@@ -129,6 +129,7 @@
         android:padding="10dp"
         android:textColor="@color/color_white"
         android:textSize="13sp"
+        android:visibility="gone"
         app:layout_constraintBaseline_toBaselineOf="@id/tv_about_us_protocol"
         app:layout_constraintStart_toEndOf="@id/tv_about_us_protocol"
         tools:text="检查新版本（V1.0.3）" />
@@ -165,17 +166,30 @@
         android:text="@string/video_update_get_text2"
         android:textColor="@color/color_white"
         android:textSize="13sp"
+        android:visibility="visible"
         app:layout_constraintBaseline_toBaselineOf="@id/tv_about_check_version_code"
         app:layout_constraintStart_toEndOf="@id/tv_about_check_version_code"
+        tools:layout_editor_absoluteY="1041dp" />
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/tv_video_play_count"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:padding="10dp"
+        android:text="@string/video_play_count_text"
+        android:textColor="@color/color_white"
+        android:textSize="13sp"
+        app:layout_constraintBaseline_toBaselineOf="@id/tv_video_update_enter"
+        app:layout_constraintStart_toEndOf="@id/tv_video_update_enter"
         tools:layout_editor_absoluteY="1041dp" />
 
     <androidx.appcompat.widget.AppCompatImageView
         android:id="@+id/iv_video_update_icon_tag"
         android:layout_width="5dp"
         android:layout_height="5dp"
+        android:layout_marginTop="10dp"
         android:src="@drawable/rtr_icon_check_version"
         android:visibility="gone"
-        android:layout_marginTop="10dp"
         app:layout_constraintEnd_toEndOf="@id/tv_video_update_enter"
         app:layout_constraintTop_toTopOf="@id/tv_video_update_enter" />
 

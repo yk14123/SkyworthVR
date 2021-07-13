@@ -12,6 +12,8 @@ import com.arialyy.annotations.Download;
 import com.arialyy.aria.core.Aria;
 import com.arialyy.aria.core.task.DownloadTask;
 import com.blankj.utilcode.util.AppUtils;
+import com.blankj.utilcode.util.FileUtils;
+import com.chinafocus.huaweimdm.tools.MdmTools;
 import com.chinafocus.hvrskyworthvr.global.ConfigManager;
 import com.chinafocus.hvrskyworthvr.model.bean.AppVersionInfo;
 import com.chinafocus.hvrskyworthvr.net.ApiMultiService;
@@ -32,7 +34,8 @@ import io.reactivex.schedulers.Schedulers;
 
 public class AppInstallViewModel extends BaseViewModel {
 
-    private static boolean isUpdate = false;
+    private static boolean isAppUpdateRunning = false;
+    private static boolean hasAppUpdate = false;
 
     private MutableLiveData<AppVersionInfo> mAppVersionInfoMutableLiveData = new MutableLiveData<>();
 
@@ -42,6 +45,7 @@ public class AppInstallViewModel extends BaseViewModel {
     private MutableLiveData<Void> mNetWorkError = new MutableLiveData<>();
     private MutableLiveData<Void> mVersionLatest = new MutableLiveData<>();
     private MutableLiveData<Void> mTaskResume = new MutableLiveData<>();
+    private MutableLiveData<Void> mTaskUpdateRunning = new MutableLiveData<>();
 
     private long mTaskId = -1;
     private String mUrl;
@@ -55,6 +59,10 @@ public class AppInstallViewModel extends BaseViewModel {
 
     public MutableLiveData<AppVersionInfo> getAppVersionInfoMutableLiveData() {
         return mAppVersionInfoMutableLiveData;
+    }
+
+    public MutableLiveData<Void> getTaskUpdateRunning() {
+        return mTaskUpdateRunning;
     }
 
     public MutableLiveData<Integer> getTaskRunning() {
@@ -102,6 +110,12 @@ public class AppInstallViewModel extends BaseViewModel {
     }
 
     public void checkAppVersionAndUpdate() {
+        if (isAppUpdateRunning()) {
+            mTaskUpdateRunning.postValue(null);
+            return;
+        }
+
+        isAppUpdateRunning = true;
         getAppVersionObservable()
                 .subscribe(new BaseObserver<AppVersionInfo>() {
                     @Override
@@ -109,11 +123,12 @@ public class AppInstallViewModel extends BaseViewModel {
                         if (appVersionInfo != null) {
                             int localAppVersionCode = AppUtils.getAppVersionCode();
                             if (appVersionInfo.getDefaultVersionCode() > localAppVersionCode && !TextUtils.isEmpty(appVersionInfo.getVersionUrl())) {
-                                isUpdate = true;
                                 mUrl = ConfigManager.getInstance().getDefaultUrl() + appVersionInfo.getVersionUrl();
                                 mAppVersionInfoMutableLiveData.postValue(appVersionInfo);
+                                hasAppUpdate = true;
                             } else {
-                                isUpdate = false;
+                                hasAppUpdate = false;
+                                isAppUpdateRunning = false;
                                 mVersionLatest.postValue(null);
                             }
                         }
@@ -124,26 +139,41 @@ public class AppInstallViewModel extends BaseViewModel {
                         mNetWorkError.postValue(null);
                         mTaskRunning.postValue(0);
                         mTaskFail.postValue(null);
+                        isAppUpdateRunning = false;
                     }
                 });
     }
 
-    public boolean isUpdate() {
-        return isUpdate;
+    public void restartDownLoad() {
+        retryDownLoadApp();
     }
 
-    public void retryDownLoadApp() {
+    public boolean isAppUpdateRunning() {
+        return isAppUpdateRunning;
+    }
+
+    public boolean hasUpdate() {
+        return hasAppUpdate;
+    }
+
+    private void retryDownLoadApp() {
+        isAppUpdateRunning = true;
         getAppVersionObservable()
                 .subscribe(new BaseObserver<AppVersionInfo>() {
-                    @RequiresApi(api = Build.VERSION_CODES.N)
+
                     @Override
                     public void onSuccess(AppVersionInfo appVersionInfo) {
                         if (appVersionInfo != null) {
                             int localAppVersionCode = AppUtils.getAppVersionCode();
                             if (appVersionInfo.getDefaultVersionCode() > localAppVersionCode && !TextUtils.isEmpty(appVersionInfo.getVersionUrl())) {
-                                isUpdate = true;
                                 mUrl = ConfigManager.getInstance().getDefaultUrl() + appVersionInfo.getVersionUrl();
-                                downLoadApk();
+                                hasAppUpdate = true;
+                                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                                    downLoadApk();
+                                }
+                            } else {
+                                isAppUpdateRunning = false;
+                                hasAppUpdate = false;
                             }
                         }
                     }
@@ -153,11 +183,12 @@ public class AppInstallViewModel extends BaseViewModel {
                         mNetWorkError.postValue(null);
                         mTaskRunning.postValue(0);
                         mTaskFail.postValue(null);
+                        isAppUpdateRunning = false;
                     }
                 });
     }
 
-    @SuppressWarnings("all")
+
     @RequiresApi(api = Build.VERSION_CODES.N)
     private void downLoadApk() {
         if (TextUtils.isEmpty(mUrl)) {
@@ -173,7 +204,8 @@ public class AppInstallViewModel extends BaseViewModel {
                                 .flatMap(file -> Optional.ofNullable(file.listFiles()))
                                 .orElse(new File[]{})
                 )
-                .subscribe(File::delete);
+                .doOnNext(File::delete)
+                .subscribe();
 
         //创建并启动下载
         mTaskId = Aria.download(this)
@@ -182,11 +214,6 @@ public class AppInstallViewModel extends BaseViewModel {
                 .resetState()
                 .ignoreFilePathOccupy()
                 .create();
-    }
-
-    @RequiresApi(api = Build.VERSION_CODES.N)
-    public void retryDownLoad() {
-        retryDownLoadApp();
     }
 
     public void pauseDownLoad() {
@@ -224,6 +251,16 @@ public class AppInstallViewModel extends BaseViewModel {
             Aria
                     .download(this)
                     .load(mTaskId)
+                    .cancel(false);
+        }
+        mTaskId = -1;
+    }
+
+    public void removeDownLoad() {
+        if (mTaskId != -1) {
+            Aria
+                    .download(this)
+                    .load(mTaskId)
                     .cancel(true);
         }
         mTaskId = -1;
@@ -243,6 +280,7 @@ public class AppInstallViewModel extends BaseViewModel {
             mTaskRunning.postValue(100);
             mTaskComplete.postValue(null);
             mTaskCompletePath = task.getFilePath();
+            isAppUpdateRunning = false;
             installApp();
         }
     }
@@ -252,12 +290,14 @@ public class AppInstallViewModel extends BaseViewModel {
         if (checkTaskUrl(task)) {
             mTaskRunning.postValue(0);
             mTaskFail.postValue(null);
+            isAppUpdateRunning = false;
         }
     }
 
     public void installApp() {
         if (!TextUtils.isEmpty(mTaskCompletePath)) {
             AppUtils.installApp(mTaskCompletePath);
+//            MdmTools.getInstance().installPackage(getApplication().getApplicationContext(), mTaskCompletePath);
         }
     }
 

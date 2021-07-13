@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/color_black_a50">
+
+    <View
+        android:id="@+id/csl_video_play_count_root"
+        android:layout_width="356dp"
+        android:layout_height="190dp"
+        android:background="@drawable/shape_video_update_bg"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/tv_video_play_count_des"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:includeFontPadding="false"
+        android:text="@string/video_play_count_text4"
+        android:textColor="@color/color_setting_id"
+        android:textSize="16sp"
+        app:layout_constraintBottom_toBottomOf="@id/csl_video_play_count_root"
+        app:layout_constraintEnd_toEndOf="@id/csl_video_play_count_root"
+        app:layout_constraintStart_toStartOf="@id/csl_video_play_count_root"
+        app:layout_constraintTop_toTopOf="@id/csl_video_play_count_root"
+        app:layout_constraintVertical_bias="0.3" />
+
+    <androidx.appcompat.widget.AppCompatButton
+        android:id="@+id/bt_video_play_count_cancel"
+        android:layout_width="127dp"
+        android:layout_height="44dp"
+        android:background="@drawable/shape_video_update_cancel_bg"
+        android:gravity="center"
+        android:stateListAnimator="@null"
+        android:text="@string/setting_status_cancel"
+        android:textColor="@color/color_setting_id_create"
+        android:textSize="13sp"
+        app:layout_constraintBottom_toBottomOf="@id/csl_video_play_count_root"
+        app:layout_constraintStart_toStartOf="@id/tv_video_play_count_des"
+        app:layout_constraintTop_toBottomOf="@id/tv_video_play_count_des"
+        app:layout_constraintVertical_bias="0.55" />
+
+    <androidx.appcompat.widget.AppCompatButton
+        android:id="@+id/bt_video_play_count__ok"
+        android:layout_width="127dp"
+        android:layout_height="44dp"
+        android:background="@drawable/shape_check_version_pause_bg"
+        android:elevation="0dp"
+        android:gravity="center"
+        android:stateListAnimator="@null"
+        android:text="@string/video_play_count_text5"
+        android:textColor="@color/color_white"
+        android:textSize="13sp"
+        app:layout_constraintBottom_toBottomOf="@id/bt_video_play_count_cancel"
+        app:layout_constraintEnd_toEndOf="@id/tv_video_play_count_des"
+        app:layout_constraintTop_toTopOf="@id/bt_video_play_count_cancel" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

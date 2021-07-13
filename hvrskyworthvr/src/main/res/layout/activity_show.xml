@@ -42,9 +42,9 @@
         android:layout_height="16dp"
         android:layout_marginStart="35dp"
         android:background="@color/color_white"
-        app:layout_constraintBottom_toBottomOf="@+id/iv_main_logo"
-        app:layout_constraintStart_toEndOf="@+id/iv_main_logo"
-        app:layout_constraintTop_toTopOf="@+id/iv_main_logo" />
+        app:layout_constraintBottom_toBottomOf="@id/iv_main_logo"
+        app:layout_constraintStart_toEndOf="@id/iv_main_logo"
+        app:layout_constraintTop_toTopOf="@id/iv_main_logo" />
 
     <net.lucode.hackware.magicindicator.MagicIndicator
         android:id="@+id/magic_Indicator_main_tag"
@@ -52,10 +52,10 @@
         android:layout_height="50dp"
         android:layout_marginStart="22dp"
         android:layout_marginBottom="3dp"
-        app:layout_constraintBottom_toBottomOf="@+id/view_divider_line"
+        app:layout_constraintBottom_toBottomOf="@id/view_divider_line"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/view_divider_line"
-        app:layout_constraintTop_toTopOf="@+id/view_divider_line" />
+        app:layout_constraintStart_toEndOf="@id/view_divider_line"
+        app:layout_constraintTop_toTopOf="@id/view_divider_line" />
 
     <com.chinafocus.hvrskyworthvr.util.widget.TagTextView
         android:id="@+id/tv_media_des"
@@ -68,11 +68,11 @@
         android:includeFontPadding="false"
         android:lineSpacingExtra="10dp"
         android:maxLines="2"
-        android:textColor="@color/color_white_a80"
-        android:textSize="18sp"
+        android:textColor="@color/color_EE"
+        android:textSize="16sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/rv_main_hot_cover"
+        app:layout_constraintTop_toBottomOf="@id/rv_main_hot_cover"
         tools:text="《皆山园图卷》由清代著名画家王原祁、王敬铭所作。青山蔼蔼，碧水粼粼，飞瀑直泄，鸟儿欢鸣，行人穿梭其中，悠然自得，仿若世外桃源。全景版《皆山园图卷》由荣宝斋...版社与中图云创联合打造，运用5G+VR技术，让观者穿越时空，在虚拟实境中，置身“可行、可望、可游、可居”的中国山水画作，感受“有声、有色、有全景”的超高清沉浸式视听体验。" />
 
     <View
@@ -120,5 +120,107 @@
         android:layout_height="150dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
+
+    <androidx.appcompat.widget.AppCompatButton
+        android:id="@+id/test_start_video"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="延迟10秒下载视频"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <androidx.appcompat.widget.AppCompatButton
+        android:id="@+id/test_cancel_video"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="延迟10秒关闭视频"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toEndOf="@id/test_start_video" />
+
+    <androidx.appcompat.widget.AppCompatButton
+        android:id="@+id/test_start_app"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="开始app更新"
+        app:layout_constraintBottom_toBottomOf="@id/view_background_change_animation"
+        app:layout_constraintStart_toEndOf="@id/test_cancel_video" />
+
+    <androidx.appcompat.widget.AppCompatButton
+        android:id="@+id/test_cancel_app"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="结束app更新"
+        app:layout_constraintBottom_toBottomOf="@id/view_background_change_animation"
+        app:layout_constraintStart_toEndOf="@id/test_start_app" />
+
+    <androidx.appcompat.widget.AppCompatButton
+        android:id="@+id/appCompatButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:onClick="volumeClick"
+        android:text="获取音量"
+        app:layout_constraintBottom_toBottomOf="@+id/view_background_change_animation"
+        app:layout_constraintStart_toEndOf="@+id/test_cancel_app" />
+
+    <androidx.appcompat.widget.AppCompatButton
+        android:id="@+id/appCompatButton2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:onClick="volumeUp"
+        android:text="增加音量"
+        app:layout_constraintBottom_toBottomOf="@+id/view_background_change_animation"
+        app:layout_constraintStart_toEndOf="@+id/appCompatButton" />
+
+    <androidx.appcompat.widget.AppCompatButton
+        android:id="@+id/appCompatButton3"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:onClick="volumeDown"
+        android:text="减少音量"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/appCompatButton2" />
+
+    <androidx.appcompat.widget.AppCompatButton
+        android:id="@+id/appCompatButton4"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:onClick="brightnessUp"
+        android:text="亮度增加"
+        app:layout_constraintBottom_toBottomOf="@+id/appCompatButton6"
+        app:layout_constraintStart_toEndOf="@+id/appCompatButton6" />
+
+    <androidx.appcompat.widget.AppCompatButton
+        android:id="@+id/appCompatButton5"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:onClick="brightnessDown"
+        android:text="亮度减少"
+        app:layout_constraintBottom_toBottomOf="@+id/appCompatButton4"
+        app:layout_constraintStart_toEndOf="@+id/appCompatButton4" />
+
+    <androidx.appcompat.widget.AppCompatButton
+        android:id="@+id/appCompatButton6"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:onClick="brightnessGet"
+        android:text="获取亮度值"
+        app:layout_constraintBottom_toBottomOf="@+id/appCompatButton7"
+        app:layout_constraintStart_toEndOf="@+id/appCompatButton7" />
+
+    <androidx.appcompat.widget.AppCompatButton
+        android:id="@+id/appCompatButton7"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:onClick="brightnessAuto"
+        android:text="设置自动亮度"
+        app:layout_constraintBottom_toTopOf="@+id/test_start_video"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <androidx.constraintlayout.widget.Group
+        android:id="@+id/group"
+        android:visibility="gone"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:constraint_referenced_ids="test_start_app,appCompatButton,test_start_video,test_cancel_video,appCompatButton4,appCompatButton2,appCompatButton5,appCompatButton6,test_cancel_app,appCompatButton3,appCompatButton7" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

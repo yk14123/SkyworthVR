@@ -4,18 +4,25 @@ import android.annotation.SuppressLint;
 import android.text.TextUtils;
 import android.util.Log;
 
+import com.arialyy.aria.core.Aria;
 import com.blankj.utilcode.util.FileUtils;
+import com.blankj.utilcode.util.SPUtils;
+import com.blankj.utilcode.util.Utils;
+import com.chinafocus.hvrskyworthvr.GlideApp;
 import com.chinafocus.hvrskyworthvr.global.ConfigManager;
 import com.chinafocus.hvrskyworthvr.model.bean.VideoContentList;
 import com.chinafocus.hvrskyworthvr.model.bean.VideoDetail;
 import com.chinafocus.hvrskyworthvr.net.ApiMultiService;
+import com.chinafocus.hvrskyworthvr.net.ImageProcess;
 import com.chinafocus.hvrskyworthvr.net.RequestBodyManager;
+import com.chinafocus.hvrskyworthvr.service.event.NotifyVideoContentList;
 import com.chinafocus.hvrskyworthvr.service.event.download.VideoUpdateLatest;
 import com.chinafocus.hvrskyworthvr.service.event.download.VideoUpdateListError;
 import com.chinafocus.hvrskyworthvr.service.event.download.VideoUpdateNotification;
 import com.chinafocus.lib_network.net.ApiManager;
 import com.chinafocus.lib_network.net.beans.BaseResponse;
 import com.chinafocus.lib_network.net.errorhandler.HttpErrorHandler;
+import com.google.gson.Gson;
 
 import org.greenrobot.eventbus.EventBus;
 
@@ -29,6 +36,8 @@ import io.reactivex.Observable;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.schedulers.Schedulers;
+
+import static com.chinafocus.hvrskyworthvr.rtr.videolist.sub.RtrVideoSubViewModel.VIDEO_LIST_DATA;
 
 public class DownLoadCreatorManager {
 
@@ -58,7 +67,14 @@ public class DownLoadCreatorManager {
 
     private final List<DownLoadHolder> mDownLoadHolders = new CopyOnWriteArrayList<>();
 
-    private final List<String> mDeletedName = new ArrayList<>();
+
+    private final List<String> mPreVideoDeletedName = new ArrayList<>();
+    private final List<String> mRealVideoDeletedName = new ArrayList<>();
+
+    private int type;
+    private int id;
+
+    private String tempVideoContentList = "";
 
     /**
      * 拉取网络数据并对比本地文件，生成下载任务
@@ -67,23 +83,26 @@ public class DownLoadCreatorManager {
         isDownLoadChecking = true;
         // 防止清理不干净，这里需要再次清理集合
         mDownLoadHolders.clear();
-        mDeletedName.clear();
+        mPreVideoDeletedName.clear();
+        mRealVideoDeletedName.clear();
         doWork();
     }
 
     @SuppressLint("NewApi")
     private void doWork() {
         mSubscribe = createVideoContentListObservable()
-                .doOnNext(listBaseResponse -> {
-                    listBaseResponse.getData().forEach(this::addDeletedName);
-                    checkPreVideoFileDeleted();
-                })
+                .doOnNext(this::cacheTempVideoContentList)
+                .doOnNext(this::preLoadImage)
+                .doOnNext(listBaseResponse -> listBaseResponse.getData().forEach(this::addDeletedName))
                 .flatMap(listBaseResponse -> Observable.fromIterable(listBaseResponse.getData()))
                 .doOnNext(this::createDownLoadHolder)
                 .flatMap(this::createVideoDetailObservable)
                 .map(BaseResponse::getData)
+                .doOnNext(this::saveVideoDetailAndSubtitle)
                 .doOnNext(this::createDownLoadHolder)
                 .doOnNext(this::addDeletedName)
+                .doOnComplete(this::notifyVideoContentList)
+                .doOnComplete(this::checkPreVideoFileDeleted)
                 .doOnComplete(this::checkRealVideoFileDeleted)
                 .observeOn(AndroidSchedulers.mainThread())
                 .doOnComplete(() -> {
@@ -111,29 +130,92 @@ public class DownLoadCreatorManager {
                 .subscribe();
     }
 
-    @SuppressLint("NewApi")
-    private <T> void addDeletedName(T t) {
-        String name = null;
-        if (t instanceof VideoDetail) {
-            name = ((VideoDetail) t).getVideoUrl();
-        } else if (t instanceof VideoContentList) {
-            name = ((VideoContentList) t).getMenuVideoUrl();
+    private void saveVideoDetailAndSubtitle(VideoDetail videoDetail) {
+        SPUtils.getInstance().put(type + ";" + id, new Gson().toJson(videoDetail));
+
+        String subtitle = videoDetail.getSubtitle();
+        if (!TextUtils.isEmpty(subtitle)) {
+            String[] split = subtitle.split("/");
+            String fileName = split[split.length - 1];
+            if (fileName.toLowerCase().endsWith("ass")) {
+                downLoadSubTitle(ConfigManager.getInstance().getDefaultUrl() + subtitle, fileName);
+            }
         }
 
-        Optional.ofNullable(name)
-                .filter(s -> !TextUtils.isEmpty(s))
-                .ifPresent(mDeletedName::add);
+    }
+
+    private void downLoadSubTitle(String url, String fileName) {
+        File file = new File(ConfigManager.getInstance().getSubtitleFilePath(), fileName);
+        if (!file.exists()) {
+            Aria.download(this)
+                    .load(url)     //读取下载地址
+                    .setFilePath(file.getAbsolutePath()) //设置文件保存的完整路径
+                    .resetState()
+                    .create();   //创建并启动下载
+        }
+    }
+
+    /**
+     * 当doOnComplete触发的时候，保存本地数据，并通知列表页面刷新数据
+     */
+    private void notifyVideoContentList() {
+        SPUtils.getInstance().put(VIDEO_LIST_DATA, tempVideoContentList);
+        EventBus.getDefault().post(NotifyVideoContentList.obtain());
+    }
+
+    private void cacheTempVideoContentList(BaseResponse<List<VideoContentList>> listBaseResponse) {
+        List<VideoContentList> data = listBaseResponse.getData();
+        tempVideoContentList = new Gson().toJson(data);
+    }
+
+    private void preLoadImage(BaseResponse<List<VideoContentList>> listBaseResponse) {
+        List<VideoContentList> data = listBaseResponse.getData();
+        if (data != null && data.size() > 0) {
+            realPreLoadImage(listBaseResponse.getData());
+        }
+    }
+
+    private void realPreLoadImage(List<VideoContentList> videoContentLists) {
+        for (VideoContentList temp : videoContentLists) {
+            GlideApp.with(Utils.getApp().getApplicationContext())
+                    .load(ConfigManager.getInstance().getDefaultUrl() + temp.getImgUrl() + ImageProcess.process(600, 400))
+                    .preload();
+        }
+    }
+
+    @SuppressLint("NewApi")
+    private <T> void addDeletedName(T t) {
+
+        if (t instanceof VideoDetail) {
+            String name = ((VideoDetail) t).getVideoUrl();
+            Optional.ofNullable(name)
+                    .filter(s -> !TextUtils.isEmpty(s))
+                    .ifPresent(mRealVideoDeletedName::add);
+        } else if (t instanceof VideoContentList) {
+            String name = ((VideoContentList) t).getMenuVideoUrl();
+            Optional.ofNullable(name)
+                    .filter(s -> !TextUtils.isEmpty(s))
+                    .ifPresent(mPreVideoDeletedName::add);
+        }
     }
 
     private void checkPreVideoFileDeleted() {
-        checkAndDeletedFile(ConfigManager.getInstance().getPreVideoFilePath());
+        checkAndDeletedFile(ConfigManager.getInstance().getPreVideoFilePath(), VideoType.PRE_VIDEO);
     }
 
     private void checkRealVideoFileDeleted() {
-        checkAndDeletedFile(ConfigManager.getInstance().getRealVideoFilePath());
+        checkAndDeletedFile(ConfigManager.getInstance().getRealVideoFilePath(), VideoType.REAL_VIDEO);
     }
 
-    private void checkAndDeletedFile(String filePath) {
+    private void checkAndDeletedFile(String filePath, VideoType videoType) {
+        List<String> mTempDeletedName = null;
+        if (videoType == VideoType.REAL_VIDEO) {
+            mTempDeletedName = mRealVideoDeletedName;
+        } else if (videoType == VideoType.PRE_VIDEO) {
+            mTempDeletedName = mPreVideoDeletedName;
+        }
+        assert mTempDeletedName != null;
+
         File file = new File(filePath);
         File[] files = file.listFiles();
         if (files != null) {
@@ -150,7 +232,7 @@ public class DownLoadCreatorManager {
                 } else {
                     tempName = s;
                 }
-                for (String temp : mDeletedName) {
+                for (String temp : mTempDeletedName) {
                     if (temp.contains(tempName)) {
                         isDeleted = false;
                         break;
@@ -161,7 +243,6 @@ public class DownLoadCreatorManager {
                 }
             }
         }
-        mDeletedName.clear();
     }
 
     /**
@@ -195,9 +276,11 @@ public class DownLoadCreatorManager {
      * @return 网络接口Observable
      */
     private Observable<BaseResponse<VideoDetail>> createVideoDetailObservable(VideoContentList videoContentList) {
+        type = videoContentList.getType();
+        id = videoContentList.getId();
         return ApiManager
                 .getService(ApiMultiService.class)
-                .getVideoDetailData(RequestBodyManager.getVideoDetailDataRequestBody(videoContentList.getType(), videoContentList.getId()))
+                .getVideoDetailData(RequestBodyManager.getVideoDetailDataRequestBody(type, id))
                 .subscribeOn(Schedulers.trampoline())
                 .onErrorResumeNext(new HttpErrorHandler<>());
     }
@@ -231,7 +314,9 @@ public class DownLoadCreatorManager {
     private void clearAll() {
         isDownLoadChecking = false;
         mDownLoadHolders.clear();
-        mDeletedName.clear();
+        mPreVideoDeletedName.clear();
+        mRealVideoDeletedName.clear();
+        tempVideoContentList = "";
     }
 
 }

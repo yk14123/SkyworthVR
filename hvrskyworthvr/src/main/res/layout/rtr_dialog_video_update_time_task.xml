@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/color_black_a50">
+
+    <View
+        android:id="@+id/csl_video_time_task_root"
+        android:layout_width="356dp"
+        android:layout_height="280dp"
+        android:background="@drawable/shape_video_update_bg"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/tv_video_time_task_des"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="28dp"
+        android:gravity="center"
+        android:includeFontPadding="false"
+        android:text="@string/video_update_get_text7"
+        android:textColor="@color/color_setting_id"
+        android:textSize="16sp"
+        app:layout_constraintEnd_toEndOf="@id/csl_video_time_task_root"
+        app:layout_constraintStart_toStartOf="@id/csl_video_time_task_root"
+        app:layout_constraintTop_toTopOf="@id/csl_video_time_task_root" />
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/appCompatTextView15"
+        android:layout_width="0dp"
+        android:layout_height="40dp"
+        android:layout_marginStart="40dp"
+        android:layout_marginEnd="40dp"
+        android:background="@drawable/shape_video_update_time_picker_bg"
+        android:gravity="center"
+        android:text="@string/video_update_time_text2"
+        android:textColor="@color/color_video_update_time_task_text"
+        app:layout_constraintBottom_toBottomOf="@id/time_picker_start"
+        app:layout_constraintEnd_toEndOf="@id/csl_video_time_task_root"
+        app:layout_constraintStart_toStartOf="@id/csl_video_time_task_root"
+        app:layout_constraintTop_toTopOf="@id/time_picker_start" />
+
+    <NumberPicker
+        android:id="@+id/time_picker_start"
+        android:layout_width="108dp"
+        android:layout_height="108dp"
+        android:layout_marginStart="62dp"
+        android:selectionDividerHeight="0dp"
+        android:timePickerMode="spinner"
+        app:layout_constraintBottom_toTopOf="@id/bt_video_update_time_task_ok"
+        app:layout_constraintStart_toStartOf="@id/csl_video_time_task_root"
+        app:layout_constraintTop_toBottomOf="@id/tv_video_time_task_des"
+        tools:ignore="UnusedAttribute" />
+
+    <NumberPicker
+        android:id="@+id/time_picker_end"
+        android:layout_width="108dp"
+        android:layout_height="108dp"
+        android:layout_marginEnd="62dp"
+        android:selectionDividerHeight="0dp"
+        android:timePickerMode="spinner"
+        app:layout_constraintBottom_toBottomOf="@id/time_picker_start"
+        app:layout_constraintEnd_toEndOf="@id/csl_video_time_task_root"
+        app:layout_constraintTop_toTopOf="@id/time_picker_start"
+        tools:ignore="UnusedAttribute" />
+
+    <androidx.appcompat.widget.AppCompatButton
+        android:id="@+id/bt_video_update_time_task_cancel"
+        android:layout_width="127dp"
+        android:layout_height="44dp"
+        android:layout_marginBottom="26dp"
+        android:background="@drawable/shape_video_update_cancel_bg"
+        android:gravity="center"
+        android:stateListAnimator="@null"
+        android:text="@string/setting_status_cancel"
+        android:textColor="@color/color_setting_id_create"
+        android:textSize="13sp"
+        app:layout_constraintBottom_toBottomOf="@id/csl_video_time_task_root"
+        app:layout_constraintStart_toStartOf="@id/appCompatTextView15" />
+
+    <androidx.appcompat.widget.AppCompatButton
+        android:id="@+id/bt_video_update_time_task_ok"
+        android:layout_width="127dp"
+        android:layout_height="44dp"
+        android:background="@drawable/shape_check_version_confirm_bg"
+        android:elevation="0dp"
+        android:gravity="center"
+        android:stateListAnimator="@null"
+        android:text="@string/setting_status_ok"
+        android:textColor="@color/color_white"
+        android:textSize="13sp"
+        app:layout_constraintBottom_toBottomOf="@id/bt_video_update_time_task_cancel"
+        app:layout_constraintEnd_toEndOf="@id/appCompatTextView15"
+        app:layout_constraintTop_toTopOf="@id/bt_video_update_time_task_cancel" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

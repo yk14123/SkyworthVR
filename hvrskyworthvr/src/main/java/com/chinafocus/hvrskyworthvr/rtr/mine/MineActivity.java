@@ -1,13 +1,11 @@
 package com.chinafocus.hvrskyworthvr.rtr.mine;
 
 import android.content.Intent;
-import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 
 import androidx.annotation.Nullable;
-import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.AppCompatImageView;
 import androidx.appcompat.widget.AppCompatTextView;
@@ -25,10 +23,14 @@ import com.chinafocus.hvrskyworthvr.model.DeviceInfoManager;
 import com.chinafocus.hvrskyworthvr.net.ApiMultiService;
 import com.chinafocus.hvrskyworthvr.rtr.dialog.RtrAppUpdateDialog;
 import com.chinafocus.hvrskyworthvr.rtr.install.AppInstallViewModel;
+import com.chinafocus.hvrskyworthvr.rtr.playcount.VideoPlayCountActivity;
 import com.chinafocus.hvrskyworthvr.rtr.videoupdate.VideoUpdateManagerActivity;
 import com.chinafocus.hvrskyworthvr.service.BluetoothService;
 import com.chinafocus.hvrskyworthvr.service.event.VrAboutConnect;
 import com.chinafocus.hvrskyworthvr.service.event.VrSyncPlayInfo;
+import com.chinafocus.hvrskyworthvr.service.event.download.VideoUpdateCancel;
+import com.chinafocus.hvrskyworthvr.service.event.download.VideoUpdateLatest;
+import com.chinafocus.hvrskyworthvr.service.event.download.VideoUpdateStart;
 import com.chinafocus.hvrskyworthvr.ui.main.about.WebAboutActivity;
 import com.chinafocus.hvrskyworthvr.ui.setting.SettingActivity;
 import com.chinafocus.hvrskyworthvr.util.TimeOutClickUtil;
@@ -37,6 +39,7 @@ import com.chinafocus.hvrskyworthvr.util.statusbar.StatusBarCompatFactory;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
 
 import static com.chinafocus.hvrskyworthvr.global.Constants.ACTIVITY_ABOUT;
 import static com.chinafocus.hvrskyworthvr.global.Constants.RESULT_CODE_ACTIVE_DIALOG;
@@ -78,6 +81,11 @@ public class MineActivity extends AppCompatActivity {
         ViewClickUtil.click(
                 findViewById(R.id.tv_video_update_enter),
                 this::startVideoUpdateManagerActivity
+        );
+
+        ViewClickUtil.click(
+                findViewById(R.id.tv_video_play_count),
+                this::startVideoPlayCountManagerActivity
         );
 
         AppCompatTextView uuid = findViewById(R.id.tv_mine_about_uuid);
@@ -123,16 +131,14 @@ public class MineActivity extends AppCompatActivity {
             if (mRtrAppUpdateDialog == null) {
                 mRtrAppUpdateDialog = new RtrAppUpdateDialog(this);
                 mRtrAppUpdateDialog.setDownLoadListener(new RtrAppUpdateDialog.DownLoadListener() {
-                    @RequiresApi(api = Build.VERSION_CODES.N)
                     @Override
                     public void immediatelyDownLoad() {
-                        mAppInstallViewModel.retryDownLoad();
+                        mAppInstallViewModel.restartDownLoad();
                     }
 
-                    @RequiresApi(api = Build.VERSION_CODES.N)
                     @Override
                     public void retryDownLoad() {
-                        mAppInstallViewModel.retryDownLoad();
+                        mAppInstallViewModel.restartDownLoad();
                     }
 
                     @Override
@@ -151,14 +157,15 @@ public class MineActivity extends AppCompatActivity {
                     }
                 });
                 mRtrAppUpdateDialog.setOnDismissListener(dialog -> {
-                    mAppInstallViewModel.cancelDownLoad();
+                    mAppInstallViewModel.removeDownLoad();
                     if (CURRENT_VR_ONLINE_STATUS == VR_STATUS_ONLINE) {
                         setResult(RESULT_CODE_ACTIVE_DIALOG, new Intent().putExtra("currentVideoId", VrSyncPlayInfo.obtain().getVideoId()));
                         finish();
                     }
                 });
             }
-            mRtrAppUpdateDialog.postStatusForce(appVersionInfo.getAutoDownLoad());
+//            mRtrAppUpdateDialog.postStatusForce(appVersionInfo.getAutoDownLoad());
+            mRtrAppUpdateDialog.postStatusForce(1);
             mRtrAppUpdateDialog.postVersionCodeAndDes(appVersionInfo.getVersionName(), appVersionInfo.getVersionIntro());
             mRtrAppUpdateDialog.showUpdatePreUI();
             if (!mRtrAppUpdateDialog.isShowing()) {
@@ -190,6 +197,7 @@ public class MineActivity extends AppCompatActivity {
             ToastUtils.showShort(MineActivity.this.getString(R.string.check_version_latest));
             mTag.setVisibility(View.GONE);
         });
+        mAppInstallViewModel.getTaskUpdateRunning().observe(this, aVoid -> ToastUtils.showShort(MineActivity.this.getString(R.string.app_download_running)));
     }
 
     private boolean isAppInstallDialogShow() {
@@ -198,6 +206,11 @@ public class MineActivity extends AppCompatActivity {
 
     private void startVideoUpdateManagerActivity() {
         startActivity(new Intent(this, VideoUpdateManagerActivity.class));
+        finish();
+    }
+
+    private void startVideoPlayCountManagerActivity() {
+        startActivity(new Intent(this, VideoPlayCountActivity.class));
         finish();
     }
 
@@ -266,7 +279,7 @@ public class MineActivity extends AppCompatActivity {
     }
 
     private void showRedTag() {
-        if (mAppInstallViewModel.isUpdate()) {
+        if (mAppInstallViewModel.hasUpdate()) {
             mTag.setVisibility(View.VISIBLE);
         } else {
             mTag.setVisibility(View.GONE);
@@ -275,6 +288,33 @@ public class MineActivity extends AppCompatActivity {
             mVideoUpdateTag.setVisibility(View.VISIBLE);
         } else {
             mVideoUpdateTag.setVisibility(View.GONE);
+        }
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    @SuppressWarnings("unused")
+    public void videoUpdateLatest(VideoUpdateLatest event) {
+        Log.d("MyLog", "-----videoUpdateLatest，MineActivity 关闭小红点-----");
+        if (mVideoUpdateTag != null) {
+            mVideoUpdateTag.setVisibility(View.GONE);
+        }
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    @SuppressWarnings("unused")
+    public void videoUpdateCancel(VideoUpdateCancel event) {
+        Log.d("MyLog", "-----videoUpdateCancel，MineActivity 关闭小红点-----");
+        if (mVideoUpdateTag != null) {
+            mVideoUpdateTag.setVisibility(View.GONE);
+        }
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    @SuppressWarnings("unused")
+    public void videoUpdateStart(VideoUpdateStart event) {
+        Log.d("MyLog", "-----videoUpdateStart，MineActivity 展示小红点-----");
+        if (mVideoUpdateTag != null) {
+            mVideoUpdateTag.setVisibility(View.VISIBLE);
         }
     }
 }

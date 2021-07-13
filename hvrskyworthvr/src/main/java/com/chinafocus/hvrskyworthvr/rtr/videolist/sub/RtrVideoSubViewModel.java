@@ -24,7 +24,7 @@ import io.reactivex.schedulers.Schedulers;
 
 public class RtrVideoSubViewModel extends BaseViewModel {
 
-    private static final String VIDEO_LIST_DATA = "video_list_data";
+    public static final String VIDEO_LIST_DATA = "video_list_data";
 
     public MutableLiveData<List<VideoContentList>> videoDataMutableLiveData = new MutableLiveData<>();
     public MutableLiveData<Boolean> noData = new MutableLiveData<>();

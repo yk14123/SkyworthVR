@@ -19,7 +19,6 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.chinafocus.huaweimdm.tools.TimerTaskManager;
 import com.huawei.android.app.admin.DeviceApplicationManager;
 import com.huawei.android.app.admin.DeviceControlManager;
 import com.huawei.android.app.admin.DeviceHwSystemManager;
@@ -382,11 +381,11 @@ public class MdmMainActivity extends Activity {
             Toast.makeText(getApplicationContext(), getString(R.string.no_permission), Toast.LENGTH_SHORT).show();
         }
 
-        if (TimerTaskManager.getInstance().isStartTimerTask()) {
-            mRebootStateTxt.setText(R.string.state_enable);
-        } else {
-            mRebootStateTxt.setText(R.string.state_disable);
-        }
+//        if (TimerTaskManager.getInstance().isStartTimerTask()) {
+//            mRebootStateTxt.setText(R.string.state_enable);
+//        } else {
+//            mRebootStateTxt.setText(R.string.state_disable);
+//        }
 
         if (isStatusBarExpandPanelDisabled) {
             mStatusBarExpandPaneStatusText.setText(R.string.state_restricted);
@@ -493,14 +492,14 @@ public class MdmMainActivity extends Activity {
                 } else if (id == R.id.enableReboot) {
 //                    mDeviceControlManager.rebootDevice(mAdminName);
                     if (mDeviceControlManager.isRooted(mAdminName)) {
-                        TimerTaskManager.getInstance().startTimerTask(getApplicationContext());
-                        Toast.makeText(getApplicationContext(), "开启每日凌晨02:00重启设备", Toast.LENGTH_SHORT).show();
+//                        TimerTaskManager.getInstance().startTimerTask(getApplicationContext());
+//                        Toast.makeText(getApplicationContext(), "开启每日凌晨02:00重启设备", Toast.LENGTH_SHORT).show();
                     }
                 } else if (id == R.id.disableReboot) {
 //                    mDeviceControlManager.rebootDevice(mAdminName);
                     if (mDeviceControlManager.isRooted(mAdminName)) {
-                        TimerTaskManager.getInstance().cancelTimerTask();
-                        Toast.makeText(getApplicationContext(), "取消每日凌晨02:00重启设备", Toast.LENGTH_SHORT).show();
+//                        TimerTaskManager.getInstance().cancelTimerTask();
+//                        Toast.makeText(getApplicationContext(), "取消每日凌晨02:00重启设备", Toast.LENGTH_SHORT).show();
                     }
                 } else if (id == R.id.bt_silent_active_admin) {
                     mDeviceControlManager.setSilentActiveAdmin(mAdminName);

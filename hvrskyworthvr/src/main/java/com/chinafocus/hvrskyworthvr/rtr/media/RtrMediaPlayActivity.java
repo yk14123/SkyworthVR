@@ -13,6 +13,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.blankj.utilcode.util.BarUtils;
+import com.blankj.utilcode.util.SPUtils;
 import com.chinafocus.hvrskyworthvr.R;
 import com.chinafocus.hvrskyworthvr.exo.tools.ExoMediaHelper;
 import com.chinafocus.hvrskyworthvr.exo.tools.ViewBindHelper;
@@ -52,6 +53,7 @@ import static com.chinafocus.hvrskyworthvr.global.Constants.RESULT_CODE_ACTIVE_D
 import static com.chinafocus.hvrskyworthvr.global.Constants.RESULT_CODE_INACTIVE_DIALOG;
 import static com.chinafocus.hvrskyworthvr.global.Constants.RESULT_CODE_INACTIVE_DIALOG_BACK;
 import static com.chinafocus.hvrskyworthvr.global.Constants.RESULT_CODE_SELF_INACTIVE_DIALOG;
+import static com.chinafocus.hvrskyworthvr.global.Constants.VIDEO_PLAY_COUNT;
 import static com.google.android.exoplayer2.Player.STATE_ENDED;
 
 public class RtrMediaPlayActivity extends AppCompatActivity implements ViewBindHelper.PlayVideoListener, PlayerControlView.VisibilityListener {
@@ -97,6 +99,8 @@ public class RtrMediaPlayActivity extends AppCompatActivity implements ViewBindH
     private void observerNetData() {
         mediaViewModel.videoDetailMutableLiveData.observe(this, videoDetail -> {
             Log.d("MyLog", "-----当前播放视频的标题是 >>> " + videoDetail.getTitle());
+
+            addVideoPlayCount();
 
             String videoUrl = "";
             String subtitle = "";
@@ -609,6 +613,7 @@ public class RtrMediaPlayActivity extends AppCompatActivity implements ViewBindH
     @Override
     public void onVideoRetry() {
         VrSyncPlayInfo.obtain().setVideoId(currentVideoId);
+        addVideoPlayCount();
     }
 
     /**
@@ -628,5 +633,13 @@ public class RtrMediaPlayActivity extends AppCompatActivity implements ViewBindH
                 mMediaVRLinkPopupWindow.dismiss();
             }
         }
+    }
+
+    /**
+     * 统计播放次数+1
+     */
+    private void addVideoPlayCount() {
+        int count = SPUtils.getInstance().getInt(VIDEO_PLAY_COUNT, 0);
+        SPUtils.getInstance().put(VIDEO_PLAY_COUNT, ++count);
     }
 }
