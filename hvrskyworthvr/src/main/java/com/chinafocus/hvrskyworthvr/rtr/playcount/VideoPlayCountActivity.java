@@ -10,16 +10,21 @@ import androidx.appcompat.widget.AppCompatTextView;
 import com.blankj.utilcode.util.SPUtils;
 import com.chinafocus.hvrskyworthvr.R;
 import com.chinafocus.hvrskyworthvr.rtr.dialog.RtrVideoPlayCountDialog;
+import com.chinafocus.hvrskyworthvr.util.FileContentUtil;
 import com.chinafocus.hvrskyworthvr.util.statusbar.StatusBarCompatFactory;
 
 import java.text.MessageFormat;
 
-import static com.chinafocus.hvrskyworthvr.global.Constants.VIDEO_PLAY_COUNT;
+import io.reactivex.Observable;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.schedulers.Schedulers;
+
 import static com.chinafocus.hvrskyworthvr.global.Constants.VIDEO_PLAY_COUNT_CLEAR_TIME;
 
 public class VideoPlayCountActivity extends AppCompatActivity {
 
     private RtrVideoPlayCountDialog mRtrVideoPlayCountDialog;
+    private AppCompatTextView tvVideoPlayCountSize;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -28,9 +33,8 @@ public class VideoPlayCountActivity extends AppCompatActivity {
         setContentView(R.layout.activity_video_play_count);
 
         findViewById(R.id.iv_video_update_back).setOnClickListener(v -> finish());
-        AppCompatTextView tvVideoPlayCountSize = findViewById(R.id.tv_video_play_count_size);
-        int size = SPUtils.getInstance().getInt(VIDEO_PLAY_COUNT, 0);
-        tvVideoPlayCountSize.setText(MessageFormat.format("{0}次", size));
+        tvVideoPlayCountSize = findViewById(R.id.tv_video_play_count_size);
+        initVideoCount();
 
         AppCompatTextView clearTime = findViewById(R.id.tv_video_play_count_clear_time);
         String time = SPUtils.getInstance().getString(VIDEO_PLAY_COUNT_CLEAR_TIME);
@@ -51,7 +55,7 @@ public class VideoPlayCountActivity extends AppCompatActivity {
                     SPUtils.getInstance().put(VIDEO_PLAY_COUNT_CLEAR_TIME, s);
 
                     tvVideoPlayCountSize.setText(MessageFormat.format("{0}次", 0));
-                    SPUtils.getInstance().put(VIDEO_PLAY_COUNT, 0);
+                    FileContentUtil.writeCount(getApplicationContext(), "VideoCount.txt", "0");
                 });
             }
             if (!mRtrVideoPlayCountDialog.isShowing()) {
@@ -59,5 +63,13 @@ public class VideoPlayCountActivity extends AppCompatActivity {
             }
         });
 
+    }
+
+    private void initVideoCount() {
+        Observable.fromCallable(() -> FileContentUtil.readCount(getApplicationContext(), "VideoCount.txt"))
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .doOnNext(s -> tvVideoPlayCountSize.setText(MessageFormat.format("{0}次", s)))
+                .subscribe();
     }
 }

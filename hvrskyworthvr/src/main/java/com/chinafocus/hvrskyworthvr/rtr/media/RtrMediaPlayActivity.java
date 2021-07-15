@@ -13,7 +13,6 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.blankj.utilcode.util.BarUtils;
-import com.blankj.utilcode.util.SPUtils;
 import com.chinafocus.hvrskyworthvr.R;
 import com.chinafocus.hvrskyworthvr.exo.tools.ExoMediaHelper;
 import com.chinafocus.hvrskyworthvr.exo.tools.ViewBindHelper;
@@ -37,6 +36,7 @@ import com.chinafocus.hvrskyworthvr.service.event.VrRotation;
 import com.chinafocus.hvrskyworthvr.service.event.VrSyncMediaStatus;
 import com.chinafocus.hvrskyworthvr.service.event.VrSyncPlayInfo;
 import com.chinafocus.hvrskyworthvr.ui.main.media.MediaViewModel;
+import com.chinafocus.hvrskyworthvr.util.FileContentUtil;
 import com.chinafocus.hvrskyworthvr.util.statusbar.StatusBarCompatFactory;
 import com.google.android.exoplayer2.Player;
 import com.google.android.exoplayer2.SimpleExoPlayer;
@@ -47,13 +47,15 @@ import org.greenrobot.eventbus.Subscribe;
 import java.io.File;
 import java.util.Objects;
 
+import io.reactivex.Observable;
+import io.reactivex.schedulers.Schedulers;
+
 import static com.chinafocus.hvrskyworthvr.global.Constants.RESULT_CODE_ACTIVE_BLUETOOTH_CONNECTED;
 import static com.chinafocus.hvrskyworthvr.global.Constants.RESULT_CODE_ACTIVE_BLUETOOTH_LOST;
 import static com.chinafocus.hvrskyworthvr.global.Constants.RESULT_CODE_ACTIVE_DIALOG;
 import static com.chinafocus.hvrskyworthvr.global.Constants.RESULT_CODE_INACTIVE_DIALOG;
 import static com.chinafocus.hvrskyworthvr.global.Constants.RESULT_CODE_INACTIVE_DIALOG_BACK;
 import static com.chinafocus.hvrskyworthvr.global.Constants.RESULT_CODE_SELF_INACTIVE_DIALOG;
-import static com.chinafocus.hvrskyworthvr.global.Constants.VIDEO_PLAY_COUNT;
 import static com.google.android.exoplayer2.Player.STATE_ENDED;
 
 public class RtrMediaPlayActivity extends AppCompatActivity implements ViewBindHelper.PlayVideoListener, PlayerControlView.VisibilityListener {
@@ -639,7 +641,14 @@ public class RtrMediaPlayActivity extends AppCompatActivity implements ViewBindH
      * 统计播放次数+1
      */
     private void addVideoPlayCount() {
-        int count = SPUtils.getInstance().getInt(VIDEO_PLAY_COUNT, 0);
-        SPUtils.getInstance().put(VIDEO_PLAY_COUNT, ++count);
+        Observable.fromCallable(() -> FileContentUtil.readCount(getApplicationContext(), "VideoCount.txt"))
+                .subscribeOn(Schedulers.io())
+                .map(s -> {
+                    long i = Long.parseLong(s);
+                    i++;
+                    return String.valueOf(i);
+                })
+                .doOnNext(s -> FileContentUtil.writeCount(getApplicationContext(), "VideoCount.txt", s))
+                .subscribe();
     }
 }
