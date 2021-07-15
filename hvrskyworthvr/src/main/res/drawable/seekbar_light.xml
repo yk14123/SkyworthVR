@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:id="@android:id/background">
+        <shape>
+            <corners android:radius="25dp" />
+            <solid android:color="@color/color_video_unplayed" />
+        </shape>
+    </item>
+    <!--    <item android:id="@android:id/secondaryProgress">-->
+    <!--        <clip>-->
+    <!--            <shape>-->
+    <!--                <corners android:radius="5dip" />-->
+    <!--                <gradient-->
+    <!--                    android:startColor="@color/color_video_update_ok_bg"-->
+    <!--                    android:centerColor="@color/color_video_update_ok_bg"-->
+    <!--                    android:centerY="0.75"-->
+    <!--                    android:endColor="@color/color_video_update_ok_bg"-->
+    <!--                    android:angle="270"/>-->
+    <!--            </shape>-->
+    <!--        </clip>-->
+    <!--    </item>-->
+    <item android:id="@android:id/progress">
+        <clip>
+            <shape>
+                <corners android:radius="5dip" />
+                <gradient
+                    android:angle="180"
+                    android:endColor="@color/color_ok_enable_end"
+                    android:startColor="@color/color_ok_enable_start" />
+            </shape>
+        </clip>
+    </item>
+</layer-list>

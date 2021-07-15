@@ -461,6 +461,11 @@ public class MediaPlayActivity extends AppCompatActivity implements ViewBindHelp
         VrSyncPlayInfo.obtain().setVideoId(currentVideoId);
     }
 
+    @Override
+    public void onMediaSetting() {
+
+    }
+
     /**
      * 配合singleTop使用，当singleTop启用的时候（PlayerActivity跳转PlayerActivity跳转），onPause -> onNewIntent ->
      * onResume

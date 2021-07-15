@@ -595,6 +595,13 @@ public class PlayerControlView extends FrameLayout {
             mSetting.setOnClickListener(v -> mInterAction.onVideoSetting());
         }
 
+        // 设置
+        AppCompatRadioButton mSetting2 = findViewById(R.id.rtr_exo_setting2);
+        if (mSetting2 != null) {
+            adaptTextViewDrawableBound(R.drawable.rtr_icon_video_setting, mSetting2);
+            mSetting2.setOnClickListener(v -> mInterAction.mediaSetting());
+        }
+
         AppCompatTextView appCompatTextView = findViewById(R.id.tv_media_video_intro_small);
         if (appCompatTextView != null) {
             Drawable drawable = ResourcesCompat.getDrawable(getResources(), R.drawable.icon_video_intro_small, null);

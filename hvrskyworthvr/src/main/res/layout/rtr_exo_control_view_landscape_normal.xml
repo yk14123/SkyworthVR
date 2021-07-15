@@ -98,7 +98,6 @@
             android:id="@+id/rtr_exo_setting"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="15dp"
             android:button="@null"
             android:drawablePadding="2dp"
             android:gravity="center"
@@ -107,6 +106,22 @@
             android:paddingEnd="10dp"
             android:paddingBottom="15dp"
             android:text="@string/media_video_intro_big"
+            android:textColor="@color/color_white"
+            android:textSize="13sp" />
+
+        <androidx.appcompat.widget.AppCompatRadioButton
+            android:id="@+id/rtr_exo_setting2"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="15dp"
+            android:button="@null"
+            android:drawablePadding="2dp"
+            android:gravity="center"
+            android:paddingStart="10dp"
+            android:paddingTop="15dp"
+            android:paddingEnd="10dp"
+            android:paddingBottom="15dp"
+            android:text="@string/media_video_setting"
             android:textColor="@color/color_white"
             android:textSize="13sp" />
 

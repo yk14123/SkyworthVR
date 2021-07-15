@@ -1,0 +1,151 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <androidx.constraintlayout.utils.widget.ImageFilterView
+        android:id="@+id/imageFilterView"
+        android:layout_width="580dp"
+        android:layout_height="256dp"
+        android:background="@color/color_black_a80"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:round="6dp" />
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/appCompatTextView17"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="24dp"
+        android:text="@string/media_setting_name"
+        android:textColor="@color/color_EE"
+        android:textSize="19sp"
+        app:layout_constraintEnd_toEndOf="@+id/imageFilterView"
+        app:layout_constraintStart_toStartOf="@+id/imageFilterView"
+        app:layout_constraintTop_toTopOf="@+id/imageFilterView" />
+
+    <androidx.appcompat.widget.AppCompatImageView
+        android:id="@+id/appCompatImageView10"
+        android:layout_width="36dp"
+        android:layout_height="36dp"
+        android:layout_marginStart="64dp"
+        android:layout_marginTop="29dp"
+        android:padding="5dp"
+        android:src="@drawable/rtr_icon_video_setting_volume"
+        app:layout_constraintStart_toStartOf="@+id/imageFilterView"
+        app:layout_constraintTop_toBottomOf="@+id/appCompatTextView17" />
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/appCompatTextView18"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:text="@string/media_setting_volume"
+        android:textColor="@color/color_white"
+        android:textSize="13sp"
+        app:layout_constraintEnd_toEndOf="@+id/appCompatImageView10"
+        app:layout_constraintStart_toStartOf="@+id/appCompatImageView10"
+        app:layout_constraintTop_toBottomOf="@+id/appCompatImageView10" />
+
+    <androidx.appcompat.widget.AppCompatImageView
+        android:id="@+id/appCompatImageView11"
+        android:layout_width="36dp"
+        android:layout_height="36dp"
+        android:layout_marginTop="38dp"
+        android:padding="5dp"
+        android:src="@drawable/rtr_icon_video_setting_brightness"
+        app:layout_constraintStart_toStartOf="@+id/appCompatImageView10"
+        app:layout_constraintTop_toBottomOf="@+id/appCompatTextView18" />
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:text="@string/media_setting_brightness"
+        android:textColor="@color/color_white"
+        android:textSize="13sp"
+        app:layout_constraintEnd_toEndOf="@+id/appCompatImageView11"
+        app:layout_constraintStart_toStartOf="@+id/appCompatImageView11"
+        app:layout_constraintTop_toBottomOf="@+id/appCompatImageView11" />
+
+    <androidx.appcompat.widget.AppCompatImageButton
+        android:id="@+id/appCompatImageButton"
+        android:layout_width="36dp"
+        android:layout_height="36dp"
+        android:layout_marginStart="40dp"
+        android:background="?android:attr/selectableItemBackgroundBorderless"
+        android:padding="5dp"
+        android:src="@drawable/rtr_icon_video_setting_volume_down"
+        app:layout_constraintBottom_toBottomOf="@+id/appCompatImageView10"
+        app:layout_constraintStart_toEndOf="@+id/appCompatImageView10"
+        app:layout_constraintTop_toTopOf="@+id/appCompatImageView10" />
+
+    <androidx.appcompat.widget.AppCompatSeekBar
+        android:id="@+id/appCompatSeekBar"
+        android:layout_width="300dp"
+        android:layout_height="30dp"
+        android:layout_marginStart="12dp"
+        android:maxHeight="5dp"
+        android:minHeight="5dp"
+        android:paddingLeft="10dp"
+        android:paddingRight="10dp"
+        android:progressDrawable="@drawable/seekbar_light"
+        android:thumb="@drawable/rtr_icon_video_setting_bar"
+        app:layout_constraintBottom_toBottomOf="@+id/appCompatImageButton"
+        app:layout_constraintStart_toEndOf="@+id/appCompatImageButton"
+        app:layout_constraintTop_toTopOf="@+id/appCompatImageButton" />
+
+    <androidx.appcompat.widget.AppCompatImageButton
+        android:id="@+id/appCompatImageView13"
+        android:layout_width="36dp"
+        android:layout_height="36dp"
+        android:layout_marginStart="12dp"
+        android:background="?android:attr/selectableItemBackgroundBorderless"
+        android:padding="5dp"
+        android:src="@drawable/rtr_icon_video_setting_volume_up"
+        app:layout_constraintBottom_toBottomOf="@+id/appCompatImageButton"
+        app:layout_constraintStart_toEndOf="@+id/appCompatSeekBar"
+        app:layout_constraintTop_toTopOf="@+id/appCompatImageButton" />
+
+    <androidx.appcompat.widget.AppCompatImageButton
+        android:id="@+id/appCompatImageView12"
+        android:layout_width="36dp"
+        android:layout_height="36dp"
+        android:background="?android:attr/selectableItemBackgroundBorderless"
+        android:padding="5dp"
+        android:src="@drawable/rtr_icon_video_setting_brightness_down"
+        app:layout_constraintBottom_toBottomOf="@+id/appCompatImageView11"
+        app:layout_constraintEnd_toEndOf="@+id/appCompatImageButton"
+        app:layout_constraintStart_toStartOf="@+id/appCompatImageButton"
+        app:layout_constraintTop_toTopOf="@+id/appCompatImageView11" />
+
+    <androidx.appcompat.widget.AppCompatSeekBar
+        android:id="@+id/appCompatSeekBar2"
+        android:layout_width="300dp"
+        android:layout_height="30dp"
+        android:layout_marginStart="12dp"
+        android:maxHeight="5dp"
+        android:minHeight="5dp"
+        android:paddingLeft="10dp"
+        android:paddingRight="10dp"
+        android:progressDrawable="@drawable/seekbar_light"
+        android:thumb="@drawable/rtr_icon_video_setting_bar"
+        app:layout_constraintBottom_toBottomOf="@+id/appCompatImageView12"
+        app:layout_constraintStart_toEndOf="@+id/appCompatImageView12"
+        app:layout_constraintTop_toTopOf="@+id/appCompatImageView12" />
+
+    <androidx.appcompat.widget.AppCompatImageButton
+        android:layout_width="36dp"
+        android:layout_height="36dp"
+        android:background="?android:attr/selectableItemBackgroundBorderless"
+        android:padding="5dp"
+        android:src="@drawable/rtr_icon_video_setting_brightness_up"
+        app:layout_constraintBottom_toBottomOf="@+id/appCompatImageView12"
+        app:layout_constraintEnd_toEndOf="@+id/appCompatImageView13"
+        app:layout_constraintStart_toStartOf="@+id/appCompatImageView13"
+        app:layout_constraintTop_toTopOf="@+id/appCompatImageView12" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

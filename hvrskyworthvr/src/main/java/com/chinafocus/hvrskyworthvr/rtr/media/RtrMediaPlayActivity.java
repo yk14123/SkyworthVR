@@ -23,6 +23,7 @@ import com.chinafocus.hvrskyworthvr.global.ConfigManager;
 import com.chinafocus.hvrskyworthvr.global.Constants;
 import com.chinafocus.hvrskyworthvr.rtr.dialog.RtrBluetoothConnectedDialog;
 import com.chinafocus.hvrskyworthvr.rtr.dialog.RtrBluetoothLostDialog;
+import com.chinafocus.hvrskyworthvr.rtr.dialog.RtrMediaSettingDialog;
 import com.chinafocus.hvrskyworthvr.rtr.dialog.RtrVideoDetailDialog;
 import com.chinafocus.hvrskyworthvr.rtr.popup.MediaVRLinkPopupWindow;
 import com.chinafocus.hvrskyworthvr.service.BluetoothService;
@@ -79,6 +80,7 @@ public class RtrMediaPlayActivity extends AppCompatActivity implements ViewBindH
     private int currentVideoId;
     private MyBluetoothLostDelayTaskRunnable mMyBluetoothLostDelayTaskRunnable;
     private MyPlayerEventListener mMyPlayerEventListener;
+    private RtrMediaSettingDialog mediaSettingDialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -568,6 +570,17 @@ public class RtrMediaPlayActivity extends AppCompatActivity implements ViewBindH
     public void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
         mExoMediaHelper.onSaveInstanceState(outState);
+    }
+
+    @Override
+    public void onMediaSetting() {
+        Log.e("MyLog", "点击了设置");
+        if (mediaSettingDialog == null) {
+            mediaSettingDialog = new RtrMediaSettingDialog(this);
+        }
+        if (!mediaSettingDialog.isShowing()) {
+            mediaSettingDialog.show();
+        }
     }
 
     @Override

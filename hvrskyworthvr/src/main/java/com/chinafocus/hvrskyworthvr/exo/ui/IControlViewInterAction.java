@@ -44,6 +44,11 @@ public interface IControlViewInterAction {
     default void videoRetry(){
     }
 
+    // 设置亮度和声音
+    default void mediaSetting(){
+
+    }
+
     // ================== 下面3个接口 澳门快讯项目用不到
 
     // 视频设置画面与投诉

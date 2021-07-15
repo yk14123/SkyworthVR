@@ -77,6 +77,13 @@ public class ViewBindHelper {
                     mPlayVideoListener.onVideoRetry();
                 }
             }
+
+            @Override
+            public void mediaSetting() {
+                if (mPlayVideoListener != null) {
+                    mPlayVideoListener.onMediaSetting();
+                }
+            }
         });
     }
 
@@ -92,6 +99,8 @@ public class ViewBindHelper {
         void onVideoSetting();
 
         void onVideoRetry();
+
+        void onMediaSetting();
     }
 
     private PlayVideoListener mPlayVideoListener;
