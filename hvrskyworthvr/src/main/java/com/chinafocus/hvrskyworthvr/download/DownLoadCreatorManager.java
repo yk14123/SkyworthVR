@@ -50,7 +50,7 @@ public class DownLoadCreatorManager {
     // 整体流程控制
     private Disposable mSubscribe;
 
-    private static DownLoadCreatorManager INSTANCE = new DownLoadCreatorManager();
+    private static final DownLoadCreatorManager INSTANCE = new DownLoadCreatorManager();
 
     public static DownLoadCreatorManager getInstance() {
         return INSTANCE;
@@ -65,10 +65,11 @@ public class DownLoadCreatorManager {
         return isDownLoadChecking;
     }
 
-    private List<DownLoadHolder> mDownLoadHolders = new CopyOnWriteArrayList<>();
+    private final List<DownLoadHolder> mDownLoadHolders = new CopyOnWriteArrayList<>();
 
-    private List<String> mPreVideoDeletedName = new ArrayList<>();
-    private List<String> mRealVideoDeletedName = new ArrayList<>();
+
+    private final List<String> mPreVideoDeletedName = new ArrayList<>();
+    private final List<String> mRealVideoDeletedName = new ArrayList<>();
 
     private int type;
     private int id;
@@ -187,16 +188,14 @@ public class DownLoadCreatorManager {
 
         if (t instanceof VideoDetail) {
             String name = ((VideoDetail) t).getVideoUrl();
-
             Optional.ofNullable(name)
                     .filter(s -> !TextUtils.isEmpty(s))
-                    .ifPresent(s -> mRealVideoDeletedName.add(s));
+                    .ifPresent(mRealVideoDeletedName::add);
         } else if (t instanceof VideoContentList) {
             String name = ((VideoContentList) t).getMenuVideoUrl();
-
             Optional.ofNullable(name)
                     .filter(s -> !TextUtils.isEmpty(s))
-                    .ifPresent(s -> mPreVideoDeletedName.add(s));
+                    .ifPresent(mPreVideoDeletedName::add);
         }
     }
 
