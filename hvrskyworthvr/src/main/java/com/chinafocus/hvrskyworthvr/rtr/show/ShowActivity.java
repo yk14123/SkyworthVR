@@ -101,6 +101,8 @@ import jp.wasabeef.glide.transformations.BlurTransformation;
 import jp.wasabeef.glide.transformations.CropTransformation;
 
 import static android.media.AudioManager.FLAG_PLAY_SOUND;
+import static android.view.KeyEvent.KEYCODE_VOLUME_DOWN;
+import static android.view.KeyEvent.KEYCODE_VOLUME_UP;
 import static com.bumptech.glide.request.RequestOptions.bitmapTransform;
 import static com.chinafocus.hvrskyworthvr.download.VideoUpdateService.VIDEO_UPDATE_SERVICE;
 import static com.chinafocus.hvrskyworthvr.download.VideoUpdateService.VIDEO_UPDATE_SERVICE_CANCEL;
@@ -836,9 +838,9 @@ public class ShowActivity extends AppCompatActivity {
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
         Log.e("MyLog", " keyCode >>> " + keyCode + " KeyEvent >>> " + event);
-//        if (KEYCODE_VOLUME_UP == keyCode || KEYCODE_VOLUME_DOWN == keyCode){
-//            return true;
-//        }
+        if (KEYCODE_VOLUME_UP == keyCode || KEYCODE_VOLUME_DOWN == keyCode) {
+            return true;
+        }
         return super.onKeyDown(keyCode, event);
     }
 

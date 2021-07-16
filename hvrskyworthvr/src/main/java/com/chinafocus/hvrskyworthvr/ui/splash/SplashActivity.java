@@ -1,7 +1,6 @@
 package com.chinafocus.hvrskyworthvr.ui.splash;
 
 import android.annotation.SuppressLint;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.location.LocationManager;
 import android.net.Uri;
@@ -15,10 +14,10 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.blankj.utilcode.constant.PermissionConstants;
+import com.blankj.utilcode.util.BrightnessUtils;
 import com.blankj.utilcode.util.PermissionUtils;
 import com.chinafocus.hvrskyworthvr.R;
 import com.chinafocus.hvrskyworthvr.model.DeviceInfoManager;
-import com.chinafocus.hvrskyworthvr.ui.main.MainActivity;
 import com.chinafocus.hvrskyworthvr.ui.setting.SettingActivity;
 import com.chinafocus.hvrskyworthvr.util.statusbar.StatusBarCompatFactory;
 
@@ -97,6 +96,7 @@ public class SplashActivity extends AppCompatActivity {
     }
 
     private void delayStartLoginActivity() {
+        BrightnessUtils.setAutoBrightnessEnabled(false);
         Completable
                 .timer(2, TimeUnit.SECONDS)
                 .subscribe(new DisposableCompletableObserver() {

@@ -533,6 +533,7 @@ public class RtrMediaPlayActivity extends AppCompatActivity implements ViewBindH
         if (mMediaVRLinkPopupWindow != null && mMediaVRLinkPopupWindow.isShowing()) {
             mMediaVRLinkPopupWindow.dismiss(false);
         }
+        hideMediaSettingDialog();
     }
 
     @Override
@@ -580,6 +581,12 @@ public class RtrMediaPlayActivity extends AppCompatActivity implements ViewBindH
         }
         if (!mediaSettingDialog.isShowing()) {
             mediaSettingDialog.show();
+        }
+    }
+
+    private void hideMediaSettingDialog() {
+        if (mediaSettingDialog != null && mediaSettingDialog.isShowing()) {
+            mediaSettingDialog.dismiss();
         }
     }
 

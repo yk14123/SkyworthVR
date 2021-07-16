@@ -26,4 +26,8 @@ public class Constants {
     public static final String VIDEO_UPDATE_TIME_TASK_END = "video_update_time_task_end";
     public static final String VIDEO_PLAY_COUNT = "video_play_count";
     public static final String VIDEO_PLAY_COUNT_CLEAR_TIME = "video_play_count_clear_time";
+
+    public static final String VOLUME_CURRENT_STATUS = "volume_current_status";
+    public static final String BRIGHTNESS_CURRENT_STATUS = "brightness_current_status";
+    public static final String INIT_VOLUME_BRIGHTNESS_STATUS = "init_volume_brightness_status";
 }

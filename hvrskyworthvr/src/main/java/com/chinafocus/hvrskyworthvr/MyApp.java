@@ -1,11 +1,14 @@
 package com.chinafocus.hvrskyworthvr;
 
 import android.app.Application;
+import android.media.AudioManager;
 import android.util.Log;
 
 import com.arialyy.aria.core.Aria;
+import com.blankj.utilcode.util.BrightnessUtils;
 import com.blankj.utilcode.util.LogUtils;
 import com.blankj.utilcode.util.SPUtils;
+import com.blankj.utilcode.util.VolumeUtils;
 import com.chinafocus.hvrskyworthvr.global.ConfigManager;
 import com.chinafocus.hvrskyworthvr.model.DeviceInfoManager;
 import com.chinafocus.hvrskyworthvr.net.NetworkRequestInfo;
@@ -25,7 +28,10 @@ import java.util.Objects;
 import io.reactivex.functions.Consumer;
 import io.reactivex.plugins.RxJavaPlugins;
 
+import static com.chinafocus.hvrskyworthvr.global.Constants.BRIGHTNESS_CURRENT_STATUS;
+import static com.chinafocus.hvrskyworthvr.global.Constants.INIT_VOLUME_BRIGHTNESS_STATUS;
 import static com.chinafocus.hvrskyworthvr.global.Constants.VIDEO_UPDATE_STATUS;
+import static com.chinafocus.hvrskyworthvr.global.Constants.VOLUME_CURRENT_STATUS;
 
 public class MyApp extends Application implements JavaCrashUtils.OnCrashListener {
     @Override
@@ -84,6 +90,23 @@ public class MyApp extends Application implements JavaCrashUtils.OnCrashListener
 
         // 开机就把应用自动下载关闭
         SPUtils.getInstance().put(VIDEO_UPDATE_STATUS, false);
+
+        initVolumeAndBrightness();
+    }
+
+    private void initVolumeAndBrightness() {
+        boolean init = SPUtils.getInstance().getBoolean(INIT_VOLUME_BRIGHTNESS_STATUS);
+        if (!init) {
+
+            int brightness = BrightnessUtils.getBrightness();
+            SPUtils.getInstance().put(BRIGHTNESS_CURRENT_STATUS, brightness);
+
+            int stream_music = VolumeUtils.getVolume(AudioManager.STREAM_MUSIC);
+            SPUtils.getInstance().put(VOLUME_CURRENT_STATUS, stream_music);
+
+            SPUtils.getInstance().put(INIT_VOLUME_BRIGHTNESS_STATUS, true);
+        }
+
     }
 
     private void initFileDirectory() {
