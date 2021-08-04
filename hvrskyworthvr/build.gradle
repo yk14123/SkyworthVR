@@ -8,8 +8,8 @@ android {
         applicationId "com.chinafocus.hvrskyworthvr"
         minSdkVersion 22
         targetSdkVersion 30
-        versionCode 63
-        versionName "2.0.63"
+        versionCode 90
+        versionName "2.0.90"
 
         testInstrumentationRunner "androidx.sky_worth_login_logo.runner.AndroidJUnitRunner"
 
